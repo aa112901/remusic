@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <color name="whaite_text">#fafafa</color>
+
+    <!-- notification text -->
+    <color name="bottom_text">#c1c0c0</color>
+
+
+    <color name="primary_material_light_1">#3f51b5</color>
+    <color name="background_material_light_1">#fafafa</color>
+    <color name="background_material_light_2">#ed02fafa</color>
+    <color name="small_font">#FF757575</color>
+    <color name="text_color">#FF000000</color>
+
+    <!-- Menu Item Color -->
+    <color name="menu_transparent">#00FFFFFF</color>
+    <color name="menu_item_blue">#3487f4</color>
+    <color name="menu_item_blue_dark">#2F79DB</color>
+    <color name="menu_item_grey">#ffdbdbdb</color>
+    <color name="menu_item_white">#FFFFFF</color>
+    <color name="menu_background">#FFFFFF</color>
+    <color name="menu_text_color">#444444</color>
+    <color name="menu_text_color_selected">#FFFFFF</color>
+    <color name="avatar_text">#FFFFFF</color>
+    <color name="avatar_background">#444444</color>
+    <color name="accent_material_light">#d20000</color>
+    <color name="primary_material_light">#f5f5f5</color>
+
+    <color name="toolabar_color">#d20000</color>
+
+
+</resources>

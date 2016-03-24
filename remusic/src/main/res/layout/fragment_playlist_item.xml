@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <RelativeLayout
+        android:background="?android:attr/selectableItemBackground"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent">
+
+        <ImageView
+            android:id="@+id/play_state"
+            android:layout_marginLeft="10dp"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_centerVertical="true"
+            android:layout_alignParentLeft="true"
+            android:visibility="gone" />
+
+        <LinearLayout
+            android:layout_toLeftOf="@+id/play_list_delete"
+            android:layout_toRightOf="@+id/play_state"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:layout_width="match_parent"
+            android:layout_height="43dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_marginLeft="10dp"
+                android:layout_gravity="center_vertical"
+                android:gravity="center_horizontal|center_vertical"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/play_list_musicname"
+                android:text="000000000"
+                android:textSize="15sp"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:maxLength="20" />
+
+            <TextView
+                android:layout_gravity="center_vertical"
+                android:gravity="center_horizontal|center_vertical"
+                android:layout_marginTop="3dp"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:id="@+id/play_list_artist"
+                android:text="-1111111"
+                android:textSize="10sp"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:maxLength="20" />
+
+        </LinearLayout>
+
+        <ImageView
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:layout_alignParentRight="true"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:src="@drawable/list_full_btn_close"
+            android:paddingRight="10dp"
+            android:paddingLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:background="?android:attr/selectableItemBackground"
+            android:focusable="false"
+            android:id="@+id/play_list_delete" />
+    </RelativeLayout>
+
+
+</LinearLayout>

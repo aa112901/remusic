@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group android:checkableBehavior="single">
+
+        <item
+            android:id="@+id/timing_play"
+
+            android:title="@string/timing" />
+        <item
+            android:id="@+id/action_exit"
+
+            android:title="@string/exit" />
+    </group>
+
+
+</menu>

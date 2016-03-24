@@ -1,0 +1,102 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/a">
+
+    <FrameLayout
+        android:id="@+id/fragment_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/nav_play"></FrameLayout>
+
+    <LinearLayout
+        android:layout_alignParentBottom="true"
+        android:id="@+id/nav_play"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="@color/primary_material_light">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginBottom="-3dp">
+
+            <com.facebook.drawee.view.SimpleDraweeView
+                android:layout_width="43dp"
+                android:layout_height="43dp"
+                android:layout_weight="0"
+                android:layout_marginTop="3dp"
+                android:layout_marginLeft="6dp"
+                android:id="@+id/playbar_img" />
+
+            <LinearLayout
+                android:layout_width="165dp"
+                android:layout_height="43dp"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:layout_marginTop="6dp"
+                android:layout_marginLeft="6dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    android:layout_height="23dp"
+                    android:id="@+id/playbar_info"
+                    android:textSize="17dp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="16dp"
+                    android:ellipsize="end"
+                    android:maxLength="20"
+                    android:maxLines="1"
+                    android:id="@+id/playbar_singer"
+                    android:textSize="10dp" />
+            </LinearLayout>
+
+
+            <ImageView
+                android:id="@+id/play_list"
+                android:layout_width="43dp"
+                android:layout_height="43dp"
+                android:onClick="click_last"
+                android:src="@drawable/playbar_btn_playlist"
+                android:background="?attr/selectableItemBackgroundBorderless" />
+
+            <ImageView
+                android:id="@+id/control"
+                android:layout_width="41dp"
+                android:layout_height="46dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:src="@drawable/playbar_btn_play" />
+
+            <ImageView
+                android:id="@+id/play_next"
+                android:layout_width="43dp"
+                android:layout_height="43dp"
+                android:onClick="click_next"
+                android:src="@drawable/playbar_btn_next"
+                android:background="?attr/selectableItemBackgroundBorderless" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <ProgressBar
+                android:id="@+id/song_progress_normal"
+                style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom"
+                android:maxHeight="6dp"
+                android:progress="0"
+                android:tag="tint_accent_color"
+                android:progressDrawable="@drawable/progressbar_color" />
+        </LinearLayout>
+    </LinearLayout>
+</RelativeLayout>

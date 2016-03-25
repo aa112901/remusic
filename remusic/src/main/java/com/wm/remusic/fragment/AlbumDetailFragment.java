@@ -63,7 +63,7 @@ public class AlbumDetailFragment extends BaseFragment {
     }
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.recyclerview_detail_item, container, false);
+        View view = inflater.inflate(R.layout.frgment_common, container, false);
 
 //        musicInfos = MusicUtils.queryMusic(getActivity(), null, albumID + "", IConstants.START_FROM_ALBUM);
 //        musicInfos = MusicUtils.getAlbumsongs(getContext(), albumID + "", IConstants.SORTED_BY_NAME);
@@ -138,7 +138,7 @@ public class AlbumDetailFragment extends BaseFragment {
             if (viewType == FIRST_ITEM) {
                 return new CommonItemViewHolder(LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.common_item, viewGroup, false));
             } else {
-                return new ListItemViewHolder(LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.musciframent_common_item, viewGroup, false));
+                return new ListItemViewHolder(LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.frament_musci_common_item, viewGroup, false));
             }
         }
 

@@ -61,7 +61,7 @@ public class ArtistDetailFragment extends BaseFragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.recyclerview_detail_item, container, false);
+        View view = inflater.inflate(R.layout.frgment_common, container, false);
         recyclerView = (RecyclerView) view.findViewById(R.id.recyclerview);
         //musicInfos = (ArrayList) MusicUtils.queryMusic(getActivity(), null, artistID + "", IConstants.START_FROM_ARTIST);
         layoutManager = new LinearLayoutManager(getActivity());
@@ -141,7 +141,7 @@ public class ArtistDetailFragment extends BaseFragment {
             if (viewType == FIRST_ITEM) {
                 return new CommonItemViewHolder(LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.common_item, viewGroup, false));
             } else {
-                return new ListItemViewHolder(LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.musciframent_common_item, viewGroup, false));
+                return new ListItemViewHolder(LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.frament_musci_common_item, viewGroup, false));
             }
         }
 

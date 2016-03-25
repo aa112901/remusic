@@ -63,7 +63,7 @@ public class PlayQueueFragment extends DialogFragment {
         getDialog().getWindow().setAttributes(params);
 
 
-        View view = inflater.inflate(R.layout.fragment_playlist, container);
+        View view = inflater.inflate(R.layout.fragment_queue, container);
 
         //布局
         playlistNumber = (TextView) view.findViewById(R.id.play_list_number);
@@ -154,7 +154,7 @@ public class PlayQueueFragment extends DialogFragment {
 
         @Override
         public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
-            return new ItemViewHolder(LayoutInflater.from(getContext()).inflate(R.layout.fragment_playlist_item, viewGroup, false));
+            return new ItemViewHolder(LayoutInflater.from(getContext()).inflate(R.layout.fragment_playqueue_item, viewGroup, false));
         }
 
         @Override

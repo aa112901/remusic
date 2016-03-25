@@ -194,7 +194,7 @@ public class RecentFragment extends Fragment {
                 return new CommonItemViewHolder(LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.common_item, viewGroup, false));
 
             else {
-                return new ListItemViewHolder(LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.musciframent_common_item, viewGroup, false));
+                return new ListItemViewHolder(LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.frament_musci_common_item, viewGroup, false));
             }
         }
 

@@ -42,7 +42,7 @@ public class MusicFlowAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.pop_window_listview, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.music_flow_layout, parent, false);
         ListItemViewHolder vh = new ListItemViewHolder(view);
         //将创建的View注册点击事件
         view.setOnClickListener(this);

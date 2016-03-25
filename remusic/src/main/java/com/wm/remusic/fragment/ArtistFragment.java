@@ -166,7 +166,7 @@ public class ArtistFragment extends BaseFragment {
 
         @Override
         public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
-            View itemView = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.viewpager_common_item, viewGroup, false);
+            View itemView = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.recyclerview_common_item, viewGroup, false);
             return new ListItemViewHolder(itemView);
         }
 

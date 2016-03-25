@@ -45,7 +45,7 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ItemHolder
 
     @Override
     public ItemHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
-        View v0 = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.musciframent_common_item, null);
+        View v0 = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.frament_musci_common_item, null);
         ItemHolder ml0 = new ItemHolder(v0);
         return ml0;
     }

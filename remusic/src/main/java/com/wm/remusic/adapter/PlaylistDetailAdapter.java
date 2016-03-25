@@ -43,7 +43,7 @@ public class PlaylistDetailAdapter extends RecyclerView.Adapter<RecyclerView.Vie
         if (viewType == FIRST_ITEM) {
             return new CommonItemViewHolder(LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.common_item, viewGroup, false));
         } else {
-            return new ItemViewHolder(LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.frament_playlist_detail_item, viewGroup, false));
+            return new ItemViewHolder(LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.fragment_playlist_detail_item, viewGroup, false));
         }
 
     }

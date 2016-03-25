@@ -179,7 +179,7 @@ public class AlbumFragment extends BaseFragment {
         @Override
         public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
             return new ListItemViewHolder(LayoutInflater.from(viewGroup.getContext()).
-                    inflate(R.layout.viewpager_common_item, viewGroup, false));
+                    inflate(R.layout.recyclerview_common_item, viewGroup, false));
         }
 
 
@@ -274,7 +274,7 @@ public class AlbumFragment extends BaseFragment {
             if (convertView == null) {
                 viewHolder = new ViewHolder();
                 convertView = getActivity().getLayoutInflater().inflate(
-                        R.layout.viewpager_common_item, null);
+                        R.layout.recyclerview_common_item, null);
                 viewHolder.albumNameTv = (TextView) convertView
                         .findViewById(R.id.viewpager_list_toptext);
                 viewHolder.numberTv = (TextView) convertView

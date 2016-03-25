@@ -1,5 +1,6 @@
 package com.wm.remusic.activity;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.net.Uri;
@@ -19,6 +20,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.wm.remusic.R;
@@ -29,6 +31,8 @@ import com.wm.remusic.service.MusicPlayer;
 import com.wm.remusic.uitl.IConstants;
 import com.wm.remusic.uitl.MusicUtils;
 
+import java.lang.ref.WeakReference;
+
 import static com.wm.remusic.service.MusicPlayer.mService;
 
 public class MainActivity extends BaseActivity implements NavigationView.OnNavigationItemSelectedListener,
@@ -37,6 +41,8 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     TextView NavMusicName;
     TextView NavArtist;
     ProgressBar mProgress;
+    CommonHandler handler;
+
     public Runnable mUpdateProgress = new Runnable() {
 
         @Override
@@ -117,7 +123,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         mProgress.measure(0, 0);
         layoutParams.setMargins(0, -20, 0, -(mProgress.getMeasuredHeight() / 2));
         mProgress.setLayoutParams(layoutParams);
-
+        handler = new CommonHandler(this);
         updateTrackInfo();
 
        //	获取底部播放栏实例、绑定监听器
@@ -126,9 +132,20 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         linearLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, PlayingActivity.class);
-                intent.setAction(IConstants.NAVIGATE_NOWPLAYING);
-                startActivity(intent);
+                if(MusicPlayer.getQueueSize() == 0){
+                    Toast.makeText(MainActivity.this,getResources().getString(R.string.queue_is_empty),
+                            Toast.LENGTH_SHORT).show();
+                }else {
+                    handler.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            Intent intent = new Intent(MainActivity.this, PlayingActivity.class);
+                            intent.setAction(IConstants.NAVIGATE_NOWPLAYING);
+                            startActivity(intent);
+                        }
+                    }, 60);
+
+                }
             }
         });
         final ImageView playQueue = (ImageView) findViewById(R.id.play_list);
@@ -140,11 +157,12 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
 
             }
         });
+
         final ImageView next = (ImageView) findViewById(R.id.play_next);
         next.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                new Handler().postDelayed(new Runnable() {
+                handler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
                         MusicPlayer.next();
@@ -161,13 +179,17 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
                 control.setImageResource(MusicPlayer.isPlaying() ? R.drawable.playbar_btn_pause
                         : R.drawable.playbar_btn_play);
 
-
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        MusicPlayer.playOrPause();
-                    }
-                }, 100);
+                if(MusicPlayer.getQueueSize() == 0){
+                    Toast.makeText(MainActivity.this,getResources().getString(R.string.queue_is_empty),
+                            Toast.LENGTH_SHORT).show();
+                }else {
+                        handler.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                MusicPlayer.playOrPause();
+                            }
+                        }, 100);
+                }
 
             }
         });
@@ -188,6 +210,13 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
 
     }
 
+    static class CommonHandler extends Handler {
+        WeakReference<Activity> mActivityReference;
+
+        CommonHandler(Activity activity) {
+            mActivityReference = new WeakReference<Activity>(activity);
+        }
+    }
 
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {

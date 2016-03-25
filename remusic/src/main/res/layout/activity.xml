@@ -14,7 +14,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:background="@color/primary_material_light"
+        android:background="?attr/selectableItemBackgroundBorderless"
         android:orientation="vertical">
 
         <LinearLayout
@@ -78,7 +78,7 @@
                 android:layout_width="43dp"
                 android:layout_height="43dp"
                 android:background="?attr/selectableItemBackgroundBorderless"
-                android:onClick="click_next"
+            android:onClick="click_next"
                 android:src="@drawable/playbar_btn_next" />
         </LinearLayout>
 

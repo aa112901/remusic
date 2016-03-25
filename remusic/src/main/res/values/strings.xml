@@ -9,7 +9,7 @@
     <string name="my_fav_playlist">我喜欢的音乐</string>
     <string name="shared_to">分享到</string>
 
-
+    <string name="queue_is_empty">播放队列为空</string>
     <string name="random_play">随机播放</string>
     <string name="loop_play">列表循环</string>
     <string name="play_one">单曲播放</string>

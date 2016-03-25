@@ -217,12 +217,14 @@ public class PlayingActivity extends BaseActivity implements IConstants {
             @Override
             public void onClick(View v) {
                 duetoplaypause = true;
+
+
                 if (MusicPlayer.isPlaying()) {
                     control.setImageResource(R.drawable.play_rdi_btn_pause);
                 } else {
                     control.setImageResource(R.drawable.play_rdi_btn_play);
                 }
-                MusicPlayer.playOrPause();
+                if(MusicPlayer.getQueueSize() != 0){MusicPlayer.playOrPause();}
             }
         });
 
@@ -360,6 +362,11 @@ public class PlayingActivity extends BaseActivity implements IConstants {
 
 
     public void updateQueue() {
+        if(MusicPlayer.getQueueSize() == 0){
+            MusicPlayer.stop();
+            finish();
+            return;
+        }
         fAdapter.notifyDataSetChanged();
         mViewPager.setCurrentItem(MusicPlayer.getQueuePosition() + 1, false);
         fAdapter.notifyDataSetChanged();
@@ -375,7 +382,7 @@ public class PlayingActivity extends BaseActivity implements IConstants {
     }
 
     public void updateTrackInfo() {
-
+        if(MusicPlayer.getQueueSize() == 0){return;}
         if (!duetoplaypause) {
             isFav = false;
             ArrayList<MusicTrack> favlists = playlistsManager.getPlaylist(10);
@@ -444,8 +451,8 @@ public class PlayingActivity extends BaseActivity implements IConstants {
 
         isNextOrPreSetPage = false;
         if (MusicPlayer.getQueuePosition() + 1 != mViewPager.getCurrentItem()) {
-            mViewPager.setCurrentItem(MusicPlayer.getQueuePosition() + 1);
-            isNextOrPreSetPage = true;
+                mViewPager.setCurrentItem(MusicPlayer.getQueuePosition() + 1);
+                isNextOrPreSetPage = true;
         }
     }
 

@@ -88,6 +88,7 @@ public class PlayQueueFragment extends DialogFragment {
                 MusicPlayer.clearQueue();
                 MusicPlayer.stop();
                 adapter.notifyDataSetChanged();
+                dismiss();
             }
         });
         recyclerView = (RecyclerView) view.findViewById(R.id.play_list);

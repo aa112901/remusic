@@ -260,19 +260,6 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
 
     }
 
-    /**
-     * 歌曲时间格式转换
-     */
-    public String timeconvert(int time) {
-        int min = 0, hour = 0;
-        time /= 1000;
-        min = time / 60;
-        time %= 60;
-        String mi = String.format("%02d", min);
-        String ti = String.format("%02d", time);
-        return mi + ":" + ti;
-    }
-
 //    @Override
 //    public void down(String key) {
 //        // 字母索引被按下时回调

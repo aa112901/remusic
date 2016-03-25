@@ -14,7 +14,7 @@ import java.util.Set;
 /**
  * Created by wm on 2016/3/7.
  */
-//引用到的工具类
+//引用到的工具类 判断定制系统类型
 
 public class BuildProperties {
 

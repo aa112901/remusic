@@ -23,7 +23,7 @@ import android.widget.TextView;
 
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.wm.remusic.R;
-import com.wm.remusic.fragment.DividerItemDecoration;
+import com.wm.remusic.uitl.DividerItemDecoration;
 import com.wm.remusic.info.Playlist;
 import com.wm.remusic.provider.PlaylistInfo;
 import com.wm.remusic.provider.PlaylistsManager;

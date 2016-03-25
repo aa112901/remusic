@@ -27,7 +27,6 @@ import com.wm.remusic.activity.SelectActivity;
 import com.wm.remusic.fragment.PlaylistDetailFragment;
 import com.wm.remusic.fragment.RecentFragment;
 import com.wm.remusic.fragment.TabPagerFragment;
-import com.wm.remusic.info.MainFragmentItem;
 import com.wm.remusic.info.MusicInfo;
 import com.wm.remusic.info.Playlist;
 import com.wm.remusic.provider.PlaylistInfo;

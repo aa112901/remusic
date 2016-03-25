@@ -24,7 +24,7 @@ import android.widget.TextView;
 
 import com.wm.remusic.R;
 import com.wm.remusic.dialog.AddPlaylistDialog;
-import com.wm.remusic.fragment.DividerItemDecoration;
+import com.wm.remusic.uitl.DividerItemDecoration;
 import com.wm.remusic.info.MusicInfo;
 import com.wm.remusic.provider.PlaylistsManager;
 import com.wm.remusic.service.MediaService;

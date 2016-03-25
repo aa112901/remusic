@@ -1,4 +1,4 @@
-package com.wm.remusic.info;
+package com.wm.remusic.adapter;
 
 /**
  * Created by wm on 2016/3/10.

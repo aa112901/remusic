@@ -19,13 +19,14 @@ import android.view.ViewGroup;
 
 import com.wm.remusic.R;
 import com.wm.remusic.adapter.MainFragmentAdapter;
-import com.wm.remusic.info.MainFragmentItem;
+import com.wm.remusic.adapter.MainFragmentItem;
 import com.wm.remusic.info.Playlist;
 import com.wm.remusic.info.Song;
 import com.wm.remusic.info.SongLoader;
 import com.wm.remusic.info.TopTracksLoader;
 import com.wm.remusic.provider.PlaylistInfo;
 import com.wm.remusic.service.MediaService;
+import com.wm.remusic.uitl.DividerItemDecoration;
 import com.wm.remusic.uitl.IConstants;
 import com.wm.remusic.uitl.MusicUtils;
 

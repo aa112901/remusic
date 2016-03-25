@@ -228,6 +228,8 @@ public class MusicUtils implements IConstants {
         }
         selection.append(")");
 
+        //sqlite 不支持decode
+
 //        final StringBuilder order = new StringBuilder();
 //        order.append("DECODE(" +MediaStore.Audio.Media._ID +",");
 //        for (int i = 0; i < id.length; i++) {
@@ -266,10 +268,8 @@ public class MusicUtils implements IConstants {
             for (int i = 0; i < id.length; i++) {
                 if (id[i] == music.songId) {
                     musicList.set(i, music);
-
                 }
             }
-
         }
         cursor.close();
         return musicList;

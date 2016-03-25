@@ -21,6 +21,7 @@ import com.wm.remusic.R;
 import com.wm.remusic.info.FolderInfo;
 import com.wm.remusic.service.MediaService;
 import com.wm.remusic.service.MusicPlayer;
+import com.wm.remusic.uitl.DividerItemDecoration;
 import com.wm.remusic.uitl.IConstants;
 import com.wm.remusic.uitl.MusicUtils;
 

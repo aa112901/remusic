@@ -48,7 +48,7 @@ public class RoundImageView extends ImageView {
     private float mDrawableRadius;
     private float v = 0;
 
-    // 控件默认长�?�宽
+    // 控件默认长宽
     private int defaultWidth = 0;
     private int defaultHeight = 0;
 

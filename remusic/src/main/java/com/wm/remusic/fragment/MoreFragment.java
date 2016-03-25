@@ -41,7 +41,7 @@ import java.util.List;
  */
 public class MoreFragment extends DialogFragment {
     int type;
-    double h;
+    double heightPercent;
     TextView topTitle;
     List<MusicInfo> list = null;
     MusicFlowAdapter muaicflowAdapter;
@@ -108,7 +108,7 @@ public class MoreFragment extends DialogFragment {
             albumName = adapterMusicInfo.albumName;
             musicName = adapterMusicInfo.musicName;
             topTitle.setText("歌曲：" + " " + musicName);
-            h = 0.6;
+            heightPercent = 0.6;
             setMusicInfo();
             muaicflowAdapter = new MusicFlowAdapter(getActivity(), mlistInfo, adapterMusicInfo);
 
@@ -131,7 +131,7 @@ public class MoreFragment extends DialogFragment {
                     break;
             }
             setCommonInfo();
-            h = 0.3;
+            heightPercent = 0.3;
             commonAdapter = new OverFlowAdapter(getActivity(), mlistInfo, list);
 
         }
@@ -161,12 +161,12 @@ public class MoreFragment extends DialogFragment {
                             shareIntent.setAction(Intent.ACTION_SEND);
                             shareIntent.putExtra(Intent.EXTRA_STREAM, Uri.parse("file://" + adapterMusicInfo.data));
                             shareIntent.setType("audio/*");
-                            getActivity().startActivity(Intent.createChooser(shareIntent, "分享到"));
+                            getActivity().startActivity(Intent.createChooser(shareIntent, getResources().getString(R.string.shared_to)));
                             dismiss();
                             break;
                         case 3:
-                            new AlertDialog.Builder(getContext()).setTitle("确定删除歌曲吗").
-                                    setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                            new AlertDialog.Builder(getContext()).setTitle(getResources().getString(R.string.sure_to_delete_music)).
+                                    setPositiveButton(getResources().getString(R.string.sure), new DialogInterface.OnClickListener() {
                                         @Override
                                         public void onClick(DialogInterface dialog, int which) {
                                             File file;
@@ -181,7 +181,7 @@ public class MoreFragment extends DialogFragment {
                                             dismiss();
                                         }
                                     }).
-                                    setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                                    setNegativeButton(getResources().getString(R.string.cancel), new DialogInterface.OnClickListener() {
                                         @Override
                                         public void onClick(DialogInterface dialog, int which) {
                                             dismiss();
@@ -208,7 +208,8 @@ public class MoreFragment extends DialogFragment {
                         case 6:
                             Uri ringUri = Uri.parse("file://" + adapterMusicInfo.data);
                             RingtoneManager.setActualDefaultRingtoneUri(getContext(), RingtoneManager.TYPE_NOTIFICATION, ringUri);
-                            Toast.makeText(getContext(), "设置铃声成功！", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getContext(),getResources().getString(R.string.set_ringtone_successed),
+                                    Toast.LENGTH_SHORT).show();
                             dismiss();
                             break;
                         case 7:
@@ -302,7 +303,7 @@ public class MoreFragment extends DialogFragment {
     public void onStart() {
         super.onStart();
         //设置fragment高度 、宽度
-        int dialogHeight = (int) (getActivity().getResources().getDisplayMetrics().heightPixels * h);
+        int dialogHeight = (int) (getActivity().getResources().getDisplayMetrics().heightPixels * heightPercent);
         ;
 //        WindowManager wm = (WindowManager) getContext().getSystemService(Context.WINDOW_SERVICE);
 //        Display display = wm.getDefaultDisplay();

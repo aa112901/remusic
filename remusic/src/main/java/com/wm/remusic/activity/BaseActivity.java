@@ -25,30 +25,10 @@ import static com.wm.remusic.service.MusicPlayer.mService;
  * Created by wm on 2016/2/25.
  */
 public class BaseActivity extends AppCompatActivity implements ServiceConnection {
-    public BroadcastReceiver mStatusListener = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            String action = intent.getAction();
-            if (action.equals(MediaService.META_CHANGED)) {
 
-                updateTrackInfo();
-                //setPauseButtonImage();
-                //queueNextRefresh(1);
-            } else if (action.equals(MediaService.PLAYSTATE_CHANGED)) {
-                //setPauseButtonImage();
-            } else if (action.equals(MediaService.QUEUE_CHANGED)) {
-                updateQueue();
-            } else if (action.equals(IConstants.MUSIC_COUNT_CHANGED)) {
-                refreshUI();
-            }
-        }
-    };
     private MusicPlayer.ServiceToken mToken;
     private PlaybackStatus mPlaybackStatus;
 
-    public void tru() {
-
-    }
 
     public void updateQueue() {
     }
@@ -132,7 +112,7 @@ public class BaseActivity extends AppCompatActivity implements ServiceConnection
 
 
         public PlaybackStatus(final BaseActivity activity) {
-            mReference = new WeakReference<BaseActivity>(activity);
+            mReference = new WeakReference<>(activity);
         }
 
 

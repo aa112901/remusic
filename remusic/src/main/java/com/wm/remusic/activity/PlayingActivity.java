@@ -136,6 +136,7 @@ public class PlayingActivity extends BaseActivity implements IConstants {
         mViewPager.setAdapter(fAdapter);
         mViewPager.setPageTransformer(true, transformer);
 
+        //改变viewpager动画时间
         try {
             Field mField = ViewPager.class.getDeclaredField("mScroller");
             mField.setAccessible(true);
@@ -194,6 +195,7 @@ public class PlayingActivity extends BaseActivity implements IConstants {
         setSeekBarListener();
         setTools();
     }
+
 
     private void setTools() {
         playingmode.setOnClickListener(new View.OnClickListener() {
@@ -277,7 +279,7 @@ public class PlayingActivity extends BaseActivity implements IConstants {
             shareIntent.setAction(Intent.ACTION_SEND);
             shareIntent.putExtra(Intent.EXTRA_STREAM, Uri.parse("file://" + musicInfo.data));
             shareIntent.setType("audio/*");
-            this.startActivity(Intent.createChooser(shareIntent, "分享到"));
+            this.startActivity(Intent.createChooser(shareIntent, getResources().getString(R.string.shared_to)));
 
         }
         return super.onOptionsItemSelected(item);
@@ -295,17 +297,20 @@ public class PlayingActivity extends BaseActivity implements IConstants {
     private void updatePlaymode() {
         if (MusicPlayer.getShuffleMode() == MediaService.SHUFFLE_NORMAL) {
             playingmode.setImageResource(R.drawable.play_icn_shuffle);
-            Toast.makeText(PlayingActivity.this.getApplication(), "随机播放", Toast.LENGTH_SHORT).show();
+            Toast.makeText(PlayingActivity.this.getApplication(), getResources().getString(R.string.random_play),
+                    Toast.LENGTH_SHORT).show();
             return;
         } else {
             switch (MusicPlayer.getRepeatMode()) {
                 case MediaService.REPEAT_ALL:
                     playingmode.setImageResource(R.drawable.play_icn_loop);
-                    Toast.makeText(PlayingActivity.this.getApplication(), "列表循环", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(PlayingActivity.this.getApplication(), getResources().getString(R.string.loop_play),
+                            Toast.LENGTH_SHORT).show();
                     break;
                 case MediaService.REPEAT_CURRENT:
                     playingmode.setImageResource(R.drawable.play_icn_one);
-                    Toast.makeText(PlayingActivity.this.getApplication(), "单曲播放", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(PlayingActivity.this.getApplication(), getResources().getString(R.string.play_one),
+                            Toast.LENGTH_SHORT).show();
                     break;
             }
         }
@@ -388,8 +393,8 @@ public class PlayingActivity extends BaseActivity implements IConstants {
 
 
         Fragment fragment = (RoundFragment) mViewPager.getAdapter().instantiateItem(mViewPager, mViewPager.getCurrentItem());
-//        viewWeakReference = new WeakReference<View>(fragment.getView());
-//        activeView = viewWeakReference.get();
+        viewWeakReference = new WeakReference<View>(fragment.getView());
+        activeView = viewWeakReference.get();
         activeView = fragment.getView();
 
         if (activeView != null) {
@@ -603,9 +608,9 @@ public class PlayingActivity extends BaseActivity implements IConstants {
                     TransitionDrawable td =
                             new TransitionDrawable(new Drawable[]{backAlbum.getDrawable(), result});
 
-                    //去除过度绘制
 
                     backAlbum.setImageDrawable(td);
+                    //去除过度绘制
                     td.setCrossFadeEnabled(true);
                     td.startTransition(370);
 

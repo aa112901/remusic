@@ -77,7 +77,7 @@ public class SearchActivity extends AppCompatActivity implements SearchView.OnQu
         mSearchView = (SearchView) MenuItemCompat.getActionView(menu.findItem(R.id.menu_search));
 
         mSearchView.setOnQueryTextListener(this);
-        mSearchView.setQueryHint("搜索本地歌曲");
+        mSearchView.setQueryHint(getResources().getString(R.string.search_local_music));
 
         mSearchView.setIconifiedByDefault(false);
         mSearchView.setIconified(false);

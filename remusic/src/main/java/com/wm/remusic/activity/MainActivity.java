@@ -59,6 +59,8 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         //        super.onSaveInstanceState(outState);
     }
 
+
+
     public void updateTrackInfo() {
         if (mService == null) {
             return;
@@ -118,7 +120,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
 
         updateTrackInfo();
 
-//	获取底部播放栏实例、绑定监听器
+       //	获取底部播放栏实例、绑定监听器
 
         LinearLayout linearLayout = (LinearLayout) findViewById(R.id.nav_play);
         linearLayout.setOnClickListener(new View.OnClickListener() {
@@ -129,12 +131,12 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
                 startActivity(intent);
             }
         });
-        final ImageView Playlist = (ImageView) findViewById(R.id.play_list);
-        Playlist.setOnClickListener(new View.OnClickListener() {
+        final ImageView playQueue = (ImageView) findViewById(R.id.play_list);
+        playQueue.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 PlayQueueFragment playQueueFragment = new PlayQueueFragment();
-                playQueueFragment.show(getSupportFragmentManager(), "playlistframent");
+                playQueueFragment.show(getSupportFragmentManager(), "playqueueframent");
 
             }
         });

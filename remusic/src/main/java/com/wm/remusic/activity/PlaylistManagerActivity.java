@@ -85,15 +85,15 @@ public class PlaylistManagerActivity extends AppCompatActivity implements View.O
         final ArrayList<Playlist> selectList = mAdapter.getSelectedItem();
         switch (v.getId()) {
             case R.id.select_del:
-                new AlertDialog.Builder(this).setTitle("确定删除歌曲吗").
-                        setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                new AlertDialog.Builder(this).setTitle(getResources().getString(R.string.sure_to_delete_music)).
+                        setPositiveButton(getResources().getString(R.string.sure), new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 // TODO: 2016/3/17
                                 dialog.dismiss();
                             }
                         }).
-                        setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                        setNegativeButton(getResources().getString(R.string.cancel), new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 dialog.dismiss();

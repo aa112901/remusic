@@ -17,16 +17,16 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.wm.remusic.uitl.IConstants;
+import com.wm.remusic.R;
+import com.wm.remusic.adapter.MainFragmentAdapter;
 import com.wm.remusic.info.MainFragmentItem;
 import com.wm.remusic.info.Playlist;
-import com.wm.remusic.provider.PlaylistInfo;
 import com.wm.remusic.info.Song;
 import com.wm.remusic.info.SongLoader;
 import com.wm.remusic.info.TopTracksLoader;
-import com.wm.remusic.R;
-import com.wm.remusic.adapter.MainFragmentAdapter;
+import com.wm.remusic.provider.PlaylistInfo;
 import com.wm.remusic.service.MediaService;
+import com.wm.remusic.uitl.IConstants;
 import com.wm.remusic.uitl.MusicUtils;
 
 import java.util.ArrayList;
@@ -38,17 +38,29 @@ import java.util.List;
  */
 public class MainFragment extends Fragment {
 
-    private RecyclerView recyclerView;
-    private LinearLayoutManager layoutManager;
     MainFragmentAdapter mAdapter;
     ActionBar ab;
+    ArrayList<Playlist> playlists;
+    private RecyclerView recyclerView;
+    private LinearLayoutManager layoutManager;
     private List results = Collections.emptyList();
     private List<MainFragmentItem> mList = new ArrayList<>();
     private PlaylistInfo playlistInfo;
-    ArrayList<Playlist> playlists;
-
     private int localMusicCount, recentMusicCount, artistsCount;
-
+    //接受歌曲播放变化和列表变化广播，刷新列表
+    private BroadcastReceiver mStatusListener = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String action = intent.getAction();
+            if (action.equals(MediaService.META_CHANGED)) {
+                //reloadAdapter();
+            } else if (action.equals(IConstants.MUSIC_COUNT_CHANGED)) {
+                // reloadAdapter();
+            } else if (action.equals(IConstants.PLAYLIST_COUNT_CHANGED)) {
+                reloadAdapter();
+            }
+        }
+    };
 
     @Override
     public void onCreate(final Bundle savedInstanceState) {
@@ -113,7 +125,6 @@ public class MainFragment extends Fragment {
         super.onPause();
     }
 
-
     //为info设置数据，并放入mlistInfo
     public void setInfo(String title, int count, int id) {
         // mlistInfo.clear();
@@ -137,22 +148,6 @@ public class MainFragment extends Fragment {
         setInfo(getContext().getResources().getString(R.string.local_manage), localMusicCount, R.drawable.music_icn_dld);
         setInfo(getContext().getResources().getString(R.string.my_artist), artistsCount, R.drawable.music_icn_artist);
     }
-
-
-    //接受歌曲播放变化和列表变化广播，刷新列表
-    private BroadcastReceiver mStatusListener = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            String action = intent.getAction();
-            if (action.equals(MediaService.META_CHANGED)) {
-                //reloadAdapter();
-            } else if (action.equals(IConstants.MUSIC_COUNT_CHANGED)) {
-                // reloadAdapter();
-            } else if (action.equals(IConstants.PLAYLIST_COUNT_CHANGED)) {
-                reloadAdapter();
-            }
-        }
-    };
 
     //刷新列表
     private void reloadAdapter() {

@@ -5,8 +5,8 @@
     <item
         android:id="@+id/menu_search"
         android:orderInCategory="1"
+        android:title="@string/search"
         app:actionViewClass="android.support.v7.widget.SearchView"
-        app:showAsAction="ifRoom|collapseActionView"
-        android:title="@string/search" />
+        app:showAsAction="ifRoom|collapseActionView" />
 
 </menu>

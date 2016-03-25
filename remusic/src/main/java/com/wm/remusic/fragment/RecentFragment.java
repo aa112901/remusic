@@ -19,19 +19,17 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.wm.remusic.uitl.CommonUtils;
-import com.wm.remusic.uitl.IConstants;
-import com.wm.remusic.provider.RecentStore;
+import com.wm.remusic.R;
 import com.wm.remusic.info.Song;
 import com.wm.remusic.info.SongLoader;
 import com.wm.remusic.info.TopTracksLoader;
-import com.wm.remusic.R;
-import com.wm.remusic.activity.SelectActivity;
+import com.wm.remusic.provider.RecentStore;
 import com.wm.remusic.service.MediaService;
 import com.wm.remusic.service.MusicPlayer;
+import com.wm.remusic.uitl.CommonUtils;
+import com.wm.remusic.uitl.IConstants;
 
 import java.lang.reflect.Field;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -39,13 +37,25 @@ import java.util.List;
  */
 public class RecentFragment extends Fragment {
 
-    private RecyclerView recyclerView;
-    private LinearLayoutManager layoutManager;
-    Adapter mAdapter;
     public int currentlyPlayingPosition = 0;
+    Adapter mAdapter;
     RecentStore recentStore;
     Toolbar toolbar;
     List<Song> mList;
+    private RecyclerView recyclerView;
+    private LinearLayoutManager layoutManager;
+    //接受歌曲播放变化和列表变化广播，刷新列表
+    private BroadcastReceiver mStatusListener = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String action = intent.getAction();
+            if (action.equals(MediaService.META_CHANGED)) {
+                reloadAdapter();
+            } else if (action.equals(MediaService.PLAYLIST_CHANGED)) {
+                reloadAdapter();
+            }
+        }
+    };
 
     @Override
     public void onCreate(final Bundle savedInstanceState) {
@@ -116,19 +126,6 @@ public class RecentFragment extends Fragment {
             throw new RuntimeException(e);
         }
     }
-
-    //接受歌曲播放变化和列表变化广播，刷新列表
-    private BroadcastReceiver mStatusListener = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            String action = intent.getAction();
-            if (action.equals(MediaService.META_CHANGED)) {
-                reloadAdapter();
-            } else if (action.equals(MediaService.PLAYLIST_CHANGED)) {
-                reloadAdapter();
-            }
-        }
-    };
 
     //刷新列表
     private void reloadAdapter() {

@@ -16,22 +16,6 @@ public class ArtistInfo implements Parcelable {
     public String artist_name;
     public int number_of_tracks;
     public long artist_id;
-
-
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        Bundle bundle = new Bundle();
-        bundle.putString(KEY_ARTIST_NAME, artist_name);
-        bundle.putInt(KEY_NUMBER_OF_TRACKS, number_of_tracks);
-        bundle.putLong(KEY_ARTIST_ID, artist_id);
-        dest.writeBundle(bundle);
-    }
-
     public static final Creator<ArtistInfo> CREATOR = new Creator<ArtistInfo>() {
 
         @Override
@@ -49,5 +33,19 @@ public class ArtistInfo implements Parcelable {
             return new ArtistInfo[size];
         }
     };
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        Bundle bundle = new Bundle();
+        bundle.putString(KEY_ARTIST_NAME, artist_name);
+        bundle.putInt(KEY_NUMBER_OF_TRACKS, number_of_tracks);
+        bundle.putLong(KEY_ARTIST_ID, artist_id);
+        dest.writeBundle(bundle);
+    }
 
 }

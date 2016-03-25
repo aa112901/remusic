@@ -73,9 +73,9 @@
         android:layout_weight="1">
 
         <Button
+            android:id="@+id/list_menu"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:id="@+id/list_menu"
             android:background="@drawable/play_ctrl_pause"
             android:focusable="false" />
     </LinearLayout>

@@ -6,25 +6,25 @@
     android:orientation="horizontal">
 
     <FrameLayout
+        android:id="@+id/cc"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:layout_widthPercent="76%"
         android:layout_centerInParent="true"
-        android:id="@+id/cc">
+        app:layout_widthPercent="76%">
 
         <ImageView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:src="@drawable/play_disc"
-            android:layout_margin="3dp" />
+            android:layout_margin="3dp"
+            android:src="@drawable/play_disc" />
 
         <!--fresco:placeholderImage="@drawable/play_disc"-->
         <com.facebook.drawee.view.SimpleDraweeView
+            android:id="@+id/sdv"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_centerInParent="true"
-            android:layout_margin="43dp"
-            android:id="@+id/sdv" />
+            android:layout_margin="43dp" />
         <!--<com.wm.remusic.uitl.CircleImageView-->
         <!--xmlns:app="http://schemas.android.com/apk/res-auto"-->
         <!--android:layout_width="match_parent"-->

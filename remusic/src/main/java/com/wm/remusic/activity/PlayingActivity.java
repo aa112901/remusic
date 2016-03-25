@@ -4,10 +4,8 @@ package com.wm.remusic.activity;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.app.Activity;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
@@ -18,13 +16,10 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -38,16 +33,16 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.wm.remusic.uitl.IConstants;
-import com.wm.remusic.info.MusicInfo;
-import com.wm.remusic.provider.PlaylistsManager;
 import com.wm.remusic.R;
 import com.wm.remusic.fragment.MoreFragment;
 import com.wm.remusic.fragment.PlayQueueFragment;
 import com.wm.remusic.fragment.RoundFragment;
+import com.wm.remusic.info.MusicInfo;
+import com.wm.remusic.provider.PlaylistsManager;
 import com.wm.remusic.service.MediaService;
 import com.wm.remusic.service.MusicPlayer;
 import com.wm.remusic.service.MusicTrack;
+import com.wm.remusic.uitl.IConstants;
 import com.wm.remusic.uitl.ImageUtils;
 import com.wm.remusic.uitl.MusicUtils;
 
@@ -63,22 +58,6 @@ public class PlayingActivity extends BaseActivity implements IConstants {
     ImageView backAlbum, playingmode, control, next, pre, playlist, cmt, fav, down, more, needle;
     TextView timePlayed, duration;
     SeekBar mProgress;
-    ActionBar ab;
-    ObjectAnimator needleAnim, animator;
-    AnimatorSet animatorSet;
-    ViewPager mViewPager;
-    FragmentAdapter fAdapter;
-    private  boolean isFav = false;
-    private boolean isNextOrPreSetPage = false; //判断viewpager由手动滑动 还是setcruuentitem换页
-    private boolean duetoplaypause = false; //判读是否是播放暂停的通知，不要切换专辑封面
-
-    BitmapFactory.Options newOpts;
-    View activeView;
-    PlaylistsManager playlistsManager;
-    WeakReference<ObjectAnimator> animatorWeakReference;
-
-
-
     public Runnable mUpdateProgress = new Runnable() {
 
         @Override
@@ -96,7 +75,19 @@ public class PlayingActivity extends BaseActivity implements IConstants {
 
         }
     };
-
+    ActionBar ab;
+    ObjectAnimator needleAnim, animator;
+    AnimatorSet animatorSet;
+    ViewPager mViewPager;
+    FragmentAdapter fAdapter;
+    BitmapFactory.Options newOpts;
+    View activeView;
+    PlaylistsManager playlistsManager;
+    WeakReference<ObjectAnimator> animatorWeakReference;
+    WeakReference<View> viewWeakReference;
+    private boolean isFav = false;
+    private boolean isNextOrPreSetPage = false; //判断viewpager由手动滑动 还是setcruuentitem换页
+    private boolean duetoplaypause = false; //判读是否是播放暂停的通知，不要切换专辑封面
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -138,7 +129,6 @@ public class PlayingActivity extends BaseActivity implements IConstants {
         needleAnim.setDuration(60);
         needleAnim.setRepeatMode(0);
         needleAnim.setInterpolator(new LinearInterpolator());
-
 
 
         PlaybarPagerTransformer transformer = new PlaybarPagerTransformer();
@@ -302,7 +292,6 @@ public class PlayingActivity extends BaseActivity implements IConstants {
 
     }
 
-
     private void updatePlaymode() {
         if (MusicPlayer.getShuffleMode() == MediaService.SHUFFLE_NORMAL) {
             playingmode.setImageResource(R.drawable.play_icn_shuffle);
@@ -321,15 +310,6 @@ public class PlayingActivity extends BaseActivity implements IConstants {
             }
         }
 
-    }
-
-
-    static class MyHandler extends Handler {
-        WeakReference<Activity> mActivityReference;
-
-        MyHandler(Activity activity) {
-            mActivityReference = new WeakReference<Activity>(activity);
-        }
     }
 
     @Override
@@ -374,7 +354,6 @@ public class PlayingActivity extends BaseActivity implements IConstants {
 //    };
 
 
-
     public void updateQueue() {
         fAdapter.notifyDataSetChanged();
         mViewPager.setCurrentItem(MusicPlayer.getQueuePosition() + 1, false);
@@ -389,8 +368,6 @@ public class PlayingActivity extends BaseActivity implements IConstants {
             fav.setImageResource(R.drawable.play_rdi_icn_love);
         }
     }
-
-    WeakReference<View> viewWeakReference;
 
     public void updateTrackInfo() {
 
@@ -467,6 +444,78 @@ public class PlayingActivity extends BaseActivity implements IConstants {
         }
     }
 
+    private void setSeekBarListener() {
+        if (mProgress != null)
+            mProgress.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+                @Override
+                public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
+                    if (b) {
+                        MusicPlayer.seek((long) i);
+                        timePlayed.setText(MusicUtils.makeShortTimeString(PlayingActivity.this.getApplication(), i / 1000));
+                    }
+                }
+
+                @Override
+                public void onStartTrackingTouch(SeekBar seekBar) {
+                }
+
+                @Override
+                public void onStopTrackingTouch(SeekBar seekBar) {
+                }
+            });
+    }
+
+    private void stopAnim() {
+        activeView = null;
+
+        if (animator != null) {
+            animator.end();
+            animator = null;
+        }
+        if (needleAnim != null) {
+            needleAnim.end();
+            needleAnim = null;
+        }
+        if (animatorSet != null) {
+            animatorSet.end();
+            animatorSet = null;
+        }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        //unregisterReceiver(mStatusListener);
+        mProgress.removeCallbacks(mUpdateProgress);
+        stopAnim();
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        stopAnim();
+        mProgress.removeCallbacks(mUpdateProgress);
+        finish();
+    }
+
+    static class MyHandler extends Handler {
+        WeakReference<Activity> mActivityReference;
+
+        MyHandler(Activity activity) {
+            mActivityReference = new WeakReference<Activity>(activity);
+        }
+    }
 
     public class PlaybarPagerTransformer implements ViewPager.PageTransformer {
 
@@ -510,29 +559,6 @@ public class PlayingActivity extends BaseActivity implements IConstants {
         }
 
     }
-
-
-    private void setSeekBarListener() {
-        if (mProgress != null)
-            mProgress.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-                @Override
-                public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
-                    if (b) {
-                        MusicPlayer.seek((long) i);
-                        timePlayed.setText(MusicUtils.makeShortTimeString(PlayingActivity.this.getApplication(), i / 1000));
-                    }
-                }
-
-                @Override
-                public void onStartTrackingTouch(SeekBar seekBar) {
-                }
-
-                @Override
-                public void onStopTrackingTouch(SeekBar seekBar) {
-                }
-            });
-    }
-
 
     private class setBlurredAlbumArt extends AsyncTask<Void, Void, Drawable> {
 
@@ -594,7 +620,6 @@ public class PlayingActivity extends BaseActivity implements IConstants {
         }
     }
 
-
     class FragmentAdapter extends FragmentStatePagerAdapter {
 
         public FragmentAdapter(FragmentManager fm) {
@@ -616,7 +641,6 @@ public class PlayingActivity extends BaseActivity implements IConstants {
             return MusicPlayer.getQueue().length + 2;
         }
     }
-
 
     public class MyScroller extends Scroller {
         private int animTime = 600;
@@ -642,51 +666,6 @@ public class PlayingActivity extends BaseActivity implements IConstants {
         public void setmDuration(int animTime) {
             this.animTime = animTime;
         }
-    }
-
-    private void stopAnim() {
-        activeView = null;
-
-        if (animator != null) {
-            animator.end();
-            animator = null;
-        }
-        if (needleAnim != null) {
-            needleAnim.end();
-            needleAnim = null;
-        }
-        if (animatorSet != null) {
-            animatorSet.end();
-            animatorSet = null;
-        }
-    }
-
-
-    @Override
-    public void onPause() {
-        super.onPause();
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        //unregisterReceiver(mStatusListener);
-        mProgress.removeCallbacks(mUpdateProgress);
-        stopAnim();
-    }
-
-    @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-        stopAnim();
-        mProgress.removeCallbacks(mUpdateProgress);
-        finish();
     }
 
 

@@ -4,10 +4,10 @@
     android:layout_height="match_parent">
 
     <ImageView
+        android:id="@+id/albumArt"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:scaleType="centerCrop"
-        android:id="@+id/albumArt"
         android:src="@drawable/login_bg_night" />
 
     <View
@@ -22,13 +22,13 @@
         android:orientation="vertical">
 
         <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:minHeight="?attr/actionBarSize"
-            android:fitsSystemWindows="true"
             android:layout_alignParentTop="true"
             android:background="@android:color/transparent"
-            android:id="@+id/toolbar"
+            android:fitsSystemWindows="true"
+            android:minHeight="?attr/actionBarSize"
             android:theme="@style/Theme.AppCompat"
             app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
 
@@ -47,12 +47,12 @@
                 <ImageView
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    app:layout_heightPercent="77%"
-                    android:src="@drawable/play_disc_halo"
-                    app:layout_widthPercent="76%"
-                    android:scaleType="fitCenter"
                     android:layout_centerInParent="true"
-                    android:layout_margin="3dp" />
+                    android:layout_margin="3dp"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/play_disc_halo"
+                    app:layout_heightPercent="77%"
+                    app:layout_widthPercent="76%" />
 
                 <!--<com.wm.remusic.uitl.RoundImageView xmlns:app="http://schemas.android.com/apk/res-auto"-->
                 <!--android:layout_width="match_parent"-->
@@ -64,24 +64,24 @@
                 <!--android:id="@+id/circle_view"-->
                 <!--/>-->
                 <android.support.v4.view.ViewPager
+                    android:id="@+id/view_pager"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_centerInParent="true"
-                    android:layout_gravity="center_horizontal"
-                    android:id="@+id/view_pager"></android.support.v4.view.ViewPager>
+                    android:layout_gravity="center_horizontal"></android.support.v4.view.ViewPager>
 
                 <ImageView
                     android:id="@+id/needle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_alignParentTop="true"
+                    android:layout_marginTop="-16dp"
+                    android:rotation="-30"
                     android:src="@drawable/play_needle"
                     android:transformPivotX="10dp"
                     android:transformPivotY="10dp"
-                    android:layout_alignParentRight="true"
-                    android:layout_alignParentTop="true"
                     app:layout_marginRightPercent="23%"
-                    android:layout_marginTop="-16dp"
-                    android:rotation="-30"
 
                     />
             </android.support.percent.PercentRelativeLayout>
@@ -91,59 +91,59 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical"
             android:layout_below="@+id/headerView"
             android:layout_gravity="center_horizontal|center_vertical"
+            android:layout_marginTop="-20dp"
             android:gravity="center_horizontal|center_vertical"
-            android:layout_marginTop="-20dp">
+            android:orientation="vertical">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="-10dp"
                 android:layout_marginLeft="70dp"
                 android:layout_marginRight="70dp"
+                android:layout_marginTop="-10dp"
                 android:orientation="horizontal">
 
                 <ImageView
+                    android:id="@+id/playing_fav"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:id="@+id/playing_fav"
                     android:layout_gravity="center_vertical"
                     android:layout_weight="1"
                     android:src="@drawable/play_rdi_icn_love" />
 
                 <ImageView
+                    android:id="@+id/playing_down"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
                     android:layout_weight="1"
-                    android:id="@+id/playing_down"
                     android:src="@drawable/play_icn_dlded_dis" />
 
                 <ImageView
+                    android:id="@+id/playing_cmt"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
                     android:layout_weight="1"
-                    android:id="@+id/playing_cmt"
                     android:src="@drawable/play_icn_cmt_number_dis" />
 
                 <ImageView
+                    android:id="@+id/playing_more"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
                     android:layout_weight="1"
-                    android:id="@+id/playing_more"
                     android:src="@drawable/play_icn_more" />
             </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
                 android:layout_marginLeft="10dp"
-                android:layout_marginRight="10dp">
+                android:layout_marginRight="10dp"
+                android:orientation="horizontal">
 
                 <TextView
                     android:id="@+id/music_duration_played"
@@ -151,11 +151,11 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
                     android:layout_weight="1"
-                    android:textColor="@color/whaite_text"
                     android:gravity="right"
                     android:singleLine="true"
-                    android:textSize="10sp"
-                    android:text="00:00" />
+                    android:text="00:00"
+                    android:textColor="@color/whaite_text"
+                    android:textSize="10sp" />
 
                 <SeekBar
                     android:id="@+id/play_seek"
@@ -170,55 +170,55 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
                     android:layout_weight="1"
-                    android:textColor="@color/whaite_text"
+                    android:singleLine="true"
                     android:text="00:00"
-                    android:textSize="10sp"
-                    android:singleLine="true" />
+                    android:textColor="@color/whaite_text"
+                    android:textSize="10sp" />
             </LinearLayout>
 
             <LinearLayout
-                android:orientation="horizontal"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
 
                 <ImageView
+                    android:id="@+id/playing_mode"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
                     android:layout_weight="1"
-                    android:id="@+id/playing_mode"
                     android:src="@drawable/play_icn_loop_prs" />
 
                 <ImageView
+                    android:id="@+id/playing_pre"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
                     android:layout_weight="1"
-                    android:id="@+id/playing_pre"
                     android:src="@drawable/play_btn_prev" />
 
                 <ImageView
+                    android:id="@+id/playing_play"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
                     android:layout_weight="1"
-                    android:id="@+id/playing_play"
                     android:src="@drawable/play_rdi_btn_play" />
 
                 <ImageView
+                    android:id="@+id/playing_next"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
                     android:layout_weight="1"
-                    android:id="@+id/playing_next"
                     android:src="@drawable/play_btn_next" />
 
                 <ImageView
+                    android:id="@+id/playing_playlist"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
                     android:layout_weight="1"
-                    android:id="@+id/playing_playlist"
                     android:src="@drawable/play_icn_src_prs" />
 
             </LinearLayout>

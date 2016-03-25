@@ -18,10 +18,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.facebook.drawee.view.SimpleDraweeView;
-import com.wm.remusic.uitl.IConstants;
-import com.wm.remusic.info.AlbumInfo;
 import com.wm.remusic.R;
+import com.wm.remusic.info.AlbumInfo;
 import com.wm.remusic.service.MusicPlayer;
+import com.wm.remusic.uitl.IConstants;
 import com.wm.remusic.uitl.MusicUtils;
 import com.wm.remusic.uitl.PreferencesUtility;
 import com.wm.remusic.uitl.SortOrder;
@@ -34,9 +34,9 @@ import java.util.List;
  */
 public class AlbumFragment extends BaseFragment {
 
+    LinearLayoutManager layoutManager;
     private List<AlbumInfo> mAlbumList = new ArrayList<>();
     private AlbumAdapter mAdapter;
-    LinearLayoutManager layoutManager;
     private RecyclerView recyclerView;
     private PreferencesUtility mPreferences;
     //private FastScroller fastScroller;
@@ -107,6 +107,28 @@ public class AlbumFragment extends BaseFragment {
         return super.onOptionsItemSelected(item);
     }
 
+    //设置分割线
+    private void setItemDecoration() {
+        itemDecoration = new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL_LIST);
+        recyclerView.addItemDecoration(itemDecoration);
+    }
+
+    //更新adapter界面
+    public void reloadAdapter() {
+        new AsyncTask<Void, Void, Void>() {
+            @Override
+            protected Void doInBackground(final Void... unused) {
+                List<AlbumInfo> albumList = MusicUtils.queryAlbums(getContext());
+                mAdapter.updateDataSet(albumList);
+                return null;
+            }
+
+            @Override
+            protected void onPostExecute(Void aVoid) {
+                mAdapter.notifyDataSetChanged();
+            }
+        }.execute();
+    }
 
     //异步加载recyclerview界面
     private class loadAlbums extends AsyncTask<String, Void, String> {
@@ -132,36 +154,11 @@ public class AlbumFragment extends BaseFragment {
         }
     }
 
-    //设置分割线
-    private void setItemDecoration() {
-        itemDecoration = new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL_LIST);
-        recyclerView.addItemDecoration(itemDecoration);
-    }
-
-
-    //更新adapter界面
-    public void reloadAdapter() {
-        new AsyncTask<Void, Void, Void>() {
-            @Override
-            protected Void doInBackground(final Void... unused) {
-                List<AlbumInfo> albumList = MusicUtils.queryAlbums(getContext());
-                mAdapter.updateDataSet(albumList);
-                return null;
-            }
-
-            @Override
-            protected void onPostExecute(Void aVoid) {
-                mAdapter.notifyDataSetChanged();
-            }
-        }.execute();
-    }
-
-
     public class AlbumAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
-        private List<AlbumInfo> mList;
         final static int FIRST_ITEM = 0;
         final static int ITEM = 1;
+        private List<AlbumInfo> mList;
 
         public AlbumAdapter(List<AlbumInfo> list) {
             //mactivity = activity;

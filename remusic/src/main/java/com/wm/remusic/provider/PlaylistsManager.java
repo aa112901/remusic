@@ -18,6 +18,7 @@ public class PlaylistsManager {
     private static PlaylistsManager sInstance = null;
 
     private MusicDB mMusicDatabase = null;
+    private long favPlaylistId = 10;
 
     public PlaylistsManager(final Context context) {
         mMusicDatabase = MusicDB.getInstance(context);
@@ -84,9 +85,6 @@ public class PlaylistsManager {
         }
 
     }
-
-    private long favPlaylistId = 10;
-
 
     public synchronized boolean getFav(long id) {
 

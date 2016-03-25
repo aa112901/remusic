@@ -15,11 +15,11 @@ import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.wm.remusic.info.MusicInfo;
-import com.wm.remusic.provider.MusicPlaybackState;
-import com.wm.remusic.info.QueueLoader;
 import com.wm.remusic.R;
 import com.wm.remusic.dialog.AddPlaylistDialog;
+import com.wm.remusic.info.MusicInfo;
+import com.wm.remusic.info.QueueLoader;
+import com.wm.remusic.provider.MusicPlaybackState;
 import com.wm.remusic.service.MusicPlayer;
 
 import java.util.ArrayList;
@@ -30,8 +30,6 @@ import java.util.ArrayList;
  */
 public class PlayQueueFragment extends DialogFragment {
 
-    private RecyclerView recyclerView;  //弹出的activity列表
-    private LinearLayoutManager layoutManager;
     RecyclerView.ItemDecoration itemDecoration;
     PlaylistAdapter adapter;
     ArrayList<MusicInfo> playlist;
@@ -39,6 +37,8 @@ public class PlayQueueFragment extends DialogFragment {
     MusicInfo model;
     int currentlyPlayingPosition = 0;
     MusicPlaybackState musicPlaybackState;
+    private RecyclerView recyclerView;  //弹出的activity列表
+    private LinearLayoutManager layoutManager;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -97,6 +97,16 @@ public class PlayQueueFragment extends DialogFragment {
         return view;
     }
 
+    @Override
+    public void onStart() {
+        super.onStart();
+        //设置fragment高度 、宽度
+        int dialogHeight = (int) (getActivity().getResources().getDisplayMetrics().heightPixels * 0.6);
+        getDialog().getWindow().setLayout(WindowManager.LayoutParams.MATCH_PARENT, dialogHeight);
+        getDialog().setCanceledOnTouchOutside(true);
+
+    }
+
     //异步加载recyclerview界面
     private class loadSongs extends AsyncTask<Void, Void, Void> {
 
@@ -127,16 +137,6 @@ public class PlayQueueFragment extends DialogFragment {
             }
 
         }
-
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-        //设置fragment高度 、宽度
-        int dialogHeight = (int) (getActivity().getResources().getDisplayMetrics().heightPixels * 0.6);
-        getDialog().getWindow().setLayout(WindowManager.LayoutParams.MATCH_PARENT, dialogHeight);
-        getDialog().setCanceledOnTouchOutside(true);
 
     }
 

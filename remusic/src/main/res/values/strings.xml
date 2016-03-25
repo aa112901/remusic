@@ -6,10 +6,7 @@
     <string name="local_manage">下载管理</string>
     <string name="my_artist">我的歌手</string>
     <string name="created_playlists">创建的歌单</string>
-
-
-
-
+    <string name="my_fav_playlist">我喜欢的音乐</string>
 
     <string name="app_name">remusic</string>
     <string name="search">搜索</string>

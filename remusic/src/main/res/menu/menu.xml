@@ -4,9 +4,9 @@
     <item
         android:id="@+id/action_search"
         android:icon="@drawable/actionbar_search"
-        app:showAsAction="ifRoom|collapseActionView"
         android:orderInCategory="1"
-        android:title="search" />
+        android:title="search"
+        app:showAsAction="ifRoom|collapseActionView" />
 
 
     <!--<item-->

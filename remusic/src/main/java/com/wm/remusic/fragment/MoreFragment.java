@@ -22,14 +22,14 @@ import android.view.WindowManager;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.wm.remusic.uitl.IConstants;
-import com.wm.remusic.info.MusicInfo;
 import com.wm.remusic.R;
 import com.wm.remusic.adapter.MusicFlowAdapter;
 import com.wm.remusic.adapter.OverFlowAdapter;
 import com.wm.remusic.adapter.OverFlowItem;
 import com.wm.remusic.dialog.AddPlaylistDialog;
+import com.wm.remusic.info.MusicInfo;
 import com.wm.remusic.service.MusicPlayer;
+import com.wm.remusic.uitl.IConstants;
 import com.wm.remusic.uitl.MusicUtils;
 
 import java.io.File;
@@ -40,19 +40,19 @@ import java.util.List;
  * Created by wm on 2016/1/31.
  */
 public class MoreFragment extends DialogFragment {
+    int type;
+    double h;
+    TextView topTitle;
+    List<MusicInfo> list = null;
+    MusicFlowAdapter muaicflowAdapter;
+    MusicInfo adapterMusicInfo;
+    OverFlowAdapter commonAdapter;
     //弹出的activity列表
     private List<OverFlowItem> mlistInfo = new ArrayList<>();  //声明一个list，动态存储要显示的信息
     private RecyclerView recyclerView;
     private LinearLayoutManager layoutManager;
     private String args;
-    int type;
-    double h;
-    TextView topTitle;
     private String musicName, artist, albumId, albumName;
-    List<MusicInfo> list = null;
-    MusicFlowAdapter muaicflowAdapter;
-    MusicInfo adapterMusicInfo;
-    OverFlowAdapter albumFlowAdapter;
 
     public static MoreFragment newInstance(String id, int startFrom) {
         MoreFragment fragment = new MoreFragment();
@@ -117,7 +117,7 @@ public class MoreFragment extends DialogFragment {
                 case IConstants.ARTISTOVERFLOW:
                     String artist = args;
                     list = MusicUtils.queryMusic(getContext(), null, artist, IConstants.START_FROM_ARTIST);
-                    topTitle.setText("歌曲：" + " " + artist);
+                    topTitle.setText("歌曲：" + " " + list.get(0).artist);
                     break;
                 case IConstants.ALBUMOVERFLOW:
                     String albumId = args;
@@ -132,7 +132,7 @@ public class MoreFragment extends DialogFragment {
             }
             setCommonInfo();
             h = 0.3;
-            albumFlowAdapter = new OverFlowAdapter(getActivity(), mlistInfo, list);
+            commonAdapter = new OverFlowAdapter(getActivity(), mlistInfo, list);
 
         }
 
@@ -225,7 +225,7 @@ public class MoreFragment extends DialogFragment {
             return;
         }
 
-        albumFlowAdapter.setOnItemClickListener(new OverFlowAdapter.OnRecyclerViewItemClickListener() {
+        commonAdapter.setOnItemClickListener(new OverFlowAdapter.OnRecyclerViewItemClickListener() {
             @Override
             public void onItemClick(View view, String data) {
                 switch (Integer.parseInt(data)) {
@@ -269,7 +269,7 @@ public class MoreFragment extends DialogFragment {
                 }
             }
         });
-        recyclerView.setAdapter(albumFlowAdapter);
+        recyclerView.setAdapter(commonAdapter);
     }
 
     //设置音乐overflow条目

@@ -28,12 +28,12 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 
-import com.wm.remusic.info.MusicInfo;
-import com.wm.remusic.provider.SearchHistory;
 import com.wm.remusic.R;
 import com.wm.remusic.adapter.SearchAdapter;
-import com.wm.remusic.uitl.SearchUtils;
+import com.wm.remusic.info.MusicInfo;
+import com.wm.remusic.provider.SearchHistory;
 import com.wm.remusic.uitl.CommonUtils;
+import com.wm.remusic.uitl.SearchUtils;
 
 import java.util.ArrayList;
 import java.util.List;

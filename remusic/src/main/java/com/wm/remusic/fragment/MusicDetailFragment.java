@@ -10,8 +10,8 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.TextView;
 
-import com.wm.remusic.info.MusicInfo;
 import com.wm.remusic.R;
+import com.wm.remusic.info.MusicInfo;
 import com.wm.remusic.uitl.MusicUtils;
 
 /**

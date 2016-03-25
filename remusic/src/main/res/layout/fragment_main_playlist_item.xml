@@ -1,76 +1,76 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="?android:attr/selectableItemBackground">
+    android:background="?android:attr/selectableItemBackground"
+    android:orientation="vertical">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_margin="5dp">
+        android:layout_margin="5dp"
+        android:orientation="horizontal">
 
         <com.facebook.drawee.view.SimpleDraweeView
+            android:id="@+id/fragment_main_playlist_item_img"
             android:layout_width="45dp"
             android:layout_height="45dp"
             android:layout_marginLeft="10dp"
-            android:scaleType="centerCrop"
-            android:id="@+id/fragment_main_playlist_item_img" />
+            android:scaleType="centerCrop" />
 
         <RelativeLayout
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
+            android:layout_gravity="center_vertical"
             android:layout_marginLeft="10dp"
-            android:orientation="horizontal"
-            android:layout_gravity="center_vertical">
+            android:orientation="horizontal">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:layout_gravity="center_vertical">
+                android:layout_gravity="center_vertical"
+                android:orientation="vertical">
 
                 <TextView
                     android:id="@+id/fragment_main_playlist_item_title"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="3dp"
-                    android:text="如果我变成回忆"
                     android:ellipsize="end"
                     android:maxLines="1"
+                    android:singleLine="true"
+                    android:text="如果我变成回忆"
                     android:textColor="@color/text_color"
-                    android:textSize="17sp"
-                    android:singleLine="true" />
+                    android:textSize="17sp" />
 
                 <TextView
                     android:id="@+id/fragment_main_playlist_item_count"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="如果我变成回忆"
                     android:ellipsize="end"
                     android:maxLength="20"
                     android:maxLines="1"
+                    android:singleLine="true"
+                    android:text="如果我变成回忆"
                     android:textColor="@color/small_font"
-                    android:textSize="12sp"
-                    android:singleLine="true" />
+                    android:textSize="12sp" />
             </LinearLayout>
 
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:background="?android:attr/selectableItemBackground"
-                android:layout_alignParentRight="true">
+                android:layout_alignParentRight="true"
+                android:background="?android:attr/selectableItemBackground">
 
                 <ImageView
+                    android:id="@+id/fragment_main_playlist_item_menu"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:layout_gravity="center_vertical"
-                    android:paddingRight="10dp"
-                    android:paddingLeft="15dp"
                     android:layout_marginRight="10dp"
                     android:background="?android:attr/selectableItemBackground"
-                    android:id="@+id/fragment_main_playlist_item_menu"
+                    android:paddingLeft="15dp"
+                    android:paddingRight="10dp"
                     android:src="@drawable/music_icn_more" />
             </LinearLayout>
 

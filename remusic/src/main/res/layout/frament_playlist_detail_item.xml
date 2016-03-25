@@ -19,8 +19,8 @@
             android:layout_alignParentLeft="true"
             android:gravity="center"
             android:maxLength="3"
-            android:paddingRight="10dp"
             android:paddingLeft="15dp"
+            android:paddingRight="10dp"
             android:textSize="17sp" />
 
         <RelativeLayout
@@ -42,8 +42,8 @@
                     android:layout_height="wrap_content"
                     android:ellipsize="end"
                     android:singleLine="true"
-                    android:textSize="16sp"
-                    android:textColor="@color/text_color" />
+                    android:textColor="@color/text_color"
+                    android:textSize="16sp" />
 
                 <TextView
                     android:id="@+id/song_artist"
@@ -57,15 +57,15 @@
             </LinearLayout>
 
             <ImageView
-                android:layout_alignParentRight="true"
-                android:layout_centerInParent="true"
                 android:id="@+id/popup_menu"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_centerInParent="true"
+                android:layout_marginRight="12dp"
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:foregroundTint="#434343"
                 android:padding="10dp"
-                android:layout_marginRight="12dp"
                 android:src="@drawable/abc_ic_menu_moreoverflow_mtrl_alpha" />
         </RelativeLayout>
 

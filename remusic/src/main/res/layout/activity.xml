@@ -1,7 +1,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/a"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:id="@+id/a">
+    android:layout_height="match_parent">
 
     <FrameLayout
         android:id="@+id/fragment_container"
@@ -10,50 +10,50 @@
         android:layout_above="@+id/nav_play"></FrameLayout>
 
     <LinearLayout
-        android:layout_alignParentBottom="true"
         android:id="@+id/nav_play"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:background="@color/primary_material_light">
+        android:layout_alignParentBottom="true"
+        android:background="@color/primary_material_light"
+        android:orientation="vertical">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginBottom="-3dp">
+            android:layout_marginBottom="-3dp"
+            android:orientation="horizontal">
 
             <com.facebook.drawee.view.SimpleDraweeView
+                android:id="@+id/playbar_img"
                 android:layout_width="43dp"
                 android:layout_height="43dp"
-                android:layout_weight="0"
-                android:layout_marginTop="3dp"
                 android:layout_marginLeft="6dp"
-                android:id="@+id/playbar_img" />
+                android:layout_marginTop="3dp"
+                android:layout_weight="0" />
 
             <LinearLayout
                 android:layout_width="165dp"
                 android:layout_height="43dp"
-                android:layout_weight="1"
-                android:orientation="vertical"
+                android:layout_marginLeft="6dp"
                 android:layout_marginTop="6dp"
-                android:layout_marginLeft="6dp">
+                android:layout_weight="1"
+                android:orientation="vertical">
 
                 <TextView
+                    android:id="@+id/playbar_info"
                     android:layout_width="wrap_content"
+                    android:layout_height="23dp"
                     android:ellipsize="end"
                     android:maxLines="1"
-                    android:layout_height="23dp"
-                    android:id="@+id/playbar_info"
                     android:textSize="17dp" />
 
                 <TextView
+                    android:id="@+id/playbar_singer"
                     android:layout_width="wrap_content"
                     android:layout_height="16dp"
                     android:ellipsize="end"
                     android:maxLength="20"
                     android:maxLines="1"
-                    android:id="@+id/playbar_singer"
                     android:textSize="10dp" />
             </LinearLayout>
 
@@ -62,9 +62,9 @@
                 android:id="@+id/play_list"
                 android:layout_width="43dp"
                 android:layout_height="43dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
                 android:onClick="click_last"
-                android:src="@drawable/playbar_btn_playlist"
-                android:background="?attr/selectableItemBackgroundBorderless" />
+                android:src="@drawable/playbar_btn_playlist" />
 
             <ImageView
                 android:id="@+id/control"
@@ -77,9 +77,9 @@
                 android:id="@+id/play_next"
                 android:layout_width="43dp"
                 android:layout_height="43dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
                 android:onClick="click_next"
-                android:src="@drawable/playbar_btn_next"
-                android:background="?attr/selectableItemBackgroundBorderless" />
+                android:src="@drawable/playbar_btn_next" />
         </LinearLayout>
 
         <LinearLayout
@@ -95,8 +95,8 @@
                 android:layout_gravity="bottom"
                 android:maxHeight="6dp"
                 android:progress="0"
-                android:tag="tint_accent_color"
-                android:progressDrawable="@drawable/progressbar_color" />
+                android:progressDrawable="@drawable/progressbar_color"
+                android:tag="tint_accent_color" />
         </LinearLayout>
     </LinearLayout>
 </RelativeLayout>

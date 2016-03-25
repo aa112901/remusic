@@ -16,8 +16,8 @@ import com.wm.remusic.uitl.PreferencesUtility;
  */
 public class MainApplication extends Application {
 
-    private long favPlaylist = 10;
     private static int MAX_MEM = 60 * ByteConstants.MB;
+    private long favPlaylist = 10;
 
     private ImagePipelineConfig getConfigureCaches(Context context) {
         final MemoryCacheParams bitmapCacheParams = new MemoryCacheParams(
@@ -57,7 +57,8 @@ public class MainApplication extends Application {
 //        refWatcher = LeakCanary.install(this);
 
         if (PreferencesUtility.getInstance(this).getFavriateMusicPlaylist() == false) {
-            PlaylistInfo.getInstance(this).addPlaylist(favPlaylist, "我喜欢的音乐", 0, "res:/" + R.mipmap.lay_protype_default);
+            PlaylistInfo.getInstance(this).addPlaylist(favPlaylist, getResources().getString(R.string.my_fav_playlist),
+                    0, "res:/" + R.mipmap.lay_protype_default);
             PreferencesUtility.getInstance(this).setFavriateMusicPlaylist(true);
         }
     }

@@ -3,48 +3,48 @@
     android:layout_width="match_parent"
     android:layout_height="208dp"
     android:background="?attr/colorPrimaryDark"
-    android:theme="@style/ThemeOverlay.AppCompat.Dark"
+    android:gravity="bottom"
     android:orientation="vertical"
-    android:gravity="bottom">
+    android:theme="@style/ThemeOverlay.AppCompat.Dark">
 
     <ImageView
+        android:id="@+id/album_art"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:scaleType="centerCrop"
-        android:id="@+id/album_art" />
+        android:scaleType="centerCrop" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
         android:layout_gravity="bottom"
-        android:gravity="bottom">
+        android:gravity="bottom"
+        android:orientation="vertical">
 
         <TextView
+            android:id="@+id/song_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/song_title"
-            android:textSize="18sp"
-            android:textColor="#ffffff"
-            android:singleLine="true"
-            android:ellipsize="end"
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"
-            android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
+            android:ellipsize="end"
+            android:singleLine="true"
+            android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+            android:textColor="#ffffff"
+            android:textSize="18sp" />
 
         <TextView
+            android:id="@+id/song_artist"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/song_artist"
-            android:paddingTop="2dp"
-            android:textSize="15sp"
-            android:textColor="#ffffff"
-            android:singleLine="true"
-            android:ellipsize="end"
             android:layout_marginBottom="10dp"
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"
-            android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
+            android:ellipsize="end"
+            android:paddingTop="2dp"
+            android:singleLine="true"
+            android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+            android:textColor="#ffffff"
+            android:textSize="15sp" />
 
     </LinearLayout>
 

@@ -6,13 +6,26 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.support.v4.app.Fragment;
 
-import com.wm.remusic.uitl.IConstants;
 import com.wm.remusic.service.MediaService;
+import com.wm.remusic.uitl.IConstants;
 
 /**
  * Created by wm on 2016/3/17.
  */
 public class BaseFragment extends Fragment {
+
+    //接受广播
+    private BroadcastReceiver mStatusListener = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String action = intent.getAction();
+            if (action.equals(MediaService.META_CHANGED)) {
+                reloadAdapter();
+            } else if (action.equals(IConstants.MUSIC_COUNT_CHANGED)) {
+                reloadAdapter();
+            }
+        }
+    };
 
     @Override
     public void onResume() {
@@ -28,20 +41,6 @@ public class BaseFragment extends Fragment {
         super.onPause();
         getActivity().unregisterReceiver(mStatusListener);
     }
-
-
-    //接受广播
-    private BroadcastReceiver mStatusListener = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            String action = intent.getAction();
-            if (action.equals(MediaService.META_CHANGED)) {
-                reloadAdapter();
-            } else if (action.equals(IConstants.MUSIC_COUNT_CHANGED)) {
-                reloadAdapter();
-            }
-        }
-    };
 
     public void reloadAdapter() {
     }

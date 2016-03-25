@@ -25,24 +25,6 @@ public class AlbumInfo implements Parcelable {
     //专辑封面图片路径
     public String album_art;
     public String album_artist;
-
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    //写数据保存数据
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        Bundle bundle = new Bundle();
-        bundle.putString(KEY_ALBUM_NAME, album_name);
-        bundle.putString(KEY_ALBUM_ART, album_art);
-        bundle.putInt(KEY_NUMBER_OF_SONGS, number_of_songs);
-        bundle.putInt(KEY_ALBUM_ID, album_id);
-        bundle.putString(KEY_ALBUM_ARTIST, album_artist);
-        dest.writeBundle(bundle);
-    }
-
     public static final Creator<AlbumInfo> CREATOR = new Creator<AlbumInfo>() {
 
         //读数据恢复数据
@@ -63,5 +45,22 @@ public class AlbumInfo implements Parcelable {
             return new AlbumInfo[size];
         }
     };
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    //写数据保存数据
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        Bundle bundle = new Bundle();
+        bundle.putString(KEY_ALBUM_NAME, album_name);
+        bundle.putString(KEY_ALBUM_ART, album_art);
+        bundle.putInt(KEY_NUMBER_OF_SONGS, number_of_songs);
+        bundle.putInt(KEY_ALBUM_ID, album_id);
+        bundle.putString(KEY_ALBUM_ARTIST, album_artist);
+        dest.writeBundle(bundle);
+    }
 
 }

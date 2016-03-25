@@ -28,9 +28,6 @@ import android.os.Parcelable;
 public class MusicTrack implements Parcelable {
 
 
-    public long mId;
-    public int mSourcePosition;
-
     public static final Creator<MusicTrack> CREATOR = new Creator<MusicTrack>() {
         @Override
         public MusicTrack createFromParcel(Parcel source) {
@@ -42,6 +39,8 @@ public class MusicTrack implements Parcelable {
             return new MusicTrack[size];
         }
     };
+    public long mId;
+    public int mSourcePosition;
 
 
     public MusicTrack(long id, int sourcePosition) {

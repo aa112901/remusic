@@ -29,8 +29,8 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:gravity="center"
         android:background="#88999999"
+        android:gravity="center"
         android:text="分享"
         android:textSize="24sp" />
 
@@ -44,9 +44,9 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
+        android:background="#88999999"
         android:gravity="center"
         android:text="删除"
-        android:background="#88999999"
         android:textSize="24sp" />
 
     <View
@@ -59,8 +59,8 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:gravity="center"
         android:background="#88999999"
+        android:gravity="center"
         android:text="详情"
         android:textSize="24sp" />
 

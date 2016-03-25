@@ -17,13 +17,13 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.facebook.drawee.view.SimpleDraweeView;
-import com.wm.remusic.uitl.IConstants;
+import com.wm.remusic.R;
+import com.wm.remusic.fragment.DividerItemDecoration;
 import com.wm.remusic.info.Playlist;
 import com.wm.remusic.provider.PlaylistInfo;
 import com.wm.remusic.provider.PlaylistsManager;
-import com.wm.remusic.R;
-import com.wm.remusic.fragment.DividerItemDecoration;
 import com.wm.remusic.service.MusicTrack;
+import com.wm.remusic.uitl.IConstants;
 import com.wm.remusic.uitl.MusicUtils;
 
 import java.util.ArrayList;

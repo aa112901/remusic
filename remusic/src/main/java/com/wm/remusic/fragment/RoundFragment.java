@@ -6,7 +6,6 @@ import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,6 +28,8 @@ public class RoundFragment extends Fragment {
     WeakReference<ObjectAnimator> animatorWeakReference;
     SimpleDraweeView sdv;
     long musicId = -1;
+    ObjectAnimator animator;
+
     public static RoundFragment newInstance(long musicId) {
         RoundFragment fragment = new RoundFragment();
         Bundle bundle = new Bundle();
@@ -36,7 +37,6 @@ public class RoundFragment extends Fragment {
         fragment.setArguments(bundle);
         return fragment;
     }
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -48,7 +48,7 @@ public class RoundFragment extends Fragment {
         }
         //  CircleImageView  circleImageView = (CircleImageView) rootView.findViewById(R.id.circle);
 
-       sdv = (SimpleDraweeView) rootView.findViewById(R.id.sdv);
+        sdv = (SimpleDraweeView) rootView.findViewById(R.id.sdv);
 
 
         //初始化圆角圆形参数对象
@@ -102,7 +102,6 @@ public class RoundFragment extends Fragment {
         return rootView;
     }
 
-
     @Override
     public void onStart() {
         super.onStart();
@@ -116,8 +115,6 @@ public class RoundFragment extends Fragment {
         animator.setInterpolator(new LinearInterpolator());
         getView().setTag(R.id.tag_animator, this.animator);
     }
-
-    ObjectAnimator animator;
 
     @Override
     public void onResume() {

@@ -16,12 +16,12 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.wm.remusic.uitl.CommonUtils;
-import com.wm.remusic.uitl.IConstants;
-import com.wm.remusic.info.MusicInfo;
 import com.wm.remusic.R;
 import com.wm.remusic.activity.SelectActivity;
+import com.wm.remusic.info.MusicInfo;
 import com.wm.remusic.service.MusicPlayer;
+import com.wm.remusic.uitl.CommonUtils;
+import com.wm.remusic.uitl.IConstants;
 import com.wm.remusic.uitl.MusicUtils;
 
 import java.io.File;
@@ -35,11 +35,11 @@ public class FolderDetailFragment extends BaseFragment {
     String folder_path;
     LinearLayoutManager layoutManager;
     Toolbar toolbar;
+    int currentlyPlayingPosition = 0;
+    ActionBar ab;
     private List<MusicInfo> musicInfos = new ArrayList<>();
     private RecyclerView recyclerView;
     private FolderDetailAdapter folderDetailAdapter;
-    int currentlyPlayingPosition = 0;
-    ActionBar ab;
 
     public static FolderDetailFragment newInstance(String id, boolean useTransition, String transitionName) {
         FolderDetailFragment fragment = new FolderDetailFragment();

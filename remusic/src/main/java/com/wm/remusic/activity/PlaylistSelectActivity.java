@@ -22,15 +22,15 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.wm.remusic.uitl.IConstants;
-import com.wm.remusic.info.MusicInfo;
-import com.wm.remusic.provider.PlaylistsManager;
 import com.wm.remusic.R;
 import com.wm.remusic.dialog.AddPlaylistDialog;
 import com.wm.remusic.fragment.DividerItemDecoration;
+import com.wm.remusic.info.MusicInfo;
+import com.wm.remusic.provider.PlaylistsManager;
 import com.wm.remusic.service.MediaService;
 import com.wm.remusic.service.MusicPlayer;
 import com.wm.remusic.uitl.DragSortRecycler;
+import com.wm.remusic.uitl.IConstants;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -41,13 +41,13 @@ import java.util.ArrayList;
 public class PlaylistSelectActivity extends AppCompatActivity implements View.OnClickListener {
 
     ArrayList<MusicInfo> arrayList;
+    SelectAdapter mAdapter;
+    ActionBar ab;
     private RecyclerView recyclerView;
     private LinearLayoutManager layoutManager;
-    SelectAdapter mAdapter;
     private Toolbar toolbar;
     private PlaylistsManager pManager;
     private long playlistId;
-    ActionBar ab;
     private LinearLayout l1, l2, l3;
 
 
@@ -224,8 +224,11 @@ public class PlaylistSelectActivity extends AppCompatActivity implements View.On
 
     public class SelectAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
-        private ArrayList<MusicInfo> mList;
         ArrayList selected;
+        private ArrayList<MusicInfo> mList;
+        private SparseBooleanArray mSelectedPositions = new SparseBooleanArray();
+        private boolean mIsSelectable = false;
+
 
         public SelectAdapter(ArrayList<MusicInfo> list) {
             if (list == null) {
@@ -233,7 +236,6 @@ public class PlaylistSelectActivity extends AppCompatActivity implements View.On
             }
             mList = list;
         }
-
 
         public ArrayList<MusicInfo> getSelectedItem() {
 
@@ -247,7 +249,6 @@ public class PlaylistSelectActivity extends AppCompatActivity implements View.On
             return selectList;
         }
 
-
         //更新adpter的数据
         public void updateDataSet(ArrayList<MusicInfo> list) {
             this.mList = list;
@@ -260,9 +261,6 @@ public class PlaylistSelectActivity extends AppCompatActivity implements View.On
             return new ListItemViewHolder(itemView);
         }
 
-        private SparseBooleanArray mSelectedPositions = new SparseBooleanArray();
-        private boolean mIsSelectable = false;
-
         private void setItemChecked(int position, boolean isChecked) {
             mSelectedPositions.put(position, isChecked);
         }
@@ -271,12 +269,12 @@ public class PlaylistSelectActivity extends AppCompatActivity implements View.On
             return mSelectedPositions.get(position);
         }
 
-        private void setSelectable(boolean selectable) {
-            mIsSelectable = selectable;
-        }
-
         private boolean isSelectable() {
             return mIsSelectable;
+        }
+
+        private void setSelectable(boolean selectable) {
+            mIsSelectable = selectable;
         }
 
         @Override

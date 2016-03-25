@@ -98,15 +98,15 @@
 
     <style name="CircleCheckBox" parent="@style/Widget.AppCompat.CompoundButton.CheckBox"></style>
 
-    <style name="dialog_anim_slide_left" parent="android:Animation" mce_bogus="1">
+    <style name="dialog_anim_slide_left" mce_bogus="1" parent="android:Animation">
         <item name="android:windowExitAnimation">@anim/dialog_exit_slide_left</item>
     </style>
 
-    <style name="dialog_anim_slide_up" parent="android:Animation" mce_bogus="1">
+    <style name="dialog_anim_slide_up" mce_bogus="1" parent="android:Animation">
         <item name="android:windowExitAnimation">@anim/dialog_exit_slide_up</item>
     </style>
 
-    <style name="dialog_anim_fade_out" parent="android:Animation" mce_bogus="1">
+    <style name="dialog_anim_fade_out" mce_bogus="1" parent="android:Animation">
         <item name="android:windowExitAnimation">@anim/dialog_exit_fade_out</item>
     </style>
 

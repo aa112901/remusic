@@ -16,14 +16,14 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.wm.remusic.uitl.IConstants;
-import com.wm.remusic.info.ArtistInfo;
-import com.wm.remusic.info.MusicInfo;
 import com.wm.remusic.R;
 import com.wm.remusic.activity.SelectActivity;
+import com.wm.remusic.info.ArtistInfo;
+import com.wm.remusic.info.MusicInfo;
 import com.wm.remusic.service.MusicPlayer;
-import com.wm.remusic.uitl.MusicUtils;
 import com.wm.remusic.uitl.CommonUtils;
+import com.wm.remusic.uitl.IConstants;
+import com.wm.remusic.uitl.MusicUtils;
 
 import java.util.ArrayList;
 

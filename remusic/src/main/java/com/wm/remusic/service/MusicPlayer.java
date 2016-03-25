@@ -488,7 +488,7 @@ public class MusicPlayer {
         }
         try {
             mService.enqueue(list, MediaService.NEXT);
-            Toast.makeText(context,R.string.next_play, Toast.LENGTH_SHORT).show();
+            Toast.makeText(context, R.string.next_play, Toast.LENGTH_SHORT).show();
         } catch (final RemoteException ignored) {
         }
     }
@@ -694,6 +694,29 @@ public class MusicPlayer {
         return -1;
     }
 
+    public static void exitService() {
+//        if (mService == null) {
+//            return;
+//        }
+        try {
+            mConnectionMap.clear();
+            Log.e("exitmp", "Destroying service");
+            mService.exit();
+        } catch (Exception e) {
+        }
+    }
+
+    public static void timing(int time) {
+        if (mService == null) {
+            return;
+        }
+        try {
+            mService.timing(time);
+        } catch (Exception e) {
+
+        }
+    }
+
     public static final class ServiceBinder implements ServiceConnection {
         private final ServiceConnection mCallback;
         private final Context mContext;
@@ -727,29 +750,6 @@ public class MusicPlayer {
 
         public ServiceToken(final ContextWrapper context) {
             mWrappedContext = context;
-        }
-    }
-
-    public static void exitService() {
-//        if (mService == null) {
-//            return;
-//        }
-        try {
-            mConnectionMap.clear();
-            Log.e("exitmp", "Destroying service");
-            mService.exit();
-        } catch (Exception e) {
-        }
-    }
-
-    public static void timing(int time) {
-        if (mService == null) {
-            return;
-        }
-        try {
-            mService.timing(time);
-        } catch (Exception e) {
-
         }
     }
 

@@ -55,16 +55,15 @@ public final class PreferencesUtility {
         return sInstance;
     }
 
+    public boolean getFavriateMusicPlaylist() {
+        return mPreferences.getBoolean(FAVRIATE_MUSIC_PLAYLIST, false);
+    }
+
     public void setFavriateMusicPlaylist(boolean b) {
         final SharedPreferences.Editor editor = mPreferences.edit();
         editor.putBoolean(FAVRIATE_MUSIC_PLAYLIST, b);
         editor.apply();
     }
-
-    public boolean getFavriateMusicPlaylist() {
-        return mPreferences.getBoolean(FAVRIATE_MUSIC_PLAYLIST, false);
-    }
-
 
     public void setOnSharedPreferenceChangeListener(OnSharedPreferenceChangeListener listener) {
         mPreferences.registerOnSharedPreferenceChangeListener(listener);

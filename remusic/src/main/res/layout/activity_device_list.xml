@@ -14,8 +14,8 @@
         android:id="@+id/title_paired_devices"
         android:layout_width="match_parent"
         android:layout_height="20dp"
-        android:paddingLeft="20dp"
         android:layout_margin="10dp"
+        android:paddingLeft="20dp"
         android:text="已经配对的设备"
         android:textSize="15sp"
         android:visibility="gone" />
@@ -34,8 +34,8 @@
         android:layout_height="20dp"
         android:background="@color/accent_material_light"
         android:paddingLeft="5dp"
-        android:textSize="15sp"
         android:text="其他设备"
+        android:textSize="15sp"
         android:visibility="gone" />
 
     <ListView
@@ -48,6 +48,6 @@
         android:id="@+id/button_scan"
         android:layout_width="60dp"
         android:layout_height="60dp"
-        android:background="@drawable/lay_logo_copylink"
-        android:layout_gravity="center" />
+        android:layout_gravity="center"
+        android:background="@drawable/lay_logo_copylink" />
 </LinearLayout>

@@ -21,18 +21,18 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.facebook.drawee.view.SimpleDraweeView;
-import com.wm.remusic.uitl.IConstants;
-import com.wm.remusic.info.MainFragmentItem;
-import com.wm.remusic.info.MusicInfo;
-import com.wm.remusic.info.Playlist;
-import com.wm.remusic.provider.PlaylistInfo;
-import com.wm.remusic.provider.PlaylistsManager;
 import com.wm.remusic.R;
 import com.wm.remusic.activity.PlaylistManagerActivity;
 import com.wm.remusic.activity.SelectActivity;
 import com.wm.remusic.fragment.PlaylistDetailFragment;
 import com.wm.remusic.fragment.RecentFragment;
 import com.wm.remusic.fragment.TabPagerFragment;
+import com.wm.remusic.info.MainFragmentItem;
+import com.wm.remusic.info.MusicInfo;
+import com.wm.remusic.info.Playlist;
+import com.wm.remusic.provider.PlaylistInfo;
+import com.wm.remusic.provider.PlaylistsManager;
+import com.wm.remusic.uitl.IConstants;
 import com.wm.remusic.uitl.MusicUtils;
 
 import java.util.ArrayList;
@@ -44,8 +44,8 @@ import java.util.List;
  */
 public class MainFragmentAdapter extends RecyclerView.Adapter<MainFragmentAdapter.ItemHolder> {
 
-    private boolean expanded = true;
     ArrayList<Playlist> playlists;
+    private boolean expanded = true;
     private Activity mContext;
     private List itemResults = Collections.emptyList();
 

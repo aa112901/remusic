@@ -1,4 +1,4 @@
-package com.wm.remusic.adapter;
+package com.example.wm.t;
 
 import android.content.Context;
 import android.support.v4.view.PagerAdapter;

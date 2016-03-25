@@ -12,12 +12,12 @@ public class AlpnaView extends ImageButton {
             "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U",
             "V", "W", "X", "Y", "Z"};
 
-    public void setHeight(float Height) {
-        this.screenHeight = Height;
-    }
-
     public AlpnaView(Context context, AttributeSet attrs) {
         super(context, attrs);
+    }
+
+    public void setHeight(float Height) {
+        this.screenHeight = Height;
     }
 
     public void setOnAlpnaViewSelecterListener(

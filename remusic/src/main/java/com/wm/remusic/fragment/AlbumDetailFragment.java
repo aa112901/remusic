@@ -15,14 +15,14 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.wm.remusic.uitl.IConstants;
-import com.wm.remusic.info.AlbumInfo;
-import com.wm.remusic.info.MusicInfo;
 import com.wm.remusic.R;
 import com.wm.remusic.activity.SelectActivity;
+import com.wm.remusic.info.AlbumInfo;
+import com.wm.remusic.info.MusicInfo;
 import com.wm.remusic.service.MusicPlayer;
-import com.wm.remusic.uitl.MusicUtils;
 import com.wm.remusic.uitl.CommonUtils;
+import com.wm.remusic.uitl.IConstants;
+import com.wm.remusic.uitl.MusicUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,14 +32,14 @@ import java.util.List;
  */
 public class AlbumDetailFragment extends BaseFragment {
 
+    int currentlyPlayingPosition = 0;
+    ActionBar ab;
     private AlbumDetailAdapter mAdapter;
     private List<MusicInfo> musicInfos = new ArrayList<>();
     private long albumID = -1;
     private RecyclerView recyclerView;
     private LinearLayoutManager layoutManager;
     private RecyclerView.ItemDecoration itemDecoration;
-    int currentlyPlayingPosition = 0;
-    ActionBar ab;
 
     public static AlbumDetailFragment newInstance(long id, boolean useTransition, String transitionName) {
         AlbumDetailFragment fragment = new AlbumDetailFragment();

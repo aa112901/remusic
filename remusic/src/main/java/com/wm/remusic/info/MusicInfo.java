@@ -46,33 +46,6 @@ public class MusicInfo implements Parcelable {
      * 0表示没有收藏 1表示收藏
      */
     public int favorite = 0;
-
-
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        Bundle bundle = new Bundle();
-        bundle.putInt(KEY_ID, _id);
-        bundle.putInt(KEY_SONG_ID, songId);
-        bundle.putInt(KEY_ALBUM_ID, albumId);
-        bundle.putString(KEY_ALBUM_NAME, albumName);
-        bundle.putString(KEY_ALBUM_DATA, albumData);
-        bundle.putInt(KEY_DURATION, duration);
-        bundle.putString(KEY_MUSIC_NAME, musicName);
-        bundle.putString(KEY_ARTIST, artist);
-        bundle.putLong(KEY_ARTIST_ID, artistId);
-        bundle.putString(KEY_DATA, data);
-        bundle.putString(KEY_FOLDER, folder);
-        bundle.putString(KEY_MUSIC_NAME_KEY, musicNameKey);
-        bundle.putInt(KEY_SIZE, size);
-        bundle.putInt(KEY_FAVORITE, favorite);
-        dest.writeBundle(bundle);
-    }
-
     public static final Creator<MusicInfo> CREATOR = new Creator<MusicInfo>() {
 
         @Override
@@ -103,6 +76,30 @@ public class MusicInfo implements Parcelable {
         }
     };
 
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        Bundle bundle = new Bundle();
+        bundle.putInt(KEY_ID, _id);
+        bundle.putInt(KEY_SONG_ID, songId);
+        bundle.putInt(KEY_ALBUM_ID, albumId);
+        bundle.putString(KEY_ALBUM_NAME, albumName);
+        bundle.putString(KEY_ALBUM_DATA, albumData);
+        bundle.putInt(KEY_DURATION, duration);
+        bundle.putString(KEY_MUSIC_NAME, musicName);
+        bundle.putString(KEY_ARTIST, artist);
+        bundle.putLong(KEY_ARTIST_ID, artistId);
+        bundle.putString(KEY_DATA, data);
+        bundle.putString(KEY_FOLDER, folder);
+        bundle.putString(KEY_MUSIC_NAME_KEY, musicNameKey);
+        bundle.putInt(KEY_SIZE, size);
+        bundle.putInt(KEY_FAVORITE, favorite);
+        dest.writeBundle(bundle);
+    }
 
     public int getFavorite() {
         return favorite;

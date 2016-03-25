@@ -35,31 +35,35 @@ import com.wm.remusic.R;
 public class RoundImageView extends ImageView {
 
 
+    private static final int DEFAULT_DURATION = 60 * 370;
     private final RectF mDrawableRect = new RectF();
-
-
     private final Matrix mShaderMatrix = new Matrix();
     private final Paint mBitmapPaint = new Paint();
-
+    public ObjectAnimator mObjectAnimator, mObjectAnimator1, mObjectAnimator3, defaultAinmator;
     private Bitmap mBitmap;
     private Bitmap srcBitmap;
-
     private BitmapShader mBitmapShader;
     private int mBitmapWidth;
     private int mBitmapHeight;
-
     private float mDrawableRadius;
-
-
-    public ObjectAnimator mObjectAnimator, mObjectAnimator1, mObjectAnimator3, defaultAinmator;
-    private static final int DEFAULT_DURATION = 60 * 370;
-
     private float v = 0;
 
     // 控件默认长�?�宽
     private int defaultWidth = 0;
     private int defaultHeight = 0;
 
+
+    public RoundImageView(Context context) {
+        super(context);
+    }
+
+    public RoundImageView(Context context, AttributeSet attrs) {
+        super(context, attrs);
+    }
+
+    public RoundImageView(Context context, AttributeSet attrs, int defStyle) {
+        super(context, attrs, defStyle);
+    }
 
     //开始旋转
     public void startRotation() {
@@ -106,7 +110,6 @@ public class RoundImageView extends ImageView {
         initTranlationAnimate1(-getWidth(), 0);
     }
 
-
     public boolean getAnimateState() {
         return mObjectAnimator.isRunning();
     }
@@ -125,7 +128,6 @@ public class RoundImageView extends ImageView {
         // mObjectAnimator3.setRepeatCount(0);
     }
 
-
     public void initRotateAnimation(float start) {
         mObjectAnimator = ObjectAnimator.ofFloat(this, "rotation", start, 360f + start);
         mObjectAnimator.setDuration(DEFAULT_DURATION);
@@ -139,20 +141,6 @@ public class RoundImageView extends ImageView {
         initRotateAnimation(0f);
         initTranlationAnimate(0, getWidth());
     }
-
-
-    public RoundImageView(Context context) {
-        super(context);
-    }
-
-    public RoundImageView(Context context, AttributeSet attrs) {
-        super(context, attrs);
-    }
-
-    public RoundImageView(Context context, AttributeSet attrs, int defStyle) {
-        super(context, attrs, defStyle);
-    }
-
 
     @Override
     protected void onDraw(Canvas canvas) {

@@ -28,14 +28,14 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.facebook.drawee.view.SimpleDraweeView;
-import com.wm.remusic.uitl.CommonUtils;
-import com.wm.remusic.uitl.IConstants;
-import com.wm.remusic.info.MusicInfo;
-import com.wm.remusic.provider.PlaylistsManager;
 import com.wm.remusic.R;
 import com.wm.remusic.adapter.PlaylistDetailAdapter;
+import com.wm.remusic.info.MusicInfo;
+import com.wm.remusic.provider.PlaylistsManager;
 import com.wm.remusic.service.MediaService;
 import com.wm.remusic.service.MusicTrack;
+import com.wm.remusic.uitl.CommonUtils;
+import com.wm.remusic.uitl.IConstants;
 import com.wm.remusic.uitl.ImageUtils;
 import com.wm.remusic.uitl.MusicUtils;
 
@@ -63,7 +63,21 @@ public class PlaylistDetailFragment extends Fragment {
     CollapsingToolbarLayout collapsingToolbarLayout;
     AppBarLayout appBarLayout;
     private Context context;
+    //接受广播
+    private BroadcastReceiver mStatusListener = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
 
+            String action = intent.getAction();
+            if (action.equals(IConstants.PLAYLIST_ITEM_MOVED)) {
+                reloadAdapter();
+
+            } else if (action.equals(IConstants.MUSIC_COUNT_CHANGED)) {
+                refreshPlaylist();
+                reloadAdapter();
+            }
+        }
+    };
 
     public static PlaylistDetailFragment newInstance(long id, String albumArt, String name) {
         PlaylistDetailFragment fragment = new PlaylistDetailFragment();
@@ -130,7 +144,6 @@ public class PlaylistDetailFragment extends Fragment {
         setAlbumart();
     }
 
-
     private void setupToolbar() {
 
         ((AppCompatActivity) getActivity()).setSupportActionBar(toolbar);
@@ -170,7 +183,6 @@ public class PlaylistDetailFragment extends Fragment {
         }.execute();
     }
 
-
     //更新adapter界面
     public void reloadAdapter() {
         new AsyncTask<Void, Void, Void>() {
@@ -195,7 +207,6 @@ public class PlaylistDetailFragment extends Fragment {
         }.execute();
     }
 
-
     @Override
     public void onResume() {
         super.onResume();
@@ -214,23 +225,6 @@ public class PlaylistDetailFragment extends Fragment {
         super.onPause();
         getActivity().unregisterReceiver(mStatusListener);
     }
-
-
-    //接受广播
-    private BroadcastReceiver mStatusListener = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-
-            String action = intent.getAction();
-            if (action.equals(IConstants.PLAYLIST_ITEM_MOVED)) {
-                reloadAdapter();
-
-            } else if (action.equals(IConstants.MUSIC_COUNT_CHANGED)) {
-                refreshPlaylist();
-                reloadAdapter();
-            }
-        }
-    };
 
     private void refreshPlaylist() {
 

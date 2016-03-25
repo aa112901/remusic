@@ -25,6 +25,10 @@ public class BuildProperties {
         properties.load(new FileInputStream(new File(Environment.getRootDirectory(), "build.prop")));
     }
 
+    public static BuildProperties newInstance() throws IOException {
+        return new BuildProperties();
+    }
+
     public boolean containsKey(final Object key) {
         return properties.containsKey(key);
     }
@@ -63,9 +67,5 @@ public class BuildProperties {
 
     public Collection<Object> values() {
         return properties.values();
-    }
-
-    public static BuildProperties newInstance() throws IOException {
-        return new BuildProperties();
     }
 }

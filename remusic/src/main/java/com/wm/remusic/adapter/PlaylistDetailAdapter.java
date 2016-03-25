@@ -11,12 +11,12 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.wm.remusic.uitl.IConstants;
-import com.wm.remusic.info.MusicInfo;
 import com.wm.remusic.R;
 import com.wm.remusic.activity.PlaylistSelectActivity;
 import com.wm.remusic.fragment.MoreFragment;
+import com.wm.remusic.info.MusicInfo;
 import com.wm.remusic.service.MusicPlayer;
+import com.wm.remusic.uitl.IConstants;
 
 import java.util.ArrayList;
 

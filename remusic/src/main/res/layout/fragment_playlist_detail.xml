@@ -49,18 +49,18 @@
                     android:orientation="horizontal">
 
                     <com.facebook.drawee.view.SimpleDraweeView
-                        android:layout_marginLeft="5dp"
+                        android:id="@+id/albumArtSmall"
                         android:layout_width="129dp"
                         android:layout_height="129dp"
-                        android:scaleType="centerCrop"
-                        android:id="@+id/albumArtSmall" />
+                        android:layout_marginLeft="5dp"
+                        android:scaleType="centerCrop" />
 
                     <TextView
-                        android:layout_marginLeft="15dp"
                         android:id="@+id/album_title"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_vertical"
+                        android:layout_marginLeft="15dp"
                         android:ellipsize="end"
                         android:singleLine="true"
                         android:textColor="#ffffff"

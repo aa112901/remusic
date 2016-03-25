@@ -17,11 +17,11 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.wm.remusic.uitl.IConstants;
-import com.wm.remusic.info.FolderInfo;
 import com.wm.remusic.R;
+import com.wm.remusic.info.FolderInfo;
 import com.wm.remusic.service.MediaService;
 import com.wm.remusic.service.MusicPlayer;
+import com.wm.remusic.uitl.IConstants;
 import com.wm.remusic.uitl.MusicUtils;
 
 import java.io.File;
@@ -36,6 +36,16 @@ public class FolderFragment extends BaseFragment {
     private LinearLayoutManager layoutManager;
     private RecyclerView.ItemDecoration itemDecoration;
     private Adapter mAdapter;
+    //接受广播
+    private BroadcastReceiver mStatusListener = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String action = intent.getAction();
+            if (action.equals(MediaService.META_CHANGED)) {
+                reloadAdapter();
+            }
+        }
+    };
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -73,6 +83,29 @@ public class FolderFragment extends BaseFragment {
         getActivity().unregisterReceiver(mStatusListener);
     }
 
+    //设置分割线
+    private void setItemDecoration() {
+        itemDecoration = new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL_LIST);
+        recyclerView.addItemDecoration(itemDecoration);
+    }
+
+    //更新adapter界面
+    public void reloadAdapter() {
+        new AsyncTask<Void, Void, Void>() {
+            @Override
+            protected Void doInBackground(final Void... unused) {
+                List<FolderInfo> folderList = MusicUtils.queryFolder(getContext());
+                mAdapter.updateDataSet(folderList);
+                return null;
+            }
+
+            @Override
+            protected void onPostExecute(Void aVoid) {
+                mAdapter.notifyDataSetChanged();
+            }
+        }.execute();
+    }
+
     //异步加载recyclerview界面
     private class loadFolders extends AsyncTask<String, Void, String> {
 
@@ -95,41 +128,6 @@ public class FolderFragment extends BaseFragment {
         protected void onPreExecute() {
         }
     }
-
-    //设置分割线
-    private void setItemDecoration() {
-        itemDecoration = new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL_LIST);
-        recyclerView.addItemDecoration(itemDecoration);
-    }
-
-    //接受广播
-    private BroadcastReceiver mStatusListener = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            String action = intent.getAction();
-            if (action.equals(MediaService.META_CHANGED)) {
-                reloadAdapter();
-            }
-        }
-    };
-
-    //更新adapter界面
-    public void reloadAdapter() {
-        new AsyncTask<Void, Void, Void>() {
-            @Override
-            protected Void doInBackground(final Void... unused) {
-                List<FolderInfo> folderList = MusicUtils.queryFolder(getContext());
-                mAdapter.updateDataSet(folderList);
-                return null;
-            }
-
-            @Override
-            protected void onPostExecute(Void aVoid) {
-                mAdapter.notifyDataSetChanged();
-            }
-        }.execute();
-    }
-
 
     public class Adapter extends RecyclerView.Adapter<Adapter.ListItemViewHolder> {
 

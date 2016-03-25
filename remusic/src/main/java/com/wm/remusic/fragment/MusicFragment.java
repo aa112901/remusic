@@ -17,11 +17,11 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.wm.remusic.uitl.IConstants;
-import com.wm.remusic.info.MusicInfo;
 import com.wm.remusic.R;
 import com.wm.remusic.activity.SelectActivity;
+import com.wm.remusic.info.MusicInfo;
 import com.wm.remusic.service.MusicPlayer;
+import com.wm.remusic.uitl.IConstants;
 import com.wm.remusic.uitl.MusicUtils;
 import com.wm.remusic.uitl.PreferencesUtility;
 import com.wm.remusic.uitl.SortOrder;
@@ -33,11 +33,11 @@ import java.util.ArrayList;
  * Created by wm on 2016/1/19.
  */
 public class MusicFragment extends BaseFragment {
+    public int currentlyPlayingPosition = 0;
+    Adapter mAdapter;
     private ArrayList<MusicInfo> musicInfos;
     private RecyclerView recyclerView;
     private LinearLayoutManager layoutManager;
-    Adapter mAdapter;
-    public int currentlyPlayingPosition = 0;
     private PreferencesUtility mPreferences;
 
     @Override
@@ -99,35 +99,6 @@ public class MusicFragment extends BaseFragment {
         }.execute();
     }
 
-    //异步加载recyclerview界面
-    private class loadSongs extends AsyncTask<String, Void, String> {
-
-        @Override
-        protected String doInBackground(String... params) {
-            if (getActivity() != null) {
-                musicInfos = (ArrayList<MusicInfo>) MusicUtils.queryMusic(getActivity(), IConstants.START_FROM_LOCAL);
-                if (musicInfos != null)
-                    mAdapter = new Adapter(musicInfos);
-            }
-
-            return "Executed";
-        }
-
-        @Override
-        protected void onPostExecute(String result) {
-            recyclerView.setAdapter(mAdapter);
-            if (getActivity() != null)
-                recyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL_LIST));
-
-        }
-
-        @Override
-        protected void onPreExecute() {
-
-        }
-    }
-
-
     @Override
     public void onActivityCreated(final Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
@@ -164,6 +135,33 @@ public class MusicFragment extends BaseFragment {
         return super.onOptionsItemSelected(item);
     }
 
+    //异步加载recyclerview界面
+    private class loadSongs extends AsyncTask<String, Void, String> {
+
+        @Override
+        protected String doInBackground(String... params) {
+            if (getActivity() != null) {
+                musicInfos = (ArrayList<MusicInfo>) MusicUtils.queryMusic(getActivity(), IConstants.START_FROM_LOCAL);
+                if (musicInfos != null)
+                    mAdapter = new Adapter(musicInfos);
+            }
+
+            return "Executed";
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+            recyclerView.setAdapter(mAdapter);
+            if (getActivity() != null)
+                recyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL_LIST));
+
+        }
+
+        @Override
+        protected void onPreExecute() {
+
+        }
+    }
 
     public class Adapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 

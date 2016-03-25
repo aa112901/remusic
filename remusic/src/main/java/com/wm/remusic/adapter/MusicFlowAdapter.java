@@ -8,8 +8,8 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.wm.remusic.info.MusicInfo;
 import com.wm.remusic.R;
+import com.wm.remusic.info.MusicInfo;
 
 import java.util.List;
 
@@ -20,18 +20,12 @@ public class MusicFlowAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     List<OverFlowItem> mList;
     MusicInfo musicInfo;
     Activity mContext;
+    private OnRecyclerViewItemClickListener mOnItemClickListener = null;
 
     public MusicFlowAdapter(Activity context, List<OverFlowItem> list, MusicInfo info) {
         mList = list;
         musicInfo = info;
         mContext = context;
-    }
-
-    private OnRecyclerViewItemClickListener mOnItemClickListener = null;
-
-    //定义接口
-    public interface OnRecyclerViewItemClickListener {
-        void onItemClick(View view, String data);
     }
 
     @Override
@@ -68,6 +62,11 @@ public class MusicFlowAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     @Override
     public int getItemCount() {
         return mList.size();
+    }
+
+    //定义接口
+    public interface OnRecyclerViewItemClickListener {
+        void onItemClick(View view, String data);
     }
 
     public class ListItemViewHolder extends RecyclerView.ViewHolder {

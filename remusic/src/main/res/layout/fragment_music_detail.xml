@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
+        android:layout_marginLeft="10dp"
         android:layout_marginTop="5dp"
-        android:layout_marginLeft="10dp">
+        android:orientation="horizontal">
 
         <TextView
             android:layout_width="wrap_content"
@@ -19,9 +19,9 @@
             android:textSize="15sp" />
 
         <TextView
+            android:id="@+id/music_detail_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/music_detail_title"
             android:textColor="@color/small_font"
             android:textSize="15sp" />
     </LinearLayout>
@@ -29,9 +29,9 @@
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
+        android:layout_marginLeft="10dp"
         android:layout_marginTop="10dp"
-        android:layout_marginLeft="10dp">
+        android:orientation="horizontal">
 
         <TextView
             android:layout_width="wrap_content"
@@ -41,9 +41,9 @@
             android:textSize="15sp" />
 
         <TextView
+            android:id="@+id/music_detail_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/music_detail_name"
             android:textColor="@color/small_font"
             android:textSize="15sp" />
     </LinearLayout>
@@ -52,9 +52,9 @@
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
+        android:layout_marginLeft="10dp"
         android:layout_marginTop="10dp"
-        android:layout_marginLeft="10dp">
+        android:orientation="horizontal">
 
         <TextView
             android:layout_width="wrap_content"
@@ -64,9 +64,9 @@
             android:textSize="15sp" />
 
         <TextView
+            android:id="@+id/music_detail_time"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/music_detail_time"
             android:textColor="@color/small_font"
             android:textSize="15sp" />
     </LinearLayout>
@@ -92,9 +92,9 @@
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
+        android:layout_marginLeft="10dp"
         android:layout_marginTop="10dp"
-        android:layout_marginLeft="10dp">
+        android:orientation="horizontal">
 
         <TextView
             android:layout_width="wrap_content"
@@ -104,9 +104,9 @@
             android:textSize="15sp" />
 
         <TextView
+            android:id="@+id/music_detail_size"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/music_detail_size"
             android:textColor="@color/small_font"
             android:textSize="15sp" />
     </LinearLayout>
@@ -114,9 +114,9 @@
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
+        android:layout_marginLeft="10dp"
         android:layout_marginTop="10dp"
-        android:layout_marginLeft="10dp">
+        android:orientation="horizontal">
 
         <TextView
             android:layout_width="wrap_content"
@@ -126,9 +126,9 @@
             android:textSize="15sp" />
 
         <TextView
+            android:id="@+id/music_detail_path"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/music_detail_path"
             android:textColor="@color/small_font"
             android:textSize="15sp" />
     </LinearLayout>

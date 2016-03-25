@@ -4,9 +4,9 @@
 
 
     <item
-        android:icon="@drawable/actionbar_share"
         android:id="@+id/menu_share"
-        app:showAsAction="ifRoom|collapseActionView"
-        android:title=""></item>
+        android:icon="@drawable/actionbar_share"
+        android:title=""
+        app:showAsAction="ifRoom|collapseActionView"></item>
 
 </menu>

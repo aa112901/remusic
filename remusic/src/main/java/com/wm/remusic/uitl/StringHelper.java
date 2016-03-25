@@ -15,14 +15,6 @@ import net.sourceforge.pinyin4j.format.exception.BadHanyuPinyinOutputFormatCombi
 import java.text.DecimalFormat;
 
 public class StringHelper {
-    public static enum CharType {
-        DELIMITER, // 非字母截止字符，例如，．）（　等等　（ 包含U0000-U0080）
-        NUM, // 2字节数字１２３４
-        LETTER, // gb2312中的，例如:ＡＢＣ，2字节字符同时包含 1字节能表示的 basic latin and latin-1
-        OTHER, // 其他字符
-        CHINESE;// 中文字
-    }
-
     /**
      * 判断输入char类型变量的字符类型
      *
@@ -153,5 +145,13 @@ public class StringHelper {
             e.printStackTrace();
         }
         return output;
+    }
+
+    public static enum CharType {
+        DELIMITER, // 非字母截止字符，例如，．）（　等等　（ 包含U0000-U0080）
+        NUM, // 2字节数字１２３４
+        LETTER, // gb2312中的，例如:ＡＢＣ，2字节字符同时包含 1字节能表示的 basic latin and latin-1
+        OTHER, // 其他字符
+        CHINESE;// 中文字
     }
 }

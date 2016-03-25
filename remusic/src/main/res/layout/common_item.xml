@@ -1,56 +1,56 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
     <RelativeLayout
-        android:background="?android:attr/selectableItemBackground"
         android:layout_width="match_parent"
         android:layout_height="46dp"
+        android:background="?android:attr/selectableItemBackground"
         android:orientation="horizontal">
 
         <ImageView
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp"
+            android:id="@+id/play_all"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
             android:layout_alignParentLeft="true"
             android:layout_centerInParent="true"
-            android:id="@+id/play_all"
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
             android:src="@drawable/list_icn_play" />
 
         <TextView
-            android:layout_toEndOf="@+id/play_all"
+            android:id="@+id/play_all_text"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:id="@+id/play_all_text"
+            android:layout_toEndOf="@+id/play_all"
+            android:gravity="center_vertical"
             android:text="播放全部"
             android:textColor="@color/text_color"
-            android:textSize="15sp"
-            android:gravity="center_vertical" />
+            android:textSize="15sp" />
 
         <TextView
-            android:layout_toEndOf="@+id/play_all_text"
             android:id="@+id/play_all_number"
-            android:textSize="14sp"
-            android:gravity="center_vertical"
             android:layout_width="70dp"
-            android:layout_height="match_parent" />
+            android:layout_height="match_parent"
+            android:layout_toEndOf="@+id/play_all_text"
+            android:gravity="center_vertical"
+            android:textSize="14sp" />
 
         <ImageView
-            android:padding="9dp"
-            android:layout_alignParentRight="true"
-            android:layout_marginEnd="15dp"
-            android:layout_centerInParent="true"
+            android:id="@+id/select"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
+            android:layout_alignParentRight="true"
+            android:layout_centerInParent="true"
             android:layout_gravity="center|clip_vertical"
-            android:gravity="end"
-            android:id="@+id/select"
+            android:layout_marginEnd="15dp"
             android:background="?android:attr/selectableItemBackground"
             android:focusable="false"
+            android:gravity="end"
+            android:padding="9dp"
             android:src="@drawable/list_icn_mng" />
     </RelativeLayout>
 

@@ -16,11 +16,11 @@ import android.provider.MediaStore.Audio.Albums;
 import android.provider.MediaStore.Audio.Media;
 import android.provider.MediaStore.Files.FileColumns;
 
+import com.wm.remusic.R;
 import com.wm.remusic.info.AlbumInfo;
 import com.wm.remusic.info.ArtistInfo;
 import com.wm.remusic.info.FolderInfo;
 import com.wm.remusic.info.MusicInfo;
-import com.wm.remusic.R;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -30,27 +30,8 @@ import java.util.List;
 
 /**
  * 查询各主页信息，获取封面图片等
- *
- *
  */
 public class MusicUtils implements IConstants {
-
-    private static String[] proj_music = new String[]{
-            Media._ID, Media.TITLE,
-            Media.DATA, Media.ALBUM_ID,
-            Media.ALBUM, Media.ARTIST,
-            Media.ARTIST_ID, Media.DURATION, Media.SIZE};
-
-    private static String[] proj_album = new String[]{Albums._ID, Albums.ALBUM_ART,
-            Albums.ALBUM, Albums.NUMBER_OF_SONGS, Albums.ARTIST};
-
-    private static String[] proj_artist = new String[]{
-            MediaStore.Audio.Artists.ARTIST,
-            MediaStore.Audio.Artists.NUMBER_OF_TRACKS,
-            MediaStore.Audio.Artists._ID};
-
-    private static String[] proj_folder = new String[]{FileColumns.DATA};
-
 
     public static final int FILTER_SIZE = 1 * 1024 * 1024;// 1MB
     public static final int FILTER_DURATION = 1 * 60 * 1000;// 1分钟
@@ -58,6 +39,18 @@ public class MusicUtils implements IConstants {
     private static final BitmapFactory.Options sBitmapOptions = new BitmapFactory.Options();
     private static final Uri sArtworkUri = Uri
             .parse("content://media/external/audio/albumart");
+    private static String[] proj_music = new String[]{
+            Media._ID, Media.TITLE,
+            Media.DATA, Media.ALBUM_ID,
+            Media.ALBUM, Media.ARTIST,
+            Media.ARTIST_ID, Media.DURATION, Media.SIZE};
+    private static String[] proj_album = new String[]{Albums._ID, Albums.ALBUM_ART,
+            Albums.ALBUM, Albums.NUMBER_OF_SONGS, Albums.ARTIST};
+    private static String[] proj_artist = new String[]{
+            MediaStore.Audio.Artists.ARTIST,
+            MediaStore.Audio.Artists.NUMBER_OF_TRACKS,
+            MediaStore.Audio.Artists._ID};
+    private static String[] proj_folder = new String[]{FileColumns.DATA};
 
     static {
         // for the cache,

@@ -17,14 +17,14 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.facebook.drawee.view.SimpleDraweeView;
-import com.wm.remusic.uitl.IConstants;
-import com.wm.remusic.info.ArtistInfo;
 import com.wm.remusic.R;
+import com.wm.remusic.info.ArtistInfo;
 import com.wm.remusic.lastfmapi.LastFmClient;
 import com.wm.remusic.lastfmapi.callbacks.ArtistInfoListener;
 import com.wm.remusic.lastfmapi.models.ArtistQuery;
 import com.wm.remusic.lastfmapi.models.LastfmArtist;
 import com.wm.remusic.service.MusicPlayer;
+import com.wm.remusic.uitl.IConstants;
 import com.wm.remusic.uitl.MusicUtils;
 import com.wm.remusic.uitl.PreferencesUtility;
 import com.wm.remusic.uitl.SortOrder;
@@ -95,6 +95,30 @@ public class ArtistFragment extends BaseFragment {
         return super.onOptionsItemSelected(item);
     }
 
+    //设置分割线
+    private void setItemDecoration() {
+
+        itemDecoration = new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL_LIST);
+        recyclerView.addItemDecoration(itemDecoration);
+    }
+
+    //更新adapter界面
+    public void reloadAdapter() {
+        new AsyncTask<Void, Void, Void>() {
+            @Override
+            protected Void doInBackground(final Void... unused) {
+                List<ArtistInfo> artList = MusicUtils.queryArtist(getActivity());
+                if (artList != null)
+                    mAdapter.updateDataSet(artList);
+                return null;
+            }
+
+            @Override
+            protected void onPostExecute(Void aVoid) {
+                mAdapter.notifyDataSetChanged();
+            }
+        }.execute();
+    }
 
     //异步加载recyclerview界面
     private class loadArtists extends AsyncTask<String, Void, String> {
@@ -121,32 +145,6 @@ public class ArtistFragment extends BaseFragment {
         @Override
         protected void onPreExecute() {
         }
-    }
-
-    //设置分割线
-    private void setItemDecoration() {
-
-        itemDecoration = new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL_LIST);
-        recyclerView.addItemDecoration(itemDecoration);
-    }
-
-
-    //更新adapter界面
-    public void reloadAdapter() {
-        new AsyncTask<Void, Void, Void>() {
-            @Override
-            protected Void doInBackground(final Void... unused) {
-                List<ArtistInfo> artList = MusicUtils.queryArtist(getActivity());
-                if (artList != null)
-                    mAdapter.updateDataSet(artList);
-                return null;
-            }
-
-            @Override
-            protected void onPostExecute(Void aVoid) {
-                mAdapter.notifyDataSetChanged();
-            }
-        }.execute();
     }
 
     public class ArtistAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {

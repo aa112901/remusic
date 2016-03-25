@@ -59,13 +59,13 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.widget.RemoteViews;
 
-import com.wm.remusic.provider.MusicPlaybackState;
-import com.wm.remusic.provider.RecentStore;
-import com.wm.remusic.info.SongPlayCount;
 import com.wm.remusic.MediaAidlInterface;
 import com.wm.remusic.R;
 import com.wm.remusic.activity.PlayingActivity;
+import com.wm.remusic.info.SongPlayCount;
 import com.wm.remusic.permissions.Nammu;
+import com.wm.remusic.provider.MusicPlaybackState;
+import com.wm.remusic.provider.RecentStore;
 import com.wm.remusic.receiver.MediaButtonIntentReceiver;
 import com.wm.remusic.uitl.CommonUtils;
 import com.wm.remusic.uitl.MusicUtils;
@@ -2179,6 +2179,14 @@ public class MediaService extends Service {
         notifyChange(META_CHANGED);
     }
 
+    public void timing(int time) {
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, new Intent(PAUSE_ACTION),
+                PendingIntent.FLAG_UPDATE_CURRENT);
+        AlarmManager am = (AlarmManager) getSystemService(ALARM_SERVICE);
+        am.set(AlarmManager.RTC, System.currentTimeMillis() + time, pendingIntent);
+
+    }
+
     public interface TrackErrorExtra {
 
         String TRACK_NAME = "trackname";
@@ -2806,14 +2814,6 @@ public class MediaService extends Service {
             Log.e("ELEVEN", "calling refresh!");
             refresh();
         }
-    }
-
-    public void timing(int time) {
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, new Intent(PAUSE_ACTION),
-                PendingIntent.FLAG_UPDATE_CURRENT);
-        AlarmManager am = (AlarmManager) getSystemService(ALARM_SERVICE);
-        am.set(AlarmManager.RTC, System.currentTimeMillis() + time, pendingIntent);
-
     }
 
 

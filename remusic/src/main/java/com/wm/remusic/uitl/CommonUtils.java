@@ -31,6 +31,12 @@ import java.lang.reflect.Method;
 public class CommonUtils {
 
 
+    public static final String MUSIC_ONLY_SELECTION = MediaStore.Audio.AudioColumns.IS_MUSIC + "=1"
+            + " AND " + MediaStore.Audio.AudioColumns.TITLE + " != ''";
+    private static final String KEY_MIUI_VERSION_CODE = "ro.miui.ui.version.code";
+    private static final String KEY_MIUI_VERSION_NAME = "ro.miui.ui.version.name";
+    private static final String KEY_MIUI_INTERNAL_STORAGE = "ro.miui.internal.storage";
+
     public static int getStatusHeight(Context context) {
 
         int statusHeight = -1;
@@ -46,9 +52,6 @@ public class CommonUtils {
         return statusHeight;
     }
 
-    public static final String MUSIC_ONLY_SELECTION = MediaStore.Audio.AudioColumns.IS_MUSIC + "=1"
-            + " AND " + MediaStore.Audio.AudioColumns.TITLE + " != ''";
-
     public static boolean isMarshmallow() {
         return Build.VERSION.SDK_INT >= Build.VERSION_CODES.M;
     }
@@ -57,6 +60,7 @@ public class CommonUtils {
         return Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP;
     }
 
+    // 检测MIUI
 
     public static boolean isJellyBeanMR2() {
         return Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2;
@@ -69,12 +73,6 @@ public class CommonUtils {
     public static boolean isJellyBeanMR1() {
         return Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1;
     }
-
-    // 检测MIUI
-
-    private static final String KEY_MIUI_VERSION_CODE = "ro.miui.ui.version.code";
-    private static final String KEY_MIUI_VERSION_NAME = "ro.miui.ui.version.name";
-    private static final String KEY_MIUI_INTERNAL_STORAGE = "ro.miui.internal.storage";
 
     public static boolean isMIUI() {
         try {

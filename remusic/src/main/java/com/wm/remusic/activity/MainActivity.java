@@ -21,12 +21,12 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.facebook.drawee.view.SimpleDraweeView;
-import com.wm.remusic.uitl.IConstants;
 import com.wm.remusic.R;
 import com.wm.remusic.fragment.MainFragment;
 import com.wm.remusic.fragment.PlayQueueFragment;
 import com.wm.remusic.fragment.TimingFragment;
 import com.wm.remusic.service.MusicPlayer;
+import com.wm.remusic.uitl.IConstants;
 import com.wm.remusic.uitl.MusicUtils;
 
 import static com.wm.remusic.service.MusicPlayer.mService;
@@ -37,16 +37,6 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     TextView NavMusicName;
     TextView NavArtist;
     ProgressBar mProgress;
-    ImageView control;
-
-    DrawerLayout drawerLayout;
-
-
-    @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        //        super.onSaveInstanceState(outState);
-    }
-
     public Runnable mUpdateProgress = new Runnable() {
 
         @Override
@@ -61,6 +51,13 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
 
         }
     };
+    ImageView control;
+    DrawerLayout drawerLayout;
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        //        super.onSaveInstanceState(outState);
+    }
 
     public void updateTrackInfo() {
         if (mService == null) {

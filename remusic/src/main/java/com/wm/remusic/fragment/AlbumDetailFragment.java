@@ -65,8 +65,7 @@ public class AlbumDetailFragment extends BaseFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.frgment_common, container, false);
 
-//        musicInfos = MusicUtils.queryMusic(getActivity(), null, albumID + "", IConstants.START_FROM_ALBUM);
-//        musicInfos = MusicUtils.getAlbumsongs(getContext(), albumID + "", IConstants.SORTED_BY_NAME);
+
         recyclerView = (RecyclerView) view.findViewById(R.id.recyclerview);
         layoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(layoutManager);

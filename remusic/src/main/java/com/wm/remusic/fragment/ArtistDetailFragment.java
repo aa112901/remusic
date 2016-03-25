@@ -62,8 +62,8 @@ public class ArtistDetailFragment extends BaseFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.frgment_common, container, false);
+
         recyclerView = (RecyclerView) view.findViewById(R.id.recyclerview);
-        //musicInfos = (ArrayList) MusicUtils.queryMusic(getActivity(), null, artistID + "", IConstants.START_FROM_ARTIST);
         layoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(layoutManager);
         artDetailAdapter = new ArtDetailAdapter(null);

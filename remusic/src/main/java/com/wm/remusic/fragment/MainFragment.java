@@ -85,6 +85,8 @@ public class MainFragment extends Fragment {
         recyclerView = (RecyclerView) view.findViewById(R.id.recyclerview);
         layoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(layoutManager);
+
+        //先给adapter设置空数据，异步加载好后更新数据，防止Recyclerview no attach
         mAdapter = new MainFragmentAdapter(getActivity(), null, null);
         recyclerView.setAdapter(mAdapter);
         recyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL_LIST));
@@ -112,7 +114,6 @@ public class MainFragment extends Fragment {
         super.setUserVisibleHint(isVisibleToUser);
         if (isVisibleToUser) {
             //相当于Fragment的onResume
-            ab.setTitle("");
         } else {
             //相当于Fragment的onPause
 

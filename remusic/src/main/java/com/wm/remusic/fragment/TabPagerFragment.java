@@ -88,18 +88,7 @@ public class TabPagerFragment extends Fragment {
 
     }
 
-//    @Override
-//    public void onViewCreated(View view, Bundle savedInstanceState) {
-//        super.onViewCreated(view, savedInstanceState);
-////        if (PreferenceManager.getDefaultSharedPreferences(getActivity()).getBoolean("dark_theme", false)) {
-////            ATE.apply(this, "dark_theme");
-////        } else {
-////            ATE.apply(this, "light_theme");
-////        }
-//        //viewPager.setCurrentItem(mPreferences.getStartPageIndex());
-//        viewPager.setCurrentItem(page);
-//
-//    }
+
 
     private void setupViewPager(ViewPager viewPager) {
         Adapter adapter = new Adapter(getChildFragmentManager());
@@ -120,8 +109,6 @@ public class TabPagerFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-//        String ateKey = Helpers.getATEKey(getActivity());
-//        ATEUtils.setStatusBarColor(getActivity(), ateKey, Config.primaryColor(getActivity(), ateKey));
         ab.setTitle("本地音乐");
     }
 

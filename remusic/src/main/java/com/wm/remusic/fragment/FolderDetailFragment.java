@@ -66,9 +66,6 @@ public class FolderDetailFragment extends BaseFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.frgment_common, container, false);
 
-        //musicInfos = MusicUtils.queryMusic(getActivity(), null, folder_path, IConstants.START_FROM_FOLDER);
-
-
         layoutManager = new LinearLayoutManager(getActivity());
         recyclerView = (RecyclerView) view.findViewById(R.id.recyclerview);
         recyclerView.setLayoutManager(layoutManager);

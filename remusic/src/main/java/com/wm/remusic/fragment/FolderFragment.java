@@ -61,6 +61,7 @@ public class FolderFragment extends BaseFragment {
         //itemDecoration = new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL_LIST);
         //recyclerView.addItemDecoration(itemDecoration);
         // new loadFolders().execute("");
+
         mAdapter = new Adapter(null);
         recyclerView.setAdapter(mAdapter);
         setItemDecoration();

@@ -31,25 +31,26 @@
 
         <activity
             android:name=".activity.MainActivity"
-            android:screenOrientation="portrait"></activity>
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".activity.PlayingActivity"
             android:launchMode="singleTask"
-            android:screenOrientation="portrait"></activity>
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".activity.SearchActivity"
-            android:screenOrientation="portrait"></activity>
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".activity.SelectActivity"
-            android:screenOrientation="portrait"></activity>
+            android:screenOrientation="portrait"
+            android:theme="@style/NoAnimation"/>
         <activity
             android:name=".activity.PlaylistSelectActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/NoAnimation"></activity>
+            android:theme="@style/NoAnimation"/>
         <activity
             android:name=".activity.PlaylistManagerActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/NoAnimation"></activity>
+            android:theme="@style/NoAnimation"/>
 
         <service
             android:name=".service.MediaService"
@@ -64,7 +65,7 @@
 
         <receiver android:name=".receiver.LaunchNowPlayingReceiver">
             <intent-filter>
-                <action android:name="com.jams.music.player.LAUNCH_NOW_PLAYING_ACTION" />
+                <action android:name="com.wm.remusic.LAUNCH_NOW_PLAYING_ACTION" />
             </intent-filter>
         </receiver>
 

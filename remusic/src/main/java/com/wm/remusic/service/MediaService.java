@@ -1214,7 +1214,7 @@ public class MediaService extends Service {
 
 
         final Intent nowPlayingIntent = new Intent();
-        nowPlayingIntent.setAction("com.jams.music.player.LAUNCH_NOW_PLAYING_ACTION");
+        nowPlayingIntent.setAction("com.wm.remusic.LAUNCH_NOW_PLAYING_ACTION");
         PendingIntent clickIntent = PendingIntent.getBroadcast(this, 0, nowPlayingIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         Intent intent = new Intent(getApplicationContext(),
@@ -1251,20 +1251,6 @@ public class MediaService extends Service {
         PendingIntent prePIntent = PendingIntent.getBroadcast(this, 0, preIntent, 0);
         remoteViews.setOnClickPendingIntent(R.id.iv_stop, prePIntent);
 
-//        final String albumName = getAlbumName();
-//        final String artistName = getArtistName();
-//        final boolean isPlaying = isPlaying();
-//        String text = TextUtils.isEmpty(albumName)
-//                ? artistName : artistName + " - " + albumName;
-//
-//        int playButtonResId = isPlaying
-//                ? R.drawable.ic_pause_white_36dp : R.drawable.ic_play_white_36dp;
-//
-//        Intent nowPlayingIntent = new Intent(this, PlayingActivity.class);
-//        nowPlayingIntent.setAction(IConstants.NAVIGATE_NOWPLAYING);
-//        PendingIntent clickIntent = PendingIntent.getActivity(this, 0, nowPlayingIntent,
-//                PendingIntent.FLAG_UPDATE_CURRENT);
-
 
         if (mNotificationPostTime == 0) {
             mNotificationPostTime = System.currentTimeMillis();
@@ -1275,35 +1261,9 @@ public class MediaService extends Service {
                 .setContentIntent(clickIntent)
                 .setWhen(mNotificationPostTime);
 
-
-//        Notification.Builder builder = new Notification.Builder(this)
-//                .setSmallIcon(R.drawable.ic_notification)
-//                        //       .setLargeIcon(artwork)
-//                .setContentIntent(clickIntent)
-//                .setContentTitle(getTrackName())
-//                .setContentText(text)
-//                .setWhen(mNotificationPostTime)
-//                .addAction(R.drawable.ic_skip_previous_white_36dp,
-//                        "",
-//                        retrievePlaybackAction(PREVIOUS_ACTION))
-//                .addAction(playButtonResId, "",
-//                        retrievePlaybackAction(TOGGLEPAUSE_ACTION))
-//                .addAction(R.drawable.ic_skip_next_white_36dp,
-//                        "",
-//                        retrievePlaybackAction(NEXT_ACTION));
-
         if (CommonUtils.isJellyBeanMR1()) {
             builder.setShowWhen(false);
         }
-//        if (CommonUtils.isLollipop()) {
-//            builder.setVisibility(Notification.VISIBILITY_PUBLIC);
-//            Notification.MediaStyle style = new Notification.MediaStyle()
-//                    .setMediaSession(mSession.getSessionToken())
-//                    .setShowActionsInCompactView(0, 1, 2, 3);
-//            builder.setStyle(style);
-//        }
-//        if (artwork != null && CommonUtils.isLollipop())
-//            builder.setColor(Palette.from(artwork).generate().getVibrantColor(Color.parseColor("#403f4d")));
 
         return builder.build();
     }

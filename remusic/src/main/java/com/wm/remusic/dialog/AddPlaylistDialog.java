@@ -8,6 +8,7 @@ import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -172,7 +173,15 @@ public class AddPlaylistDialog extends DialogFragment {
                 Playlist playlist = playlists.get(getAdapterPosition());
                 //playlistInfo.updatePlaylist(playlist.id, musicId.length);
                 ArrayList<MusicTrack> musicTracks = playlistsManager.getPlaylist(playlist.id);
+
+                if(getAdapterPosition() == 0 && musicTracks.size() == 0){
+                    for (int i = 0; i < musicId.length; i++) {
+                        playlistsManager.Insert(getContext(), playlist.id, musicId[i], 0);
+                    }
+                }
+
                 for (int i = 0; i < musicId.length; i++) {
+
                     for (int j = 0; j < musicTracks.size(); j++) {
                         if (musicId[i] != musicTracks.get(j).mId) {
                             playlistsManager.Insert(getContext(), playlist.id, musicId[i], 0);

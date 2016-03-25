@@ -16,6 +16,7 @@ import com.wm.remusic.uitl.PreferencesUtility;
  */
 public class MainApplication extends Application {
 
+    //    private RefWatcher refWatcher;
     private static int MAX_MEM = 60 * ByteConstants.MB;
     private long favPlaylist = 10;
 
@@ -48,8 +49,6 @@ public class MainApplication extends Application {
 //        return application.refWatcher;
 //    }
 
-//    private RefWatcher refWatcher;
-
     @Override
     public void onCreate() {
         frescoInit();
@@ -62,6 +61,5 @@ public class MainApplication extends Application {
             PreferencesUtility.getInstance(this).setFavriateMusicPlaylist(true);
         }
     }
-
 
 }

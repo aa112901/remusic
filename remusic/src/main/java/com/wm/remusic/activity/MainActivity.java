@@ -225,9 +225,11 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
 
             case R.id.action_exit:// 退出
                 // MyApplication.getInstance().killActivity();
-                MusicPlayer.playOrPause();
-                finish();
+                if(MusicPlayer.isPlaying()){
+                    MusicPlayer.playOrPause();
+                }
                 unbindService();
+                finish();
 
                 break;
             case R.id.timing_play:

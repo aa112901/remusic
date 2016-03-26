@@ -47,7 +47,7 @@ public class TimingFragment extends DialogFragment implements View.OnClickListen
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.timing_10min:
-                MusicPlayer.timing(20 * 1000);
+                MusicPlayer.timing(10 * 60 * 1000);
                 Toast.makeText(getContext(), "将在10分钟后停止播放", Toast.LENGTH_SHORT).show();
                 dismiss();
                 break;

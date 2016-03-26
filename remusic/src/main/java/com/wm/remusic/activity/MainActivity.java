@@ -224,7 +224,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         switch (item.getItemId()) {
 
             case R.id.action_exit:// 退出
-                // MyApplication.getInstance().killActivity();
+                // Application.getInstance().killActivity();
                 if(MusicPlayer.isPlaying()){
                     MusicPlayer.playOrPause();
                 }

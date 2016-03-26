@@ -8,7 +8,7 @@ import com.facebook.common.util.ByteConstants;
 import com.facebook.drawee.backends.pipeline.Fresco;
 import com.facebook.imagepipeline.cache.MemoryCacheParams;
 import com.facebook.imagepipeline.core.ImagePipelineConfig;
-import com.wm.remusic.activity.UnceHandler;
+import com.wm.remusic.handler.UnceHandler;
 import com.wm.remusic.provider.PlaylistInfo;
 import com.wm.remusic.uitl.PreferencesUtility;
 

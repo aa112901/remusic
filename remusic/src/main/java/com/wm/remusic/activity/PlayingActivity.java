@@ -369,7 +369,6 @@ public class PlayingActivity extends BaseActivity implements IConstants {
         }
         fAdapter.notifyDataSetChanged();
         mViewPager.setCurrentItem(MusicPlayer.getQueuePosition() + 1, false);
-        fAdapter.notifyDataSetChanged();
         updateTrackInfo();
     }
 
@@ -652,6 +651,25 @@ public class PlayingActivity extends BaseActivity implements IConstants {
             //左右各加一个
             return MusicPlayer.getQueue().length + 2;
         }
+
+        
+        private int mChildCount = 0;
+
+        @Override
+        public void notifyDataSetChanged() {
+            mChildCount = getCount();
+            super.notifyDataSetChanged();
+        }
+
+        @Override
+        public int getItemPosition(Object object)   {
+            if ( mChildCount > 0) {
+                mChildCount --;
+                return POSITION_NONE;
+            }
+            return super.getItemPosition(object);
+        }
+
     }
 
     public class MyScroller extends Scroller {

@@ -115,7 +115,7 @@ public class PlayQueueFragment extends DialogFragment {
         @Override
         protected Void doInBackground(Void... params) {
             if (getActivity() != null) {
-                playlist = (ArrayList) QueueLoader.getQueueSongs(getActivity());
+                playlist = QueueLoader.getQueueSongs(getActivity());
 
             }
             return null;
@@ -201,7 +201,7 @@ public class PlayQueueFragment extends DialogFragment {
                         notifyItemRemoved(getAdapterPosition());
                         MusicPlayer.removeTrack(deleteId);
 
-                        updateDataSet((ArrayList) QueueLoader.getQueueSongs(getActivity()));
+                        updateDataSet(QueueLoader.getQueueSongs(getActivity()));
                         if (playlist == null) {
                             MusicPlayer.stop();
                         }

@@ -15,23 +15,26 @@
 package com.wm.remusic.info;
 
 import android.content.Context;
+import android.database.Cursor;
 import android.provider.MediaStore;
+import android.util.Log;
+
+import com.wm.remusic.service.MusicPlayer;
 
 import java.util.ArrayList;
-import java.util.List;
 
 
 public class QueueLoader {
 
-    private static NowPlayingCursor mCursor;
+    private static PlayQueueCursor mCursor;
 
-    public static List<MusicInfo> getQueueSongs(Context context) {
+    public static ArrayList<MusicInfo> getQueueSongs(Context context) {
 
-        final ArrayList<MusicInfo> mSongList = new ArrayList<>();
-        mCursor = new NowPlayingCursor(context);
+        final ArrayList<MusicInfo> mMusicQueues = new ArrayList<>();
+        mCursor = new PlayQueueCursor(context);
 
-        if (mCursor != null && mCursor.moveToFirst()) {
-            do {
+        while (mCursor.moveToNext()) {
+
                 MusicInfo music = new MusicInfo();
                 music.songId = mCursor.getInt(mCursor
                         .getColumnIndex(MediaStore.Audio.Media._ID));
@@ -43,15 +46,12 @@ public class QueueLoader {
                         .getColumnIndex(MediaStore.Audio.Media.ARTIST));
                 music.data = mCursor.getString(mCursor
                         .getColumnIndex(MediaStore.Audio.Media.DATA));
-
-                mSongList.add(music);
-            } while (mCursor.moveToNext());
+                mMusicQueues.add(music);
         }
         if (mCursor != null) {
             mCursor.close();
             mCursor = null;
         }
-        return mSongList;
+        return mMusicQueues;
     }
-
 }

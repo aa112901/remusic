@@ -255,7 +255,7 @@ public class PlaylistDetailFragment extends Fragment {
             Drawable drawable = null;
 
             try {
-                drawable = ImageUtils.createBlurredImageFromBitmap(loadedImage[0], getContext(), 70);
+                drawable = ImageUtils.createBlurredImageFromBitmap(loadedImage[0], getContext(), 20);
             } catch (Exception e) {
                 e.printStackTrace();
             }

@@ -35,7 +35,6 @@ import android.widget.Toast;
 import com.wm.remusic.MediaAidlInterface;
 import com.wm.remusic.R;
 
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.WeakHashMap;

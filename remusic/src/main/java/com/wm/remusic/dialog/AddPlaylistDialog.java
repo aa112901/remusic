@@ -8,7 +8,6 @@ import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,10 +32,10 @@ import java.util.ArrayList;
  * Created by naman on 20/12/15.
  */
 public class AddPlaylistDialog extends DialogFragment {
-    PlaylistInfo playlistInfo;
-    PlaylistsManager playlistsManager;
-    RecyclerView recyclerView;
-    long[] musicId;
+    private PlaylistInfo playlistInfo;
+    private PlaylistsManager playlistsManager;
+    private RecyclerView recyclerView;
+    private long[] musicId;
 
     public static AddPlaylistDialog newInstance(long[] songList) {
         AddPlaylistDialog dialog = new AddPlaylistDialog();

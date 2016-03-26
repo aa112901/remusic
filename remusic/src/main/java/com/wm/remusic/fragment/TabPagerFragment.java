@@ -25,9 +25,9 @@ import java.util.List;
  */
 public class TabPagerFragment extends Fragment {
     //PreferencesUtility mPreferences;
-    ViewPager viewPager;
-    int page = 0;
-    ActionBar ab;
+    private ViewPager viewPager;
+    private int page = 0;
+    private ActionBar ab;
 
     public static final TabPagerFragment newInstance(int page) {
         TabPagerFragment f = new TabPagerFragment();

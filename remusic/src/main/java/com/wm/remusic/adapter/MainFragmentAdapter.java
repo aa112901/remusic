@@ -43,7 +43,7 @@ import java.util.List;
  */
 public class MainFragmentAdapter extends RecyclerView.Adapter<MainFragmentAdapter.ItemHolder> {
 
-    ArrayList<Playlist> playlists;
+    private ArrayList<Playlist> playlists;
     private boolean expanded = true;
     private Activity mContext;
     private List itemResults = Collections.emptyList();
@@ -233,8 +233,8 @@ public class MainFragmentAdapter extends RecyclerView.Adapter<MainFragmentAdapte
                         if (position == 5) {
                             Toast.makeText(mContext, "此歌单不应删除", Toast.LENGTH_SHORT).show();
                         } else {
-                            new AlertDialog.Builder(mContext).setTitle("确定删除歌曲吗").
-                                    setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                            new AlertDialog.Builder(mContext).setTitle(mContext.getString(R.string.sure_to_delete_music)).
+                                    setPositiveButton(mContext.getString(R.string.sure), new DialogInterface.OnClickListener() {
                                         @Override
                                         public void onClick(DialogInterface dialog, int which) {
 
@@ -246,7 +246,7 @@ public class MainFragmentAdapter extends RecyclerView.Adapter<MainFragmentAdapte
                                             dialog.dismiss();
                                         }
                                     }).
-                                    setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                                    setNegativeButton(mContext.getString(R.string.cancel), new DialogInterface.OnClickListener() {
                                         @Override
                                         public void onClick(DialogInterface dialog, int which) {
                                             dialog.dismiss();

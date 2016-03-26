@@ -18,10 +18,10 @@ import java.util.List;
  * Created by wm on 2016/2/21.
  */
 public class OverFlowAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements View.OnClickListener {
-    List<OverFlowItem> mList;
-    List<MusicInfo> musicInfos;
-    Context mContext;
-    Activity activity;
+    private List<OverFlowItem> mList;
+    private List<MusicInfo> musicInfos;
+    private Context mContext;
+    private Activity activity;
     private OnRecyclerViewItemClickListener mOnItemClickListener = null;
 
     public OverFlowAdapter(Activity activity, List<OverFlowItem> list, List<MusicInfo> info) {

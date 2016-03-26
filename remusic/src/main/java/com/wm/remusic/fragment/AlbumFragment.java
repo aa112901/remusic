@@ -35,7 +35,7 @@ import java.util.List;
  */
 public class AlbumFragment extends BaseFragment {
 
-    LinearLayoutManager layoutManager;
+    private LinearLayoutManager layoutManager;
     private List<AlbumInfo> mAlbumList = new ArrayList<>();
     private AlbumAdapter mAdapter;
     private RecyclerView recyclerView;

@@ -47,22 +47,22 @@ import java.util.ArrayList;
  */
 public class PlaylistDetailFragment extends Fragment {
 
-    long playlsitId = -1;
-    String albumPath, playlistname;
+    private long playlsitId = -1;
+    private String albumPath, playlistname;
 
-    PlaylistsManager playlistsManager;
+    private PlaylistsManager playlistsManager;
 
-    SimpleDraweeView albumArtSmall;
-    ImageView albumArt;
-    TextView albumTitle, albumDetails;
+    private SimpleDraweeView albumArtSmall;
+    private ImageView albumArt;
+    private TextView albumTitle, albumDetails;
 
-    RecyclerView recyclerView;
-    PlaylistDetailAdapter mAdapter;
+    private RecyclerView recyclerView;
+    private PlaylistDetailAdapter mAdapter;
 
-    Toolbar toolbar;
+    private Toolbar toolbar;
 
-    CollapsingToolbarLayout collapsingToolbarLayout;
-    AppBarLayout appBarLayout;
+    private CollapsingToolbarLayout collapsingToolbarLayout;
+    private AppBarLayout appBarLayout;
     private Context context;
     //接受广播
     private BroadcastReceiver mStatusListener = new BroadcastReceiver() {

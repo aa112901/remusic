@@ -17,7 +17,7 @@ import com.wm.remusic.service.MusicPlayer;
  */
 public class TimingFragment extends DialogFragment implements View.OnClickListener {
 
-    TextView timing10, timing20, timing30, timing45, timing60, timing90;
+    private TextView timing10, timing20, timing30, timing45, timing60, timing90;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,

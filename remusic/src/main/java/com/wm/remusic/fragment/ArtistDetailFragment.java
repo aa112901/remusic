@@ -32,13 +32,12 @@ import java.util.ArrayList;
  * Created by wm on 2016/1/7.
  */
 public class ArtistDetailFragment extends BaseFragment {
-    int currentlyPlayingPosition = 0;
-    long artistID = -1;
-    LinearLayoutManager layoutManager;
-    Toolbar toolbar;
-    ActionBar ab;
+    private int currentlyPlayingPosition = 0;
+    private long artistID = -1;
+    private LinearLayoutManager layoutManager;
+    private Toolbar toolbar;
+    private ActionBar ab;
 
-    private ArrayList<MusicInfo> musicInfos = new ArrayList<>();
     private RecyclerView recyclerView;
     private ArtDetailAdapter artDetailAdapter;
 

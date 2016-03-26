@@ -10,10 +10,11 @@ import java.lang.ref.WeakReference;
  * Created by wm on 2016/3/26.
  */
 public class HandlerUtil extends Handler {
-    static class CommonHandler extends Handler {
-        WeakReference<Context> mActivityReference;
 
-        CommonHandler(Context activity) {
+    static class CommonHandler extends Handler {
+        WeakReference<Activity> mActivityReference;
+
+        CommonHandler(Activity activity) {
             mActivityReference = new WeakReference<>(activity);
         }
     }

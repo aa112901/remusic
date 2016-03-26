@@ -33,8 +33,8 @@ import java.util.List;
  */
 public class AlbumDetailFragment extends BaseFragment {
 
-    int currentlyPlayingPosition = 0;
-    ActionBar ab;
+    private int currentlyPlayingPosition = 0;
+    private ActionBar ab;
     private AlbumDetailAdapter mAdapter;
     private List<MusicInfo> musicInfos = new ArrayList<>();
     private long albumID = -1;

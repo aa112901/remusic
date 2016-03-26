@@ -31,12 +31,12 @@ import java.util.ArrayList;
  */
 public class PlayQueueFragment extends DialogFragment {
 
-    RecyclerView.ItemDecoration itemDecoration;
-    PlaylistAdapter adapter;
-    ArrayList<MusicInfo> playlist;
-    TextView playlistNumber, clearAll, addToPlaylist;
-    MusicInfo model;
-    int currentlyPlayingPosition = 0;
+    private RecyclerView.ItemDecoration itemDecoration;
+    private PlaylistAdapter adapter;
+    private ArrayList<MusicInfo> playlist;
+    private TextView playlistNumber, clearAll, addToPlaylist;
+    private MusicInfo musicInfo;
+    private int currentlyPlayingPosition = 0;
     MusicPlaybackState musicPlaybackState;
     private RecyclerView recyclerView;  //弹出的activity列表
     private LinearLayoutManager layoutManager;
@@ -161,11 +161,11 @@ public class PlayQueueFragment extends DialogFragment {
 
         @Override
         public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-            model = playlist.get(position);
+            musicInfo = playlist.get(position);
             ((ItemViewHolder) holder).MusicName.setText(playlist.get(position).musicName);
             ((ItemViewHolder) holder).Artist.setText("-" + playlist.get(position).artist);
             //判断该条目音乐是否在播放
-            if (MusicPlayer.getCurrentAudioId() == model.songId) {
+            if (MusicPlayer.getCurrentAudioId() == musicInfo.songId) {
                 ((ItemViewHolder) holder).playstate.setVisibility(View.VISIBLE);
                 ((ItemViewHolder) holder).playstate.setImageResource(R.drawable.song_play_icon);
                 currentlyPlayingPosition = position;

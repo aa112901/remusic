@@ -14,7 +14,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -32,7 +31,6 @@ import com.wm.remusic.service.MediaService;
 import com.wm.remusic.service.MusicPlayer;
 import com.wm.remusic.uitl.IConstants;
 
-import java.io.File;
 import java.util.ArrayList;
 
 /**
@@ -40,13 +38,13 @@ import java.util.ArrayList;
  */
 public class SelectActivity extends AppCompatActivity implements View.OnClickListener {
 
-    ArrayList<MusicInfo> mList;
-    SelectAdapter mAdapter;
-    ActionBar ab;
+    private ArrayList<MusicInfo> mList;
+    private SelectAdapter mAdapter;
+    private ActionBar ab;
     private RecyclerView recyclerView;
     private LinearLayoutManager layoutManager;
     private Toolbar toolbar;
-    private LinearLayout l1, l2, l3;
+    private LinearLayout nextPlay, addtoPlaylist, delete;
 
 
     @Override
@@ -54,12 +52,12 @@ public class SelectActivity extends AppCompatActivity implements View.OnClickLis
         super.onCreate(savedInstanceState);
         setContentView(R.layout.select);
 
-        l1 = (LinearLayout) findViewById(R.id.select_next);
-        l2 = (LinearLayout) findViewById(R.id.select_addtoplaylist);
-        l3 = (LinearLayout) findViewById(R.id.select_del);
-        l1.setOnClickListener(this);
-        l2.setOnClickListener(this);
-        l3.setOnClickListener(this);
+        nextPlay = (LinearLayout) findViewById(R.id.select_next);
+        addtoPlaylist = (LinearLayout) findViewById(R.id.select_addtoplaylist);
+        delete = (LinearLayout) findViewById(R.id.select_del);
+        nextPlay.setOnClickListener(this);
+        addtoPlaylist.setOnClickListener(this);
+        delete.setOnClickListener(this);
 
         recyclerView = (RecyclerView) findViewById(R.id.recyclerview);
         layoutManager = new LinearLayoutManager(this);
@@ -291,7 +289,7 @@ public class SelectActivity extends AppCompatActivity implements View.OnClickLis
             return mList == null ? 0 : mList.size();
         }
 
-        public class ListItemViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+        public class ListItemViewHolder extends RecyclerView.ViewHolder{
             //ViewHolder
             CheckBox checkBox;
             TextView mainTitle, title;
@@ -301,15 +299,6 @@ public class SelectActivity extends AppCompatActivity implements View.OnClickLis
                 this.mainTitle = (TextView) view.findViewById(R.id.select_title_main);
                 this.title = (TextView) view.findViewById(R.id.select_title_small);
                 this.checkBox = (CheckBox) view.findViewById(R.id.select_checkbox);
-
-                //为每个条目设置监听
-                view.setOnClickListener(this);
-
-            }
-
-            //加载歌手专辑界面fragment
-            @Override
-            public void onClick(View v) {
 
             }
 

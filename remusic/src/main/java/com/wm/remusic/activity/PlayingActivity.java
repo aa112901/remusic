@@ -55,9 +55,9 @@ import java.util.ArrayList;
  * Created by wm on 2016/2/21.
  */
 public class PlayingActivity extends BaseActivity implements IConstants {
-    ImageView backAlbum, playingmode, control, next, pre, playlist, cmt, fav, down, more, needle;
-    TextView timePlayed, duration;
-    SeekBar mProgress;
+    private ImageView backAlbum, playingmode, control, next, pre, playlist, cmt, fav, down, more, needle;
+    private TextView timePlayed, duration;
+    private SeekBar mProgress;
     public Runnable mUpdateProgress = new Runnable() {
 
         @Override
@@ -75,16 +75,16 @@ public class PlayingActivity extends BaseActivity implements IConstants {
 
         }
     };
-    ActionBar ab;
-    ObjectAnimator needleAnim, animator;
-    AnimatorSet animatorSet;
-    ViewPager mViewPager;
-    FragmentAdapter fAdapter;
-    BitmapFactory.Options newOpts;
-    View activeView;
-    PlaylistsManager playlistsManager;
-    WeakReference<ObjectAnimator> animatorWeakReference;
-    WeakReference<View> viewWeakReference;
+    private ActionBar ab;
+    private ObjectAnimator needleAnim, animator;
+    private AnimatorSet animatorSet;
+    private ViewPager mViewPager;
+    private FragmentAdapter fAdapter;
+    private BitmapFactory.Options newOpts;
+    private View activeView;
+    private PlaylistsManager playlistsManager;
+    private WeakReference<ObjectAnimator> animatorWeakReference;
+    private WeakReference<View> viewWeakReference;
     private boolean isFav = false;
     private boolean isNextOrPreSetPage = false; //判断viewpager由手动滑动 还是setcruuentitem换页
     private boolean duetoplaypause = false; //判读是否是播放暂停的通知，不要切换专辑封面
@@ -633,6 +633,8 @@ public class PlayingActivity extends BaseActivity implements IConstants {
 
     class FragmentAdapter extends FragmentStatePagerAdapter {
 
+        private int mChildCount = 0;
+
         public FragmentAdapter(FragmentManager fm) {
             super(fm);
         }
@@ -652,8 +654,6 @@ public class PlayingActivity extends BaseActivity implements IConstants {
             return MusicPlayer.getQueue().length + 2;
         }
 
-        
-        private int mChildCount = 0;
 
         @Override
         public void notifyDataSetChanged() {

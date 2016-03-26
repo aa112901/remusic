@@ -37,9 +37,9 @@ import static com.wm.remusic.service.MusicPlayer.mService;
 
 public class MainActivity extends BaseActivity implements NavigationView.OnNavigationItemSelectedListener,
         ServiceConnection {
-    SimpleDraweeView NavPlayImg;
-    TextView NavMusicName;
-    TextView NavArtist;
+    SimpleDraweeView navPlayImg;
+    TextView navMusicName;
+    TextView navArtist;
     ProgressBar mProgress;
     CommonHandler handler;
 
@@ -77,16 +77,16 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
 
         if (data != null) {
             Uri uri1 = Uri.parse("file://" + data);
-            NavPlayImg.setImageURI(uri1);
+            navPlayImg.setImageURI(uri1);
 
         } else {
             Uri urr = Uri.parse("res:/" + R.drawable.placeholder_disk_210);
-            NavPlayImg.setImageURI(urr);
-            // NavPlayImg.setImageResource(R.drawable.placeholder_disk_210);
+            navPlayImg.setImageURI(urr);
+            // navPlayImg.setImageResource(R.drawable.placeholder_disk_210);
         }
 
-        NavMusicName.setText(MusicPlayer.getTrackName());
-        NavArtist.setText(MusicPlayer.getArtistName());
+        navMusicName.setText(MusicPlayer.getTrackName());
+        navArtist.setText(MusicPlayer.getArtistName());
         mProgress.setMax((int) MusicPlayer.duration());
         mProgress.postDelayed(mUpdateProgress, 10);
         if (MusicPlayer.isPlaying()) {
@@ -115,9 +115,9 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         setContentView(R.layout.activity_main);
 
 
-        NavPlayImg = (SimpleDraweeView) findViewById(R.id.playbar_img);
-        NavMusicName = (TextView) findViewById(R.id.playbar_info);
-        NavArtist = (TextView) findViewById(R.id.playbar_singer);
+        navPlayImg = (SimpleDraweeView) findViewById(R.id.playbar_img);
+        navMusicName = (TextView) findViewById(R.id.playbar_info);
+        navArtist = (TextView) findViewById(R.id.playbar_singer);
         mProgress = (ProgressBar) findViewById(R.id.song_progress_normal);
         LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams) mProgress.getLayoutParams();
         mProgress.measure(0, 0);
@@ -225,7 +225,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         switch (item.getItemId()) {
 
             case R.id.action_exit:// 退出
-                // Application.getInstance().killActivity();
+
                 if(MusicPlayer.isPlaying()){
                     MusicPlayer.playOrPause();
                 }

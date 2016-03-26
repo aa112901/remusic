@@ -1149,7 +1149,7 @@ public class MediaService extends Service {
 
 
         Notification notification = new Notification();
-        notification.icon = R.drawable.ic_launcher;
+      //  notification.icon = R.drawable.ic_launcher;
         notification.tickerText = albumName;
         notification.contentIntent = clickIntent;
         notification.contentView = remoteViews;

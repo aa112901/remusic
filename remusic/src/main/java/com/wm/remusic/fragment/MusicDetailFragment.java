@@ -18,8 +18,8 @@ import com.wm.remusic.uitl.MusicUtils;
  * Created by wm on 2016/3/2.
  */
 public class MusicDetailFragment extends DialogFragment {
-    TextView title, name, time, qua, size, path;
-    MusicInfo musicInfo;
+    private TextView title, name, time, qua, size, path;
+    private MusicInfo musicInfo;
 
     public static MusicDetailFragment newInstance(MusicInfo musicInfo) {
         MusicDetailFragment fragment = new MusicDetailFragment();

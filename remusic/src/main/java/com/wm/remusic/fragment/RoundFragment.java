@@ -25,10 +25,11 @@ import java.lang.ref.WeakReference;
  * Created by wm on 2016/3/11.
  */
 public class RoundFragment extends Fragment {
-    WeakReference<ObjectAnimator> animatorWeakReference;
-    SimpleDraweeView sdv;
-    long musicId = -1;
-    ObjectAnimator animator;
+
+    private WeakReference<ObjectAnimator> animatorWeakReference;
+    private SimpleDraweeView sdv;
+    private long musicId = -1;
+    private ObjectAnimator animator;
 
     public static RoundFragment newInstance(long musicId) {
         RoundFragment fragment = new RoundFragment();

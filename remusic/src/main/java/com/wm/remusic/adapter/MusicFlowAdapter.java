@@ -17,9 +17,9 @@ import java.util.List;
  * Created by wm on 2016/2/21.
  */
 public class MusicFlowAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements View.OnClickListener {
-    List<OverFlowItem> mList;
-    MusicInfo musicInfo;
-    Activity mContext;
+    private List<OverFlowItem> mList;
+    private MusicInfo musicInfo;
+    private Activity mContext;
     private OnRecyclerViewItemClickListener mOnItemClickListener = null;
 
     public MusicFlowAdapter(Activity context, List<OverFlowItem> list, MusicInfo info) {

@@ -34,7 +34,6 @@ import com.wm.remusic.service.MusicPlayer;
 import com.wm.remusic.uitl.DragSortRecycler;
 import com.wm.remusic.uitl.IConstants;
 
-import java.io.File;
 import java.util.ArrayList;
 
 /**
@@ -42,15 +41,15 @@ import java.util.ArrayList;
  */
 public class PlaylistSelectActivity extends AppCompatActivity implements View.OnClickListener {
 
-    ArrayList<MusicInfo> arrayList;
-    SelectAdapter mAdapter;
-    ActionBar ab;
+    private ArrayList<MusicInfo> arrayList;
+    private SelectAdapter mAdapter;
+    private ActionBar ab;
     private RecyclerView recyclerView;
     private LinearLayoutManager layoutManager;
     private Toolbar toolbar;
     private PlaylistsManager pManager;
     private long playlistId;
-    private LinearLayout l1, l2, l3;
+    private LinearLayout nextPlay, addtoPlaylist, delete;
 
 
     @Override
@@ -59,12 +58,12 @@ public class PlaylistSelectActivity extends AppCompatActivity implements View.On
         setContentView(R.layout.select);
         pManager = PlaylistsManager.getInstance(this);
 
-        l1 = (LinearLayout) findViewById(R.id.select_next);
-        l2 = (LinearLayout) findViewById(R.id.select_addtoplaylist);
-        l3 = (LinearLayout) findViewById(R.id.select_del);
-        l1.setOnClickListener(this);
-        l2.setOnClickListener(this);
-        l3.setOnClickListener(this);
+        nextPlay = (LinearLayout) findViewById(R.id.select_next);
+        addtoPlaylist = (LinearLayout) findViewById(R.id.select_addtoplaylist);
+        delete = (LinearLayout) findViewById(R.id.select_del);
+        nextPlay.setOnClickListener(this);
+        addtoPlaylist.setOnClickListener(this);
+        delete.setOnClickListener(this);
 
         recyclerView = (RecyclerView) findViewById(R.id.recyclerview);
         layoutManager = new LinearLayoutManager(this);
@@ -351,7 +350,7 @@ public class PlaylistSelectActivity extends AppCompatActivity implements View.On
             return mList == null ? 0 : mList.size();
         }
 
-        public class ListItemViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+        public class ListItemViewHolder extends RecyclerView.ViewHolder{
             //ViewHolder
             CheckBox checkBox;
             TextView mainTitle, title;
@@ -364,18 +363,8 @@ public class PlaylistSelectActivity extends AppCompatActivity implements View.On
                 this.checkBox = (CheckBox) view.findViewById(R.id.select_checkbox);
                 this.move = (ImageView) view.findViewById(R.id.select_move);
 
-                //为每个条目设置监听
-                view.setOnClickListener(this);
-
             }
-
-
-            @Override
-            public void onClick(View v) {
-
             }
-
-        }
     }
 
 }

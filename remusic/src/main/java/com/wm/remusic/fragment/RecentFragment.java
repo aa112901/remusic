@@ -38,11 +38,11 @@ import java.util.List;
  */
 public class RecentFragment extends Fragment {
 
-    public int currentlyPlayingPosition = 0;
-    Adapter mAdapter;
-    RecentStore recentStore;
-    Toolbar toolbar;
-    List<Song> mList;
+    private int currentlyPlayingPosition = 0;
+    private Adapter mAdapter;
+    private RecentStore recentStore;
+    private Toolbar toolbar;
+    private List<Song> mList;
     private RecyclerView recyclerView;
     private LinearLayoutManager layoutManager;
     //接受歌曲播放变化和列表变化广播，刷新列表

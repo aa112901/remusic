@@ -34,8 +34,8 @@ import java.util.ArrayList;
  * Created by wm on 2016/1/19.
  */
 public class MusicFragment extends BaseFragment {
-    public int currentlyPlayingPosition = 0;
-    Adapter mAdapter;
+    private int currentlyPlayingPosition = 0;
+    private Adapter mAdapter;
     private ArrayList<MusicInfo> musicInfos;
     private RecyclerView recyclerView;
     private LinearLayoutManager layoutManager;

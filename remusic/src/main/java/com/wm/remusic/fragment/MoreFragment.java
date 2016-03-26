@@ -47,20 +47,20 @@ import java.util.List;
  * Created by wm on 2016/1/31.
  */
 public class MoreFragment extends DialogFragment {
-    int type;
-    double heightPercent;
-    TextView topTitle;
-    List<MusicInfo> list = null;
-    MusicFlowAdapter muaicflowAdapter;
-    MusicInfo adapterMusicInfo;
-    OverFlowAdapter commonAdapter;
+    private int type;
+    private double heightPercent;
+    private TextView topTitle;
+    private List<MusicInfo> list = null;
+    private MusicFlowAdapter muaicflowAdapter;
+    private MusicInfo adapterMusicInfo;
+    private OverFlowAdapter commonAdapter;
     //弹出的activity列表
     private List<OverFlowItem> mlistInfo = new ArrayList<>();  //声明一个list，动态存储要显示的信息
     private RecyclerView recyclerView;
     private LinearLayoutManager layoutManager;
     private String args;
     private String musicName, artist, albumId, albumName;
-    Context mContext;
+    private Context mContext;
 
     public static MoreFragment newInstance(String id, int startFrom) {
         MoreFragment fragment = new MoreFragment();

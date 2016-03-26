@@ -33,11 +33,11 @@ import java.util.List;
  * Created by wm on 2016/1/18.
  */
 public class FolderDetailFragment extends BaseFragment {
-    String folder_path;
-    LinearLayoutManager layoutManager;
-    Toolbar toolbar;
-    int currentlyPlayingPosition = 0;
-    ActionBar ab;
+    private String folder_path;
+    private LinearLayoutManager layoutManager;
+    private Toolbar toolbar;
+    private int currentlyPlayingPosition = 0;
+    private ActionBar ab;
     private List<MusicInfo> musicInfos = new ArrayList<>();
     private RecyclerView recyclerView;
     private FolderDetailAdapter folderDetailAdapter;

@@ -33,9 +33,9 @@ import java.util.List;
  */
 public class MainFragment extends BaseFragment {
 
-    MainFragmentAdapter mAdapter;
-    ActionBar ab;
-    ArrayList<Playlist> playlists;
+    private MainFragmentAdapter mAdapter;
+    private ActionBar ab;
+    private ArrayList<Playlist> playlists;
     private RecyclerView recyclerView;
     private LinearLayoutManager layoutManager;
     private List results = Collections.emptyList();

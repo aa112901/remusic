@@ -28,10 +28,10 @@
                 android:transitionName="transition_album_art"
                 app:layout_collapseMode="parallax" />
 
-            <!--<View-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="match_parent"-->
-            <!--android:background="#22000000" />-->
+            <View
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="#60000000" />
 
 
             <LinearLayout

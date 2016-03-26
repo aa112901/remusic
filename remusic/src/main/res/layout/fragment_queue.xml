@@ -24,6 +24,7 @@
                 android:layout_weight="1"
                 android:gravity="center"
                 android:text="收藏"
+                android:layout_margin="3dp"
                 android:textSize="12sp" />
 
             <TextView
@@ -43,6 +44,7 @@
                 android:layout_weight="1"
                 android:gravity="center_vertical|center_horizontal"
                 android:text="清空"
+                android:layout_margin="3dp"
                 android:textSize="12sp" />
         </LinearLayout>
 

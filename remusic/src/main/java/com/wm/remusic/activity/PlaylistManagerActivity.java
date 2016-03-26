@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -43,19 +44,15 @@ public class PlaylistManagerActivity extends AppCompatActivity implements View.O
     private RecyclerView recyclerView;
     private LinearLayoutManager layoutManager;
     private Toolbar toolbar;
-    private PlaylistsManager pManager;
-    private long playlistId;
-    private LinearLayout l1;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_playlist_manager);
-        pManager = PlaylistsManager.getInstance(this);
         playlistInfo = PlaylistInfo.getInstance(this);
 
-        l1 = (LinearLayout) findViewById(R.id.select_next);
-
+        LinearLayout delete = (LinearLayout) findViewById(R.id.select_del);
+        delete.setOnClickListener(this);
 
         recyclerView = (RecyclerView) findViewById(R.id.recyclerview);
         layoutManager = new LinearLayoutManager(this);
@@ -89,7 +86,12 @@ public class PlaylistManagerActivity extends AppCompatActivity implements View.O
                         setPositiveButton(getResources().getString(R.string.sure), new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                // TODO: 2016/3/17
+                                for (int i = 0; i < selectList.size(); i++){
+                                    PlaylistInfo.getInstance(PlaylistManagerActivity.this).deletePlaylist(selectList.get(i).id);
+                                    PlaylistsManager.getInstance(PlaylistManagerActivity.this).delete(selectList.get(i).id);
+                                }
+                                new reload().execute();
+                                ab.setTitle("已选择0项");
                                 dialog.dismiss();
                             }
                         }).
@@ -118,6 +120,20 @@ public class PlaylistManagerActivity extends AppCompatActivity implements View.O
         finish();
     }
 
+    private class reload extends AsyncTask<Void,Void,Void>{
+
+        @Override
+        protected Void doInBackground(Void... params) {
+            playlists = playlistInfo.getPlaylist();
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void v){
+            mAdapter.updateDataSet(playlists);
+            mAdapter.notifyDataSetChanged();
+        }
+    }
 
     //异步加载recyclerview界面
     private class loadSongs extends AsyncTask<String, Void, String> {
@@ -143,7 +159,7 @@ public class PlaylistManagerActivity extends AppCompatActivity implements View.O
                 @Override
                 public void onItemMoved(int from, int to) {
                     Log.d("queue", "onItemMoved " + from + " to " + to);
-                    Playlist playlist = mAdapter.getMusicAt(from);
+                    final Playlist playlist = mAdapter.getMusicAt(from);
                     boolean f = mAdapter.isItemChecked(from);
                     boolean t = mAdapter.isItemChecked(to);
                     mAdapter.removeSongAt(from);
@@ -152,15 +168,21 @@ public class PlaylistManagerActivity extends AppCompatActivity implements View.O
                     mAdapter.setItemChecked(to, f);
                     mAdapter.notifyDataSetChanged();
 
-//                    new Handler().postDelayed(new Runnable() {
-//                        @Override
-//                        public void run() {
-//                            pManager.delete(playlistId);
-//                            for(int i = 0;i<mAdapter.mList.size(); i++){
-//                                pManager.Insert(PlaylistManagerActivity.this,playlistId, mAdapter.mList.get(i).songId, i);
-//                            }
-//                        }
-//                    },300);
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+
+                            int length = mAdapter.mList.size();
+                            long[] playlists = new long[length];
+                            for(int i = 0; i< length;i++){
+                                playlists[i] = mAdapter.mList.get(i).id;
+                            }
+                            
+                            playlistInfo.deletePlaylist(playlists);
+                            playlistInfo.addPlaylist(mAdapter.mList);
+
+                        }
+                    },300);
 
                     //MusicPlayer.moveQueueItem(from, to);
                 }
@@ -198,7 +220,6 @@ public class PlaylistManagerActivity extends AppCompatActivity implements View.O
         }
 
         public ArrayList<Playlist> getSelectedItem() {
-
 
             ArrayList<Playlist> selectList = new ArrayList<>();
             for (int i = 0; i < mList.size(); i++) {

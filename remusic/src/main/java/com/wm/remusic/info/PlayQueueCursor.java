@@ -41,13 +41,11 @@ public class PlayQueueCursor extends AbstractCursor {
 
             AudioColumns.ALBUM,
 
-            AudioColumns.DURATION,
-
             AudioColumns.TRACK,
 
             AudioColumns.ARTIST_ID,
 
-            AudioColumns.TRACK,
+            AudioColumns.DATA
     };
 
     private final Context mContext;

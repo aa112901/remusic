@@ -34,19 +34,11 @@ public class QueueLoader {
         mCursor = new PlayQueueCursor(context);
 
         while (mCursor.moveToNext()) {
-
                 MusicInfo music = new MusicInfo();
-                music.songId = mCursor.getInt(mCursor
-                        .getColumnIndex(MediaStore.Audio.Media._ID));
-                music.albumName = mCursor.getString(mCursor
-                        .getColumnIndex(MediaStore.Audio.Albums.ALBUM));
-                music.musicName = mCursor.getString(mCursor
-                        .getColumnIndex(MediaStore.Audio.Media.TITLE));
-                music.artist = mCursor.getString(mCursor
-                        .getColumnIndex(MediaStore.Audio.Media.ARTIST));
-                music.data = mCursor.getString(mCursor
-                        .getColumnIndex(MediaStore.Audio.Media.DATA));
-                mMusicQueues.add(music);
+                music.songId = mCursor.getInt(0);
+                music.albumName = mCursor.getString(4);
+                music.musicName = mCursor.getString(1);
+                music.artist = mCursor.getString(2);
         }
         if (mCursor != null) {
             mCursor.close();

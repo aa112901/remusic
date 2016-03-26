@@ -21,7 +21,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_above="@+id/select_del"
-        android:layout_below="@+id/toolbar"></android.support.v7.widget.RecyclerView>
+        android:layout_below="@+id/toolbar"/>
 
     <LinearLayout
         android:id="@+id/select_del"

@@ -4,6 +4,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.provider.MediaStore;
 
 import com.wm.remusic.info.Playlist;
 
@@ -63,6 +64,28 @@ public class PlaylistInfo {
         }
     }
 
+    public synchronized void addPlaylist(ArrayList<Playlist> playlists) {
+        final SQLiteDatabase database = mMusicDatabase.getWritableDatabase();
+        database.beginTransaction();
+
+        try {
+            for(int i = 0; i< playlists.size(); i++){
+                ContentValues values = new ContentValues(4);
+                values.put(PlaylistInfoColumns.PLAYLIST_ID, playlists.get(i).id);
+                values.put(PlaylistInfoColumns.PLAYLIST_NAME, playlists.get(i).name);
+                values.put(PlaylistInfoColumns.SONG_COUNT, playlists.get(i).songCount);
+                values.put(PlaylistInfoColumns.ALBUM_ART, playlists.get(i).albumArt);
+
+                database.insert(PlaylistInfoColumns.NAME, null, values);
+            }
+            database.setTransactionSuccessful();
+        } finally {
+            database.endTransaction();
+        }
+    }
+
+
+
 
     public synchronized void updatePlaylist(long playlistid, int oldcount) {
         ArrayList<Playlist> results = getPlaylist();
@@ -96,6 +119,23 @@ public class PlaylistInfo {
         final SQLiteDatabase database = mMusicDatabase.getWritableDatabase();
         database.delete(PlaylistInfoColumns.NAME, PlaylistInfoColumns.PLAYLIST_ID + " = ?", new String[]
                 {String.valueOf(PlaylistId)});
+    }
+
+    public synchronized void deletePlaylist(final long[] PlaylistId) {
+
+        final StringBuilder selection = new StringBuilder();
+        selection.append( PlaylistInfoColumns.PLAYLIST_ID + " IN (");
+        for (int i = 0; i < PlaylistId.length; i++) {
+            selection.append(PlaylistId[i]);
+            if (i < PlaylistId.length - 1) {
+                selection.append(",");
+            }
+        }
+        selection.append(")");
+
+
+        final SQLiteDatabase database = mMusicDatabase.getWritableDatabase();
+        database.delete(PlaylistInfoColumns.NAME, selection.toString(), null);
     }
 
     public void deleteAll() {

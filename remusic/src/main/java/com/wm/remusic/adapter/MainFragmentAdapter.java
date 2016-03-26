@@ -100,7 +100,7 @@ public class MainFragmentAdapter extends RecyclerView.Adapter<MainFragmentAdapte
                 Playlist playlist = (Playlist) itemResults.get(i);
                 itemHolder.albumArt.setImageURI(Uri.parse(playlist.albumArt));
                 itemHolder.title.setText(playlist.name);
-                itemHolder.songcount.setText(playlist.songCount + "");
+                itemHolder.songcount.setText(playlist.songCount + "首");
                 setOnPlaylistListener(itemHolder, i, playlist.id, playlist.albumArt, playlist.name);
                 break;
             case 2:

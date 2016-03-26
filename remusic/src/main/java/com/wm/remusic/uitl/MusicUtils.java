@@ -378,12 +378,14 @@ public class MusicUtils implements IConstants {
     public static Uri getAlbumUri(Context context, long musicId) {
         ContentResolver cr = context.getContentResolver();
         Cursor cursor = cr.query(Media.EXTERNAL_CONTENT_URI, proj_music, "_id =" + String.valueOf(musicId), null, null);
+        long id = -3;
         if (cursor == null) {
             cursor.close();
             return null;
         }
-        cursor.moveToFirst();
-        long id = cursor.getInt(cursor.getColumnIndex(Media.ALBUM_ID));
+        if(cursor.moveToFirst()){
+           id = cursor.getInt(cursor.getColumnIndex(Media.ALBUM_ID));
+        }
 
         cursor.close();
         return getAlbumArtUri(id);

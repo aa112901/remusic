@@ -8,6 +8,7 @@ import com.facebook.common.util.ByteConstants;
 import com.facebook.drawee.backends.pipeline.Fresco;
 import com.facebook.imagepipeline.cache.MemoryCacheParams;
 import com.facebook.imagepipeline.core.ImagePipelineConfig;
+import com.wm.remusic.activity.UnceHandler;
 import com.wm.remusic.provider.PlaylistInfo;
 import com.wm.remusic.uitl.PreferencesUtility;
 
@@ -49,12 +50,18 @@ public class MainApplication extends Application {
 //        return application.refWatcher;
 //    }
 
+    public void init(){
+        //设置该CrashHandler为程序的默认处理器
+        UnceHandler catchExcep = new UnceHandler(this);
+        Thread.setDefaultUncaughtExceptionHandler(catchExcep);
+    }
+
     @Override
     public void onCreate() {
         frescoInit();
         super.onCreate();
 //        refWatcher = LeakCanary.install(this);
-
+        init();
         if (PreferencesUtility.getInstance(this).getFavriateMusicPlaylist() == false) {
             PlaylistInfo.getInstance(this).addPlaylist(favPlaylist, getResources().getString(R.string.my_fav_playlist),
                     0, "res:/" + R.mipmap.lay_protype_default);

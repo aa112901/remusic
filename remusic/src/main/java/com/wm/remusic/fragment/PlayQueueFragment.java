@@ -6,6 +6,7 @@ import android.os.Handler;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -123,6 +124,7 @@ public class PlayQueueFragment extends DialogFragment {
 
         @Override
         protected void onPostExecute(Void result) {
+
             if (playlist != null) {
                 adapter = new PlaylistAdapter(playlist);
                 recyclerView.setAdapter(adapter);

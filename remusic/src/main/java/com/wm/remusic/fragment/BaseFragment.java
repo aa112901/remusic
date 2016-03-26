@@ -23,6 +23,8 @@ public class BaseFragment extends Fragment {
                 reloadAdapter();
             } else if (action.equals(IConstants.MUSIC_COUNT_CHANGED)) {
                 reloadAdapter();
+            }else if(action.equals(IConstants.PLAYLIST_COUNT_CHANGED)){
+                reloadAdapter();
             }
         }
     };
@@ -33,6 +35,7 @@ public class BaseFragment extends Fragment {
         IntentFilter f = new IntentFilter();
         f.addAction(MediaService.META_CHANGED);
         f.addAction(IConstants.MUSIC_COUNT_CHANGED);
+        f.addAction(IConstants.PLAYLIST_COUNT_CHANGED);
         getActivity().registerReceiver(mStatusListener, f);
     }
 

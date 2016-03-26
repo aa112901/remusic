@@ -34,11 +34,12 @@ public class QueueLoader {
         mCursor = new PlayQueueCursor(context);
 
         while (mCursor.moveToNext()) {
-                MusicInfo music = new MusicInfo();
-                music.songId = mCursor.getInt(0);
-                music.albumName = mCursor.getString(4);
-                music.musicName = mCursor.getString(1);
-                music.artist = mCursor.getString(2);
+            MusicInfo music = new MusicInfo();
+            music.songId = mCursor.getInt(0);
+            music.albumName = mCursor.getString(4);
+            music.musicName = mCursor.getString(1);
+            music.artist = mCursor.getString(2);
+            mMusicQueues.add(music);
         }
         if (mCursor != null) {
             mCursor.close();

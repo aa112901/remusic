@@ -37,7 +37,7 @@ import java.util.List;
 /**
  * Created by wm on 2016/3/8.
  */
-public class MainFragment extends Fragment {
+public class MainFragment extends BaseFragment {
 
     MainFragmentAdapter mAdapter;
     ActionBar ab;
@@ -49,19 +49,19 @@ public class MainFragment extends Fragment {
     private PlaylistInfo playlistInfo;
     private int localMusicCount, recentMusicCount, artistsCount;
     //接受歌曲播放变化和列表变化广播，刷新列表
-    private BroadcastReceiver mStatusListener = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            String action = intent.getAction();
-            if (action.equals(MediaService.META_CHANGED)) {
-                //reloadAdapter();
-            } else if (action.equals(IConstants.MUSIC_COUNT_CHANGED)) {
-                // reloadAdapter();
-            } else if (action.equals(IConstants.PLAYLIST_COUNT_CHANGED)) {
-                reloadAdapter();
-            }
-        }
-    };
+//    private BroadcastReceiver mStatusListener = new BroadcastReceiver() {
+//        @Override
+//        public void onReceive(Context context, Intent intent) {
+//            String action = intent.getAction();
+//            if (action.equals(MediaService.META_CHANGED)) {
+//                //reloadAdapter();
+//            } else if (action.equals(IConstants.MUSIC_COUNT_CHANGED)) {
+//                // reloadAdapter();
+//            } else if (action.equals(IConstants.PLAYLIST_COUNT_CHANGED)) {
+//                reloadAdapter();
+//            }
+//        }
+//    };
 
     @Override
     public void onCreate(final Bundle savedInstanceState) {
@@ -99,13 +99,13 @@ public class MainFragment extends Fragment {
     public void onResume() {
         super.onResume();
 
-        //注册广播
-        IntentFilter f = new IntentFilter();
-        f.addAction(MediaService.META_CHANGED);
-        f.addAction(IConstants.MUSIC_COUNT_CHANGED);
-        f.addAction(IConstants.PLAYLIST_COUNT_CHANGED);
-        getActivity().registerReceiver(mStatusListener, f);
-        reloadAdapter();
+//        //注册广播
+//        IntentFilter f = new IntentFilter();
+//        f.addAction(MediaService.META_CHANGED);
+//        f.addAction(IConstants.MUSIC_COUNT_CHANGED);
+//        f.addAction(IConstants.PLAYLIST_COUNT_CHANGED);
+//        getActivity().registerReceiver(mStatusListener, f);
+        //reloadAdapter();
 
     }
 
@@ -114,6 +114,7 @@ public class MainFragment extends Fragment {
         super.setUserVisibleHint(isVisibleToUser);
         if (isVisibleToUser) {
             //相当于Fragment的onResume
+            reloadAdapter();
         } else {
             //相当于Fragment的onPause
 
@@ -123,7 +124,7 @@ public class MainFragment extends Fragment {
     @Override
     public void onPause() {
 
-        getActivity().unregisterReceiver(mStatusListener);
+        //getActivity().unregisterReceiver(mStatusListener);
         super.onPause();
     }
 
@@ -152,7 +153,7 @@ public class MainFragment extends Fragment {
     }
 
     //刷新列表
-    private void reloadAdapter() {
+    public void reloadAdapter() {
         new AsyncTask<Void, Void, Void>() {
             @Override
             protected Void doInBackground(final Void... unused) {

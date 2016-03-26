@@ -115,6 +115,60 @@ public class PlaylistInfo {
         }
     }
 
+    //删除本地文件时更新播放列表歌曲数量信息
+    public void updatePlaylistMusicCount(long[] PlaylistId) {
+
+        SQLiteDatabase database = null;
+
+        final StringBuilder selection = new StringBuilder();
+        selection.append( PlaylistInfoColumns.PLAYLIST_ID + " IN (");
+        for (int i = 0; i < PlaylistId.length; i++) {
+            selection.append(PlaylistId[i]);
+            if (i < PlaylistId.length - 1) {
+                selection.append(",");
+            }
+        }
+        selection.append(")");
+
+        Cursor cursor = null;
+        try {
+            cursor = mMusicDatabase.getReadableDatabase().query(PlaylistInfoColumns.NAME, null,
+                    selection.toString(), null, null, null, null);
+
+            if (cursor != null && cursor.moveToFirst()) {
+               database = mMusicDatabase.getWritableDatabase();
+                database.beginTransaction();
+
+                do {
+                    int count =  cursor.getInt(cursor.getColumnIndex(PlaylistInfoColumns.SONG_COUNT)) - 1;
+                    long playlistid = cursor.getLong(cursor.getColumnIndex(PlaylistInfoColumns.PLAYLIST_ID));
+                    if(count == 0){
+                        database.delete(PlaylistInfoColumns.NAME, PlaylistInfoColumns.PLAYLIST_ID + " = ?", new String[]
+                                {String.valueOf(playlistid)});
+                    }else {
+                        ContentValues values = new ContentValues(2);
+                        values.put(PlaylistInfoColumns.PLAYLIST_ID, playlistid);
+                        values.put(PlaylistInfoColumns.SONG_COUNT, count);
+                        database.update(PlaylistInfoColumns.NAME, values, PlaylistInfoColumns.PLAYLIST_ID + " = " + playlistid, null);
+                    }
+                   // update(playlistid,count);
+
+                } while (cursor.moveToNext());
+
+                database.setTransactionSuccessful();
+            }
+
+        } finally {
+            database.endTransaction();
+            if (cursor != null) {
+                cursor.close();
+                cursor = null;
+            }
+        }
+
+    }
+
+
     public void deletePlaylist(final long PlaylistId) {
         final SQLiteDatabase database = mMusicDatabase.getWritableDatabase();
         database.delete(PlaylistInfoColumns.NAME, PlaylistInfoColumns.PLAYLIST_ID + " = ?", new String[]

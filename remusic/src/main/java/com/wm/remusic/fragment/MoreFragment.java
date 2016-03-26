@@ -1,12 +1,16 @@
 package com.wm.remusic.fragment;
 
 
+import android.content.ContentUris;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.media.RingtoneManager;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
+import android.provider.MediaStore;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AlertDialog;
@@ -23,11 +27,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.wm.remusic.R;
+import com.wm.remusic.activity.MainActivity;
 import com.wm.remusic.adapter.MusicFlowAdapter;
 import com.wm.remusic.adapter.OverFlowAdapter;
 import com.wm.remusic.adapter.OverFlowItem;
 import com.wm.remusic.dialog.AddPlaylistDialog;
 import com.wm.remusic.info.MusicInfo;
+import com.wm.remusic.provider.PlaylistsManager;
 import com.wm.remusic.service.MusicPlayer;
 import com.wm.remusic.uitl.DividerItemDecoration;
 import com.wm.remusic.uitl.IConstants;
@@ -54,6 +60,7 @@ public class MoreFragment extends DialogFragment {
     private LinearLayoutManager layoutManager;
     private String args;
     private String musicName, artist, albumId, albumName;
+    Context mContext;
 
     public static MoreFragment newInstance(String id, int startFrom) {
         MoreFragment fragment = new MoreFragment();
@@ -63,6 +70,8 @@ public class MoreFragment extends DialogFragment {
         fragment.setArguments(args);
         return fragment;
     }
+
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -79,7 +88,6 @@ public class MoreFragment extends DialogFragment {
             type = getArguments().getInt("type");
             args = getArguments().getString("id");
         }
-
         //布局
         View view = inflater.inflate(R.layout.more_fragment, container);
         topTitle = (TextView) view.findViewById(R.id.pop_list_title);
@@ -103,7 +111,7 @@ public class MoreFragment extends DialogFragment {
 
         if (type == IConstants.MUSICOVERFLOW) {
             long musicId = Long.parseLong(args.trim());
-            adapterMusicInfo = MusicUtils.getMusicInfo(getContext(), musicId);
+            adapterMusicInfo = MusicUtils.getMusicInfo(mContext, musicId);
             artist = adapterMusicInfo.artist;
             albumId = adapterMusicInfo.albumId + "";
             albumName = adapterMusicInfo.albumName;
@@ -117,17 +125,17 @@ public class MoreFragment extends DialogFragment {
             switch (type) {
                 case IConstants.ARTISTOVERFLOW:
                     String artist = args;
-                    list = MusicUtils.queryMusic(getContext(), null, artist, IConstants.START_FROM_ARTIST);
+                    list = MusicUtils.queryMusic(mContext, null, artist, IConstants.START_FROM_ARTIST);
                     topTitle.setText("歌曲：" + " " + list.get(0).artist);
                     break;
                 case IConstants.ALBUMOVERFLOW:
                     String albumId = args;
-                    list = MusicUtils.queryMusic(getContext(), null, albumId, IConstants.START_FROM_ALBUM);
+                    list = MusicUtils.queryMusic(mContext, null, albumId, IConstants.START_FROM_ALBUM);
                     topTitle.setText("专辑：" + " " + list.get(0).albumName);
                     break;
                 case IConstants.FOLDEROVERFLOW:
                     String folder = args;
-                    list = MusicUtils.queryMusic(getContext(), null, folder, IConstants.START_FROM_FOLDER);
+                    list = MusicUtils.queryMusic(mContext, null, folder, IConstants.START_FROM_FOLDER);
                     topTitle.setText("文件夹：" + " " + folder);
                     break;
             }
@@ -148,7 +156,7 @@ public class MoreFragment extends DialogFragment {
                         case 0:
                             long[] ids = new long[1];
                             ids[0] = adapterMusicInfo.songId;
-                            MusicPlayer.playNext(getContext(), ids, -1);
+                            MusicPlayer.playNext(mContext, ids, -1);
                             dismiss();
                             break;
                         case 1:
@@ -166,19 +174,44 @@ public class MoreFragment extends DialogFragment {
                             dismiss();
                             break;
                         case 3:
-                            new AlertDialog.Builder(getContext()).setTitle(getResources().getString(R.string.sure_to_delete_music)).
+                            new AlertDialog.Builder(mContext).setTitle(getResources().getString(R.string.sure_to_delete_music)).
                                     setPositiveButton(getResources().getString(R.string.sure), new DialogInterface.OnClickListener() {
                                         @Override
                                         public void onClick(DialogInterface dialog, int which) {
-                                            File file;
-                                            file = new File(adapterMusicInfo.data);
-                                            if (file.exists())
-                                                file.delete();
-                                            {
-                                                getContext().sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE,
-                                                        Uri.parse("file://" + adapterMusicInfo.data)));
+
+                                            Uri uri = ContentUris.withAppendedId(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,adapterMusicInfo.songId);
+                                            mContext.getContentResolver().delete(uri,null,null);
+
+
+                                            if(MusicPlayer.getCurrentAudioId() == adapterMusicInfo.songId){
+                                                if(MusicPlayer.getQueueSize() == 0){
+                                                    MusicPlayer.stop();
+                                                }else {
+                                                    MusicPlayer.next();
+                                                }
+
                                             }
-                                            getContext().sendBroadcast(new Intent(IConstants.MUSIC_COUNT_CHANGED));
+
+                                            new Handler().postDelayed(new Runnable() {
+                                                @Override
+                                                public void run() {
+                                                    PlaylistsManager.getInstance(mContext).deleteMusic(mContext, adapterMusicInfo.songId);
+                                                }
+                                            }, 200);
+                                            new Handler().postDelayed(new Runnable() {
+                                                @Override
+                                                public void run() {
+                                                    mContext.sendBroadcast(new Intent(IConstants.MUSIC_COUNT_CHANGED));
+                                                }
+                                            },600);
+//                                            File file;
+//                                            file = new File(adapterMusicInfo.data);
+//                                            if (file.exists())
+//                                                file.delete();
+
+//                                                mContext.getApplicationContext().sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE,
+//                                                        Uri.parse("file://" + adapterMusicInfo.data)));
+//                                            mContext.sendBroadcast(new Intent(IConstants.MUSIC_COUNT_CHANGED));
                                             dismiss();
                                         }
                                     }).
@@ -191,26 +224,42 @@ public class MoreFragment extends DialogFragment {
                             dismiss();
                             break;
                         case 4:
-                            FragmentTransaction transaction = ((AppCompatActivity) getContext()).getSupportFragmentManager().beginTransaction();
+                            FragmentTransaction transaction = ((AppCompatActivity) mContext).getSupportFragmentManager().beginTransaction();
                             ArtistDetailFragment fragment = ArtistDetailFragment.newInstance(adapterMusicInfo.artistId);
-                            transaction.hide(((AppCompatActivity) getContext()).getSupportFragmentManager().findFragmentById(R.id.fragment_container));
+                            transaction.hide(((AppCompatActivity) mContext).getSupportFragmentManager().findFragmentById(R.id.fragment_container));
                             transaction.add(R.id.fragment_container, fragment);
                             transaction.addToBackStack(null).commit();
                             dismiss();
                             break;
                         case 5:
-                            FragmentTransaction transaction1 = ((AppCompatActivity) getContext()).getSupportFragmentManager().beginTransaction();
+                            FragmentTransaction transaction1 = ((AppCompatActivity) mContext).getSupportFragmentManager().beginTransaction();
                             AlbumDetailFragment fragment1 = AlbumDetailFragment.newInstance(adapterMusicInfo.albumId, false, null);
-                            transaction1.hide(((AppCompatActivity) getContext()).getSupportFragmentManager().findFragmentById(R.id.fragment_container));
+                            transaction1.hide(((AppCompatActivity) mContext).getSupportFragmentManager().findFragmentById(R.id.fragment_container));
                             transaction1.add(R.id.fragment_container, fragment1);
                             transaction1.addToBackStack(null).commit();
                             dismiss();
                             break;
                         case 6:
-                            Uri ringUri = Uri.parse("file://" + adapterMusicInfo.data);
-                            RingtoneManager.setActualDefaultRingtoneUri(getContext(), RingtoneManager.TYPE_NOTIFICATION, ringUri);
-                            Toast.makeText(getContext(),getResources().getString(R.string.set_ringtone_successed),
-                                    Toast.LENGTH_SHORT).show();
+
+                            new AlertDialog.Builder(mContext).setTitle(getResources().getString(R.string.sure_to_delete_music)).
+                                    setPositiveButton(getResources().getString(R.string.sure), new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            Uri ringUri = Uri.parse("file://" + adapterMusicInfo.data);
+                                            RingtoneManager.setActualDefaultRingtoneUri(mContext, RingtoneManager.TYPE_NOTIFICATION, ringUri);
+                                            Toast.makeText(mContext,getResources().getString(R.string.set_ringtone_successed),
+                                                    Toast.LENGTH_SHORT).show();
+
+                                            dismiss();
+                                        }
+                                    }).
+                                    setNegativeButton(getResources().getString(R.string.cancel), new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            dismiss();
+                                        }
+                                    }).show();
+
                             dismiss();
                             break;
                         case 7:
@@ -240,7 +289,7 @@ public class MoreFragment extends DialogFragment {
                                 for (int i = 0; i < list.size(); i++) {
                                     queuelist[i] = list.get(i).songId;
                                 }
-                                MusicPlayer.playAll(getContext(), queuelist, 0, false);
+                                MusicPlayer.playAll(mContext, queuelist, 0, false);
                             }
                         }, 100);
                         dismiss();
@@ -255,22 +304,66 @@ public class MoreFragment extends DialogFragment {
                         dismiss();
                         break;
                     case 2:
-                        File file;
-                        for (MusicInfo music : list) {
-                            file = new File(music.data);
-                            if (file.exists())
-                                file.delete();
-                            if (file.exists() == false) {
-                                getActivity().sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE,
-                                        Uri.parse("file://" + music.data)));
+
+                        new AsyncTask<Void, Void, Void>() {
+
+                            @Override
+                            protected Void doInBackground(Void... params) {
+                                for (MusicInfo music : list) {
+
+                                   if(MusicPlayer.getCurrentAudioId() == music.songId){
+                                       if(MusicPlayer.getQueueSize() == 0){
+                                           MusicPlayer.stop();
+                                       }else {
+                                           MusicPlayer.next();
+                                       }
+
+                                   }
+                                    Uri uri = ContentUris.withAppendedId(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, music.songId);
+                                    mContext.getContentResolver().delete(uri,null,null);
+                                    PlaylistsManager.getInstance(mContext).deleteMusic(mContext, music.songId);
+                                }
+                                return null;
                             }
-                        }
-                        getActivity().sendBroadcast(new Intent(IConstants.MUSIC_COUNT_CHANGED));
+
+                            @Override
+                            protected void onPostExecute(Void v) {
+                                mContext.sendBroadcast(new Intent(IConstants.MUSIC_COUNT_CHANGED));
+                            }
+
+                        }.execute();
+
+//                        Handler handler1 = new Handler();
+//                        handler1.postDelayed(new Runnable() {
+//                            @Override
+//                            public void run() {
+//                                for (final MusicInfo music : list) {
+//                                    PlaylistsManager.getInstance(mContext).deleteMusic(mContext, music.songId);
+//                                }
+//                            }
+//                        }, 100);
+
+
+//                            file = new File(music.data);
+//                            if (file.exists())
+//                                file.delete();
+//                            if (file.exists() == false) {
+//                                getActivity().sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE,
+//                                        Uri.parse("file://" + music.data)));
+//                            }
+                        //  HandlerUtil.CommonHandler handler1 = new HandlerUtil.CommonHandler(mContext);
+//                new Handler().postDelayed(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        mContext.sendBroadcast(new Intent(IConstants.MUSIC_COUNT_CHANGED));
+//                    }
+//                }, 600);
+
                         dismiss();
                         break;
                 }
-            }
-        });
+        }
+    });
         recyclerView.setAdapter(commonAdapter);
     }
 
@@ -298,6 +391,7 @@ public class MoreFragment extends DialogFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setStyle(DialogFragment.STYLE_NO_FRAME, R.style.CustomDatePickerDialog);
+        mContext = getContext();
     }
 
     @Override
@@ -306,7 +400,7 @@ public class MoreFragment extends DialogFragment {
         //设置fragment高度 、宽度
         int dialogHeight = (int) (getActivity().getResources().getDisplayMetrics().heightPixels * heightPercent);
         ;
-//        WindowManager wm = (WindowManager) getContext().getSystemService(Context.WINDOW_SERVICE);
+//        WindowManager wm = (WindowManager) mContext.getSystemService(Context.WINDOW_SERVICE);
 //        Display display = wm.getDefaultDisplay();
 //        int height = display.getHeight();
         getDialog().getWindow().setLayout(WindowManager.LayoutParams.MATCH_PARENT, dialogHeight);

@@ -145,6 +145,41 @@ public class PlaylistsManager {
                 {String.valueOf(PlaylistId)});
     }
 
+
+    //删除播放列表中的记录的音乐 ，删除本地文件时调用
+    public synchronized void deleteMusic(Context context,final long musicId) {
+        final SQLiteDatabase database = mMusicDatabase.getWritableDatabase();
+
+        Cursor cursor = null;
+        try {
+            cursor = mMusicDatabase.getReadableDatabase().query(PlaylistsColumns.NAME, null,
+                    PlaylistsColumns.TRACK_ID + " = " + String.valueOf(musicId), null, null, null, null, null);
+            if(cursor != null && cursor.moveToFirst()){
+                long[] deletedPlaylistIds = new long[cursor.getCount()];
+                int i = 0;
+
+               do{
+                    deletedPlaylistIds[i] = cursor.getLong(0);
+                    i++;
+                }while (cursor.moveToNext());
+
+                PlaylistInfo.getInstance(context).updatePlaylistMusicCount(deletedPlaylistIds);
+            }
+
+
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+                cursor = null;
+            }
+        }
+
+        database.delete(PlaylistsColumns.NAME, PlaylistsColumns.TRACK_ID + " = ?", new String[]
+                {String.valueOf(musicId)});
+    }
+
+
+
     public void deleteAll() {
         final SQLiteDatabase database = mMusicDatabase.getWritableDatabase();
         database.delete(PlaylistsColumns.NAME, null, null);

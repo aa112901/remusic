@@ -152,14 +152,9 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         playQueue.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                  new Thread(new Runnable() {
-                      @Override
-                      public void run() {
-                          NavArtist.setText("ccc");
-                      }
-                  }).start();
-//                PlayQueueFragment playQueueFragment = new PlayQueueFragment();
-//                playQueueFragment.show(getSupportFragmentManager(), "playqueueframent");
+
+                PlayQueueFragment playQueueFragment = new PlayQueueFragment();
+                playQueueFragment.show(getSupportFragmentManager(), "playqueueframent");
 
             }
         });

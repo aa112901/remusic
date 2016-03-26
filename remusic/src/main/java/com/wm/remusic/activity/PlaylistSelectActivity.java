@@ -1,11 +1,13 @@
 package com.wm.remusic.activity;
 
+import android.content.ContentUris;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
+import android.provider.MediaStore;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -114,19 +116,38 @@ public class PlaylistSelectActivity extends AppCompatActivity implements View.On
                         setPositiveButton(getResources().getString(R.string.sure), new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                File file;
 
-                                for (int i = 0; i < selectList.size(); i++) {
-                                    String path = selectList.get(i).data;
-                                    file = new File(path);
-                                    if (file.exists())
-                                        file.delete();
-                                    if (file.exists() == false) {
-                                        sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE,
-                                                Uri.parse("file://" + path)));
-                                        sendBroadcast(new Intent(MediaService.PLAYLIST_CHANGED));
+                                new AsyncTask<Void, Void, Void>() {
+
+                                    @Override
+                                    protected Void doInBackground(Void... params) {
+                                        for (MusicInfo music : selectList) {
+
+                                            if(MusicPlayer.getCurrentAudioId() == music.songId){
+                                                if(MusicPlayer.getQueueSize() == 0){
+                                                    MusicPlayer.stop();
+                                                }else {
+                                                    MusicPlayer.next();
+                                                }
+
+                                            }
+                                            Uri uri = ContentUris.withAppendedId(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, music.songId);
+                                            PlaylistSelectActivity.this.getContentResolver().delete(uri,null,null);
+                                            PlaylistsManager.getInstance(PlaylistSelectActivity.this).deleteMusic(PlaylistSelectActivity.this,
+                                                    music.songId);
+                                        }
+
+                                        return null;
                                     }
-                                }
+
+                                    @Override
+                                    protected void onPostExecute(Void v) {
+                                        mAdapter.updateDataSet();
+                                        mAdapter.notifyDataSetChanged();
+                                        PlaylistSelectActivity.this.sendBroadcast(new Intent(IConstants.MUSIC_COUNT_CHANGED));
+                                    }
+
+                                }.execute();
                                 dialog.dismiss();
                             }
                         }).
@@ -250,8 +271,10 @@ public class PlaylistSelectActivity extends AppCompatActivity implements View.On
         }
 
         //更新adpter的数据
-        public void updateDataSet(ArrayList<MusicInfo> list) {
-            this.mList = list;
+        public void updateDataSet() {
+             ab.setTitle("已选择0项");
+             mList.removeAll(getSelectedItem());
+             mSelectedPositions.clear();
         }
 
         @Override

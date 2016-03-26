@@ -62,7 +62,7 @@ import android.widget.RemoteViews;
 import com.wm.remusic.MediaAidlInterface;
 import com.wm.remusic.R;
 import com.wm.remusic.activity.PlayingActivity;
-import com.wm.remusic.info.SongPlayCount;
+import com.wm.remusic.recent.SongPlayCount;
 import com.wm.remusic.permissions.Nammu;
 import com.wm.remusic.provider.MusicPlaybackState;
 import com.wm.remusic.provider.RecentStore;

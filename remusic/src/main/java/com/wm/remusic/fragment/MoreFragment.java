@@ -154,9 +154,15 @@ public class MoreFragment extends DialogFragment {
                 public void onItemClick(View view, String data) {
                     switch (Integer.parseInt(data)) {
                         case 0:
-                            long[] ids = new long[1];
-                            ids[0] = adapterMusicInfo.songId;
-                            MusicPlayer.playNext(mContext, ids, -1);
+                            new Handler().postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    long[] ids = new long[1];
+                                    ids[0] = adapterMusicInfo.songId;
+                                    MusicPlayer.playNext(mContext, ids, -1);
+                                }
+                            }, 100);
+
                             dismiss();
                             break;
                         case 1:
@@ -241,26 +247,24 @@ public class MoreFragment extends DialogFragment {
                             break;
                         case 6:
 
-                            new AlertDialog.Builder(mContext).setTitle(getResources().getString(R.string.sure_to_delete_music)).
+                            new AlertDialog.Builder(mContext).setTitle(getResources().getString(R.string.sure_to_set_ringtone)).
                                     setPositiveButton(getResources().getString(R.string.sure), new DialogInterface.OnClickListener() {
                                         @Override
                                         public void onClick(DialogInterface dialog, int which) {
                                             Uri ringUri = Uri.parse("file://" + adapterMusicInfo.data);
                                             RingtoneManager.setActualDefaultRingtoneUri(mContext, RingtoneManager.TYPE_NOTIFICATION, ringUri);
+                                            dialog.dismiss();
                                             Toast.makeText(mContext,getResources().getString(R.string.set_ringtone_successed),
                                                     Toast.LENGTH_SHORT).show();
-
                                             dismiss();
                                         }
                                     }).
                                     setNegativeButton(getResources().getString(R.string.cancel), new DialogInterface.OnClickListener() {
                                         @Override
                                         public void onClick(DialogInterface dialog, int which) {
-                                            dismiss();
+                                            dialog.dismiss();
                                         }
                                     }).show();
-
-                            dismiss();
                             break;
                         case 7:
                             MusicDetailFragment detailFrament = MusicDetailFragment.newInstance(adapterMusicInfo);

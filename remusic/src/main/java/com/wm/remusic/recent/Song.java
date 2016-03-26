@@ -12,7 +12,7 @@
  * See the GNU General Public License for more details.
  */
 
-package com.wm.remusic.info;
+package com.wm.remusic.recent;
 
 public class Song {
 

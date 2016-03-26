@@ -1,16 +1,20 @@
 package com.wm.remusic.activity;
 
+import android.content.ContentUris;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
+import android.provider.MediaStore;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,6 +25,7 @@ import android.widget.TextView;
 
 import com.wm.remusic.R;
 import com.wm.remusic.dialog.AddPlaylistDialog;
+import com.wm.remusic.provider.PlaylistsManager;
 import com.wm.remusic.uitl.DividerItemDecoration;
 import com.wm.remusic.info.MusicInfo;
 import com.wm.remusic.service.MediaService;
@@ -48,9 +53,7 @@ public class SelectActivity extends AppCompatActivity implements View.OnClickLis
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.select);
-        if (getIntent().getParcelableArrayListExtra("ids") != null) {
-            mList = getIntent().getParcelableArrayListExtra("ids");
-        }
+
         l1 = (LinearLayout) findViewById(R.id.select_next);
         l2 = (LinearLayout) findViewById(R.id.select_addtoplaylist);
         l3 = (LinearLayout) findViewById(R.id.select_del);
@@ -87,11 +90,18 @@ public class SelectActivity extends AppCompatActivity implements View.OnClickLis
         switch (v.getId()) {
 
             case R.id.select_next:
-                long[] list = new long[selectList.size()];
+               final long[] list = new long[selectList.size()];
                 for (int i = 0; i < mAdapter.getSelectedItem().size(); i++) {
                     list[i] = selectList.get(i).songId;
                 }
-                MusicPlayer.playNext(this, list, -1);
+
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        MusicPlayer.playNext(SelectActivity.this, list, -1);
+                    }
+                }, 100);
+
                 break;
             case R.id.select_addtoplaylist:
                 long[] list1 = new long[selectList.size()];
@@ -108,19 +118,37 @@ public class SelectActivity extends AppCompatActivity implements View.OnClickLis
                         setPositiveButton(getResources().getString(R.string.sure), new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                File file;
+                                new AsyncTask<Void, Void, Void>() {
 
-                                for (int i = 0; i < selectList.size(); i++) {
-                                    String path = selectList.get(i).data;
-                                    file = new File(path);
-                                    if (file.exists())
-                                        file.delete();
-                                    if (file.exists() == false) {
-                                        sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE,
-                                                Uri.parse("file://" + path)));
+                                    @Override
+                                    protected Void doInBackground(Void... params) {
+                                        for (MusicInfo music : selectList) {
+
+                                            if(MusicPlayer.getCurrentAudioId() == music.songId){
+                                                if(MusicPlayer.getQueueSize() == 0){
+                                                    MusicPlayer.stop();
+                                                }else {
+                                                    MusicPlayer.next();
+                                                }
+
+                                            }
+                                            Uri uri = ContentUris.withAppendedId(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, music.songId);
+                                            SelectActivity.this.getContentResolver().delete(uri,null,null);
+                                            PlaylistsManager.getInstance(SelectActivity.this).deleteMusic(SelectActivity.this,
+                                                    music.songId);
+                                        }
+
+                                        return null;
                                     }
-                                }
-                                sendBroadcast(new Intent(IConstants.MUSIC_COUNT_CHANGED));
+
+                                    @Override
+                                    protected void onPostExecute(Void v) {
+                                        mAdapter.updateDataSet();
+                                        mAdapter.notifyDataSetChanged();
+                                        SelectActivity.this.sendBroadcast(new Intent(IConstants.MUSIC_COUNT_CHANGED));
+                                    }
+
+                                }.execute();
                                 dialog.dismiss();
                             }
                         }).
@@ -146,6 +174,9 @@ public class SelectActivity extends AppCompatActivity implements View.OnClickLis
 
         @Override
         protected String doInBackground(String... params) {
+            if (getIntent().getParcelableArrayListExtra("ids") != null) {
+                mList = getIntent().getParcelableArrayListExtra("ids");
+            }
             if (mList != null)
                 mAdapter = new SelectAdapter(mList);
             return "Executed";
@@ -192,9 +223,12 @@ public class SelectActivity extends AppCompatActivity implements View.OnClickLis
         }
 
         //更新adpter的数据
-        public void updateDataSet(ArrayList<MusicInfo> list) {
-            this.mList = list;
+        public void updateDataSet() {
+            ab.setTitle("已选择0项");
+            mList.removeAll(getSelectedItem());
+            mSelectedPositions.clear();
         }
+
 
         @Override
         public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {

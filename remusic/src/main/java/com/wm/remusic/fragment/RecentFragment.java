@@ -20,9 +20,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.wm.remusic.R;
-import com.wm.remusic.info.Song;
-import com.wm.remusic.info.SongLoader;
-import com.wm.remusic.info.TopTracksLoader;
+import com.wm.remusic.recent.Song;
+import com.wm.remusic.recent.SongLoader;
+import com.wm.remusic.recent.TopTracksLoader;
 import com.wm.remusic.provider.RecentStore;
 import com.wm.remusic.service.MediaService;
 import com.wm.remusic.service.MusicPlayer;

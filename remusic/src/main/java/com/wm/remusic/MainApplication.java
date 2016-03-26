@@ -50,7 +50,7 @@ public class MainApplication extends Application {
 //        return application.refWatcher;
 //    }
 
-    public void init(){
+    public void initCatchException(){
         //设置该CrashHandler为程序的默认处理器
         UnceHandler catchExcep = new UnceHandler(this);
         Thread.setDefaultUncaughtExceptionHandler(catchExcep);
@@ -61,7 +61,9 @@ public class MainApplication extends Application {
         frescoInit();
         super.onCreate();
 //        refWatcher = LeakCanary.install(this);
-        init();
+
+        initCatchException();
+
         if (PreferencesUtility.getInstance(this).getFavriateMusicPlaylist() == false) {
             PlaylistInfo.getInstance(this).addPlaylist(favPlaylist, getResources().getString(R.string.my_fav_playlist),
                     0, "res:/" + R.mipmap.lay_protype_default);

@@ -11,7 +11,7 @@
  * governing permissions and limitations under the License.
  */
 
-package com.wm.remusic.info;
+package com.wm.remusic.recent;
 
 import android.content.Context;
 import android.database.AbstractCursor;

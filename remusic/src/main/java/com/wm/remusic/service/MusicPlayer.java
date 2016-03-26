@@ -35,6 +35,8 @@ import android.widget.Toast;
 import com.wm.remusic.MediaAidlInterface;
 import com.wm.remusic.R;
 
+import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.WeakHashMap;
 
@@ -487,7 +489,32 @@ public class MusicPlayer {
             return;
         }
         try {
-            mService.enqueue(list, MediaService.NEXT);
+            int current = -1;
+            long[] result = list;
+
+            for(int i = 0; i < list.length; i++) {
+                if (MusicPlayer.getCurrentAudioId() == list[i]) {
+                    current = i;
+                } else {
+                    MusicPlayer.removeTrack(list[i]);
+                }
+            }
+
+            if( current != -1){
+                ArrayList lists = new ArrayList();
+                for(int i = 0; i<list.length;i++){
+                    if(i != current){
+                        lists.add(list[i]);
+                    }
+                }
+                result = new long[list.length - 1];
+                for(int i = 0;i<lists.size();i++){
+                     result[i] = (long) lists.get(i);
+                }
+            }
+
+            mService.enqueue(result, MediaService.NEXT);
+
             Toast.makeText(context, R.string.next_play, Toast.LENGTH_SHORT).show();
         } catch (final RemoteException ignored) {
         }

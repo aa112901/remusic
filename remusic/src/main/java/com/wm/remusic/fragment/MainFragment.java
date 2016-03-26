@@ -1,13 +1,8 @@
 package com.wm.remusic.fragment;
 
 
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -21,11 +16,10 @@ import com.wm.remusic.R;
 import com.wm.remusic.adapter.MainFragmentAdapter;
 import com.wm.remusic.adapter.MainFragmentItem;
 import com.wm.remusic.info.Playlist;
-import com.wm.remusic.info.Song;
-import com.wm.remusic.info.SongLoader;
-import com.wm.remusic.info.TopTracksLoader;
+import com.wm.remusic.recent.Song;
+import com.wm.remusic.recent.SongLoader;
+import com.wm.remusic.recent.TopTracksLoader;
 import com.wm.remusic.provider.PlaylistInfo;
-import com.wm.remusic.service.MediaService;
 import com.wm.remusic.uitl.DividerItemDecoration;
 import com.wm.remusic.uitl.IConstants;
 import com.wm.remusic.uitl.MusicUtils;

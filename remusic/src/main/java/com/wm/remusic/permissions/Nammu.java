@@ -136,7 +136,7 @@ public class Nammu {
      */
     public static ArrayList<String> getGrantedPermissions() {
         if (context == null) {
-            throw new RuntimeException("Must call init() earlier");
+            throw new RuntimeException("Must call initCatchException() earlier");
         }
         ArrayList<String> permissions = new ArrayList<String>();
         ArrayList<String> permissionsGranted = new ArrayList<String>();
@@ -249,7 +249,7 @@ public class Nammu {
      */
     public static void permissionCompare(PermissionListener permissionListener) {
         if (context == null) {
-            throw new RuntimeException("Before comparing permissions you need to call Nammu.init(context)");
+            throw new RuntimeException("Before comparing permissions you need to call Nammu.initCatchException(context)");
 
         }
         ArrayList<String> previouslyGranted = getPreviousPermissions();
@@ -297,7 +297,7 @@ public class Nammu {
      */
     public static boolean checkPermission(String permissionName) {
         if (context == null) {
-            throw new RuntimeException("Before comparing permissions you need to call Nammu.init(context)");
+            throw new RuntimeException("Before comparing permissions you need to call Nammu.initCatchException(context)");
         }
         return PackageManager.PERMISSION_GRANTED == context.checkSelfPermission(permissionName);
     }

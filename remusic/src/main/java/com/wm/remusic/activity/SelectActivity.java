@@ -14,6 +14,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -30,6 +31,7 @@ import com.wm.remusic.info.MusicInfo;
 import com.wm.remusic.service.MediaService;
 import com.wm.remusic.service.MusicPlayer;
 import com.wm.remusic.uitl.IConstants;
+import com.wm.remusic.uitl.MusicUtils;
 
 import java.util.ArrayList;
 
@@ -88,15 +90,28 @@ public class SelectActivity extends AppCompatActivity implements View.OnClickLis
         switch (v.getId()) {
 
             case R.id.select_next:
-               final long[] list = new long[selectList.size()];
-                for (int i = 0; i < mAdapter.getSelectedItem().size(); i++) {
-                    list[i] = selectList.get(i).songId;
-                }
 
                 new Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {
+
+                        ArrayList<MusicInfo> select = mAdapter.getSelectedItem();
+                        long currentAudioId = MusicPlayer.getCurrentAudioId();
+
+                        for(int i = 0;i< select.size();i++){
+                            if(select.get(i).songId == currentAudioId ){
+                                select.remove(i);
+                                break;
+                            }
+                        }
+
+                        final long[] list = new long[select.size()];
+                        for (int i = 0; i < select.size(); i++) {
+                            list[i] = select.get(i).songId;
+                        }
+
                         MusicPlayer.playNext(SelectActivity.this, list, -1);
+
                     }
                 }, 100);
 

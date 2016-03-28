@@ -401,7 +401,7 @@ public class PlayingActivity extends BaseActivity implements IConstants {
         Fragment fragment = (RoundFragment) mViewPager.getAdapter().instantiateItem(mViewPager, mViewPager.getCurrentItem());
         viewWeakReference = new WeakReference<View>(fragment.getView());
         activeView = viewWeakReference.get();
-        activeView = fragment.getView();
+        //activeView = fragment.getView();
 
         if (activeView != null) {
 //            animatorWeakReference = new WeakReference<>((ObjectAnimator) activeView.getTag(R.id.tag_animator));

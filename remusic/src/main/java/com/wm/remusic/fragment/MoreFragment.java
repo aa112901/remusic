@@ -157,6 +157,9 @@ public class MoreFragment extends DialogFragment {
                             new Handler().postDelayed(new Runnable() {
                                 @Override
                                 public void run() {
+                                    if(adapterMusicInfo.songId == MusicPlayer.getCurrentAudioId())
+                                        return;
+
                                     long[] ids = new long[1];
                                     ids[0] = adapterMusicInfo.songId;
                                     MusicPlayer.playNext(mContext, ids, -1);

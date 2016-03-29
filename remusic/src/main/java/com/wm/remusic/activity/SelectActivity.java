@@ -54,18 +54,6 @@ public class SelectActivity extends AppCompatActivity implements View.OnClickLis
         super.onCreate(savedInstanceState);
         setContentView(R.layout.select);
 
-        nextPlay = (LinearLayout) findViewById(R.id.select_next);
-        addtoPlaylist = (LinearLayout) findViewById(R.id.select_addtoplaylist);
-        delete = (LinearLayout) findViewById(R.id.select_del);
-        nextPlay.setOnClickListener(this);
-        addtoPlaylist.setOnClickListener(this);
-        delete.setOnClickListener(this);
-
-        recyclerView = (RecyclerView) findViewById(R.id.recyclerview);
-        layoutManager = new LinearLayoutManager(this);
-        recyclerView.setLayoutManager(layoutManager);
-
-
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         ab = getSupportActionBar();
@@ -78,6 +66,20 @@ public class SelectActivity extends AppCompatActivity implements View.OnClickLis
                 onBackPressed();
             }
         });
+
+        nextPlay = (LinearLayout) findViewById(R.id.select_next);
+        addtoPlaylist = (LinearLayout) findViewById(R.id.select_addtoplaylist);
+        delete = (LinearLayout) findViewById(R.id.select_del);
+        nextPlay.setOnClickListener(this);
+        addtoPlaylist.setOnClickListener(this);
+        delete.setOnClickListener(this);
+
+        recyclerView = (RecyclerView) findViewById(R.id.recyclerview);
+        layoutManager = new LinearLayoutManager(this);
+        recyclerView.setLayoutManager(layoutManager);
+
+
+
 
         new loadSongs().execute("");
 

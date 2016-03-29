@@ -3,6 +3,7 @@ package com.wm.remusic.activity;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -23,6 +24,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.facebook.drawee.view.SimpleDraweeView;
+import com.readystatesoftware.systembartint.SystemBarTintManager;
 import com.wm.remusic.R;
 import com.wm.remusic.fragment.MainFragment;
 import com.wm.remusic.fragment.PlayQueueFragment;
@@ -114,6 +116,12 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        SystemBarTintManager tintManager = new SystemBarTintManager(this);
+        // enable status bar tint
+        tintManager.setStatusBarTintEnabled(true);
+        // enable navigation bar tint
+        tintManager.setNavigationBarTintEnabled(true);
+        //tintManager.setTintColor(Color.parseColor("#00000000"));
 
         navPlayImg = (SimpleDraweeView) findViewById(R.id.playbar_img);
         navMusicName = (TextView) findViewById(R.id.playbar_info);
@@ -124,18 +132,18 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         layoutParams.setMargins(0, -20, 0, -(mProgress.getMeasuredHeight() / 2));
         mProgress.setLayoutParams(layoutParams);
         handler = new CommonHandler(this);
-        updateTrackInfo();
+//        updateTrackInfo();
 
        //	获取底部播放栏实例、绑定监听器
 
-        LinearLayout linearLayout = (LinearLayout) findViewById(R.id.nav_play);
-        linearLayout.setOnClickListener(new View.OnClickListener() {
+        LinearLayout nowPlay = (LinearLayout) findViewById(R.id.nav_play);
+        nowPlay.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(MusicPlayer.getQueueSize() == 0){
-                    Toast.makeText(MainActivity.this,getResources().getString(R.string.queue_is_empty),
+                if (MusicPlayer.getQueueSize() == 0) {
+                    Toast.makeText(MainActivity.this, getResources().getString(R.string.queue_is_empty),
                             Toast.LENGTH_SHORT).show();
-                }else {
+                } else {
                     handler.postDelayed(new Runnable() {
                         @Override
                         public void run() {

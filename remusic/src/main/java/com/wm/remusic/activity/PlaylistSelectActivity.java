@@ -24,6 +24,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.readystatesoftware.systembartint.SystemBarTintManager;
 import com.wm.remusic.R;
 import com.wm.remusic.dialog.AddPlaylistDialog;
 import com.wm.remusic.uitl.DividerItemDecoration;
@@ -56,19 +57,6 @@ public class PlaylistSelectActivity extends AppCompatActivity implements View.On
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.select);
-        pManager = PlaylistsManager.getInstance(this);
-
-        nextPlay = (LinearLayout) findViewById(R.id.select_next);
-        addtoPlaylist = (LinearLayout) findViewById(R.id.select_addtoplaylist);
-        delete = (LinearLayout) findViewById(R.id.select_del);
-        nextPlay.setOnClickListener(this);
-        addtoPlaylist.setOnClickListener(this);
-        delete.setOnClickListener(this);
-
-        recyclerView = (RecyclerView) findViewById(R.id.recyclerview);
-        layoutManager = new LinearLayoutManager(this);
-        recyclerView.setLayoutManager(layoutManager);
-
 
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -82,6 +70,28 @@ public class PlaylistSelectActivity extends AppCompatActivity implements View.On
                 onBackPressed();
             }
         });
+
+        pManager = PlaylistsManager.getInstance(this);
+
+        SystemBarTintManager tintManager = new SystemBarTintManager(this);
+        // enable status bar tint
+        tintManager.setStatusBarTintEnabled(true);
+        // enable navigation bar tint
+        tintManager.setNavigationBarTintEnabled(true);
+
+        nextPlay = (LinearLayout) findViewById(R.id.select_next);
+        addtoPlaylist = (LinearLayout) findViewById(R.id.select_addtoplaylist);
+        delete = (LinearLayout) findViewById(R.id.select_del);
+        nextPlay.setOnClickListener(this);
+        addtoPlaylist.setOnClickListener(this);
+        delete.setOnClickListener(this);
+
+        recyclerView = (RecyclerView) findViewById(R.id.recyclerview);
+        layoutManager = new LinearLayoutManager(this);
+        recyclerView.setLayoutManager(layoutManager);
+
+
+
 
         new loadSongs().execute("");
 

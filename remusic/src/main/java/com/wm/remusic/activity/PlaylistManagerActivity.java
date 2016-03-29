@@ -23,6 +23,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.facebook.drawee.view.SimpleDraweeView;
+import com.readystatesoftware.systembartint.SystemBarTintManager;
 import com.wm.remusic.R;
 import com.wm.remusic.uitl.DividerItemDecoration;
 import com.wm.remusic.info.Playlist;
@@ -49,15 +50,6 @@ public class PlaylistManagerActivity extends AppCompatActivity implements View.O
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_playlist_manager);
-        playlistInfo = PlaylistInfo.getInstance(this);
-
-        LinearLayout delete = (LinearLayout) findViewById(R.id.select_del);
-        delete.setOnClickListener(this);
-
-        recyclerView = (RecyclerView) findViewById(R.id.recyclerview);
-        layoutManager = new LinearLayoutManager(this);
-        recyclerView.setLayoutManager(layoutManager);
-
 
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -71,6 +63,25 @@ public class PlaylistManagerActivity extends AppCompatActivity implements View.O
                 onBackPressed();
             }
         });
+
+
+        playlistInfo = PlaylistInfo.getInstance(this);
+
+        SystemBarTintManager tintManager = new SystemBarTintManager(this);
+        // enable status bar tint
+        tintManager.setStatusBarTintEnabled(true);
+        // enable navigation bar tint
+        tintManager.setNavigationBarTintEnabled(true);
+
+        LinearLayout delete = (LinearLayout) findViewById(R.id.select_del);
+        delete.setOnClickListener(this);
+
+        recyclerView = (RecyclerView) findViewById(R.id.recyclerview);
+        layoutManager = new LinearLayoutManager(this);
+        recyclerView.setLayoutManager(layoutManager);
+
+
+
 
         new loadSongs().execute("");
 

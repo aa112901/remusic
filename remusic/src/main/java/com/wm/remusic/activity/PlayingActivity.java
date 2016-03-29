@@ -33,6 +33,8 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.facebook.drawee.backends.pipeline.Fresco;
+import com.facebook.imagepipeline.core.ImagePipeline;
 import com.wm.remusic.R;
 import com.wm.remusic.fragment.MoreFragment;
 import com.wm.remusic.fragment.PlayQueueFragment;
@@ -88,6 +90,21 @@ public class PlayingActivity extends BaseActivity implements IConstants {
     private boolean isFav = false;
     private boolean isNextOrPreSetPage = false; //判断viewpager由手动滑动 还是setcruuentitem换页
     private boolean duetoplaypause = false; //判读是否是播放暂停的通知，不要切换专辑封面
+
+
+    @Override
+    public void  onLowMemory() {
+        super.onLowMemory();
+        ImagePipeline imagePipeline = Fresco.getImagePipeline();
+        //清空内存缓存（包括Bitmap缓存和未解码图片的缓存）
+        imagePipeline.clearMemoryCaches();
+        //清空硬盘缓存，一般在设置界面供用户手动清理
+        //imagePipeline.clearDiskCaches();
+
+        //同时清理内存缓存和硬盘缓存
+        //imagePipeline.clearCaches();
+    }
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {

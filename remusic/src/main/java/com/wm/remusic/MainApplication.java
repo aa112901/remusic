@@ -7,6 +7,7 @@ import com.facebook.common.internal.Supplier;
 import com.facebook.common.util.ByteConstants;
 import com.facebook.drawee.backends.pipeline.Fresco;
 import com.facebook.imagepipeline.cache.MemoryCacheParams;
+import com.facebook.imagepipeline.core.ImagePipeline;
 import com.facebook.imagepipeline.core.ImagePipelineConfig;
 import com.wm.remusic.handler.UnceHandler;
 import com.wm.remusic.provider.PlaylistInfo;
@@ -17,8 +18,9 @@ import com.wm.remusic.uitl.PreferencesUtility;
  */
 public class MainApplication extends Application {
 
-    //    private RefWatcher refWatcher;
-    private static int MAX_MEM = 60 * ByteConstants.MB;
+    //private RefWatcher refWatcher;
+    private static int MAX_MEM = (int) Runtime.getRuntime().maxMemory()/5;
+    //private static int MAX_MEM = 60 * ByteConstants.MB;
     private long favPlaylist = 10;
 
     private ImagePipelineConfig getConfigureCaches(Context context) {
@@ -40,6 +42,21 @@ public class MainApplication extends Application {
         return builder.build();
     }
 
+    @Override
+    public void  onLowMemory() {
+        super.onLowMemory();
+        ImagePipeline imagePipeline = Fresco.getImagePipeline();
+        //清空内存缓存（包括Bitmap缓存和未解码图片的缓存）
+        imagePipeline.clearMemoryCaches();
+        //清空硬盘缓存，一般在设置界面供用户手动清理
+        //imagePipeline.clearDiskCaches();
+
+        //同时清理内存缓存和硬盘缓存
+        //imagePipeline.clearCaches();
+    }
+
+
+
     private void frescoInit() {
         Fresco.initialize(this, getConfigureCaches(this));
     }
@@ -50,6 +67,7 @@ public class MainApplication extends Application {
 //        return application.refWatcher;
 //    }
 
+    //捕获全局Exception 重启界面
     public void initCatchException(){
         //设置该CrashHandler为程序的默认处理器
         UnceHandler catchExcep = new UnceHandler(this);
@@ -62,7 +80,7 @@ public class MainApplication extends Application {
         super.onCreate();
 //        refWatcher = LeakCanary.install(this);
 
-        initCatchException();
+       // initCatchException();
 
         if (PreferencesUtility.getInstance(this).getFavriateMusicPlaylist() == false) {
             PlaylistInfo.getInstance(this).addPlaylist(favPlaylist, getResources().getString(R.string.my_fav_playlist),

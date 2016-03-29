@@ -28,6 +28,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 
+import com.readystatesoftware.systembartint.SystemBarTintManager;
 import com.wm.remusic.R;
 import com.wm.remusic.adapter.SearchAdapter;
 import com.wm.remusic.info.MusicInfo;
@@ -55,12 +56,20 @@ public class SearchActivity extends AppCompatActivity implements SearchView.OnQu
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search);
 
-        mImm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setPadding(0, CommonUtils.getStatusHeight(this), 0, 0);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+
+        SystemBarTintManager tintManager = new SystemBarTintManager(this);
+        // enable status bar tint
+        tintManager.setStatusBarTintEnabled(true);
+        // enable navigation bar tint
+        tintManager.setNavigationBarTintEnabled(true);
+
+        mImm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+
 
         recyclerView = (RecyclerView) findViewById(R.id.recyclerview);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));

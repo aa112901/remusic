@@ -1,7 +1,5 @@
 package com.wm.remusic.fragment;
 
-
-import android.app.Activity;
 import android.content.ContentUris;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -18,7 +16,6 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -29,8 +26,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.wm.remusic.R;
-import com.wm.remusic.activity.MainActivity;
-import com.wm.remusic.activity.PlayingActivity;
 import com.wm.remusic.adapter.MusicFlowAdapter;
 import com.wm.remusic.adapter.OverFlowAdapter;
 import com.wm.remusic.adapter.OverFlowItem;
@@ -49,28 +44,26 @@ import java.util.List;
 /**
  * Created by wm on 2016/1/31.
  */
-public class MoreFragment extends DialogFragment {
-    private int type;
-    private double heightPercent;
+public class SimpleMoreFragment extends DialogFragment {
+
+    private double heightPercent = 0.5;
     private TextView topTitle;
-    private List<MusicInfo> list = null;
-    private MusicFlowAdapter muaicflowAdapter;
+    private MusicFlowAdapter musicflowAdapter;
     private MusicInfo adapterMusicInfo;
-    private OverFlowAdapter commonAdapter;
+
     //弹出的activity列表
     private List<OverFlowItem> mlistInfo = new ArrayList<>();  //声明一个list，动态存储要显示的信息
     private RecyclerView recyclerView;
     private LinearLayoutManager layoutManager;
-    private String args;
-    private String musicName, artist, albumId, albumName;
+    private long args;
+    private String musicName;
     private Context mContext;
-    private Activity mActivity;
 
-    public static MoreFragment newInstance(String id, int startFrom) {
-        MoreFragment fragment = new MoreFragment();
+
+    public static SimpleMoreFragment newInstance(long id) {
+        SimpleMoreFragment fragment = new SimpleMoreFragment();
         Bundle args = new Bundle();
-        args.putString("id", id);
-        args.putInt("type", startFrom);
+        args.putLong("id", id);
         fragment.setArguments(args);
         return fragment;
     }
@@ -80,12 +73,6 @@ public class MoreFragment extends DialogFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        try {
-            mActivity = (Activity)mContext;
-        } catch (Exception e) {
-            e.printStackTrace();
-            //说明是ApplicationContext
-        }
 
         //设置无标题
         getDialog().requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -96,8 +83,7 @@ public class MoreFragment extends DialogFragment {
         getDialog().getWindow().requestFeature(Window.FEATURE_NO_TITLE);
         getDialog().getWindow().setAttributes(params);
         if (getArguments() != null) {
-            type = getArguments().getInt("type");
-            args = getArguments().getString("id");
+            args = getArguments().getLong("id");
         }
         //布局
         View view = inflater.inflate(R.layout.more_fragment, container);
@@ -120,47 +106,18 @@ public class MoreFragment extends DialogFragment {
 
     private void getList() {
 
-        if (type == IConstants.MUSICOVERFLOW) {
-            long musicId = Long.parseLong(args.trim());
+            long musicId = args;
             adapterMusicInfo = MusicUtils.getMusicInfo(mContext, musicId);
-            artist = adapterMusicInfo.artist;
-            albumId = adapterMusicInfo.albumId + "";
-            albumName = adapterMusicInfo.albumName;
             musicName = adapterMusicInfo.musicName;
             topTitle.setText("歌曲：" + " " + musicName);
-            heightPercent = 0.6;
             setMusicInfo();
-            muaicflowAdapter = new MusicFlowAdapter(getActivity(), mlistInfo, adapterMusicInfo);
-
-        } else {
-            switch (type) {
-                case IConstants.ARTISTOVERFLOW:
-                    String artist = args;
-                    list = MusicUtils.queryMusic(mContext, null, artist, IConstants.START_FROM_ARTIST);
-                    topTitle.setText("歌曲：" + " " + list.get(0).artist);
-                    break;
-                case IConstants.ALBUMOVERFLOW:
-                    String albumId = args;
-                    list = MusicUtils.queryMusic(mContext, null, albumId, IConstants.START_FROM_ALBUM);
-                    topTitle.setText("专辑：" + " " + list.get(0).albumName);
-                    break;
-                case IConstants.FOLDEROVERFLOW:
-                    String folder = args;
-                    list = MusicUtils.queryMusic(mContext, null, folder, IConstants.START_FROM_FOLDER);
-                    topTitle.setText("文件夹：" + " " + folder);
-                    break;
-            }
-            setCommonInfo();
-            heightPercent = 0.3;
-            commonAdapter = new OverFlowAdapter(getActivity(), mlistInfo, list);
-
-        }
+            musicflowAdapter = new MusicFlowAdapter(getActivity(), mlistInfo, adapterMusicInfo);
 
     }
 
     private void setClick() {
-        if (muaicflowAdapter != null) {
-            muaicflowAdapter.setOnItemClickListener(new MusicFlowAdapter.OnRecyclerViewItemClickListener() {
+        if (musicflowAdapter != null) {
+            musicflowAdapter.setOnItemClickListener(new MusicFlowAdapter.OnRecyclerViewItemClickListener() {
                 @Override
                 public void onItemClick(View view, String data) {
                     switch (Integer.parseInt(data)) {
@@ -168,7 +125,7 @@ public class MoreFragment extends DialogFragment {
                             new Handler().postDelayed(new Runnable() {
                                 @Override
                                 public void run() {
-                                    if(adapterMusicInfo.songId == MusicPlayer.getCurrentAudioId())
+                                    if (adapterMusicInfo.songId == MusicPlayer.getCurrentAudioId())
                                         return;
 
                                     long[] ids = new long[1];
@@ -199,14 +156,14 @@ public class MoreFragment extends DialogFragment {
                                         @Override
                                         public void onClick(DialogInterface dialog, int which) {
 
-                                            Uri uri = ContentUris.withAppendedId(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,adapterMusicInfo.songId);
+                                            Uri uri = ContentUris.withAppendedId(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, adapterMusicInfo.songId);
                                             mContext.getContentResolver().delete(uri, null, null);
 
 
-                                            if(MusicPlayer.getCurrentAudioId() == adapterMusicInfo.songId){
-                                                if(MusicPlayer.getQueueSize() == 0){
+                                            if (MusicPlayer.getCurrentAudioId() == adapterMusicInfo.songId) {
+                                                if (MusicPlayer.getQueueSize() == 0) {
                                                     MusicPlayer.stop();
-                                                }else {
+                                                } else {
                                                     MusicPlayer.next();
                                                 }
 
@@ -241,32 +198,6 @@ public class MoreFragment extends DialogFragment {
                             break;
                         case 4:
 
-//                            if((mActivity instanceof PlayingActivity)){
-//                                Log.e("is playing", "activity");
-//                                Intent intent = new Intent(mContext,MainActivity.class);
-//                                intent.putExtra("fragment_load_arg",adapterMusicInfo.artistId);
-//                                mContext.startActivity(intent);
-//                                dismiss();
-//                                return;
-//
-//                        }
-                            FragmentTransaction transaction = ((AppCompatActivity) mContext).getSupportFragmentManager().beginTransaction();
-                            ArtistDetailFragment fragment = ArtistDetailFragment.newInstance(adapterMusicInfo.artistId);
-                            transaction.hide(((AppCompatActivity) mContext).getSupportFragmentManager().findFragmentById(R.id.fragment_container));
-                            transaction.add(R.id.fragment_container, fragment);
-                            transaction.addToBackStack(null).commit();
-                            dismiss();
-                            break;
-                        case 5:
-                            FragmentTransaction transaction1 = ((AppCompatActivity) mContext).getSupportFragmentManager().beginTransaction();
-                            AlbumDetailFragment fragment1 = AlbumDetailFragment.newInstance(adapterMusicInfo.albumId, false, null);
-                            transaction1.hide(((AppCompatActivity) mContext).getSupportFragmentManager().findFragmentById(R.id.fragment_container));
-                            transaction1.add(R.id.fragment_container, fragment1);
-                            transaction1.addToBackStack(null).commit();
-                            dismiss();
-                            break;
-                        case 6:
-
                             new AlertDialog.Builder(mContext).setTitle(getResources().getString(R.string.sure_to_set_ringtone)).
                                     setPositiveButton(getResources().getString(R.string.sure), new DialogInterface.OnClickListener() {
                                         @Override
@@ -274,7 +205,7 @@ public class MoreFragment extends DialogFragment {
                                             Uri ringUri = Uri.parse("file://" + adapterMusicInfo.data);
                                             RingtoneManager.setActualDefaultRingtoneUri(mContext, RingtoneManager.TYPE_NOTIFICATION, ringUri);
                                             dialog.dismiss();
-                                            Toast.makeText(mContext,getResources().getString(R.string.set_ringtone_successed),
+                                            Toast.makeText(mContext, getResources().getString(R.string.set_ringtone_successed),
                                                     Toast.LENGTH_SHORT).show();
                                             dismiss();
                                         }
@@ -286,7 +217,7 @@ public class MoreFragment extends DialogFragment {
                                         }
                                     }).show();
                             break;
-                        case 7:
+                        case 5:
                             MusicDetailFragment detailFrament = MusicDetailFragment.newInstance(adapterMusicInfo);
                             detailFrament.show(getActivity().getFragmentManager(), "detail");
                             dismiss();
@@ -296,99 +227,9 @@ public class MoreFragment extends DialogFragment {
                     }
                 }
             });
-            recyclerView.setAdapter(muaicflowAdapter);
-            return;
+            recyclerView.setAdapter(musicflowAdapter);
         }
 
-        commonAdapter.setOnItemClickListener(new OverFlowAdapter.OnRecyclerViewItemClickListener() {
-            @Override
-            public void onItemClick(View view, String data) {
-                switch (Integer.parseInt(data)) {
-                    case 0:
-                        final Handler handler = new Handler();
-                        handler.postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                long[] queuelist = new long[list.size()];
-                                for (int i = 0; i < list.size(); i++) {
-                                    queuelist[i] = list.get(i).songId;
-                                }
-                                MusicPlayer.playAll(mContext, queuelist, 0, false);
-                            }
-                        }, 100);
-                        dismiss();
-                        break;
-                    case 1:
-                        long[] queuelist = new long[list.size()];
-                        for (int i = 0; i < list.size(); i++) {
-                            queuelist[i] = list.get(i).songId;
-                        }
-                        AddPlaylistDialog.newInstance(queuelist).show(getFragmentManager(), "add");
-
-                        dismiss();
-                        break;
-                    case 2:
-
-                        new AsyncTask<Void, Void, Void>() {
-
-                            @Override
-                            protected Void doInBackground(Void... params) {
-                                for (MusicInfo music : list) {
-
-                                   if(MusicPlayer.getCurrentAudioId() == music.songId){
-                                       if(MusicPlayer.getQueueSize() == 0){
-                                           MusicPlayer.stop();
-                                       }else {
-                                           MusicPlayer.next();
-                                       }
-
-                                   }
-                                    Uri uri = ContentUris.withAppendedId(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, music.songId);
-                                    mContext.getContentResolver().delete(uri,null,null);
-                                    PlaylistsManager.getInstance(mContext).deleteMusic(mContext, music.songId);
-                                }
-                                return null;
-                            }
-
-                            @Override
-                            protected void onPostExecute(Void v) {
-                                mContext.sendBroadcast(new Intent(IConstants.MUSIC_COUNT_CHANGED));
-                            }
-
-                        }.execute();
-
-//                        Handler handler1 = new Handler();
-//                        handler1.postDelayed(new Runnable() {
-//                            @Override
-//                            public void run() {
-//                                for (final MusicInfo music : list) {
-//                                    PlaylistsManager.getInstance(mContext).deleteMusic(mContext, music.songId);
-//                                }
-//                            }
-//                        }, 100);
-
-
-//                            file = new File(music.data);
-//                            if (file.exists())
-//                                file.delete();
-//                            if (file.exists() == false) {
-//                                getActivity().sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE,
-//                                        Uri.parse("file://" + music.data)));
-//                            }
-                        //  HandlerUtil.CommonHandler handler1 = new HandlerUtil.CommonHandler(mContext);
-//                new Handler().postDelayed(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        mContext.sendBroadcast(new Intent(IConstants.MUSIC_COUNT_CHANGED));
-//                    }
-//                }, 600);
-
-                        dismiss();
-                        break;
-                }
-        }
-    });
-        recyclerView.setAdapter(commonAdapter);
     }
 
     //设置音乐overflow条目
@@ -398,18 +239,10 @@ public class MoreFragment extends DialogFragment {
         setInfo("收藏到歌单", R.drawable.lay_icn_fav);
         setInfo("分享", R.drawable.lay_icn_share);
         setInfo("删除", R.drawable.lay_icn_delete);
-        setInfo("歌手：" + artist, R.drawable.lay_icn_artist);
-        setInfo("专辑：" + albumName, R.drawable.lay_icn_alb);
         setInfo("设为铃声", R.drawable.lay_icn_ring);
         setInfo("查看歌曲信息", R.drawable.lay_icn_document);
     }
 
-    //设置专辑，艺术家，文件夹overflow条目
-    private void setCommonInfo() {
-        setInfo("播放", R.drawable.lay_icn_play);
-        setInfo("收藏到歌单", R.drawable.lay_icn_fav);
-        setInfo("删除", R.drawable.lay_icn_delete);
-    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {

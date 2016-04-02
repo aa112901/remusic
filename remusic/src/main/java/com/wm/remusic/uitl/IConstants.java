@@ -37,6 +37,8 @@ public interface IConstants {
     int START_FROM_FOLDER = 4;
     int START_FROM_FAVORITE = 5;
 
+    int FAV_PLAYLIST = 10;
+
 
     String NAVIGATE_NOWPLAYING = "navigate_nowplaying";
 

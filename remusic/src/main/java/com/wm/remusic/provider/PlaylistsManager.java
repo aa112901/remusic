@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
 import com.wm.remusic.service.MusicTrack;
+import com.wm.remusic.uitl.IConstants;
 
 import java.util.ArrayList;
 
@@ -18,7 +19,7 @@ public class PlaylistsManager {
     private static PlaylistsManager sInstance = null;
 
     private MusicDB mMusicDatabase = null;
-    private long favPlaylistId = 10;
+    private long favPlaylistId = IConstants.FAV_PLAYLIST;
 
     public PlaylistsManager(final Context context) {
         mMusicDatabase = MusicDB.getInstance(context);

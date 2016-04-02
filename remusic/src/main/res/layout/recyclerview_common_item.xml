@@ -62,6 +62,7 @@
         <ImageView
             android:id="@+id/viewpager_list_button"
             android:layout_width="wrap_content"
+            android:padding="6dp"
             android:layout_height="wrap_content"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:focusable="false"

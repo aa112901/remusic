@@ -33,12 +33,12 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.facebook.drawee.backends.pipeline.Fresco;
-import com.facebook.imagepipeline.core.ImagePipeline;
+
 import com.wm.remusic.R;
-import com.wm.remusic.fragment.MoreFragment;
 import com.wm.remusic.fragment.PlayQueueFragment;
 import com.wm.remusic.fragment.RoundFragment;
+import com.wm.remusic.fragment.SimpleMoreFragment;
+import com.wm.remusic.handler.HandlerUtil;
 import com.wm.remusic.info.MusicInfo;
 import com.wm.remusic.provider.PlaylistsManager;
 import com.wm.remusic.service.MediaService;
@@ -90,20 +90,6 @@ public class PlayingActivity extends BaseActivity implements IConstants {
     private boolean isFav = false;
     private boolean isNextOrPreSetPage = false; //判断viewpager由手动滑动 还是setcruuentitem换页
     private boolean duetoplaypause = false; //判读是否是播放暂停的通知，不要切换专辑封面
-
-
-    @Override
-    public void  onLowMemory() {
-        super.onLowMemory();
-        ImagePipeline imagePipeline = Fresco.getImagePipeline();
-        //清空内存缓存（包括Bitmap缓存和未解码图片的缓存）
-        imagePipeline.clearMemoryCaches();
-        //清空硬盘缓存，一般在设置界面供用户手动清理
-        //imagePipeline.clearDiskCaches();
-
-        //同时清理内存缓存和硬盘缓存
-        //imagePipeline.clearCaches();
-    }
 
 
     @Override
@@ -167,29 +153,41 @@ public class PlayingActivity extends BaseActivity implements IConstants {
             e.printStackTrace();
         }
 
-
         mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
 
             @Override
             public void onPageSelected(final int pPosition) {
                 if (pPosition < 1) { //首位之前，跳转到末尾（N）
-                    mViewPager.setCurrentItem(MusicPlayer.getQueue().length, false);
                     MusicPlayer.setQueuePosition(MusicPlayer.getQueue().length);
+                    mViewPager.setCurrentItem(MusicPlayer.getQueue().length, false);
                     isNextOrPreSetPage = false;
                     return;
 
                 } else if (pPosition > MusicPlayer.getQueue().length) { //末位之后，跳转到首位（1）
-                    mViewPager.setCurrentItem(1, false); //false:不显示跳转过程的动画
                     MusicPlayer.setQueuePosition(0);
+                    mViewPager.setCurrentItem(1, false); //false:不显示跳转过程的动画
                     isNextOrPreSetPage = false;
                     return;
                 } else {
 
                     if (isNextOrPreSetPage == false) {
                         if (pPosition < MusicPlayer.getQueuePosition() + 1) {
-                            MusicPlayer.previous(PlayingActivity.this, true);
+                            HandlerUtil.getInstance(PlayingActivity.this).postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    MusicPlayer.previous(PlayingActivity.this, true);
+                                }
+                            }, 396);
+
+
                         } else if (pPosition > MusicPlayer.getQueuePosition() + 1) {
-                            MusicPlayer.next();
+                            HandlerUtil.getInstance(PlayingActivity.this).postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    MusicPlayer.next();
+                                }
+                            }, 396);
+
                         }
                     }
 
@@ -248,6 +246,10 @@ public class PlayingActivity extends BaseActivity implements IConstants {
         next.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if(animator != null){
+                    animator.end();
+                    animator = null;
+                }
                 MusicPlayer.next();
             }
         });
@@ -264,7 +266,7 @@ public class PlayingActivity extends BaseActivity implements IConstants {
             @Override
             public void onClick(View v) {
 
-                MoreFragment moreFragment = new MoreFragment().newInstance(String.valueOf(MusicPlayer.getCurrentAudioId()), IConstants.MUSICOVERFLOW);
+                SimpleMoreFragment moreFragment = new  SimpleMoreFragment().newInstance(MusicPlayer.getCurrentAudioId());
                 moreFragment.show(getSupportFragmentManager(), "music");
             }
         });
@@ -275,12 +277,17 @@ public class PlayingActivity extends BaseActivity implements IConstants {
             public void onClick(View v) {
 
                 if (isFav == true) {
-                    playlistsManager.removeItem(PlayingActivity.this, 10, MusicPlayer.getCurrentAudioId());
+                    playlistsManager.removeItem(PlayingActivity.this, IConstants.FAV_PLAYLIST,
+                            MusicPlayer.getCurrentAudioId());
                     fav.setImageResource(R.drawable.play_rdi_icn_love);
+                    isFav = false;
                 } else {
-                    playlistsManager.Insert(PlayingActivity.this, 10, MusicPlayer.getCurrentAudioId(), 10);
+                    playlistsManager.Insert(PlayingActivity.this, IConstants.FAV_PLAYLIST,
+                            MusicPlayer.getCurrentAudioId(), 0);
                     fav.setImageResource(R.drawable.play_icn_loved);
+                    isFav = true;
                 }
+
                 Intent intent = new Intent(IConstants.PLAYLIST_COUNT_CHANGED);
                 sendBroadcast(intent);
             }
@@ -348,13 +355,15 @@ public class PlayingActivity extends BaseActivity implements IConstants {
 
         //设置ViewPager的默认项
         mViewPager.setCurrentItem(MusicPlayer.getQueuePosition() + 1);
-        new setBlurredAlbumArt().execute();
+       // new setBlurredAlbumArt().execute();
 
     }
 
     @Override
     public void onResume() {
+
         super.onResume();
+
     }
 
 
@@ -386,7 +395,7 @@ public class PlayingActivity extends BaseActivity implements IConstants {
         }
         fAdapter.notifyDataSetChanged();
         mViewPager.setCurrentItem(MusicPlayer.getQueuePosition() + 1, false);
-        updateTrackInfo();
+        //5updateTrackInfo();
     }
 
     private void updateFav(boolean b) {
@@ -399,9 +408,10 @@ public class PlayingActivity extends BaseActivity implements IConstants {
 
     public void updateTrackInfo() {
         if(MusicPlayer.getQueueSize() == 0){return;}
+
         if (!duetoplaypause) {
             isFav = false;
-            ArrayList<MusicTrack> favlists = playlistsManager.getPlaylist(10);
+            ArrayList<MusicTrack> favlists = playlistsManager.getPlaylist(IConstants.FAV_PLAYLIST);
             for (int i = 0; i < favlists.size(); i++) {
                 if (MusicPlayer.getCurrentAudioId() == favlists.get(i).mId) {
                     isFav = true;
@@ -414,11 +424,9 @@ public class PlayingActivity extends BaseActivity implements IConstants {
         }
         duetoplaypause = false;
 
-
         Fragment fragment = (RoundFragment) mViewPager.getAdapter().instantiateItem(mViewPager, mViewPager.getCurrentItem());
         viewWeakReference = new WeakReference<View>(fragment.getView());
         activeView = viewWeakReference.get();
-        //activeView = fragment.getView();
 
         if (activeView != null) {
 //            animatorWeakReference = new WeakReference<>((ObjectAnimator) activeView.getTag(R.id.tag_animator));
@@ -443,8 +451,8 @@ public class PlayingActivity extends BaseActivity implements IConstants {
             control.setImageResource(R.drawable.play_rdi_btn_play);
         }
 
-        animatorSet = new AnimatorSet();
 
+        animatorSet = new AnimatorSet();
         if (MusicPlayer.isPlaying()) {
             if (animator != null && !animator.isRunning()) {
                 animatorSet.play(needleAnim).before(animator);
@@ -516,9 +524,14 @@ public class PlayingActivity extends BaseActivity implements IConstants {
     }
 
     @Override
+    public void onSaveInstanceState(Bundle outState){
+        onBackPressed();
+        //super.onSaveInstanceState(outState);
+
+    }
+    @Override
     public void onStop() {
         super.onStop();
-
     }
 
     @Override
@@ -534,16 +547,8 @@ public class PlayingActivity extends BaseActivity implements IConstants {
         super.onBackPressed();
         stopAnim();
         mProgress.removeCallbacks(mUpdateProgress);
-        finish();
     }
 
-    static class MyHandler extends Handler {
-        WeakReference<Activity> mActivityReference;
-
-        MyHandler(Activity activity) {
-            mActivityReference = new WeakReference<Activity>(activity);
-        }
-    }
 
     public class PlaybarPagerTransformer implements ViewPager.PageTransformer {
 
@@ -690,7 +695,7 @@ public class PlayingActivity extends BaseActivity implements IConstants {
     }
 
     public class MyScroller extends Scroller {
-        private int animTime = 600;
+        private int animTime = 390;
 
         public MyScroller(Context context) {
             super(context);

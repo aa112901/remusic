@@ -11,6 +11,7 @@ import com.facebook.imagepipeline.core.ImagePipeline;
 import com.facebook.imagepipeline.core.ImagePipelineConfig;
 import com.wm.remusic.handler.UnceHandler;
 import com.wm.remusic.provider.PlaylistInfo;
+import com.wm.remusic.uitl.IConstants;
 import com.wm.remusic.uitl.PreferencesUtility;
 
 /**
@@ -21,7 +22,7 @@ public class MainApplication extends Application {
     //private RefWatcher refWatcher;
     private static int MAX_MEM = (int) Runtime.getRuntime().maxMemory()/5;
     //private static int MAX_MEM = 60 * ByteConstants.MB;
-    private long favPlaylist = 10;
+    private long favPlaylist = IConstants.FAV_PLAYLIST;
 
     private ImagePipelineConfig getConfigureCaches(Context context) {
         final MemoryCacheParams bitmapCacheParams = new MemoryCacheParams(

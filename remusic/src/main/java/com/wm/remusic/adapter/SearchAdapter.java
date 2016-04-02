@@ -26,6 +26,7 @@ import android.widget.TextView;
 
 import com.wm.remusic.R;
 import com.wm.remusic.fragment.MoreFragment;
+import com.wm.remusic.fragment.SimpleMoreFragment;
 import com.wm.remusic.info.MusicInfo;
 import com.wm.remusic.service.MusicPlayer;
 import com.wm.remusic.uitl.IConstants;
@@ -74,7 +75,7 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ItemHolder
         itemHolder.menu.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                MoreFragment morefragment = MoreFragment.newInstance(searchResults.get(position).songId + "", IConstants.MUSICOVERFLOW);
+                SimpleMoreFragment morefragment = SimpleMoreFragment.newInstance(searchResults.get(position).songId);
                 morefragment.show(((AppCompatActivity) mContext).getSupportFragmentManager(), "music");
             }
         });

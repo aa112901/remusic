@@ -42,7 +42,8 @@
             <android.support.percent.PercentRelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+               android:layout_marginTop="10dp">
 
                 <ImageView
                     android:layout_width="match_parent"
@@ -79,8 +80,8 @@
                     android:layout_marginTop="-16dp"
                     android:rotation="-30"
                     android:src="@drawable/play_needle"
-                    android:transformPivotX="10dp"
-                    android:transformPivotY="10dp"
+                    android:transformPivotX="15.1dp"
+                    android:transformPivotY="15.1dp"
                     app:layout_marginRightPercent="23%"
 
                     />

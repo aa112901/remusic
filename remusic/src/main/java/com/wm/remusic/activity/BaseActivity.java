@@ -48,17 +48,20 @@ public class BaseActivity extends AppCompatActivity implements ServiceConnection
         super.onCreate(savedInstanceState);
         mToken = MusicPlayer.bindToService(this, this);
         mPlaybackStatus = new PlaybackStatus(this);
-    }
 
-    @Override
-    protected void onStart() {
-        super.onStart();
+
         IntentFilter f = new IntentFilter();
         f.addAction(MediaService.PLAYSTATE_CHANGED);
         f.addAction(MediaService.META_CHANGED);
         f.addAction(MediaService.QUEUE_CHANGED);
         f.addAction(IConstants.MUSIC_COUNT_CHANGED);
         registerReceiver(mPlaybackStatus, new IntentFilter(f));
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+
     }
 
     @Override

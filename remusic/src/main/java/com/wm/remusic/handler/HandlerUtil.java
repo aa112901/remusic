@@ -9,13 +9,19 @@ import java.lang.ref.WeakReference;
 /**
  * Created by wm on 2016/3/26.
  */
-public class HandlerUtil extends Handler {
+public class HandlerUtil extends Handler{
 
-    static class CommonHandler extends Handler {
-        WeakReference<Activity> mActivityReference;
+   private static HandlerUtil instance = null;
+    WeakReference<Context> mActivityReference;
 
-        CommonHandler(Activity activity) {
-            mActivityReference = new WeakReference<>(activity);
-        }
+    public static HandlerUtil getInstance(Context context){
+       if(instance == null){
+           instance = new HandlerUtil(context.getApplicationContext());
+       }
+        return instance;
     }
+
+        HandlerUtil(Context context) {
+            mActivityReference = new WeakReference<>(context);
+        }
 }

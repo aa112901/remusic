@@ -20,6 +20,9 @@ import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.os.AsyncTask;
 import android.preference.PreferenceManager;
 
+import java.util.ArrayList;
+import java.util.Set;
+
 public final class PreferencesUtility {
 
     public static final String ARTIST_SORT_ORDER = "artist_sort_order";
@@ -54,6 +57,17 @@ public final class PreferencesUtility {
             sInstance = new PreferencesUtility(context.getApplicationContext());
         }
         return sInstance;
+    }
+
+
+    public void setItemPostion(String str){
+        final SharedPreferences.Editor editor = mPreferences.edit();
+        editor.putString("item_relative_position", str);
+        editor.apply();
+    }
+
+    public String getItemPosition(){
+        return mPreferences.getString("item_relative_position","推荐歌单 最新专辑 主播电台");
     }
 
     public void setDownMusicBit(int bit){

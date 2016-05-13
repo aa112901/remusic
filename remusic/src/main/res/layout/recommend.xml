@@ -150,49 +150,55 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
-            <include layout="@layout/recommend_playlist" />
-            <include layout="@layout/recommend_newalbums"/>
-            <include layout="@layout/recommend_radio"/>
+            <!--<include layout="@layout/recommend_playlist" />-->
+            <!--<include layout="@layout/recommend_newalbums"/>-->
+            <!--<include layout="@layout/recommend_radio"/>-->
 
             <!--添加布局的位置-->
 
         </LinearLayout>
+      <LinearLayout
+          android:orientation="vertical"
+          android:id="@+id/item_change"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content">
+          <View
+              android:id="@+id/layout_line"
+              android:layout_width="match_parent"
+              android:layout_height="0.3dp"
+              android:layout_marginTop="20dp"
+              android:background="#E0E0E0" />
 
-        <View
-            android:id="@+id/layout_line"
-            android:layout_width="match_parent"
-            android:layout_height="0.3dp"
-            android:layout_marginTop="20dp"
-            android:background="#E0E0E0" />
+          <TextView
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:layout_gravity="center_horizontal"
+              android:layout_marginTop="15dp"
+              android:text="现在可以根据个人喜好，自由调整首页项目顺序啦~"
+              android:textColor="#7D7D7D"
+              android:textSize="10sp" />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginTop="15dp"
-            android:text="现在可以根据个人喜好，自由调整首页项目顺序啦~"
-            android:textColor="#7D7D7D"
-            android:textSize="10sp" />
+          <LinearLayout
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:layout_gravity="center_horizontal"
+              android:layout_marginBottom="70dp"
+              android:layout_marginTop="10dp"
+              android:orientation="horizontal"
+              android:clickable="true"
+              android:background="@drawable/btn_background"
+              >
 
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginBottom="70dp"
-            android:layout_marginTop="10dp"
-            android:orientation="horizontal"
-            android:clickable="true"
-            android:background="@drawable/btn_background"
-           >
+              <TextView
+                  android:layout_width="wrap_content"
+                  android:layout_height="wrap_content"
+                  android:text="调整栏目顺序"
+                  android:id="@+id/change_item_position"
+                  android:textColor="@color/themeColor"
+                  android:clickable="true"
+                  android:textSize="12sp" />
+          </LinearLayout>
+      </LinearLayout>
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="调整栏目顺序"
-                android:id="@+id/change_item_position"
-                android:textColor="@color/themeColor"
-                android:clickable="true"
-                android:textSize="12sp" />
-        </LinearLayout>
     </LinearLayout>
 </ScrollView>

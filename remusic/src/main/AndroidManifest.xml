@@ -58,6 +58,7 @@
         <activity android:name=".activity.DownActivity"/>
         <activity android:name=".activity.NetPlaylistDetailActivity"/>
         <activity android:name=".activity.RecentActivity"/>
+        <activity android:name=".fragment.NetItemChangeActivity"/>
 
         <service
             android:name=".service.MediaService"

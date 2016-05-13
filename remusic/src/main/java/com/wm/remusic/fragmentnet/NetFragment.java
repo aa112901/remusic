@@ -5,6 +5,8 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -28,18 +30,18 @@ import com.google.gson.JsonObject;
 import com.wm.remusic.R;
 import com.wm.remusic.activity.AlbumsDetailActivity;
 import com.wm.remusic.activity.NetPlaylistDetailActivity;
-import com.wm.remusic.adapter.OverFlowAdapter;
-import com.wm.remusic.info.Playlist;
+import com.wm.remusic.fragment.NetItemChangeActivity;
 import com.wm.remusic.json.PlaylistNet;
 import com.wm.remusic.json.RadioNet;
-import com.wm.remusic.json.RecommendAlbum;
 import com.wm.remusic.net.BMA;
 import com.wm.remusic.net.HttpUtil;
+import com.wm.remusic.uitl.PreferencesUtility;
 
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.Iterator;
 
 /**
@@ -59,7 +61,11 @@ public class NetFragment extends Fragment {
     int width = 160,height = 160;
 
     String newAlbums = "http://music.163.com/api/album/new?area=ALL&offset=" + "0" + "&total=true&limit=" + "6" ;
-
+    LayoutInflater layoutInflater;
+    View loadView , v1,v2,v3;
+    LinearLayout itemChanged;
+    HashMap<String,View> hashMap;
+    String position;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -67,54 +73,43 @@ public class NetFragment extends Fragment {
 
         ImageButton privateFm = (ImageButton) view.findViewById(R.id.private_fm);
 
+        layoutInflater = LayoutInflater.from(getContext());
+        TextView dailyText = (TextView) view.findViewById(R.id.daily_text);
+        dailyText.setText(Calendar.getInstance().get(Calendar.DAY_OF_MONTH) + "");
+//        recyclerView1 = (RecyclerView) view.findViewById(R.id.recommend_playlist_recyclerview);
+//        recyclerView2 = (RecyclerView) view.findViewById(R.id.recommend_newalbums_recyclerview);
+//        recyclerView3 = (RecyclerView) view.findViewById(R.id.recommend_radio_recyclerview);
+//        gridLayoutManager = new GridLayoutManager(getActivity(),3);
+//        gridLayoutManager2 = new GridLayoutManager(getActivity(),3);
+//        gridLayoutManager3 = new GridLayoutManager(getActivity(),3);
+//        recyclerView1.setLayoutManager(gridLayoutManager);
+//        recyclerView2.setLayoutManager(gridLayoutManager2);
+//        recyclerView3.setLayoutManager(gridLayoutManager3);
+//        recomendAdapter = new RecommendAdapter(null);
+//        newAlbumsAdapter = new NewAlbumsAdapter(null);
+//        radioAdapter = new RadioAdapter(null);
+//        recyclerView1.setAdapter(recomendAdapter);
+//        recyclerView2.setAdapter(newAlbumsAdapter);
+//        recyclerView3.setAdapter(radioAdapter);
 
-        recyclerView1 = (RecyclerView) view.findViewById(R.id.recommend_playlist_recyclerview);
-        recyclerView2 = (RecyclerView) view.findViewById(R.id.recommend_newalbums_recyclerview);
-        recyclerView3 = (RecyclerView) view.findViewById(R.id.recommend_radio_recyclerview);
-        gridLayoutManager = new GridLayoutManager(getActivity(),3);
-        gridLayoutManager2 = new GridLayoutManager(getActivity(),3);
-        gridLayoutManager3 = new GridLayoutManager(getActivity(),3);
-        recyclerView1.setLayoutManager(gridLayoutManager);
-        recyclerView2.setLayoutManager(gridLayoutManager2);
-        recyclerView3.setLayoutManager(gridLayoutManager3);
+        itemChanged = (LinearLayout) view.findViewById(R.id.item_change);
+        linearLayout = (LinearLayout) view.findViewById(R.id.recommend_layout);
+        loadView = layoutInflater.inflate(R.layout.loading, null, false);
+        itemChanged.setVisibility(View.INVISIBLE);
+        linearLayout.addView(loadView);
+
         recomendAdapter = new RecommendAdapter(null);
         newAlbumsAdapter = new NewAlbumsAdapter(null);
         radioAdapter = new RadioAdapter(null);
-        recyclerView1.setAdapter(recomendAdapter);
-        recyclerView2.setAdapter(newAlbumsAdapter);
-        recyclerView3.setAdapter(radioAdapter);
-
-        TextView dailyText = (TextView) view.findViewById(R.id.daily_text);
-        dailyText.setText(Calendar.getInstance().get(Calendar.DAY_OF_MONTH) + "");
 
         reloadAdapter();
-
-        linearLayout = (LinearLayout) view.findViewById(R.id.recommend_layout);
-
-        LayoutInflater layoutInflater = LayoutInflater.from(getContext());
-      final   View v1 = layoutInflater.inflate(R.layout.recommend_newalbums, linearLayout,false);
-        recyclerView3 = (RecyclerView) v1.findViewById(R.id.recommend_newalbums_recyclerview);
-        gridLayoutManager3 = new GridLayoutManager(getActivity(),3);
-        recyclerView3.setLayoutManager(gridLayoutManager3);
-        recyclerView3.setAdapter(newAlbumsAdapter);
-
-     final    View v2 = layoutInflater.inflate(R.layout.recommend_playlist, linearLayout,false);
-        recyclerView3 = (RecyclerView) v2.findViewById(R.id.recommend_playlist_recyclerview);
-        gridLayoutManager3 = new GridLayoutManager(getActivity(),3);
-        recyclerView3.setLayoutManager(gridLayoutManager3);
-        recyclerView3.setAdapter(recomendAdapter);
-
-        linearLayout.addView(v1);
-        linearLayout.addView(v2);
-
-
 
         TextView change = (TextView) view.findViewById(R.id.change_item_position);
         change.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                linearLayout.removeView(v1);
-                linearLayout.addView(v1,0);
+               Intent itent = new Intent(getContext(),NetItemChangeActivity.class);
+                getActivity().startActivity(itent);
             }
         });
 
@@ -123,6 +118,8 @@ public class NetFragment extends Fragment {
         return view;
     }
     LinearLayout linearLayout;
+
+
     public String getThisMonthDate(){
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         Calendar cc2 = Calendar.getInstance();
@@ -133,6 +130,8 @@ public class NetFragment extends Fragment {
         String start = sdf.format(cc2.getTime());
         return start+"|"+end;
     }
+
+
 
     private void reloadAdapter(){
        final Gson gson = new Gson();
@@ -165,27 +164,13 @@ public class NetFragment extends Fragment {
                 }
 
 
-                return null;
-            }
 
-            @Override
-            protected void onPostExecute(Void v){
-                recomendAdapter.update(recomendList);
-            }
-
-        }.execute();
-
-        new AsyncTask<Void,Void,Void>(){
-
-            @Override
-            protected Void doInBackground(Void... params) {
-
-                JsonObject result = HttpUtil.getResposeJsonObject(newAlbums);
-                if(result == null){
+                JsonObject result2 = HttpUtil.getResposeJsonObject(newAlbums);
+                if(result2 == null){
                     return null;
                 }
                 //新专辑
-                JsonArray jsonArray2  = result.get("albums").getAsJsonArray();
+                JsonArray jsonArray2  = result2.get("albums").getAsJsonArray();
                 if(jsonArray2 == null){
                     return null;
                 }
@@ -202,28 +187,17 @@ public class NetFragment extends Fragment {
                 }
 
 
-                return null;
-            }
 
-            @Override
-            protected void onPostExecute(Void v){
-                newAlbumsAdapter.update(newAlbumsList);
-            }
 
-        }.execute();
 
-        new AsyncTask<Void,Void,Void>(){
 
-            @Override
-            protected Void doInBackground(Void... params) {
-
-                JsonObject result = HttpUtil.get(BMA.Radio.recommendRadioList(6), "RadioList");
-                if(result == null){
+                JsonObject result3 = HttpUtil.get(BMA.Radio.recommendRadioList(6), "RadioList");
+                if(result3 == null){
                     return null;
                 }
 
                 //推荐电台
-                JsonArray rArray = result.get("list")
+                JsonArray rArray = result3.get("list")
                         .getAsJsonArray();
                 if(rArray == null){
                     return null;
@@ -236,25 +210,162 @@ public class NetFragment extends Fragment {
                     radioList.add(radioNet);
                 }
 
+
+
                 return null;
             }
 
             @Override
             protected void onPostExecute(Void v){
+
+                v1 = layoutInflater.inflate(R.layout.recommend_playlist, linearLayout,false);
+                recyclerView1 = (RecyclerView) v1.findViewById(R.id.recommend_playlist_recyclerview);
+                gridLayoutManager = new GridLayoutManager(getActivity(),3);
+                recyclerView1.setLayoutManager(gridLayoutManager);
+                recyclerView1.setAdapter(recomendAdapter);
+
+
+                v2 = layoutInflater.inflate(R.layout.recommend_newalbums, linearLayout,false);
+                recyclerView2 = (RecyclerView) v2.findViewById(R.id.recommend_newalbums_recyclerview);
+                gridLayoutManager2 = new GridLayoutManager(getActivity(),3);
+                recyclerView2.setLayoutManager(gridLayoutManager2);
+                recyclerView2.setAdapter(newAlbumsAdapter);
+
+               v3 = layoutInflater.inflate(R.layout.recommend_radio, linearLayout,false);
+                recyclerView3 = (RecyclerView) v3.findViewById(R.id.recommend_radio_recyclerview);
+                gridLayoutManager3 = new GridLayoutManager(getActivity(),3);
+                recyclerView3.setLayoutManager(gridLayoutManager3);
+                recyclerView3.setAdapter(radioAdapter);
+
+
+                recomendAdapter.update(recomendList);
+                newAlbumsAdapter.update(newAlbumsList);
                 radioAdapter.update(radioList);
 
+                hashMap = new HashMap<>();
+                hashMap.put("推荐歌单",v1);
+                hashMap.put("最新专辑",v2);
+                hashMap.put("主播电台",v3);
+                position = PreferencesUtility.getInstance(getActivity()).getItemPosition();
+                linearLayout.removeView(loadView);
 
+                addViews();
+
+                itemChanged.setVisibility(View.VISIBLE);
 
             }
 
         }.execute();
 
 
+
+
+//        new AsyncTask<Void,Void,Void>(){
+//
+//            @Override
+//            protected Void doInBackground(Void... params) {
+//
+//                JsonObject result = HttpUtil.getResposeJsonObject(newAlbums);
+//                if(result == null){
+//                    return null;
+//                }
+//                //新专辑
+//                JsonArray jsonArray2  = result.get("albums").getAsJsonArray();
+//                if(jsonArray2 == null){
+//                    return null;
+//                }
+//
+//                Iterator it2 = jsonArray2.iterator();
+//                while(it2.hasNext()){
+//                    JsonElement e = (JsonElement)it2.next();
+//                    JsonObject jo = e.getAsJsonObject();
+//
+//                    String artistName = jo.get("artist").getAsJsonObject().get("name").getAsString();
+//                    NewAlbums newAlbums = new NewAlbums(getStringValue(jo, "blurPicUrl"),getIntValue(jo, "id"),
+//                            getStringValue(jo, "name"), artistName, getIntValue(jo, "publishTime"));
+//                    newAlbumsList.add(newAlbums);
+//                }
+//
+//
+//                return null;
+//            }
+//
+//            @Override
+//            protected void onPostExecute(Void v){
+//                newAlbumsAdapter.update(newAlbumsList);
+//            }
+//
+//        }.execute();
+//
+//        new AsyncTask<Void,Void,Void>(){
+//
+//            @Override
+//            protected Void doInBackground(Void... params) {
+//
+//                JsonObject result = HttpUtil.get(BMA.Radio.recommendRadioList(6), "RadioList");
+//                if(result == null){
+//                    return null;
+//                }
+//
+//                //推荐电台
+//                JsonArray rArray = result.get("list")
+//                        .getAsJsonArray();
+//                if(rArray == null){
+//                    return null;
+//                }
+//
+//                int rlen = rArray.size();
+//
+//                for(int i = 0;i < rlen; i++){
+//                    RadioNet radioNet = gson.fromJson(rArray.get(i),RadioNet.class);
+//                    radioList.add(radioNet);
+//                }
+//
+//                return null;
+//            }
+//
+//            @Override
+//            protected void onPostExecute(Void v){
+//                radioAdapter.update(radioList);
+//
+//            }
+//
+//        }.execute();
+
+
     }
-    private String getStringValue(JsonObject jsonObject,String key){
+
+    public void addViews(){
+
+        String[] strs = position.split(" ");
+        for(int i = 0 ; i< strs.length ; i++ ){
+            linearLayout.addView(hashMap.get(strs[i]));
+        }
+
+    }
+
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if(position == null){
+            return;
+        }
+        String st = PreferencesUtility.getInstance(getActivity()).getItemPosition();
+        if(!st.equals(position)){
+            position = st;
+            linearLayout.removeAllViews();
+            addViews();
+        }
+
+
+    }
+
+    private String getStringValue(JsonObject jsonObject, String key){
         JsonElement nameElement = jsonObject.get(key);
         return nameElement.getAsString();
     }
+
 
     private int getIntValue(JsonObject jsonObject,String key){
         JsonElement nameElement = jsonObject.get(key);
@@ -351,7 +462,7 @@ public class NetFragment extends Fragment {
 
         @Override
         public void onBindViewHolder(RecyclerView.ViewHolder holder, final int position) {
-            RadioNet info = mList.get(position);
+           final RadioNet info = mList.get(position);
 
             ImageRequest request = ImageRequestBuilder.newBuilderWithSource(Uri.parse(info.getPic()))
                     .setResizeOptions(new ResizeOptions(width, height))
@@ -368,7 +479,7 @@ public class NetFragment extends Fragment {
             ((ItemView) holder).itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    RadioNet info = mList.get(position);
+
                     Intent intent = new Intent(getActivity(), AlbumsDetailActivity.class);
                     info.getChannelid();
 //                    intent.putExtra("albumid", info.id);
@@ -441,7 +552,7 @@ public class NetFragment extends Fragment {
 
         @Override
         public void onBindViewHolder(RecyclerView.ViewHolder holder, final int position) {
-            NewAlbums info = mList.get(position);
+         final  NewAlbums info = mList.get(position);
 
             ImageRequest request = ImageRequestBuilder.newBuilderWithSource(Uri.parse(info.coverImgUrl))
                     .setResizeOptions(new ResizeOptions(width, height))
@@ -458,7 +569,7 @@ public class NetFragment extends Fragment {
             ((ItemView) holder).itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    NewAlbums info =  mList.get(position);
+
                     Intent intent = new Intent(getActivity(), AlbumsDetailActivity.class);
                     intent.putExtra("albumid",info.id);
                     intent.putExtra("albumart",info.coverImgUrl);

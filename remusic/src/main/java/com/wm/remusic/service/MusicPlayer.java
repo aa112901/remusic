@@ -35,7 +35,6 @@ import android.widget.Toast;
 import com.wm.remusic.MediaAidlInterface;
 import com.wm.remusic.R;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.WeakHashMap;
 
@@ -491,7 +490,7 @@ public class MusicPlayer {
             int current = -1;
             long[] result = list;
 
-            for(int i = 0; i < list.length; i++) {
+            for (int i = 0; i < list.length; i++) {
                 if (MusicPlayer.getCurrentAudioId() == list[i]) {
                     current = i;
                 } else {

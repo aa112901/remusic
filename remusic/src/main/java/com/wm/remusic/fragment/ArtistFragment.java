@@ -241,8 +241,8 @@ public class ArtistFragment extends BaseFragment {
             public void onClick(View v) {
                 FragmentTransaction transaction = ((AppCompatActivity) getContext()).getSupportFragmentManager().beginTransaction();
                 ArtistDetailFragment fragment = ArtistDetailFragment.newInstance(mList.get(getAdapterPosition()).artist_id);
-                transaction.hide(((AppCompatActivity) getContext()).getSupportFragmentManager().findFragmentById(R.id.fragment_container));
-                transaction.add(R.id.fragment_container, fragment);
+                transaction.hide(((AppCompatActivity) getContext()).getSupportFragmentManager().findFragmentById(R.id.tab_container));
+                transaction.add(R.id.tab_container, fragment);
                 transaction.addToBackStack(null).commit();
             }
 

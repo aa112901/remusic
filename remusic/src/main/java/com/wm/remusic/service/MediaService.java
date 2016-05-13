@@ -62,12 +62,13 @@ import android.widget.RemoteViews;
 import com.wm.remusic.MediaAidlInterface;
 import com.wm.remusic.R;
 import com.wm.remusic.activity.PlayingActivity;
-import com.wm.remusic.recent.SongPlayCount;
 import com.wm.remusic.permissions.Nammu;
 import com.wm.remusic.provider.MusicPlaybackState;
 import com.wm.remusic.provider.RecentStore;
 import com.wm.remusic.receiver.MediaButtonIntentReceiver;
+import com.wm.remusic.recent.SongPlayCount;
 import com.wm.remusic.uitl.CommonUtils;
+import com.wm.remusic.uitl.ImageUtils;
 import com.wm.remusic.uitl.MusicUtils;
 
 import java.io.IOException;
@@ -288,8 +289,10 @@ public class MediaService extends Service {
                 MediaButtonIntentReceiver.class.getName());
         mAudioManager.registerMediaButtonEventReceiver(mMediaButtonReceiverComponent);
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP){
             setUpMediaSession();
+        }
+
 
         mPreferences = getSharedPreferences("Service", 0);
         mCardId = getCardId();
@@ -1149,7 +1152,7 @@ public class MediaService extends Service {
 
 
         Notification notification = new Notification();
-      //  notification.icon = R.drawable.ic_launcher;
+        //  notification.icon = R.drawable.ic_launcher;
         notification.tickerText = albumName;
         notification.contentIntent = clickIntent;
         notification.contentView = remoteViews;
@@ -1160,7 +1163,7 @@ public class MediaService extends Service {
 //                bitmap = BitmapFactory.decodeFile(MusicUtils.getAlbumInfo(this, getAlbumId()).album_art);
 //            }
 //
-        Bitmap bitmap = MusicUtils.getArtworkQuick(this, getAlbumId(), 160, 160);
+        Bitmap bitmap = ImageUtils.getArtworkQuick(this, getAlbumId(), 160, 160);
 
         if (bitmap != null) {
             remoteViews.setImageViewBitmap(R.id.image, bitmap);
@@ -1222,7 +1225,7 @@ public class MediaService extends Service {
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         PendingIntent pi = PendingIntent.getActivity(getApplicationContext(),
                 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-        Bitmap bitmap = MusicUtils.getArtworkQuick(this, getAlbumId(), 160, 160);
+        Bitmap bitmap = ImageUtils.getArtworkQuick(this, getAlbumId(), 160, 160);
 
         if (bitmap != null) {
             remoteViews.setImageViewBitmap(R.id.image, bitmap);

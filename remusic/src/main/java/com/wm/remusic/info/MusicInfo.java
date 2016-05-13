@@ -24,6 +24,7 @@ public class MusicInfo implements Parcelable {
     public static final String KEY_MUSIC_NAME_KEY = "musicnamekey";
     public static final String KEY_SIZE = "size";
     public static final String KEY_FAVORITE = "favorite";
+    public static final String KEY_URL = "url";
 
     /**
      * 数据库中的_id
@@ -40,6 +41,7 @@ public class MusicInfo implements Parcelable {
     public String data;
     public String folder;
     public String musicNameKey;
+    public String url;
 
     public int size;
     /**
@@ -67,6 +69,7 @@ public class MusicInfo implements Parcelable {
             music.albumData = bundle.getString(KEY_ALBUM_DATA);
             music.size = bundle.getInt(KEY_SIZE);
             music.favorite = bundle.getInt(KEY_FAVORITE);
+            music.url = bundle.getString(KEY_URL);
             return music;
         }
 
@@ -98,6 +101,7 @@ public class MusicInfo implements Parcelable {
         bundle.putString(KEY_MUSIC_NAME_KEY, musicNameKey);
         bundle.putInt(KEY_SIZE, size);
         bundle.putInt(KEY_FAVORITE, favorite);
+        bundle.putString(KEY_URL,url);
         dest.writeBundle(bundle);
     }
 

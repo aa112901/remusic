@@ -14,9 +14,12 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.util.SparseBooleanArray;
+import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
@@ -25,13 +28,12 @@ import android.widget.TextView;
 
 import com.wm.remusic.R;
 import com.wm.remusic.dialog.AddPlaylistDialog;
-import com.wm.remusic.provider.PlaylistsManager;
-import com.wm.remusic.uitl.DividerItemDecoration;
 import com.wm.remusic.info.MusicInfo;
+import com.wm.remusic.provider.PlaylistsManager;
 import com.wm.remusic.service.MediaService;
 import com.wm.remusic.service.MusicPlayer;
+import com.wm.remusic.uitl.DividerItemDecoration;
 import com.wm.remusic.uitl.IConstants;
-import com.wm.remusic.uitl.MusicUtils;
 
 import java.util.ArrayList;
 
@@ -79,9 +81,28 @@ public class SelectActivity extends AppCompatActivity implements View.OnClickLis
         recyclerView.setLayoutManager(layoutManager);
 
 
-
-
         new loadSongs().execute("");
+
+    }
+
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        final MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.down, menu);
+        MenuItem down = menu.findItem(R.id.down);
+        down.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                Intent intent = new Intent(SelectActivity.this,DownActivity.class);
+                startActivity(intent);
+                return false;
+            }
+        });
+
+
+        return true;
 
     }
 
@@ -100,8 +121,8 @@ public class SelectActivity extends AppCompatActivity implements View.OnClickLis
                         ArrayList<MusicInfo> select = mAdapter.getSelectedItem();
                         long currentAudioId = MusicPlayer.getCurrentAudioId();
 
-                        for(int i = 0;i< select.size();i++){
-                            if(select.get(i).songId == currentAudioId ){
+                        for (int i = 0; i < select.size(); i++) {
+                            if (select.get(i).songId == currentAudioId) {
                                 select.remove(i);
                                 break;
                             }
@@ -139,16 +160,16 @@ public class SelectActivity extends AppCompatActivity implements View.OnClickLis
                                     protected Void doInBackground(Void... params) {
                                         for (MusicInfo music : selectList) {
 
-                                            if(MusicPlayer.getCurrentAudioId() == music.songId){
-                                                if(MusicPlayer.getQueueSize() == 0){
+                                            if (MusicPlayer.getCurrentAudioId() == music.songId) {
+                                                if (MusicPlayer.getQueueSize() == 0) {
                                                     MusicPlayer.stop();
-                                                }else {
+                                                } else {
                                                     MusicPlayer.next();
                                                 }
 
                                             }
                                             Uri uri = ContentUris.withAppendedId(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, music.songId);
-                                            SelectActivity.this.getContentResolver().delete(uri,null,null);
+                                            SelectActivity.this.getContentResolver().delete(uri, null, null);
                                             PlaylistsManager.getInstance(SelectActivity.this).deleteMusic(SelectActivity.this,
                                                     music.songId);
                                         }
@@ -306,7 +327,7 @@ public class SelectActivity extends AppCompatActivity implements View.OnClickLis
             return mList == null ? 0 : mList.size();
         }
 
-        public class ListItemViewHolder extends RecyclerView.ViewHolder{
+        public class ListItemViewHolder extends RecyclerView.ViewHolder {
             //ViewHolder
             CheckBox checkBox;
             TextView mainTitle, title;

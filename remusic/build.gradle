@@ -2,7 +2,7 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 23
-    buildToolsVersion "23.0.2"
+    buildToolsVersion '23.0.3'
 
     defaultConfig {
         applicationId "com.wm.remusic"
@@ -33,4 +33,5 @@ dependencies {
     compile 'com.squareup.okhttp:okhttp-urlconnection:2.7.2'
     compile 'com.squareup.retrofit:retrofit:1.9.0'
     compile 'com.readystatesoftware.systembartint:systembartint:1.0.3'
+    compile 'com.jakewharton:butterknife:7.0.1'
 }

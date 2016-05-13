@@ -3,7 +3,6 @@ package com.wm.remusic.activity;
 
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -13,7 +12,6 @@ import android.graphics.drawable.TransitionDrawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
@@ -32,7 +30,6 @@ import android.widget.Scroller;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
-
 
 import com.wm.remusic.R;
 import com.wm.remusic.fragment.PlayQueueFragment;
@@ -60,23 +57,7 @@ public class PlayingActivity extends BaseActivity implements IConstants {
     private ImageView backAlbum, playingmode, control, next, pre, playlist, cmt, fav, down, more, needle;
     private TextView timePlayed, duration;
     private SeekBar mProgress;
-    public Runnable mUpdateProgress = new Runnable() {
 
-        @Override
-        public void run() {
-
-            if (mProgress != null) {
-                long position = MusicPlayer.position();
-                mProgress.setProgress((int) position);
-                timePlayed.setText(MusicUtils.makeShortTimeString(PlayingActivity.this.getApplication(), position / 1000));
-            }
-
-            if (MusicPlayer.isPlaying()) {
-                mProgress.postDelayed(mUpdateProgress, 50);
-            }
-
-        }
-    };
     private ActionBar ab;
     private ObjectAnimator needleAnim, animator;
     private AnimatorSet animatorSet;
@@ -140,18 +121,18 @@ public class PlayingActivity extends BaseActivity implements IConstants {
         mViewPager.setPageTransformer(true, transformer);
 
         //改变viewpager动画时间
-        try {
-            Field mField = ViewPager.class.getDeclaredField("mScroller");
-            mField.setAccessible(true);
-            MyScroller mScroller = new MyScroller(mViewPager.getContext().getApplicationContext(), new AccelerateInterpolator());
-            mField.set(mViewPager, mScroller);
-        } catch (NoSuchFieldException e) {
-            e.printStackTrace();
-        } catch (IllegalArgumentException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        }
+//        try {
+//            Field mField = ViewPager.class.getDeclaredField("mScroller");
+//            mField.setAccessible(true);
+//            MyScroller mScroller = new MyScroller(mViewPager.getContext().getApplicationContext(), new AccelerateInterpolator());
+//            mField.set(mViewPager, mScroller);
+//        } catch (NoSuchFieldException e) {
+//            e.printStackTrace();
+//        } catch (IllegalArgumentException e) {
+//            e.printStackTrace();
+//        } catch (IllegalAccessException e) {
+//            e.printStackTrace();
+//        }
 
         mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
 
@@ -239,14 +220,16 @@ public class PlayingActivity extends BaseActivity implements IConstants {
                 } else {
                     control.setImageResource(R.drawable.play_rdi_btn_play);
                 }
-                if(MusicPlayer.getQueueSize() != 0){MusicPlayer.playOrPause();}
+                if (MusicPlayer.getQueueSize() != 0) {
+                    MusicPlayer.playOrPause();
+                }
             }
         });
 
         next.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(animator != null){
+                if (animator != null) {
                     animator.end();
                     animator = null;
                 }
@@ -266,7 +249,7 @@ public class PlayingActivity extends BaseActivity implements IConstants {
             @Override
             public void onClick(View v) {
 
-                SimpleMoreFragment moreFragment = new  SimpleMoreFragment().newInstance(MusicPlayer.getCurrentAudioId());
+                SimpleMoreFragment moreFragment = new SimpleMoreFragment().newInstance(MusicPlayer.getCurrentAudioId());
                 moreFragment.show(getSupportFragmentManager(), "music");
             }
         });
@@ -355,7 +338,7 @@ public class PlayingActivity extends BaseActivity implements IConstants {
 
         //设置ViewPager的默认项
         mViewPager.setCurrentItem(MusicPlayer.getQueuePosition() + 1);
-       // new setBlurredAlbumArt().execute();
+        // new setBlurredAlbumArt().execute();
 
     }
 
@@ -388,7 +371,7 @@ public class PlayingActivity extends BaseActivity implements IConstants {
 
 
     public void updateQueue() {
-        if(MusicPlayer.getQueueSize() == 0){
+        if (MusicPlayer.getQueueSize() == 0) {
             MusicPlayer.stop();
             finish();
             return;
@@ -405,9 +388,15 @@ public class PlayingActivity extends BaseActivity implements IConstants {
             fav.setImageResource(R.drawable.play_rdi_icn_love);
         }
     }
+     private long bluredId = -1;
 
     public void updateTrackInfo() {
-        if(MusicPlayer.getQueueSize() == 0){return;}
+        if (MusicPlayer.getQueueSize() == 0) {
+            return;
+        }
+        if(MusicPlayer.getCurrentAudioId() != bluredId){
+            new setBlurredAlbumArt().execute();
+        }
 
         if (!duetoplaypause) {
             isFav = false;
@@ -419,7 +408,7 @@ public class PlayingActivity extends BaseActivity implements IConstants {
                 }
             }
             updateFav(isFav);
-            new setBlurredAlbumArt().execute();
+           // new setBlurredAlbumArt().execute();
 
         }
         duetoplaypause = false;
@@ -427,7 +416,6 @@ public class PlayingActivity extends BaseActivity implements IConstants {
         Fragment fragment = (RoundFragment) mViewPager.getAdapter().instantiateItem(mViewPager, mViewPager.getCurrentItem());
         viewWeakReference = new WeakReference<View>(fragment.getView());
         activeView = viewWeakReference.get();
-
         if (activeView != null) {
 //            animatorWeakReference = new WeakReference<>((ObjectAnimator) activeView.getTag(R.id.tag_animator));
 //            animator = animatorWeakReference.get();
@@ -475,10 +463,31 @@ public class PlayingActivity extends BaseActivity implements IConstants {
 
         isNextOrPreSetPage = false;
         if (MusicPlayer.getQueuePosition() + 1 != mViewPager.getCurrentItem()) {
-                mViewPager.setCurrentItem(MusicPlayer.getQueuePosition() + 1);
-                isNextOrPreSetPage = true;
+            mViewPager.setCurrentItem(MusicPlayer.getQueuePosition() + 1);
+            isNextOrPreSetPage = true;
         }
+
+        bluredId = MusicPlayer.getCurrentAudioId();
     }
+
+
+    private Runnable mUpdateProgress = new Runnable() {
+
+        @Override
+        public void run() {
+
+            if (mProgress != null) {
+                long position = MusicPlayer.position();
+                mProgress.setProgress((int) position);
+                timePlayed.setText(MusicUtils.makeShortTimeString(PlayingActivity.this.getApplication(), position / 1000));
+            }
+
+            if (MusicPlayer.isPlaying()) {
+                mProgress.postDelayed(mUpdateProgress, 50);
+            }
+
+        }
+    };
 
     private void setSeekBarListener() {
         if (mProgress != null)
@@ -524,11 +533,12 @@ public class PlayingActivity extends BaseActivity implements IConstants {
     }
 
     @Override
-    public void onSaveInstanceState(Bundle outState){
+    public void onSaveInstanceState(Bundle outState) {
         onBackPressed();
         //super.onSaveInstanceState(outState);
 
     }
+
     @Override
     public void onStop() {
         super.onStop();
@@ -628,19 +638,27 @@ public class PlayingActivity extends BaseActivity implements IConstants {
 
         @Override
         protected void onPostExecute(Drawable result) {
+
             if (albumid != MusicPlayer.getCurrentAlbumId()) {
+                this.cancel(true);
                 return;
             }
             if (result != null) {
                 if (backAlbum.getDrawable() != null) {
-                    TransitionDrawable td =
+                  final TransitionDrawable td =
                             new TransitionDrawable(new Drawable[]{backAlbum.getDrawable(), result});
 
 
                     backAlbum.setImageDrawable(td);
                     //去除过度绘制
                     td.setCrossFadeEnabled(true);
-                    td.startTransition(370);
+                    HandlerUtil.getInstance(PlayingActivity.this).postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            td.startTransition(370);
+                        }
+                    },1600);
+
 
                 } else {
                     backAlbum.setImageDrawable(result);
@@ -684,9 +702,9 @@ public class PlayingActivity extends BaseActivity implements IConstants {
         }
 
         @Override
-        public int getItemPosition(Object object)   {
-            if ( mChildCount > 0) {
-                mChildCount --;
+        public int getItemPosition(Object object) {
+            if (mChildCount > 0) {
+                mChildCount--;
                 return POSITION_NONE;
             }
             return super.getItemPosition(object);

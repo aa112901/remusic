@@ -5,6 +5,7 @@ import android.animation.ObjectAnimator;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -108,12 +109,14 @@ public class RoundFragment extends Fragment {
         super.onStart();
 //        animatorWeakReference = new  WeakReference<ObjectAnimator>(new ObjectAnimator());
 //        animator = animatorWeakReference.get();
-        animatorWeakReference = new WeakReference(new ObjectAnimator());
+        animatorWeakReference =  new WeakReference(ObjectAnimator.ofFloat(getView(), "rotation", new float[]{0.0F, 360.0F}));
         animator = animatorWeakReference.get();
-        animator = ObjectAnimator.ofFloat(getView(), "rotation", new float[]{0.0F, 360.0F});
+        //animator = ObjectAnimator.ofFloat(getView(), "rotation", new float[]{0.0F, 360.0F});
         animator.setRepeatCount(Integer.MAX_VALUE);
         animator.setDuration(25000L);
         animator.setInterpolator(new LinearInterpolator());
+
+        if(getView() != null)
         getView().setTag(R.id.tag_animator, this.animator);
     }
 

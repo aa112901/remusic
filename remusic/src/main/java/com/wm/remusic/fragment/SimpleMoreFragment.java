@@ -6,14 +6,11 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.media.RingtoneManager;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.MediaStore;
 import android.support.v4.app.DialogFragment;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.Gravity;
@@ -27,7 +24,6 @@ import android.widget.Toast;
 
 import com.wm.remusic.R;
 import com.wm.remusic.adapter.MusicFlowAdapter;
-import com.wm.remusic.adapter.OverFlowAdapter;
 import com.wm.remusic.adapter.OverFlowItem;
 import com.wm.remusic.dialog.AddPlaylistDialog;
 import com.wm.remusic.handler.HandlerUtil;
@@ -69,7 +65,6 @@ public class SimpleMoreFragment extends DialogFragment {
     }
 
 
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -106,12 +101,12 @@ public class SimpleMoreFragment extends DialogFragment {
 
     private void getList() {
 
-            long musicId = args;
-            adapterMusicInfo = MusicUtils.getMusicInfo(mContext, musicId);
-            musicName = adapterMusicInfo.musicName;
-            topTitle.setText("歌曲：" + " " + musicName);
-            setMusicInfo();
-            musicflowAdapter = new MusicFlowAdapter(getActivity(), mlistInfo, adapterMusicInfo);
+        long musicId = args;
+        adapterMusicInfo = MusicUtils.getMusicInfo(mContext, musicId);
+        musicName = adapterMusicInfo.musicName;
+        topTitle.setText("歌曲：" + " " + musicName);
+        setMusicInfo();
+        musicflowAdapter = new MusicFlowAdapter(getActivity(), mlistInfo, adapterMusicInfo);
 
     }
 

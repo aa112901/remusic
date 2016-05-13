@@ -18,7 +18,6 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -29,8 +28,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.wm.remusic.R;
-import com.wm.remusic.activity.MainActivity;
-import com.wm.remusic.activity.PlayingActivity;
+import com.wm.remusic.activity.TabActivity;
 import com.wm.remusic.adapter.MusicFlowAdapter;
 import com.wm.remusic.adapter.OverFlowAdapter;
 import com.wm.remusic.adapter.OverFlowItem;
@@ -76,12 +74,11 @@ public class MoreFragment extends DialogFragment {
     }
 
 
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         try {
-            mActivity = (Activity)mContext;
+            mActivity = (Activity) mContext;
         } catch (Exception e) {
             e.printStackTrace();
             //说明是ApplicationContext
@@ -168,7 +165,7 @@ public class MoreFragment extends DialogFragment {
                             new Handler().postDelayed(new Runnable() {
                                 @Override
                                 public void run() {
-                                    if(adapterMusicInfo.songId == MusicPlayer.getCurrentAudioId())
+                                    if (adapterMusicInfo.songId == MusicPlayer.getCurrentAudioId())
                                         return;
 
                                     long[] ids = new long[1];
@@ -199,14 +196,14 @@ public class MoreFragment extends DialogFragment {
                                         @Override
                                         public void onClick(DialogInterface dialog, int which) {
 
-                                            Uri uri = ContentUris.withAppendedId(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,adapterMusicInfo.songId);
+                                            Uri uri = ContentUris.withAppendedId(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, adapterMusicInfo.songId);
                                             mContext.getContentResolver().delete(uri, null, null);
 
 
-                                            if(MusicPlayer.getCurrentAudioId() == adapterMusicInfo.songId){
-                                                if(MusicPlayer.getQueueSize() == 0){
+                                            if (MusicPlayer.getCurrentAudioId() == adapterMusicInfo.songId) {
+                                                if (MusicPlayer.getQueueSize() == 0) {
                                                     MusicPlayer.stop();
-                                                }else {
+                                                } else {
                                                     MusicPlayer.next();
                                                 }
 
@@ -252,16 +249,17 @@ public class MoreFragment extends DialogFragment {
 //                        }
                             FragmentTransaction transaction = ((AppCompatActivity) mContext).getSupportFragmentManager().beginTransaction();
                             ArtistDetailFragment fragment = ArtistDetailFragment.newInstance(adapterMusicInfo.artistId);
-                            transaction.hide(((AppCompatActivity) mContext).getSupportFragmentManager().findFragmentById(R.id.fragment_container));
-                            transaction.add(R.id.fragment_container, fragment);
+                            transaction.hide(((AppCompatActivity) mContext).getSupportFragmentManager().findFragmentById(R.id.tab_container));
+                            transaction.add(R.id.tab_container, fragment);
                             transaction.addToBackStack(null).commit();
                             dismiss();
                             break;
                         case 5:
+
                             FragmentTransaction transaction1 = ((AppCompatActivity) mContext).getSupportFragmentManager().beginTransaction();
                             AlbumDetailFragment fragment1 = AlbumDetailFragment.newInstance(adapterMusicInfo.albumId, false, null);
-                            transaction1.hide(((AppCompatActivity) mContext).getSupportFragmentManager().findFragmentById(R.id.fragment_container));
-                            transaction1.add(R.id.fragment_container, fragment1);
+                            transaction1.hide(((AppCompatActivity) mContext).getSupportFragmentManager().findFragmentById(R.id.tab_container));
+                            transaction1.add(R.id.tab_container, fragment1);
                             transaction1.addToBackStack(null).commit();
                             dismiss();
                             break;
@@ -274,7 +272,7 @@ public class MoreFragment extends DialogFragment {
                                             Uri ringUri = Uri.parse("file://" + adapterMusicInfo.data);
                                             RingtoneManager.setActualDefaultRingtoneUri(mContext, RingtoneManager.TYPE_NOTIFICATION, ringUri);
                                             dialog.dismiss();
-                                            Toast.makeText(mContext,getResources().getString(R.string.set_ringtone_successed),
+                                            Toast.makeText(mContext, getResources().getString(R.string.set_ringtone_successed),
                                                     Toast.LENGTH_SHORT).show();
                                             dismiss();
                                         }
@@ -335,16 +333,16 @@ public class MoreFragment extends DialogFragment {
                             protected Void doInBackground(Void... params) {
                                 for (MusicInfo music : list) {
 
-                                   if(MusicPlayer.getCurrentAudioId() == music.songId){
-                                       if(MusicPlayer.getQueueSize() == 0){
-                                           MusicPlayer.stop();
-                                       }else {
-                                           MusicPlayer.next();
-                                       }
+                                    if (MusicPlayer.getCurrentAudioId() == music.songId) {
+                                        if (MusicPlayer.getQueueSize() == 0) {
+                                            MusicPlayer.stop();
+                                        } else {
+                                            MusicPlayer.next();
+                                        }
 
-                                   }
+                                    }
                                     Uri uri = ContentUris.withAppendedId(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, music.songId);
-                                    mContext.getContentResolver().delete(uri,null,null);
+                                    mContext.getContentResolver().delete(uri, null, null);
                                     PlaylistsManager.getInstance(mContext).deleteMusic(mContext, music.songId);
                                 }
                                 return null;
@@ -386,8 +384,8 @@ public class MoreFragment extends DialogFragment {
                         dismiss();
                         break;
                 }
-        }
-    });
+            }
+        });
         recyclerView.setAdapter(commonAdapter);
     }
 

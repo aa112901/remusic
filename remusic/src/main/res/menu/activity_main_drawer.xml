@@ -4,6 +4,10 @@
     <group android:checkableBehavior="single">
 
         <item
+            android:id="@+id/down_bit"
+            android:title="下载歌曲品质"/>
+
+        <item
             android:id="@+id/timing_play"
 
             android:title="@string/timing" />

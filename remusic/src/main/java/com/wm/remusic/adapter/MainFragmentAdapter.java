@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AlertDialog;
@@ -22,8 +23,12 @@ import android.widget.Toast;
 
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.wm.remusic.R;
+import com.wm.remusic.activity.DownActivity;
+import com.wm.remusic.activity.PlaylistDetailActivity;
 import com.wm.remusic.activity.PlaylistManagerActivity;
+import com.wm.remusic.activity.RecentActivity;
 import com.wm.remusic.activity.SelectActivity;
+import com.wm.remusic.activity.TabActivity;
 import com.wm.remusic.fragment.PlaylistDetailFragment;
 import com.wm.remusic.fragment.RecentFragment;
 import com.wm.remusic.fragment.TabPagerFragment;
@@ -97,11 +102,13 @@ public class MainFragmentAdapter extends RecyclerView.Adapter<MainFragmentAdapte
                 setOnListener(itemHolder, i);
                 break;
             case 1:
-                Playlist playlist = (Playlist) itemResults.get(i);
-                itemHolder.albumArt.setImageURI(Uri.parse(playlist.albumArt));
-                itemHolder.title.setText(playlist.name);
-                itemHolder.songcount.setText(playlist.songCount + "首");
-                setOnPlaylistListener(itemHolder, i, playlist.id, playlist.albumArt, playlist.name);
+                if (expanded) {
+                    Playlist playlist = (Playlist) itemResults.get(i);
+                    itemHolder.albumArt.setImageURI(Uri.parse(playlist.albumArt));
+                    itemHolder.title.setText(playlist.name);
+                    itemHolder.songcount.setText(playlist.songCount + "首");
+                    setOnPlaylistListener(itemHolder, i, playlist.id, playlist.albumArt, playlist.name);
+                }
                 break;
             case 2:
                 itemHolder.sectionItem.setText("创建的歌单" + "(" + playlists.size() + ")");
@@ -118,6 +125,9 @@ public class MainFragmentAdapter extends RecyclerView.Adapter<MainFragmentAdapte
 
     @Override
     public int getItemCount() {
+        if (!expanded) {
+            itemResults.removeAll(playlists);
+        }
         return itemResults == null ? 0 : itemResults.size();
     }
 
@@ -131,11 +141,15 @@ public class MainFragmentAdapter extends RecyclerView.Adapter<MainFragmentAdapte
                         handler.postDelayed(new Runnable() {
                             @Override
                             public void run() {
-                                TabPagerFragment fragment = TabPagerFragment.newInstance(0);
-                                FragmentTransaction transaction = ((AppCompatActivity) mContext).getSupportFragmentManager().beginTransaction();
-                                transaction.hide(((AppCompatActivity) mContext).getSupportFragmentManager().findFragmentById(R.id.fragment_container));
-                                transaction.add(R.id.fragment_container, fragment);
-                                transaction.addToBackStack(null).commit();
+                                Intent intent = new Intent(mContext, TabActivity.class);
+                                intent.putExtra("page_number",0);
+                                mContext.startActivity(intent);
+
+//                                TabPagerFragment fragment = TabPagerFragment.newInstance(0);
+//                                FragmentTransaction transaction = ((AppCompatActivity) mContext).getSupportFragmentManager().beginTransaction();
+//                                transaction.hide(((AppCompatActivity) mContext).getSupportFragmentManager().findFragmentById(R.id.fragment_container));
+//                                transaction.add(R.id.fragment_container, fragment);
+//                                transaction.addToBackStack(null).commit();
                             }
                         }, 60);
 
@@ -150,11 +164,13 @@ public class MainFragmentAdapter extends RecyclerView.Adapter<MainFragmentAdapte
                         handler.postDelayed(new Runnable() {
                             @Override
                             public void run() {
-                                RecentFragment fragment = new RecentFragment();
-                                FragmentTransaction transaction = ((AppCompatActivity) mContext).getSupportFragmentManager().beginTransaction();
-                                transaction.hide(((AppCompatActivity) mContext).getSupportFragmentManager().findFragmentById(R.id.fragment_container));
-                                transaction.add(R.id.fragment_container, fragment);
-                                transaction.addToBackStack(null).commit();
+                                Intent intent = new Intent(mContext, RecentActivity.class);
+                                mContext.startActivity(intent);
+//                                RecentFragment fragment = new RecentFragment();
+//                                FragmentTransaction transaction = ((AppCompatActivity) mContext).getSupportFragmentManager().beginTransaction();
+//                                transaction.hide(((AppCompatActivity) mContext).getSupportFragmentManager().findFragmentById(R.id.fragment_container));
+//                                transaction.add(R.id.fragment_container, fragment);
+//                                transaction.addToBackStack(null).commit();
                             }
                         }, 60);
                     }
@@ -170,9 +186,10 @@ public class MainFragmentAdapter extends RecyclerView.Adapter<MainFragmentAdapte
                         handler.postDelayed(new Runnable() {
                             @Override
                             public void run() {
-                                Intent intent = new Intent(mContext, SelectActivity.class);
-                                ArrayList<MusicInfo> mList = (ArrayList<MusicInfo>) MusicUtils.queryMusic(mContext, IConstants.START_FROM_LOCAL);
-                                intent.putParcelableArrayListExtra("ids", mList);
+                                Intent intent = new Intent(mContext, DownActivity.class);
+//                                Intent intent = new Intent(mContext, SelectActivity.class);
+//                                ArrayList<MusicInfo> mList = (ArrayList<MusicInfo>) MusicUtils.queryMusic(mContext, IConstants.START_FROM_LOCAL);
+//                                intent.putParcelableArrayListExtra("ids", mList);
                                 mContext.startActivity(intent);
                             }
                         }, 60);
@@ -184,11 +201,11 @@ public class MainFragmentAdapter extends RecyclerView.Adapter<MainFragmentAdapte
                 itemHolder.itemView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        TabPagerFragment fragment = TabPagerFragment.newInstance(1);
-                        FragmentTransaction transaction = ((AppCompatActivity) mContext).getSupportFragmentManager().beginTransaction();
-                        transaction.hide(((AppCompatActivity) mContext).getSupportFragmentManager().findFragmentById(R.id.fragment_container));
-                        transaction.add(R.id.fragment_container, fragment);
-                        transaction.addToBackStack(null).commit();
+
+                        Intent intent = new Intent(mContext, TabActivity.class);
+                        intent.putExtra("page_number",1);
+                        mContext.startActivity(intent);
+
                     }
                 });
         }
@@ -203,19 +220,17 @@ public class MainFragmentAdapter extends RecyclerView.Adapter<MainFragmentAdapte
                 handler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        PlaylistDetailFragment fragment = PlaylistDetailFragment.newInstance(playlistid, albumArt, playlistname);
-                        FragmentTransaction transaction = ((AppCompatActivity) mContext).getSupportFragmentManager().beginTransaction();
-                        transaction.hide(((AppCompatActivity) mContext).getSupportFragmentManager().findFragmentById(R.id.fragment_container));
-                        transaction.add(R.id.fragment_container, fragment);
-                        transaction.addToBackStack(null).commit();
-//                        Intent intent = new Intent(mContext, PlaylistDetailActivity.class);
-//                        intent.setFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-//                        Bundle bundle = new Bundle();
-//                        bundle.putLong("playlistid",playlistid);
-//                        bundle.putString("albumart",albumArt);
-//                        bundle.putString("playlistname",playlistname);
-//                        intent.putExtra("playlist",bundle);
-//                        mContext.startActivity(intent);
+//                        PlaylistDetailFragment fragment = PlaylistDetailFragment.newInstance(playlistid, albumArt, playlistname);
+//                        FragmentTransaction transaction = ((AppCompatActivity) mContext).getSupportFragmentManager().beginTransaction();
+//                        transaction.hide(((AppCompatActivity) mContext).getSupportFragmentManager().findFragmentById(R.id.fragment_container));
+//                        transaction.add(R.id.fragment_container, fragment);
+//                        transaction.addToBackStack(null).commit();
+                        Intent intent = new Intent(mContext, PlaylistDetailActivity.class);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+                        intent.putExtra("playlistid",playlistid);
+                        intent.putExtra("albumart",albumArt);
+                        intent.putExtra("playlistname",playlistname);
+                        mContext.startActivity(intent);
 
                     }
                 }, 60);

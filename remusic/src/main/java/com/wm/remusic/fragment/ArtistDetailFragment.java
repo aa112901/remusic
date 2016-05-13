@@ -84,7 +84,6 @@ public class ArtistDetailFragment extends BaseFragment {
                 getActivity().onBackPressed();
             }
         });
-
         return view;
 
 

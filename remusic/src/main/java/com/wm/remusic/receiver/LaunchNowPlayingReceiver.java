@@ -25,18 +25,14 @@ import com.wm.remusic.service.MusicPlayer;
 
 public class LaunchNowPlayingReceiver extends BroadcastReceiver {
 
-    private MainApplication mApp;
-
     @Override
     public void onReceive(Context context, Intent intent) {
-        mApp = (MainApplication) context.getApplicationContext();
 
-        if (MusicPlayer.isPlaying()) {
-            Intent activityIntent = new Intent(context, PlayingActivity.class);
+//        if (MusicPlayer.isPlaying()) {
+            Intent activityIntent = new Intent(context.getApplicationContext(), PlayingActivity.class);
             activityIntent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT | Intent.FLAG_ACTIVITY_NEW_TASK);
-            context.startActivity(activityIntent);
-
-        }
+        context.getApplicationContext().startActivity(activityIntent);
+//        }
 
     }
 

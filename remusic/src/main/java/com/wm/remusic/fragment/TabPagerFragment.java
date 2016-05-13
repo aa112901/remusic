@@ -28,11 +28,13 @@ public class TabPagerFragment extends Fragment {
     private ViewPager viewPager;
     private int page = 0;
     private ActionBar ab;
+    private  String[] title;
 
-    public static final TabPagerFragment newInstance(int page) {
+    public static final TabPagerFragment newInstance(int page,String[] title) {
         TabPagerFragment f = new TabPagerFragment();
         Bundle bdl = new Bundle(1);
         bdl.putInt("page_number", page);
+        bdl.putStringArray("title",title);
         f.setArguments(bdl);
         return f;
     }
@@ -51,6 +53,7 @@ public class TabPagerFragment extends Fragment {
         // mPreferences = PreferencesUtility.getInstance(getActivity());
         if (getArguments() != null) {
             page = getArguments().getInt("page_number");
+            title = getArguments().getStringArray("title");
         }
     }
 
@@ -66,7 +69,6 @@ public class TabPagerFragment extends Fragment {
         ab = ((AppCompatActivity) getActivity()).getSupportActionBar();
         ab.setHomeAsUpIndicator(R.drawable.actionbar_back);
         ab.setDisplayHomeAsUpEnabled(true);
-        ab.setTitle("本地音乐");
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -89,13 +91,12 @@ public class TabPagerFragment extends Fragment {
     }
 
 
-
     private void setupViewPager(ViewPager viewPager) {
         Adapter adapter = new Adapter(getChildFragmentManager());
-        adapter.addFragment(new MusicFragment(), "歌曲");
-        adapter.addFragment(new ArtistFragment(), "歌手");
-        adapter.addFragment(new AlbumFragment(), "专辑");
-        adapter.addFragment(new FolderFragment(), "文件夹");
+        adapter.addFragment(new MusicFragment(), title[0]);
+        adapter.addFragment(new ArtistFragment(), title[1]);
+        adapter.addFragment(new AlbumFragment(), title[2]);
+        adapter.addFragment(new FolderFragment(), title[3]);
 
         viewPager.setAdapter(adapter);
     }
@@ -109,6 +110,7 @@ public class TabPagerFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+        if(title[0].equals("单曲"))
         ab.setTitle("本地音乐");
     }
 

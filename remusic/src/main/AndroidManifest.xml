@@ -3,12 +3,12 @@
     package="com.wm.remusic">
 
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS"/>
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
-    <uses-permission android:name="android.permission.WAKE_LOCK"/>
-    <uses-permission android:name="android.permission.INTERNET"/>
-    <uses-permission android:name="android.permission.BROADCAST_STICKY"/>
-    <uses-permission android:name="android.permission.WRITE_SETTINGS"/>
+    <uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.BROADCAST_STICKY" />
+    <uses-permission android:name="android.permission.WRITE_SETTINGS" />
 
     <application
         android:name=".MainApplication"
@@ -29,26 +29,35 @@
 
         <activity
             android:name=".activity.MainActivity"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait" />
         <activity
             android:name=".activity.PlayingActivity"
             android:launchMode="singleTask"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait" />
         <activity
             android:name=".activity.SearchActivity"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait" />
         <activity
             android:name=".activity.SelectActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/NoAnimation"/>
+            android:theme="@style/NoAnimation" />
         <activity
             android:name=".activity.PlaylistSelectActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/NoAnimation"/>
+            android:theme="@style/NoAnimation" />
         <activity
             android:name=".activity.PlaylistManagerActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/NoAnimation"/>
+            android:theme="@style/NoAnimation" />
+        <activity android:name=".activity.AlbumsDetailActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".activity.TabActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".activity.PlaylistDetailActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".activity.DownActivity"/>
+        <activity android:name=".activity.NetPlaylistDetailActivity"/>
+        <activity android:name=".activity.RecentActivity"/>
 
         <service
             android:name=".service.MediaService"

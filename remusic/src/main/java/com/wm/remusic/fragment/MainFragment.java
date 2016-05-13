@@ -8,23 +8,26 @@ import android.content.IntentFilter;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 
 import com.wm.remusic.R;
 import com.wm.remusic.adapter.MainFragmentAdapter;
 import com.wm.remusic.adapter.MainFragmentItem;
 import com.wm.remusic.info.Playlist;
+import com.wm.remusic.provider.PlaylistInfo;
 import com.wm.remusic.recent.Song;
 import com.wm.remusic.recent.SongLoader;
 import com.wm.remusic.recent.TopTracksLoader;
-import com.wm.remusic.provider.PlaylistInfo;
 import com.wm.remusic.service.MediaService;
 import com.wm.remusic.uitl.DividerItemDecoration;
 import com.wm.remusic.uitl.IConstants;
@@ -49,6 +52,8 @@ public class MainFragment extends Fragment {
     private PlaylistInfo playlistInfo;
     private int localMusicCount, recentMusicCount, artistsCount;
 
+    private ImageView barnet, barmusic,barfriends;
+
 
     @Override
     public void onCreate(final Bundle savedInstanceState) {
@@ -61,14 +66,34 @@ public class MainFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_main, container, false);
 
-        Toolbar toolbar = (Toolbar) view.findViewById(R.id.toolbar);
-        ((AppCompatActivity) getActivity()).setSupportActionBar(toolbar);
+//        Toolbar toolbar = (Toolbar) view.findViewById(R.id.toolbar);
+//        ((AppCompatActivity) getActivity()).setSupportActionBar(toolbar);
+//
+//
+//        ab = ((AppCompatActivity) getActivity()).getSupportActionBar();
+//        ab.setDisplayHomeAsUpEnabled(true);
+//        ab.setHomeAsUpIndicator(R.drawable.ic_menu);
+//        ab.setTitle("");
+//
+//        barnet = (ImageView) view.findViewById(R.id.bar_net);
+//        barmusic = (ImageView) view.findViewById(R.id.bar_music);
+//        barfriends = (ImageView) view.findViewById(R.id.bar_friends);
+//
+//        barmusic = (ImageView) view.findViewById(R.id.bar_music);
+//        barmusic.setSelected(true);
+//
+//        barnet.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                barmusic.setSelected(false);
+//                barnet.setSelected(true);
+//                FragmentTransaction transaction = ((AppCompatActivity) getContext()).getSupportFragmentManager().beginTransaction();
+//                NetFragment fragment = new NetFragment();
+//                transaction.replace(R.id.fragment_container, fragment);
+//                transaction.commitAllowingStateLoss();
+//            }
+//        });
 
-
-        ab = ((AppCompatActivity) getActivity()).getSupportActionBar();
-        ab.setDisplayHomeAsUpEnabled(true);
-        ab.setHomeAsUpIndicator(R.drawable.ic_menu);
-        ab.setTitle("");
         recyclerView = (RecyclerView) view.findViewById(R.id.recyclerview);
         layoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(layoutManager);
@@ -85,7 +110,7 @@ public class MainFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-
+//        barmusic.setSelected(true);
 //        //注册广播
         IntentFilter f = new IntentFilter();
         f.addAction(IConstants.MUSIC_COUNT_CHANGED);
@@ -145,8 +170,8 @@ public class MainFragment extends Fragment {
         List<Song> recentsongs = SongLoader.getSongsForCursor(TopTracksLoader.getCursor());
         recentMusicCount = recentsongs.size();
         //设置mlistInfo，listview要显示的内容
-        localMusicCount = MusicUtils.queryMusic(getContext().getApplicationContext(), IConstants.START_FROM_LOCAL).size();
-        artistsCount = MusicUtils.queryArtist(getContext().getApplicationContext()).size();
+        localMusicCount = MusicUtils.queryMusic(getContext(), IConstants.START_FROM_LOCAL).size();
+        artistsCount = MusicUtils.queryArtist(getContext()).size();
         setInfo(getContext().getResources().getString(R.string.local_music), localMusicCount, R.drawable.music_icn_local);
         setInfo(getContext().getResources().getString(R.string.recent_play), recentMusicCount, R.drawable.music_icn_recent);
         setInfo(getContext().getResources().getString(R.string.local_manage), localMusicCount, R.drawable.music_icn_dld);

@@ -53,6 +53,8 @@
         <item name="android:layout_height">match_parent</item>
         <item name="android:windowIsFloating">true</item>
         <item name="android:windowAnimationStyle">@style/dialog_fragment_animation</item>
+        <item name="android:windowEnterAnimation">@anim/dialog_in_bottom</item>
+        <item name="android:windowExitAnimation">@anim/dialog_out_bottom</item>
     </style>
 
     <style name="dialog_fragment_animation">
@@ -108,6 +110,26 @@
 
     <style name="dialog_anim_fade_out" mce_bogus="1" parent="android:Animation">
         <item name="android:windowExitAnimation">@anim/dialog_exit_fade_out</item>
+    </style>
+
+
+
+    <style name="ToolbarStyle" parent="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
+        <item name="actionBarItemBackground">@drawable/toolbarItemBackground</item>
+        <item name="selectableItemBackground">@drawable/toolbarItemBackground</item>
+        <item name="titleTextAppearance">@style/ToolBar.Title</item>
+        <item name="subtitleTextAppearance">@style/Toolbar.SubTitle</item>
+        <item name="android:windowNoTitle">true</item>
+    </style>
+
+    <style name="ToolBar.Title" parent="@style/TextAppearance.Widget.AppCompat.Toolbar.Title">
+        <item name="android:textSize">17.0sp</item>
+        <item name="android:textColor">@color/toolbarTextColor</item>
+    </style>
+
+    <style name="Toolbar.SubTitle" parent="@style/TextAppearance.Widget.AppCompat.Toolbar.Subtitle">
+        <item name="android:textSize">12.0sp</item>
+        <item name="android:textColor">#ff928e91</item>
     </style>
 
 

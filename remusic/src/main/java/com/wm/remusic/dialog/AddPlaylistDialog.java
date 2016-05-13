@@ -18,11 +18,11 @@ import android.widget.TextView;
 
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.wm.remusic.R;
-import com.wm.remusic.uitl.DividerItemDecoration;
 import com.wm.remusic.info.Playlist;
 import com.wm.remusic.provider.PlaylistInfo;
 import com.wm.remusic.provider.PlaylistsManager;
 import com.wm.remusic.service.MusicTrack;
+import com.wm.remusic.uitl.DividerItemDecoration;
 import com.wm.remusic.uitl.IConstants;
 import com.wm.remusic.uitl.MusicUtils;
 
@@ -173,7 +173,7 @@ public class AddPlaylistDialog extends DialogFragment {
                 //playlistInfo.updatePlaylist(playlist.id, musicId.length);
                 ArrayList<MusicTrack> musicTracks = playlistsManager.getPlaylist(playlist.id);
 
-                if(getAdapterPosition() == 0 && musicTracks.size() == 0){
+                if (getAdapterPosition() == 0 && musicTracks.size() == 0) {
                     for (int i = 0; i < musicId.length; i++) {
                         playlistsManager.Insert(getContext(), playlist.id, musicId[i], 0);
                     }

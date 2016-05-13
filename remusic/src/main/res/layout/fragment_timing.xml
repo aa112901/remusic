@@ -11,6 +11,8 @@
         android:layout_marginTop="20dp"
         android:layout_weight="1"
         android:text="定时停止播放"
+        android:gravity="center_vertical"
+        android:background="?android:attr/selectableItemBackground"
         android:textColor="@color/text_color"
         android:textSize="20sp" />
 
@@ -20,7 +22,9 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="20dp"
         android:layout_weight="1"
+        android:background="?android:attr/selectableItemBackground"
         android:text="10分钟后"
+        android:gravity="center_vertical"
         android:textColor="@color/text_color"
         android:textSize="15sp" />
 
@@ -30,7 +34,9 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="20dp"
         android:layout_weight="1"
+        android:background="?android:attr/selectableItemBackground"
         android:text="20分钟后"
+        android:gravity="center_vertical"
         android:textColor="@color/text_color"
         android:textSize="15sp" />
 
@@ -42,6 +48,8 @@
         android:layout_weight="1"
         android:text="30分钟后"
         android:textColor="@color/text_color"
+        android:gravity="center_vertical"
+        android:background="?android:attr/selectableItemBackground"
         android:textSize="15sp" />
 
     <TextView
@@ -52,6 +60,8 @@
         android:layout_weight="1"
         android:text="45分钟后"
         android:textColor="@color/text_color"
+        android:gravity="center_vertical"
+        android:background="?android:attr/selectableItemBackground"
         android:textSize="15sp" />
 
     <TextView
@@ -61,7 +71,9 @@
         android:layout_marginLeft="20dp"
         android:layout_weight="1"
         android:text="60分钟后"
+        android:gravity="center_vertical"
         android:textColor="@color/text_color"
+        android:background="?android:attr/selectableItemBackground"
         android:textSize="15sp" />
 
     <TextView
@@ -71,7 +83,9 @@
         android:layout_marginLeft="20dp"
         android:layout_weight="1"
         android:text="90分钟后"
+        android:gravity="center_vertical"
         android:textColor="@color/text_color"
+        android:background="?android:attr/selectableItemBackground"
         android:textSize="15sp" />
 
 </LinearLayout>

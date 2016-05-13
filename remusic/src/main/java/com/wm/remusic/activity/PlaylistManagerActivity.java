@@ -25,10 +25,10 @@ import android.widget.TextView;
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.readystatesoftware.systembartint.SystemBarTintManager;
 import com.wm.remusic.R;
-import com.wm.remusic.uitl.DividerItemDecoration;
 import com.wm.remusic.info.Playlist;
 import com.wm.remusic.provider.PlaylistInfo;
 import com.wm.remusic.provider.PlaylistsManager;
+import com.wm.remusic.uitl.DividerItemDecoration;
 import com.wm.remusic.uitl.DragSortRecycler;
 import com.wm.remusic.uitl.IConstants;
 
@@ -81,8 +81,6 @@ public class PlaylistManagerActivity extends AppCompatActivity implements View.O
         recyclerView.setLayoutManager(layoutManager);
 
 
-
-
         new loadSongs().execute("");
 
     }
@@ -97,7 +95,7 @@ public class PlaylistManagerActivity extends AppCompatActivity implements View.O
                         setPositiveButton(getResources().getString(R.string.sure), new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                for (int i = 0; i < selectList.size(); i++){
+                                for (int i = 0; i < selectList.size(); i++) {
                                     PlaylistInfo.getInstance(PlaylistManagerActivity.this).deletePlaylist(selectList.get(i).id);
                                     PlaylistsManager.getInstance(PlaylistManagerActivity.this).delete(selectList.get(i).id);
                                 }
@@ -131,7 +129,7 @@ public class PlaylistManagerActivity extends AppCompatActivity implements View.O
         finish();
     }
 
-    private class reload extends AsyncTask<Void,Void,Void>{
+    private class reload extends AsyncTask<Void, Void, Void> {
 
         @Override
         protected Void doInBackground(Void... params) {
@@ -140,7 +138,7 @@ public class PlaylistManagerActivity extends AppCompatActivity implements View.O
         }
 
         @Override
-        protected void onPostExecute(Void v){
+        protected void onPostExecute(Void v) {
             mAdapter.updateDataSet(playlists);
             mAdapter.notifyDataSetChanged();
         }
@@ -185,15 +183,15 @@ public class PlaylistManagerActivity extends AppCompatActivity implements View.O
 
                             int length = mAdapter.mList.size();
                             long[] playlists = new long[length];
-                            for(int i = 0; i< length;i++){
+                            for (int i = 0; i < length; i++) {
                                 playlists[i] = mAdapter.mList.get(i).id;
                             }
-                            
+
                             playlistInfo.deletePlaylist(playlists);
                             playlistInfo.addPlaylist(mAdapter.mList);
 
                         }
-                    },300);
+                    }, 300);
 
                     //MusicPlayer.moveQueueItem(from, to);
                 }

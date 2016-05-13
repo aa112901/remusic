@@ -4,7 +4,6 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.provider.MediaStore;
 
 import com.wm.remusic.info.Playlist;
 
@@ -69,7 +68,7 @@ public class PlaylistInfo {
         database.beginTransaction();
 
         try {
-            for(int i = 0; i< playlists.size(); i++){
+            for (int i = 0; i < playlists.size(); i++) {
                 ContentValues values = new ContentValues(4);
                 values.put(PlaylistInfoColumns.PLAYLIST_ID, playlists.get(i).id);
                 values.put(PlaylistInfoColumns.PLAYLIST_NAME, playlists.get(i).name);
@@ -83,8 +82,6 @@ public class PlaylistInfo {
             database.endTransaction();
         }
     }
-
-
 
 
     public synchronized void updatePlaylist(long playlistid, int oldcount) {
@@ -121,7 +118,7 @@ public class PlaylistInfo {
         SQLiteDatabase database = null;
 
         final StringBuilder selection = new StringBuilder();
-        selection.append( PlaylistInfoColumns.PLAYLIST_ID + " IN (");
+        selection.append(PlaylistInfoColumns.PLAYLIST_ID + " IN (");
         for (int i = 0; i < PlaylistId.length; i++) {
             selection.append(PlaylistId[i]);
             if (i < PlaylistId.length - 1) {
@@ -136,22 +133,22 @@ public class PlaylistInfo {
                     selection.toString(), null, null, null, null);
 
             if (cursor != null && cursor.moveToFirst()) {
-               database = mMusicDatabase.getWritableDatabase();
+                database = mMusicDatabase.getWritableDatabase();
                 database.beginTransaction();
 
                 do {
-                    int count =  cursor.getInt(cursor.getColumnIndex(PlaylistInfoColumns.SONG_COUNT)) - 1;
+                    int count = cursor.getInt(cursor.getColumnIndex(PlaylistInfoColumns.SONG_COUNT)) - 1;
                     long playlistid = cursor.getLong(cursor.getColumnIndex(PlaylistInfoColumns.PLAYLIST_ID));
-                    if(count == 0){
+                    if (count == 0) {
                         database.delete(PlaylistInfoColumns.NAME, PlaylistInfoColumns.PLAYLIST_ID + " = ?", new String[]
                                 {String.valueOf(playlistid)});
-                    }else {
+                    } else {
                         ContentValues values = new ContentValues(2);
                         values.put(PlaylistInfoColumns.PLAYLIST_ID, playlistid);
                         values.put(PlaylistInfoColumns.SONG_COUNT, count);
                         database.update(PlaylistInfoColumns.NAME, values, PlaylistInfoColumns.PLAYLIST_ID + " = " + playlistid, null);
                     }
-                   // update(playlistid,count);
+                    // update(playlistid,count);
 
                 } while (cursor.moveToNext());
 
@@ -178,7 +175,7 @@ public class PlaylistInfo {
     public synchronized void deletePlaylist(final long[] PlaylistId) {
 
         final StringBuilder selection = new StringBuilder();
-        selection.append( PlaylistInfoColumns.PLAYLIST_ID + " IN (");
+        selection.append(PlaylistInfoColumns.PLAYLIST_ID + " IN (");
         for (int i = 0; i < PlaylistId.length; i++) {
             selection.append(PlaylistId[i]);
             if (i < PlaylistId.length - 1) {

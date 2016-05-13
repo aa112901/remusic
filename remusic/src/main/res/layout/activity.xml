@@ -1,102 +1,67 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/a"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <FrameLayout
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:fitsSystemWindows="true"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/toolabar_color"
+        android:minHeight="?attr/actionBarSize"
+        app:contentInsetStart="0.0dp"
+        app:layout_scrollFlags="enterAlways|scroll"
+        app:theme="@style/ToolbarStyle">
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="?actionBarSize"
+            android:gravity="center">
+
+            <ImageView
+                android:id="@+id/bar_net"
+                android:layout_width="55dp"
+                android:layout_height="match_parent"
+                android:layout_marginStart="20dp"
+                android:layout_toLeftOf="@+id/bar_music"
+                android:background="@drawable/actionbar_disco"
+                android:clickable="true" />
+
+            <ImageView
+                android:id="@+id/bar_music"
+                android:layout_width="55dp"
+                android:layout_height="match_parent"
+                android:layout_centerInParent="true"
+                android:background="@drawable/actionbar_music"
+                android:clickable="true" />
+
+            <ImageView
+                android:id="@+id/bar_friends"
+                android:layout_width="55dp"
+                android:layout_height="match_parent"
+                android:layout_toRightOf="@+id/bar_music"
+                android:background="@drawable/actionbar_friends"
+                android:clickable="true" />
+
+            <ImageView
+                android:id="@+id/bar_search"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:background="@drawable/actionbar_search" />
+        </RelativeLayout>
+    </android.support.v7.widget.Toolbar>
+
+    <LinearLayout
+        android:orientation="vertical"
         android:id="@+id/fragment_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_above="@+id/nav_play"></FrameLayout>
-
-    <LinearLayout
-        android:id="@+id/nav_play"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:background="?attr/selectableItemBackgroundBorderless"
-        android:orientation="vertical">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="-3dp"
-            android:orientation="horizontal">
-
-            <com.facebook.drawee.view.SimpleDraweeView
-                android:id="@+id/playbar_img"
-                android:layout_width="43dp"
-                android:layout_height="43dp"
-                android:layout_marginLeft="6dp"
-                android:layout_marginTop="3dp"
-                android:layout_weight="0" />
-
-            <LinearLayout
-                android:layout_width="165dp"
-                android:layout_height="43dp"
-                android:layout_marginLeft="6dp"
-                android:layout_marginTop="6dp"
-                android:layout_weight="1"
-                android:orientation="vertical">
-
-                <TextView
-                    android:id="@+id/playbar_info"
-                    android:layout_width="wrap_content"
-                    android:layout_height="23dp"
-                    android:ellipsize="end"
-                    android:maxLines="1"
-                    android:textSize="17dp" />
-
-                <TextView
-                    android:id="@+id/playbar_singer"
-                    android:layout_width="wrap_content"
-                    android:layout_height="16dp"
-                    android:ellipsize="end"
-                    android:maxLength="20"
-                    android:maxLines="1"
-                    android:textSize="10dp" />
-            </LinearLayout>
-
-
-            <ImageView
-                android:id="@+id/play_list"
-                android:layout_width="43dp"
-                android:layout_height="43dp"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:onClick="click_last"
-                android:src="@drawable/playbar_btn_playlist" />
-
-            <ImageView
-                android:id="@+id/control"
-                android:layout_width="41dp"
-                android:layout_height="46dp"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:src="@drawable/playbar_btn_play" />
-
-            <ImageView
-                android:id="@+id/play_next"
-                android:layout_width="43dp"
-                android:layout_height="43dp"
-                android:background="?attr/selectableItemBackgroundBorderless"
-            android:onClick="click_next"
-                android:src="@drawable/playbar_btn_next" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
-
-            <ProgressBar
-                android:id="@+id/song_progress_normal"
-                style="@style/Widget.AppCompat.ProgressBar.Horizontal"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="bottom"
-                android:maxHeight="6dp"
-                android:progress="0"
-                android:progressDrawable="@drawable/progressbar_color"
-                android:tag="tint_accent_color" />
-        </LinearLayout>
+        android:layout_below="@+id/toolbar"
+        android:layout_above="@+id/nav_play">
     </LinearLayout>
+
+  <include layout="@layout/bottom_nav"/>
 </RelativeLayout>

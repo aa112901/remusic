@@ -16,7 +16,6 @@ package com.wm.remusic.recent;
 import android.content.Context;
 import android.database.AbstractCursor;
 import android.database.Cursor;
-import android.os.RemoteException;
 import android.provider.BaseColumns;
 import android.provider.MediaStore;
 import android.provider.MediaStore.Audio.AudioColumns;

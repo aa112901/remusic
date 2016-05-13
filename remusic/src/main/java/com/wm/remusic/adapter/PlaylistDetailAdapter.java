@@ -65,7 +65,7 @@ public class PlaylistDetailAdapter extends RecyclerView.Adapter<RecyclerView.Vie
             ((ItemViewHolder) itemHolder).menu.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    MoreFragment morefragment = MoreFragment.newInstance(arraylist.get(i-1).songId + "", IConstants.MUSICOVERFLOW);
+                    MoreFragment morefragment = MoreFragment.newInstance(arraylist.get(i - 1).songId + "", IConstants.MUSICOVERFLOW);
                     morefragment.show(((AppCompatActivity) mContext).getSupportFragmentManager(), "music");
                 }
             });

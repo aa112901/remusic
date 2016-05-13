@@ -18,8 +18,8 @@ import android.widget.TextView;
 import com.wm.remusic.R;
 import com.wm.remusic.dialog.AddPlaylistDialog;
 import com.wm.remusic.info.MusicInfo;
-import com.wm.remusic.recent.QueueLoader;
 import com.wm.remusic.provider.MusicPlaybackState;
+import com.wm.remusic.recent.QueueLoader;
 import com.wm.remusic.service.MusicPlayer;
 import com.wm.remusic.uitl.DividerItemDecoration;
 

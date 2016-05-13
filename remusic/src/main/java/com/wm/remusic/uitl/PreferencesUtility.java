@@ -39,6 +39,7 @@ public final class PreferencesUtility {
     private static final String START_PAGE_PREFERENCE_LASTOPENED = "start_page_preference_latopened";
     private static final String NOW_PLAYNG_THEME_VALUE = "now_playing_theme_value";
     private static final String FAVRIATE_MUSIC_PLAYLIST = "favirate_music_playlist";
+    private static final String DOWNMUSIC_BIT = "down_music_bit";
 
     private static PreferencesUtility sInstance;
 
@@ -53,6 +54,16 @@ public final class PreferencesUtility {
             sInstance = new PreferencesUtility(context.getApplicationContext());
         }
         return sInstance;
+    }
+
+    public void setDownMusicBit(int bit){
+        final SharedPreferences.Editor editor = mPreferences.edit();
+        editor.putInt(DOWNMUSIC_BIT,bit);
+        editor.apply();
+    }
+
+    public int getDownMusicBit(){
+        return mPreferences.getInt(DOWNMUSIC_BIT,192);
     }
 
     public boolean getFavriateMusicPlaylist() {

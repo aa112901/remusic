@@ -1,21 +1,19 @@
 package com.wm.remusic.activity;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.content.ServiceConnection;
-import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.Gravity;
+import android.view.KeyEvent;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
@@ -27,48 +25,33 @@ import android.widget.Toast;
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.readystatesoftware.systembartint.SystemBarTintManager;
 import com.wm.remusic.R;
-import com.wm.remusic.fragment.ArtistDetailFragment;
+import com.wm.remusic.fragment.BitSetFragment;
 import com.wm.remusic.fragment.MainFragment;
 import com.wm.remusic.fragment.PlayQueueFragment;
+import com.wm.remusic.fragmentnet.TabNetPagerFragment;
 import com.wm.remusic.fragment.TimingFragment;
+import com.wm.remusic.handler.HandlerUtil;
 import com.wm.remusic.service.MusicPlayer;
 import com.wm.remusic.uitl.IConstants;
 import com.wm.remusic.uitl.MusicUtils;
-
-import java.lang.ref.WeakReference;
 
 import static com.wm.remusic.service.MusicPlayer.mService;
 
 public class MainActivity extends BaseActivity implements NavigationView.OnNavigationItemSelectedListener,
         ServiceConnection {
-    SimpleDraweeView navPlayImg;
-    TextView navMusicName;
-    TextView navArtist;
-    ProgressBar mProgress;
-    CommonHandler handler;
+    private SimpleDraweeView navPlayImg;
+    private TextView navMusicName,navArtist;
+    private ProgressBar mProgress;
+    private ActionBar ab;
+    private ImageView barnet, barmusic,barfriends,search;
+    private ImageView control;
+    private DrawerLayout drawerLayout;
 
-    public Runnable mUpdateProgress = new Runnable() {
-
-        @Override
-        public void run() {
-
-            long position = MusicPlayer.position();
-            mProgress.setProgress((int) position);
-
-            if (MusicPlayer.isPlaying()) {
-                mProgress.postDelayed(mUpdateProgress, 50);
-            } else mProgress.removeCallbacks(this);
-
-        }
-    };
-    ImageView control;
-    DrawerLayout drawerLayout;
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         //        super.onSaveInstanceState(outState);
     }
-
 
 
     public void updateTrackInfo() {
@@ -118,6 +101,65 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+       setSupportActionBar(toolbar);
+
+
+        ab = getSupportActionBar();
+        ab.setDisplayHomeAsUpEnabled(true);
+        ab.setHomeAsUpIndicator(R.drawable.ic_menu);
+        ab.setTitle("");
+
+        barnet = (ImageView) findViewById(R.id.bar_net);
+        barmusic = (ImageView) findViewById(R.id.bar_music);
+        barfriends = (ImageView) findViewById(R.id.bar_friends);
+        search = (ImageView) findViewById(R.id.bar_search);
+
+        barmusic = (ImageView) findViewById(R.id.bar_music);
+        barmusic.setSelected(true);
+        FragmentTransaction  transaction = getSupportFragmentManager().beginTransaction();
+       final MainFragment mfragment = new MainFragment();
+        transaction.add(R.id.fragment_container, mfragment, "music").commitAllowingStateLoss();
+        final  TabNetPagerFragment fragment = new TabNetPagerFragment();
+
+        barnet.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                barmusic.setSelected(false);
+                barnet.setSelected(true);
+                FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+                transaction.hide(mfragment);
+                if(getSupportFragmentManager().findFragmentByTag("net") == null){
+                    transaction.add(R.id.fragment_container, fragment,"net");
+                }else {
+                    transaction.show(fragment);
+                }
+                transaction.commitAllowingStateLoss();
+            }
+        });
+        barmusic.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                barmusic.setSelected(true);
+                barnet.setSelected(false);
+                FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+                transaction.hide(fragment);
+                transaction.show(mfragment);
+                transaction.commitAllowingStateLoss();
+            }
+        });
+
+        search.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final Intent intent = new Intent(MainActivity.this, SearchActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+                MainActivity.this.startActivity(intent);
+            }
+        });
+
+
+
         SystemBarTintManager tintManager = new SystemBarTintManager(this);
         // enable status bar tint
         tintManager.setStatusBarTintEnabled(true);
@@ -133,10 +175,8 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         mProgress.measure(0, 0);
         layoutParams.setMargins(0, -20, 0, -(mProgress.getMeasuredHeight() / 2));
         mProgress.setLayoutParams(layoutParams);
-        handler = new CommonHandler(this);
-//        updateTrackInfo();
 
-       //	获取底部播放栏实例、绑定监听器
+        //	获取底部播放栏实例、绑定监听器
 
         LinearLayout nowPlay = (LinearLayout) findViewById(R.id.nav_play);
         nowPlay.setOnClickListener(new View.OnClickListener() {
@@ -146,7 +186,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
                     Toast.makeText(MainActivity.this, getResources().getString(R.string.queue_is_empty),
                             Toast.LENGTH_SHORT).show();
                 } else {
-                    handler.postDelayed(new Runnable() {
+                    HandlerUtil.getInstance(MainActivity.this).postDelayed(new Runnable() {
                         @Override
                         public void run() {
                             Intent intent = new Intent(MainActivity.this, PlayingActivity.class);
@@ -173,7 +213,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         next.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                handler.postDelayed(new Runnable() {
+                HandlerUtil.getInstance(MainActivity.this).postDelayed(new Runnable() {
                     @Override
                     public void run() {
                         MusicPlayer.next();
@@ -190,16 +230,16 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
                 control.setImageResource(MusicPlayer.isPlaying() ? R.drawable.playbar_btn_pause
                         : R.drawable.playbar_btn_play);
 
-                if(MusicPlayer.getQueueSize() == 0){
-                    Toast.makeText(MainActivity.this,getResources().getString(R.string.queue_is_empty),
+                if (MusicPlayer.getQueueSize() == 0) {
+                    Toast.makeText(MainActivity.this, getResources().getString(R.string.queue_is_empty),
                             Toast.LENGTH_SHORT).show();
-                }else {
-                        handler.postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                MusicPlayer.playOrPause();
-                            }
-                        }, 100);
+                } else {
+                    HandlerUtil.getInstance(MainActivity.this).postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            MusicPlayer.playOrPause();
+                        }
+                    }, 100);
                 }
 
             }
@@ -214,38 +254,46 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         navigationview.setClickable(true);
         navigationview.setNavigationItemSelectedListener(this);
 
-        MainFragment fragment = new MainFragment();
-        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        transaction.replace(R.id.fragment_container, fragment).commitAllowingStateLoss();
-
 
     }
 
-    static class CommonHandler extends Handler {
-        WeakReference<Activity> mActivityReference;
+    public Runnable mUpdateProgress = new Runnable() {
 
-        CommonHandler(Activity activity) {
-            mActivityReference = new WeakReference<Activity>(activity);
+        @Override
+        public void run() {
+
+            long position = MusicPlayer.position();
+            mProgress.setProgress((int) position);
+
+            if (MusicPlayer.isPlaying()) {
+                mProgress.postDelayed(mUpdateProgress, 50);
+            } else mProgress.removeCallbacks(this);
+
         }
-    }
+    };
+
 
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
         switch (item.getItemId()) {
 
+            case R.id.timing_play:
+                TimingFragment fragment = new TimingFragment();
+                fragment.show(getSupportFragmentManager(), "timing");
+                break;
             case R.id.action_exit:// 退出
 
-                if(MusicPlayer.isPlaying()){
+                if (MusicPlayer.isPlaying()) {
                     MusicPlayer.playOrPause();
                 }
                 unbindService();
                 finish();
 
-                break;
-            case R.id.timing_play:
-                TimingFragment fragment = new TimingFragment();
-                fragment.show(getSupportFragmentManager(), "timing");
+            case R.id.down_bit:
+                  BitSetFragment bfragment = new BitSetFragment();
+                   bfragment.show(getSupportFragmentManager(),"bitset");
+
                 break;
 
         }
@@ -283,19 +331,19 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.menu, menu);
-        MenuItem searchViewButton = menu.findItem(R.id.action_search);
-        searchViewButton.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(MenuItem item) {
-                final Intent intent = new Intent(MainActivity.this, SearchActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-                // intent.setAction(IConstants.NAVIGATE_SEARCH);
-                MainActivity.this.startActivity(intent);
-                return true;
-            }
-        });
+//        MenuInflater inflater = getMenuInflater();
+//        inflater.inflate(R.menu.menu, menu);
+//        MenuItem searchViewButton = menu.findItem(R.id.action_search);
+//        searchViewButton.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+//            @Override
+//            public boolean onMenuItemClick(MenuItem item) {
+//                final Intent intent = new Intent(MainActivity.this, SearchActivity.class);
+//                intent.setFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+//                // intent.setAction(IConstants.NAVIGATE_SEARCH);
+//                MainActivity.this.startActivity(intent);
+//                return true;
+//            }
+//        });
 
 
         return true;
@@ -327,27 +375,27 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
 //    }
 
 
-//     long time = 0;
-//    /**
-//     * 双击返回桌面
-//     */
-//    @Override
-//    public boolean onKeyDown(int keyCode, KeyEvent event) {
-//        if (keyCode == KeyEvent.KEYCODE_BACK) {
-//            if ((System.currentTimeMillis() - time > 1000)) {
-//                Toast.makeText(this, "再按一次返回桌面", Toast.LENGTH_SHORT).show();
-//                time = System.currentTimeMillis();
-//            } else {
-//                Intent intent = new Intent(Intent.ACTION_MAIN);
-//                intent.addCategory(Intent.CATEGORY_HOME);
-//                startActivity(intent);
-//            }
-//            return true;
-//        } else {
-//            return super.onKeyDown(keyCode, event);
-//        }
-//
-//    }
+     long time = 0;
+    /**
+     * 双击返回桌面
+     */
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            if ((System.currentTimeMillis() - time > 1000)) {
+                Toast.makeText(this, "再按一次返回桌面", Toast.LENGTH_SHORT).show();
+                time = System.currentTimeMillis();
+            } else {
+                Intent intent = new Intent(Intent.ACTION_MAIN);
+                intent.addCategory(Intent.CATEGORY_HOME);
+                startActivity(intent);
+            }
+            return true;
+        } else {
+            return super.onKeyDown(keyCode, event);
+        }
+
+    }
 
     @Override
     public void onBackPressed() {

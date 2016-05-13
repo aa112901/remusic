@@ -43,7 +43,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:orientation="horizontal"
-               android:layout_marginTop="10dp">
+                android:layout_marginTop="10dp">
 
                 <ImageView
                     android:layout_width="match_parent"
@@ -69,7 +69,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_centerInParent="true"
-                    android:layout_gravity="center_horizontal"></android.support.v4.view.ViewPager>
+                    android:layout_gravity="center_horizontal"/>
 
                 <ImageView
                     android:id="@+id/needle"

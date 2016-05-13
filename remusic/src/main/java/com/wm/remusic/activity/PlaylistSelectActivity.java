@@ -27,11 +27,11 @@ import android.widget.TextView;
 import com.readystatesoftware.systembartint.SystemBarTintManager;
 import com.wm.remusic.R;
 import com.wm.remusic.dialog.AddPlaylistDialog;
-import com.wm.remusic.uitl.DividerItemDecoration;
 import com.wm.remusic.info.MusicInfo;
 import com.wm.remusic.provider.PlaylistsManager;
 import com.wm.remusic.service.MediaService;
 import com.wm.remusic.service.MusicPlayer;
+import com.wm.remusic.uitl.DividerItemDecoration;
 import com.wm.remusic.uitl.DragSortRecycler;
 import com.wm.remusic.uitl.IConstants;
 
@@ -91,8 +91,6 @@ public class PlaylistSelectActivity extends AppCompatActivity implements View.On
         recyclerView.setLayoutManager(layoutManager);
 
 
-
-
         new loadSongs().execute("");
 
     }
@@ -132,16 +130,16 @@ public class PlaylistSelectActivity extends AppCompatActivity implements View.On
                                     protected Void doInBackground(Void... params) {
                                         for (MusicInfo music : selectList) {
 
-                                            if(MusicPlayer.getCurrentAudioId() == music.songId){
-                                                if(MusicPlayer.getQueueSize() == 0){
+                                            if (MusicPlayer.getCurrentAudioId() == music.songId) {
+                                                if (MusicPlayer.getQueueSize() == 0) {
                                                     MusicPlayer.stop();
-                                                }else {
+                                                } else {
                                                     MusicPlayer.next();
                                                 }
 
                                             }
                                             Uri uri = ContentUris.withAppendedId(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, music.songId);
-                                            PlaylistSelectActivity.this.getContentResolver().delete(uri,null,null);
+                                            PlaylistSelectActivity.this.getContentResolver().delete(uri, null, null);
                                             PlaylistsManager.getInstance(PlaylistSelectActivity.this).deleteMusic(PlaylistSelectActivity.this,
                                                     music.songId);
                                         }
@@ -281,9 +279,9 @@ public class PlaylistSelectActivity extends AppCompatActivity implements View.On
 
         //更新adpter的数据
         public void updateDataSet() {
-             ab.setTitle("已选择0项");
-             mList.removeAll(getSelectedItem());
-             mSelectedPositions.clear();
+            ab.setTitle("已选择0项");
+            mList.removeAll(getSelectedItem());
+            mSelectedPositions.clear();
         }
 
         @Override
@@ -360,7 +358,7 @@ public class PlaylistSelectActivity extends AppCompatActivity implements View.On
             return mList == null ? 0 : mList.size();
         }
 
-        public class ListItemViewHolder extends RecyclerView.ViewHolder{
+        public class ListItemViewHolder extends RecyclerView.ViewHolder {
             //ViewHolder
             CheckBox checkBox;
             TextView mainTitle, title;
@@ -374,7 +372,7 @@ public class PlaylistSelectActivity extends AppCompatActivity implements View.On
                 this.move = (ImageView) view.findViewById(R.id.select_move);
 
             }
-            }
+        }
     }
 
 }

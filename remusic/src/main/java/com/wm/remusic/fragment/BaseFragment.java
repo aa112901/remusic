@@ -23,7 +23,7 @@ public class BaseFragment extends Fragment {
                 reloadAdapter();
             } else if (action.equals(IConstants.MUSIC_COUNT_CHANGED)) {
                 reloadAdapter();
-            }else if(action.equals(IConstants.PLAYLIST_COUNT_CHANGED)){
+            } else if (action.equals(IConstants.PLAYLIST_COUNT_CHANGED)) {
                 reloadAdapter();
             }
         }

@@ -25,6 +25,7 @@ import com.wm.remusic.R;
 import com.wm.remusic.json.Focus;
 import com.wm.remusic.net.BMA;
 import com.wm.remusic.net.HttpUtil;
+import com.wm.remusic.net.NetworkUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -49,6 +50,8 @@ public class LoodView extends FrameLayout {
     private List<ImageView> imageViewList;
     private List<View> dotViewList;
     private ViewPager viewPager;
+    private boolean isFromCache = true;
+    private Context mContext;
     //当前轮播页面
     private int currentItem = 0;
     //定时任务
@@ -61,16 +64,20 @@ public class LoodView extends FrameLayout {
         }
     };
 
+
     public LoodView(Context context) {
         super(context);
+        mContext = context;
     }
 
     public LoodView(Context context, AttributeSet attributeSet) {
         this(context, attributeSet, 0);
+        mContext = context;
     }
 
     public LoodView(Context context, AttributeSet attributeSet, int defStyle) {
         super(context, attributeSet, defStyle);
+        mContext = context;
         initImageView();
         initUI(context);
         if (isAutoPlay) {
@@ -122,7 +129,7 @@ public class LoodView extends FrameLayout {
         viewPager.setFocusable(true);
         fPagerAdapter = new FPagerAdapter();
         viewPager.setAdapter(fPagerAdapter);
-        viewPager.setOnPageChangeListener(new MyPageChangeListener());
+        viewPager.addOnPageChangeListener(new MyPageChangeListener());
     }
 
     private void initImageView() {
@@ -139,8 +146,12 @@ public class LoodView extends FrameLayout {
         new AsyncTask<Void, Void, Void>() {
             @Override
             protected Void doInBackground(Void... params) {
+                if(NetworkUtils.isConnectInternet(mContext)){
+                    isFromCache = false;
+                }
+
                 try{
-                    JsonArray rray = HttpUtil.get(BMA.focusPic(7), "fou").get("pic").getAsJsonArray();
+                    JsonArray rray = HttpUtil.getResposeJsonObject(BMA.focusPic(7),mContext, isFromCache).get("pic").getAsJsonArray();
                     int en = rray.size();
                     Gson gson = new Gson();
 

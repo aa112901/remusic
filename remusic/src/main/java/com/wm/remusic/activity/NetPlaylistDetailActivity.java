@@ -37,16 +37,18 @@ import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonSyntaxException;
 import com.squareup.okhttp.OkHttpClient;
 import com.wm.remusic.R;
 import com.wm.remusic.downmusic.DownloadManager;
 import com.wm.remusic.downmusic.DownloadTask;
 import com.wm.remusic.json.GeDanGeInfo;
 import com.wm.remusic.json.GeDanSrc;
-import com.wm.remusic.json.MusicNet;
+import com.wm.remusic.json.MusicDetailNet;
 import com.wm.remusic.net.BMA;
 import com.wm.remusic.net.HttpUtil;
 import com.wm.remusic.service.MusicPlayer;
+import com.wm.remusic.uitl.CommonUtils;
 import com.wm.remusic.uitl.DividerItemDecoration;
 import com.wm.remusic.uitl.ImageUtils;
 import com.wm.remusic.uitl.PreferencesUtility;
@@ -119,6 +121,7 @@ public class NetPlaylistDetailActivity extends AppCompatActivity {
         ab.setHomeAsUpIndicator(R.drawable.actionbar_back);
         ab.setDisplayHomeAsUpEnabled(true);
         ab.setTitle("歌单");
+        toolbar.setPadding(0, CommonUtils.getStatusHeight(this)/2, 0, 0);
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -129,24 +132,24 @@ public class NetPlaylistDetailActivity extends AppCompatActivity {
     }
 
     GeDanSrc geDanSrc;
-    MusicNet musicNet;
+    MusicDetailNet musicDetailNet;
     private void loadAllLists() {
         new AsyncTask<Void, Void, Void>() {
             @Override
             protected Void doInBackground(final Void... unused) {
-                String a = BMA.GeDan.geDanInfo(playlsitId + "");
-                Log.e("id",playlsitId + "");
 
-                
-                JsonObject jsonObject = HttpUtil.get(a, "gedan");
-                geDanSrc = gson.fromJson(jsonObject.toString(), GeDanSrc.class);
-                Log.e("id",jsonObject.toString());
-                JsonArray pArray = jsonObject.get("content").getAsJsonArray();
-                int plen = pArray.size();
+                try {
+                    JsonObject jsonObject = HttpUtil.getResposeJsonObject(BMA.GeDan.geDanInfo(playlsitId + ""));
+                    geDanSrc = gson.fromJson(jsonObject.toString(), GeDanSrc.class);
+                    JsonArray pArray = jsonObject.get("content").getAsJsonArray();
+                    int plen = pArray.size();
 
-                for(int i = 0;i < plen; i++){
-                    GeDanGeInfo geDanGeInfo = gson.fromJson(pArray.get(i),GeDanGeInfo.class);
-                    mList.add(geDanGeInfo);
+                    for(int i = 0;i < plen; i++){
+                        GeDanGeInfo geDanGeInfo = gson.fromJson(pArray.get(i),GeDanGeInfo.class);
+                        mList.add(geDanGeInfo);
+                    }
+                } catch (NullPointerException e) {
+                    e.printStackTrace();
                 }
 
                 return null;
@@ -273,7 +276,7 @@ public class NetPlaylistDetailActivity extends AppCompatActivity {
             return position == FIRST_ITEM ? FIRST_ITEM : ITEM;
 
         }
-        private final OkHttpClient client = new OkHttpClient();
+
         @Override
         public void onBindViewHolder(final RecyclerView.ViewHolder itemHolder, final int i) {
             if (itemHolder instanceof ItemViewHolder) {
@@ -294,7 +297,7 @@ public class NetPlaylistDetailActivity extends AppCompatActivity {
                                         new AsyncTask<Void, Void, Void>() {
                                             @Override
                                             protected Void doInBackground(final Void... unused) {
-                                             JsonArray jsonArray  =  HttpUtil.get(BMA.Song.songInfo(localItem.getSong_id()).trim(), "c").get("songurl")
+                                             JsonArray jsonArray  =  HttpUtil.getResposeJsonObject(BMA.Song.songInfo(localItem.getSong_id()).trim()).get("songurl")
                                                           .getAsJsonObject().get("url").getAsJsonArray();
                                                 int len = jsonArray.size();
 
@@ -303,10 +306,10 @@ public class NetPlaylistDetailActivity extends AppCompatActivity {
                                                 for(int i = len-1; i>-1;i--){
                                                     int bit = Integer.parseInt(jsonArray.get(i).getAsJsonObject().get("file_bitrate").toString());
                                                     if(bit == downloadBit){
-                                                        musicNet = gson.fromJson(jsonArray.get(i), MusicNet.class);
+                                                        musicDetailNet = gson.fromJson(jsonArray.get(i), MusicDetailNet.class);
                                                         return null;
                                                     }else if(bit < downloadBit && bit >= 64) {
-                                                        musicNet = gson.fromJson(jsonArray.get(i), MusicNet.class);
+                                                        musicDetailNet = gson.fromJson(jsonArray.get(i), MusicDetailNet.class);
                                                         return null;
                                                     }
                                                 }
@@ -323,7 +326,7 @@ public class NetPlaylistDetailActivity extends AppCompatActivity {
                                                         file.mkdir();
                                                     }
 
-                                                    DownloadTask task = new DownloadTask.Builder(NetPlaylistDetailActivity.this,musicNet.getShow_link())
+                                                    DownloadTask task = new DownloadTask.Builder(NetPlaylistDetailActivity.this, musicDetailNet.getShow_link())
                                                             .setFileName(localItem.getTitle())
                                                             .setSaveDirPath("/storage/emulated/0/remusic/").build();
 
@@ -339,54 +342,6 @@ public class NetPlaylistDetailActivity extends AppCompatActivity {
                                             }
                                         }.execute();
 
-//                                        HandlerUtil.getInstance(NetPlaylistDetailActivity.this).postDelayed(new Runnable() {
-//                                            @Override
-//                                            public void run() {
-//                                                final DownloadTask task = new DownloadTask(NetPlaylistDetailActivity.this);
-//
-////                                                Log.e("song info",localItem.getSong_id());
-////
-////                                                Log.e("ccc",HttpUtil.get(BMA.Song.songInfo(localItem.getSong_id()).trim(), "c").toString());
-//                                                Request request = new Request.Builder()
-//                                                        .url(BMA.Song.songInfo(localItem.getSong_id()).trim())
-//                                                        .build();
-//
-//                                                client.newCall(request).enqueue(new Callback() {
-//                                                    @Override
-//                                                    public void onFailure(Request request, IOException e) {
-//
-//                                                    }
-//
-//                                                    @Override
-//                                                    public void onResponse(Response response) throws IOException {
-//                                                        if (!response.isSuccessful())
-//                                                            throw new IOException("Unexpected code " + response);
-//
-//                                                        JsonParser parser = new JsonParser();
-//                                                        JsonElement el = parser.parse(response.body().string());
-//
-//
-//                                                        JsonArray jsonArray = el.getAsJsonObject().get("songurl")
-//                                                                .getAsJsonObject().get("url").getAsJsonArray();
-//                                                        musicNet = gson.fromJson(jsonArray.get(2), MusicNet.class);
-//                                                        task.setUrl(musicNet.getShow_link());
-//                                                        task.setFileName(localItem.getTitle() + ".mp3");
-//                                                        task.setSaveDirPath("/storage/emulated/0/");
-//                                                        task.setId(hashCode() + "");
-//                                                        DownloadManager.getInstance(NetPlaylistDetailActivity.this).addDownloadTask(task);
-//                                                    }
-//                                                });
-//
-//                                            }
-//                                        }, 60);
-
-
-
-//                                        HttpUtil.downMp3(localItem.url,localItem.musicName);
-//                                        Toast.makeText(NetPlaylistDetailActivity.this,"已经加入下载",Toast.LENGTH_SHORT).show();
-//                                        Intent intent = new Intent();
-//                                        intent.setAction(IConstants.MUSIC_COUNT_CHANGED);
-//                                        mContext.sendBroadcast(intent);
                                         dialog.dismiss();
                                     }
                                 }).
@@ -471,7 +426,7 @@ public class NetPlaylistDetailActivity extends AppCompatActivity {
 
                         try{
 
-                            JsonArray jsonArray = HttpUtil.get(BMA.Song.songInfo(BMA.Song.songInfo(arraylist.get(getAdapterPosition()).getSong_id())), "c").get("songurl").getAsJsonObject()
+                            JsonArray jsonArray = HttpUtil.getResposeJsonObject(BMA.Song.songInfo(BMA.Song.songInfo(arraylist.get(getAdapterPosition()).getSong_id()))).get("songurl").getAsJsonObject()
                                     .get("url").getAsJsonArray();
 
                             int len = jsonArray.size();
@@ -481,7 +436,7 @@ public class NetPlaylistDetailActivity extends AppCompatActivity {
                          //   MusicNet musicNet = gson.fromJson(jsonArray.get(3),MusicNet.class);
 
                             mediaPlayer.reset();
-                            mediaPlayer.setDataSource(musicNet.getShow_link());
+                            mediaPlayer.setDataSource(musicDetailNet.getShow_link());
                             mediaPlayer.prepare();
                             mediaPlayer.start();
                             MusicPlayer.clearQueue();

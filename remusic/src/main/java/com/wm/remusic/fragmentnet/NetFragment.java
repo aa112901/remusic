@@ -1,14 +1,18 @@
 package com.wm.remusic.fragmentnet;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.Spannable;
+import android.text.SpannableString;
+import android.text.style.ImageSpan;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,37 +21,51 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 
+import com.facebook.binaryresource.BinaryResource;
+import com.facebook.binaryresource.FileBinaryResource;
+import com.facebook.cache.common.CacheKey;
 import com.facebook.drawee.backends.pipeline.Fresco;
 import com.facebook.drawee.interfaces.DraweeController;
 import com.facebook.drawee.view.SimpleDraweeView;
+import com.facebook.imagepipeline.cache.DefaultCacheKeyFactory;
 import com.facebook.imagepipeline.common.ResizeOptions;
+import com.facebook.imagepipeline.core.ImagePipelineFactory;
 import com.facebook.imagepipeline.request.ImageRequest;
 import com.facebook.imagepipeline.request.ImageRequestBuilder;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonSyntaxException;
 import com.wm.remusic.R;
 import com.wm.remusic.activity.AlbumsDetailActivity;
 import com.wm.remusic.activity.NetPlaylistDetailActivity;
-import com.wm.remusic.fragment.NetItemChangeActivity;
-import com.wm.remusic.json.PlaylistNet;
+import com.wm.remusic.json.BillboardItem;
+import com.wm.remusic.activity.NetItemChangeActivity;
+import com.wm.remusic.json.GedanHot;
 import com.wm.remusic.json.RadioNet;
 import com.wm.remusic.net.BMA;
 import com.wm.remusic.net.HttpUtil;
+import com.wm.remusic.net.NetworkUtils;
+import com.wm.remusic.uitl.ImageUtils;
 import com.wm.remusic.uitl.PreferencesUtility;
 
 
+import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * Created by wm on 2016/4/9.
  */
 public class NetFragment extends Fragment {
+
+
 
     private RecyclerView recyclerView1,recyclerView2,recyclerView3;
     private GridLayoutManager gridLayoutManager,gridLayoutManager2,gridLayoutManager3;
@@ -55,7 +73,7 @@ public class NetFragment extends Fragment {
     private NewAlbumsAdapter newAlbumsAdapter;
     private RadioAdapter radioAdapter;
 
-    private ArrayList<PlaylistNet> recomendList = new ArrayList<>();
+    private ArrayList<GedanHot> recomendList = new ArrayList<>();
     private ArrayList<NewAlbums> newAlbumsList = new ArrayList<>();
     private ArrayList<RadioNet> radioList = new ArrayList<>();
     int width = 160,height = 160;
@@ -66,6 +84,8 @@ public class NetFragment extends Fragment {
     LinearLayout itemChanged;
     HashMap<String,View> hashMap;
     String position;
+    private ArrayList<BillboardItem> items = new ArrayList<>(7);
+    private static ExecutorService exec = Executors.newFixedThreadPool(6);
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -113,8 +133,6 @@ public class NetFragment extends Fragment {
             }
         });
 
-
-
         return view;
     }
     LinearLayout linearLayout;
@@ -133,84 +151,82 @@ public class NetFragment extends Fragment {
 
 
 
+
+
+
+
+private boolean isFromCache = true;
     private void reloadAdapter(){
        final Gson gson = new Gson();
-
-
         new AsyncTask<Void,Void,Void>(){
 
             @Override
             protected Void doInBackground(Void... params) {
 
-
+                if(NetworkUtils.isConnectInternet(getActivity())){
+                    isFromCache = false;
+                }
                 String fmtrash = "http://music.163.com/api/radio/get";
 
-                JsonObject result = HttpUtil.get(BMA.GeDan.hotGeDan(6), "PlaylistHot");
-                if(result == null){
-                    return null;
-                }
+
                 //热门歌单
-                JsonArray pArray = result.get("content")
-                        .getAsJsonObject().get("list").getAsJsonArray();
-                if(pArray == null){
-                    return null;
+                try {
+                    JsonObject result = HttpUtil.getResposeJsonObject(BMA.GeDan.hotGeDan(6),getActivity() , isFromCache);
+
+                    if(result == null){
+                        return null;
+                    }
+
+                    JsonArray pArray = result.get("content")
+                            .getAsJsonObject().get("list").getAsJsonArray();
+                    if(pArray == null){
+                        return null;
+                    }
+
+                    int plen = pArray.size();
+
+                    for(int i = 0;i < plen; i++){
+                        GedanHot gedanHot = gson.fromJson(pArray.get(i),GedanHot.class);
+                        recomendList.add(gedanHot);
+                    }
+                } catch (NullPointerException e) {
+                    e.printStackTrace();
                 }
 
-                int plen = pArray.size();
-
-                for(int i = 0;i < plen; i++){
-                    PlaylistNet playlistNet = gson.fromJson(pArray.get(i),PlaylistNet.class);
-                    recomendList.add(playlistNet);
-                }
-
-
-
-                JsonObject result2 = HttpUtil.getResposeJsonObject(newAlbums);
-                if(result2 == null){
-                    return null;
-                }
                 //新专辑
-                JsonArray jsonArray2  = result2.get("albums").getAsJsonArray();
-                if(jsonArray2 == null){
-                    return null;
-                }
+                try {
+                    JsonObject result2 = HttpUtil.getResposeJsonObject(newAlbums,getContext() ,isFromCache);
+                    JsonArray jsonArray2  = result2.get("albums").getAsJsonArray();
 
-                Iterator it2 = jsonArray2.iterator();
-                while(it2.hasNext()){
-                    JsonElement e = (JsonElement)it2.next();
-                    JsonObject jo = e.getAsJsonObject();
+                    Iterator it2 = jsonArray2.iterator();
+                    while(it2.hasNext()){
+                        JsonElement e = (JsonElement)it2.next();
+                        JsonObject jo = e.getAsJsonObject();
 
-                    String artistName = jo.get("artist").getAsJsonObject().get("name").getAsString();
-                    NewAlbums newAlbums = new NewAlbums(getStringValue(jo, "blurPicUrl"),getIntValue(jo, "id"),
-                            getStringValue(jo, "name"), artistName, getIntValue(jo, "publishTime"));
-                    newAlbumsList.add(newAlbums);
-                }
-
-
-
-
-
-
-                JsonObject result3 = HttpUtil.get(BMA.Radio.recommendRadioList(6), "RadioList");
-                if(result3 == null){
-                    return null;
+                        String artistName = jo.get("artist").getAsJsonObject().get("name").getAsString();
+                        NewAlbums newAlbums = new NewAlbums(getStringValue(jo, "blurPicUrl"),getIntValue(jo, "id"),
+                                getStringValue(jo, "name"), artistName, getIntValue(jo, "publishTime"));
+                        newAlbumsList.add(newAlbums);
+                    }
+                } catch (NullPointerException e) {
+                    e.printStackTrace();
                 }
 
                 //推荐电台
-                JsonArray rArray = result3.get("list")
-                        .getAsJsonArray();
-                if(rArray == null){
-                    return null;
+                try {
+                    JsonObject result3 = HttpUtil.getResposeJsonObject(BMA.Radio.recommendRadioList(6),getActivity() , isFromCache);
+
+                    JsonArray rArray = result3.get("list").getAsJsonArray();
+
+                    int rlen = rArray.size();
+
+                    for(int i = 0;i < rlen; i++){
+                        RadioNet radioNet = gson.fromJson(rArray.get(i),RadioNet.class);
+                        radioList.add(radioNet);
+                    }
+                } catch (NullPointerException e) {
+                    e.printStackTrace();
                 }
-
-                int rlen = rArray.size();
-
-                for(int i = 0;i < rlen; i++){
-                    RadioNet radioNet = gson.fromJson(rArray.get(i),RadioNet.class);
-                    radioList.add(radioNet);
-                }
-
-
 
                 return null;
             }
@@ -231,7 +247,7 @@ public class NetFragment extends Fragment {
                 recyclerView2.setLayoutManager(gridLayoutManager2);
                 recyclerView2.setAdapter(newAlbumsAdapter);
 
-               v3 = layoutInflater.inflate(R.layout.recommend_radio, linearLayout,false);
+                v3 = layoutInflater.inflate(R.layout.recommend_radio, linearLayout,false);
                 recyclerView3 = (RecyclerView) v3.findViewById(R.id.recommend_radio_recyclerview);
                 gridLayoutManager3 = new GridLayoutManager(getActivity(),3);
                 recyclerView3.setLayoutManager(gridLayoutManager3);
@@ -256,81 +272,6 @@ public class NetFragment extends Fragment {
             }
 
         }.execute();
-
-
-
-
-//        new AsyncTask<Void,Void,Void>(){
-//
-//            @Override
-//            protected Void doInBackground(Void... params) {
-//
-//                JsonObject result = HttpUtil.getResposeJsonObject(newAlbums);
-//                if(result == null){
-//                    return null;
-//                }
-//                //新专辑
-//                JsonArray jsonArray2  = result.get("albums").getAsJsonArray();
-//                if(jsonArray2 == null){
-//                    return null;
-//                }
-//
-//                Iterator it2 = jsonArray2.iterator();
-//                while(it2.hasNext()){
-//                    JsonElement e = (JsonElement)it2.next();
-//                    JsonObject jo = e.getAsJsonObject();
-//
-//                    String artistName = jo.get("artist").getAsJsonObject().get("name").getAsString();
-//                    NewAlbums newAlbums = new NewAlbums(getStringValue(jo, "blurPicUrl"),getIntValue(jo, "id"),
-//                            getStringValue(jo, "name"), artistName, getIntValue(jo, "publishTime"));
-//                    newAlbumsList.add(newAlbums);
-//                }
-//
-//
-//                return null;
-//            }
-//
-//            @Override
-//            protected void onPostExecute(Void v){
-//                newAlbumsAdapter.update(newAlbumsList);
-//            }
-//
-//        }.execute();
-//
-//        new AsyncTask<Void,Void,Void>(){
-//
-//            @Override
-//            protected Void doInBackground(Void... params) {
-//
-//                JsonObject result = HttpUtil.get(BMA.Radio.recommendRadioList(6), "RadioList");
-//                if(result == null){
-//                    return null;
-//                }
-//
-//                //推荐电台
-//                JsonArray rArray = result.get("list")
-//                        .getAsJsonArray();
-//                if(rArray == null){
-//                    return null;
-//                }
-//
-//                int rlen = rArray.size();
-//
-//                for(int i = 0;i < rlen; i++){
-//                    RadioNet radioNet = gson.fromJson(rArray.get(i),RadioNet.class);
-//                    radioList.add(radioNet);
-//                }
-//
-//                return null;
-//            }
-//
-//            @Override
-//            protected void onPostExecute(Void v){
-//                radioAdapter.update(radioList);
-//
-//            }
-//
-//        }.execute();
 
 
     }
@@ -358,7 +299,6 @@ public class NetFragment extends Fragment {
             addViews();
         }
 
-
     }
 
     private String getStringValue(JsonObject jsonObject, String key){
@@ -374,13 +314,18 @@ public class NetFragment extends Fragment {
 
 
     class RecommendAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
-        private ArrayList<PlaylistNet> mList;
+        private ArrayList<GedanHot> mList;
+        SpannableString spanString;
+        public RecommendAdapter(ArrayList<GedanHot> list){
+            Bitmap b = BitmapFactory.decodeResource(getResources(), R.mipmap.index_icn_earphone);
+            ImageSpan imgSpan = new ImageSpan(getActivity(), b, ImageSpan.ALIGN_BASELINE);
+            spanString = new SpannableString("icon");
+            spanString.setSpan(imgSpan, 0, 4, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
 
-        public RecommendAdapter(ArrayList<PlaylistNet> list){
             mList = list;
         }
 
-        public void update(ArrayList<PlaylistNet> list){
+        public void update(ArrayList<GedanHot> list){
             mList = list;
             notifyDataSetChanged();
         }
@@ -395,11 +340,36 @@ public class NetFragment extends Fragment {
 
         @Override
         public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-        final PlaylistNet info = mList.get(position);
+        final GedanHot info = mList.get(position);
 
-            ((ItemView) holder).art.setImageURI(Uri.parse(info.getPic()));
+            try {
+                ImageRequest imageRequest = ImageRequest.fromUri(info.getPic());
+                CacheKey cacheKey= DefaultCacheKeyFactory.getInstance()
+                        .getEncodedCacheKey(imageRequest);
+                BinaryResource resource = ImagePipelineFactory.getInstance()
+                        .getMainDiskStorageCache().getResource(cacheKey);
+                File file=((FileBinaryResource)resource).getFile();
+
+                if(file != null){
+                    ((ItemView) holder).art.setImageURI(Uri.fromFile(file));
+                }else {
+                    ((ItemView) holder).art.setImageURI(Uri.parse(info.getPic()));
+                }
+
+            } catch (Exception e) {
+
+            }
+
             ((ItemView) holder).name.setText(info.getTitle());
-            ((ItemView) holder).count.setText(info.getListenum());
+            ((ItemView) holder).count.setText(spanString);
+
+            int count = Integer.parseInt(info.getListenum());
+            if(count > 10000){
+                count = count / 10000;
+                ((ItemView) holder).count.append(" " + count + "万");
+            }else {
+                ((ItemView) holder).count.append(" " + info.getListenum());
+            }
             ((ItemView) holder).itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -467,13 +437,26 @@ public class NetFragment extends Fragment {
             ImageRequest request = ImageRequestBuilder.newBuilderWithSource(Uri.parse(info.getPic()))
                     .setResizeOptions(new ResizeOptions(width, height))
                     .build();
+
             DraweeController controller = Fresco.newDraweeControllerBuilder()
                     .setOldController(((ItemView) holder).art.getController())
                     .setImageRequest(request)
                     .build();
+
             ((ItemView) holder).art.setController(controller);
 
-            //  ((ItemView) holder).art.setImageURI(Uri.parse(info.coverImgUrl));
+
+
+//            ImageRequest request = ImageRequestBuilder.newBuilderWithSource(Uri.parse(info.getPic()))
+//                    .setResizeOptions(new ResizeOptions(width, height))
+//                    .build();
+//            DraweeController controller = Fresco.newDraweeControllerBuilder()
+//                    .setOldController(((ItemView) holder).art.getController())
+//                    .setImageRequest(request)
+//                    .build();
+//            ((ItemView) holder).art.setController(controller);
+
+
             ((ItemView) holder).albumName.setText(info.getTitle());
             ((ItemView) holder).artsit.setText(info.getDesc());
             ((ItemView) holder).itemView.setOnClickListener(new View.OnClickListener() {
@@ -489,11 +472,6 @@ public class NetFragment extends Fragment {
 //                    intent.putExtra("publisttime", info.publishTime);
                     getActivity().startActivity(intent);
 
-//                    AlbumsDetail fragment = AlbumsDetail.newInstance(info.id, info.coverImgUrl, info.albumName,
-//                            info.artistName, info.publishTime);
-//                    FragmentTransaction transaction = ((AppCompatActivity) getContext()).getSupportFragmentManager().beginTransaction();
-//                    transaction.replace(R.id.fragment_container, fragment);
-//                    transaction.commitAllowingStateLoss();
                 }
             });
         }
@@ -554,16 +532,42 @@ public class NetFragment extends Fragment {
         public void onBindViewHolder(RecyclerView.ViewHolder holder, final int position) {
          final  NewAlbums info = mList.get(position);
 
-            ImageRequest request = ImageRequestBuilder.newBuilderWithSource(Uri.parse(info.coverImgUrl))
-                    .setResizeOptions(new ResizeOptions(width, height))
-                    .build();
-            DraweeController controller = Fresco.newDraweeControllerBuilder()
-                    .setOldController(((ItemView) holder).art.getController())
-                    .setImageRequest(request)
-                    .build();
-            ((ItemView) holder).art.setController(controller);
+            ImageRequest imageRequest = ImageRequest.fromUri(info.coverImgUrl);
+            CacheKey cacheKey= DefaultCacheKeyFactory.getInstance()
+                    .getEncodedCacheKey(imageRequest);
+            BinaryResource resource = ImagePipelineFactory.getInstance()
+                    .getMainDiskStorageCache().getResource(cacheKey);
+            File file=((FileBinaryResource)resource).getFile();
+            if(file != null){
+                ImageRequest request = ImageRequestBuilder.fromRequest(imageRequest)
+                        .setResizeOptions(new ResizeOptions(width, height))
+                        .build();
+                DraweeController controller = Fresco.newDraweeControllerBuilder()
+                        .setOldController(((ItemView) holder).art.getController())
+                        .setImageRequest(request)
+                        .build();
+                ((ItemView) holder).art.setController(controller);
+            }else {
+                ImageRequest request = ImageRequestBuilder.newBuilderWithSource(Uri.parse(info.coverImgUrl))
+                        .setResizeOptions(new ResizeOptions(width, height))
+                        .build();
+                DraweeController controller = Fresco.newDraweeControllerBuilder()
+                        .setOldController(((ItemView) holder).art.getController())
+                        .setImageRequest(request)
+                        .build();
+                ((ItemView) holder).art.setController(controller);
+            }
 
-          //  ((ItemView) holder).art.setImageURI(Uri.parse(info.coverImgUrl));
+//            ImageRequest request = ImageRequestBuilder.newBuilderWithSource(Uri.parse(info.coverImgUrl))
+//                    .setResizeOptions(new ResizeOptions(width, height))
+//                    .build();
+//            DraweeController controller = Fresco.newDraweeControllerBuilder()
+//                    .setOldController(((ItemView) holder).art.getController())
+//                    .setImageRequest(request)
+//                    .build();
+//            ((ItemView) holder).art.setController(controller);
+
+
             ((ItemView) holder).albumName.setText(info.albumName);
             ((ItemView) holder).artsit.setText(info.artistName);
             ((ItemView) holder).itemView.setOnClickListener(new View.OnClickListener() {

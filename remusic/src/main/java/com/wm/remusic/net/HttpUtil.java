@@ -7,12 +7,15 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.squareup.okhttp.Cache;
+import com.squareup.okhttp.CacheControl;
 import com.squareup.okhttp.FormEncodingBuilder;
 import com.squareup.okhttp.MediaType;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
 import com.squareup.okhttp.RequestBody;
 import com.squareup.okhttp.Response;
+import com.wm.remusic.R;
 import com.wm.remusic.net.PersistentCookieStore;
 
 import java.io.File;
@@ -29,29 +32,6 @@ import retrofit.client.OkClient;
  */
 public class HttpUtil {
     private static final OkHttpClient mOkHttpClient = new OkHttpClient();
-
-    public static JsonObject get(final  String url, String name) {
-        try {
-            mOkHttpClient.setConnectTimeout(1000, TimeUnit.MINUTES);
-            mOkHttpClient.setReadTimeout(1000, TimeUnit.MINUTES);
-            Request request = new Request.Builder()
-                    .url(url)
-                    .build();
-            Response response = mOkHttpClient.newCall(request).execute();
-            if(response.isSuccessful()){
-                String c = response.body().string();
-                Log.e("re",c);
-                JsonParser parser = new JsonParser();
-                JsonElement el = parser.parse(c);
-                return el.getAsJsonObject();
-
-            }
-
-        }catch (Exception e){
-            e.printStackTrace();
-        }
-        return null;
-    }
 
 
     public static void getOut(final  String url) {
@@ -76,6 +56,75 @@ public class HttpUtil {
         }
     }
 
+    public static String getResposeString(String action1 ){
+        try {
+            mOkHttpClient.setConnectTimeout(1000, TimeUnit.MINUTES);
+            mOkHttpClient.setReadTimeout(1000, TimeUnit.MINUTES);
+            Request request = new Request.Builder()
+                    .url(action1)
+                    .build();
+            Response response = mOkHttpClient.newCall(request).execute();
+            if(response.isSuccessful()){
+
+                File file = new File("/storage/emulated/0/billboard.json");
+                String c = response.body().string();
+                FileOutputStream fo = new FileOutputStream(file);
+                fo.write(c.getBytes());
+
+                Log.e("billboard",c);
+                return c;
+            }
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
+//       mOkHttpClient.setCookieHandler(new CookieManager(
+//                new PersistentCookieStore(getContext().getApplicationContext()),
+//                CookiePolicy.ACCEPT_ALL));
+
+        return null;
+    }
+
+    public static JsonObject getResposeJsonObject(String action1 , Context context ,boolean forceCache){
+        try {
+
+            File sdcache = context.getExternalCacheDir();
+            //File cacheFile = new File(context.getCacheDir(), "[缓存目录]");
+            Cache cache = new Cache(sdcache.getAbsoluteFile(), 1024 * 1024 * 30); //30Mb
+            mOkHttpClient.setCache(cache);
+
+            mOkHttpClient.setConnectTimeout(1000, TimeUnit.MINUTES);
+            mOkHttpClient.setReadTimeout(1000, TimeUnit.MINUTES);
+            Request.Builder builder = new Request.Builder()
+                    .url(action1)
+                    .addHeader("Referer","http://music.163.com/")
+                    .addHeader("Cookie", "appver=1.5.0.75771");
+            if(forceCache){
+                builder.cacheControl(CacheControl.FORCE_CACHE);
+            }
+            Request request = builder.build();
+            Response response = mOkHttpClient.newCall(request).execute();
+            if(response.isSuccessful()){
+                String c = response.body().string();
+                Log.e("re",c);
+                JsonParser parser = new JsonParser();
+                JsonElement el = parser.parse(c);
+                return el.getAsJsonObject();
+
+            }
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
+//       mOkHttpClient.setCookieHandler(new CookieManager(
+//                new PersistentCookieStore(getContext().getApplicationContext()),
+//                CookiePolicy.ACCEPT_ALL));
+
+        return null;
+    }
+
     public static JsonObject getResposeJsonObject(String action1){
         try {
             mOkHttpClient.setConnectTimeout(1000, TimeUnit.MINUTES);
@@ -88,6 +137,7 @@ public class HttpUtil {
             Response response = mOkHttpClient.newCall(request).execute();
             if(response.isSuccessful()){
                 String c = response.body().string();
+                Log.e("re",c);
                 JsonParser parser = new JsonParser();
                 JsonElement el = parser.parse(c);
                 return el.getAsJsonObject();

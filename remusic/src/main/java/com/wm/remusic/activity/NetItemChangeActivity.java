@@ -1,5 +1,6 @@
-package com.wm.remusic.fragment;
+package com.wm.remusic.activity;
 
+import android.graphics.Paint;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBar;
@@ -15,7 +16,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.wm.remusic.R;
-import com.wm.remusic.info.Playlist;
 import com.wm.remusic.uitl.DividerItemDecoration;
 import com.wm.remusic.uitl.DragSortRecycler;
 import com.wm.remusic.uitl.PreferencesUtility;
@@ -28,7 +28,6 @@ import java.util.ArrayList;
 public class NetItemChangeActivity extends AppCompatActivity{
     SelectAdapter mAdapter;
     ActionBar ab;
-    ArrayList<Playlist> playlists;
     private RecyclerView recyclerView;
     private LinearLayoutManager layoutManager;
     private Toolbar toolbar;
@@ -43,7 +42,6 @@ public class NetItemChangeActivity extends AppCompatActivity{
         ab = getSupportActionBar();
         ab.setHomeAsUpIndicator(R.drawable.actionbar_back);
         ab.setDisplayHomeAsUpEnabled(true);
-        ab.setTitle("已选择0项");
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -51,14 +49,15 @@ public class NetItemChangeActivity extends AppCompatActivity{
             }
         });
 
-
-
-//        SystemBarTintManager tintManager = new SystemBarTintManager(this);
-//        // enable status bar tint
-//        tintManager.setStatusBarTintEnabled(true);
-//        // enable navigation bar tint
-//        tintManager.setNavigationBarTintEnabled(true);
-
+        TextView defaultPosition = (TextView)findViewById(R.id.default_item_position);
+        defaultPosition.getPaint().setFlags(Paint. UNDERLINE_TEXT_FLAG ); //下划线
+        defaultPosition.getPaint().setAntiAlias(true);//抗锯齿
+        defaultPosition.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                PreferencesUtility.getInstance(NetItemChangeActivity.this).setItemPostion("推荐歌单 最新专辑 主播电台");
+            }
+        });
 
         recyclerView = (RecyclerView) findViewById(R.id.recyclerview);
         layoutManager = new LinearLayoutManager(this);

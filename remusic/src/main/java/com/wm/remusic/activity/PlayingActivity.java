@@ -71,7 +71,7 @@ public class PlayingActivity extends BaseActivity implements IConstants {
     private boolean isFav = false;
     private boolean isNextOrPreSetPage = false; //判断viewpager由手动滑动 还是setcruuentitem换页
     private boolean duetoplaypause = false; //判读是否是播放暂停的通知，不要切换专辑封面
-
+    Toolbar toolbar;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -79,7 +79,7 @@ public class PlayingActivity extends BaseActivity implements IConstants {
         setContentView(R.layout.activity_playing);
         playlistsManager = PlaylistsManager.getInstance(this);
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
         if (toolbar != null) {
             setSupportActionBar(toolbar);
             ab = getSupportActionBar();
@@ -109,11 +109,30 @@ public class PlayingActivity extends BaseActivity implements IConstants {
         needle = (ImageView) findViewById(R.id.needle);
         mViewPager = (ViewPager) findViewById(R.id.view_pager);
 
-        needleAnim = ObjectAnimator.ofFloat(needle, "rotation", -30, 0);
-        needleAnim.setDuration(60);
-        needleAnim.setRepeatMode(0);
-        needleAnim.setInterpolator(new LinearInterpolator());
+        loadOther();
+        setViewPager();
+       // setViewPager();
+    }
 
+
+    private void loadOther(){
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                needleAnim = ObjectAnimator.ofFloat(needle, "rotation", -30, 0);
+                needleAnim.setDuration(60);
+                needleAnim.setRepeatMode(0);
+                needleAnim.setInterpolator(new LinearInterpolator());
+
+                setSeekBarListener();
+                setTools();
+            }
+        }).start();
+
+    }
+
+    private void setViewPager(){
 
         PlaybarPagerTransformer transformer = new PlaybarPagerTransformer();
         fAdapter = new FragmentAdapter(getSupportFragmentManager());
@@ -187,11 +206,7 @@ public class PlayingActivity extends BaseActivity implements IConstants {
             public void onPageScrollStateChanged(int pState) {
             }
         });
-
-        setSeekBarListener();
-        setTools();
     }
-
 
     private void setTools() {
         playingmode.setOnClickListener(new View.OnClickListener() {
@@ -652,12 +667,13 @@ public class PlayingActivity extends BaseActivity implements IConstants {
                     backAlbum.setImageDrawable(td);
                     //去除过度绘制
                     td.setCrossFadeEnabled(true);
-                    HandlerUtil.getInstance(PlayingActivity.this).postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            td.startTransition(370);
-                        }
-                    },1600);
+                    td.startTransition(370);
+//                    HandlerUtil.getInstance(PlayingActivity.this).postDelayed(new Runnable() {
+//                        @Override
+//                        public void run() {
+//
+//                        }
+//                    },1600);
 
 
                 } else {

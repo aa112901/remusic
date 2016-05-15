@@ -3,7 +3,7 @@ package com.wm.remusic.json;
 /**
  * Created by wm on 2016/4/16.
  */
-public class MusicNet {
+public class MusicDetailNet {
 
     /**
      * show_link : http://zhangmenshiting.baidu.com/data2/music/66764024/66764024.mp3?xcode=7c8f1aaf10a3704c350a5c038dd045b5

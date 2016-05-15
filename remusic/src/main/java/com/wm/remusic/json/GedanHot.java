@@ -3,7 +3,7 @@ package com.wm.remusic.json;
 /**
  * Created by wm on 2016/4/15.
  */
-public class PlaylistNet {
+public class GedanHot {
 
     /**
      * listid : 6509

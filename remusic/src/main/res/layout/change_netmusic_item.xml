@@ -27,13 +27,12 @@
         android:id="@+id/recyclerview"
         android:layout_below="@+id/text"
         android:layout_width="match_parent"
-        android:layout_height="300dp"/>
+        android:layout_height="260dp"/>
     <TextView
         android:gravity="center"
-        style="?android:attr/listSeparatorTextViewStyle"
         android:layout_below="@+id/recyclerview"
         android:text="恢复默认顺序"
-        android:id="@+id/returnTo"
+        android:id="@+id/default_item_position"
         android:layout_width="match_parent"
         android:layout_height="60dp" />
 </RelativeLayout>

@@ -68,6 +68,7 @@ public class DownloadTask implements Runnable {
     }
 
     private void init(Builder builder){
+        mContext = builder.context;
         fileName = builder.fileName;
         saveDirPath = builder.saveDirPath;
         completedSize = builder.completedSize;
@@ -79,6 +80,7 @@ public class DownloadTask implements Runnable {
         downloadStatus = builder.downloadStatus;
         UPDATE_SIZE = builder.UPDATE_SIZE;
         listeners = builder.listeners;
+
     }
 
     public static class Builder{
@@ -116,8 +118,6 @@ public class DownloadTask implements Runnable {
 
         public Builder setSaveDirPath(String saveDirPath){
             this.saveDirPath = saveDirPath;
-
-
             return this;
         }
 
@@ -263,10 +263,9 @@ public class DownloadTask implements Runnable {
             return;
         } finally {
 
-            String path = saveDirPath + fileName;
-           String  nP = fileName.substring(0, path.length() - 5);
+            //String  nP = fileName.substring(0, path.length() - 5);
             dbEntity.setCompletedSize(completedSize);
-            dbEntity.setFileName(nP);
+            dbEntity.setFileName(fileName);
             downFileStore.update(dbEntity);
             if (bis != null) try {
                 bis.close();
@@ -284,17 +283,18 @@ public class DownloadTask implements Runnable {
                 e.printStackTrace();
             }
 
+        }
+        if(totalSize ==completedSize){
+            String path = saveDirPath + fileName;
             File file = new File(path);
             Log.e("rename", path.substring(0, path.length() - 5));
             boolean c = file.renameTo(new File(path + ".mp3"));
             Log.e("rename",c + "");
 
-        }
-        if(totalSize ==completedSize){
-            downloadStatus=DownloadStatus.DOWNLOAD_STATUS_COMPLETED;
+            downloadStatus = DownloadStatus.DOWNLOAD_STATUS_COMPLETED;
             dbEntity.setDownloadStatus(downloadStatus);
             downFileStore.update(dbEntity);
-            Uri contentUri = Uri.fromFile(new File(saveDirPath + fileName));
+            Uri contentUri = Uri.fromFile(new File(saveDirPath + fileName + ".mp3"));
             Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE,contentUri);
             mContext.sendBroadcast(mediaScanIntent);
         }

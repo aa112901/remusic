@@ -14,6 +14,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -40,6 +41,27 @@ public class MusicFragment extends BaseFragment {
     private RecyclerView recyclerView;
     private LinearLayoutManager layoutManager;
     private PreferencesUtility mPreferences;
+    private FrameLayout frameLayout;
+    private View view;
+
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+        if(isVisibleToUser){
+            if(view == null){
+                view = LayoutInflater.from(getActivity()).inflate(R.layout.recylerview,frameLayout,false);
+                recyclerView = (RecyclerView) view.findViewById(R.id.recyclerview);
+                layoutManager = new LinearLayoutManager(getActivity());
+                recyclerView.setLayoutManager(layoutManager);
+                mAdapter = new Adapter(null);
+                recyclerView.setAdapter(mAdapter);
+                //fastScroller = (FastScroller) view.findViewById(R.id.fastscroller);
+                recyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL_LIST));
+                reloadAdapter();
+                // new loadSongs().execute("");
+            }
+        }
+    }
 
     @Override
     public void onCreate(final Bundle savedInstanceState) {
@@ -49,18 +71,11 @@ public class MusicFragment extends BaseFragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.recylerview, container, false);
+        View view = inflater.inflate(R.layout.load_framelayout, container, false);
+        frameLayout = (FrameLayout) view.findViewById(R.id.loadframe);
+        View loadView = LayoutInflater.from(getActivity()).inflate(R.layout.loading,frameLayout,false);
+        frameLayout.addView(loadView);
 
-
-        recyclerView = (RecyclerView) view.findViewById(R.id.recyclerview);
-        layoutManager = new LinearLayoutManager(getActivity());
-        recyclerView.setLayoutManager(layoutManager);
-        mAdapter = new Adapter(null);
-        recyclerView.setAdapter(mAdapter);
-        //fastScroller = (FastScroller) view.findViewById(R.id.fastscroller);
-        recyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL_LIST));
-        reloadAdapter();
-        // new loadSongs().execute("");
 
         return view;
     }
@@ -96,6 +111,8 @@ public class MusicFragment extends BaseFragment {
             @Override
             protected void onPostExecute(Void aVoid) {
                 mAdapter.notifyDataSetChanged();
+                frameLayout.removeAllViews();
+                frameLayout.addView(view);
             }
         }.execute();
     }

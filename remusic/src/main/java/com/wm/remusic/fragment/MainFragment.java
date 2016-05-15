@@ -9,6 +9,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -23,7 +24,9 @@ import android.widget.ImageView;
 import com.wm.remusic.R;
 import com.wm.remusic.adapter.MainFragmentAdapter;
 import com.wm.remusic.adapter.MainFragmentItem;
+import com.wm.remusic.handler.HandlerUtil;
 import com.wm.remusic.info.Playlist;
+import com.wm.remusic.provider.DownFileStore;
 import com.wm.remusic.provider.PlaylistInfo;
 import com.wm.remusic.recent.Song;
 import com.wm.remusic.recent.SongLoader;
@@ -50,7 +53,8 @@ public class MainFragment extends Fragment {
     private List results = Collections.emptyList();
     private List<MainFragmentItem> mList = new ArrayList<>();
     private PlaylistInfo playlistInfo;
-    private int localMusicCount, recentMusicCount, artistsCount;
+    private int localMusicCount, recentMusicCount, downLoadCount,artistsCount;
+    private SwipeRefreshLayout swipeRefresh;
 
     private ImageView barnet, barmusic,barfriends;
 
@@ -66,37 +70,18 @@ public class MainFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_main, container, false);
 
-//        Toolbar toolbar = (Toolbar) view.findViewById(R.id.toolbar);
-//        ((AppCompatActivity) getActivity()).setSupportActionBar(toolbar);
-//
-//
-//        ab = ((AppCompatActivity) getActivity()).getSupportActionBar();
-//        ab.setDisplayHomeAsUpEnabled(true);
-//        ab.setHomeAsUpIndicator(R.drawable.ic_menu);
-//        ab.setTitle("");
-//
-//        barnet = (ImageView) view.findViewById(R.id.bar_net);
-//        barmusic = (ImageView) view.findViewById(R.id.bar_music);
-//        barfriends = (ImageView) view.findViewById(R.id.bar_friends);
-//
-//        barmusic = (ImageView) view.findViewById(R.id.bar_music);
-//        barmusic.setSelected(true);
-//
-//        barnet.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                barmusic.setSelected(false);
-//                barnet.setSelected(true);
-//                FragmentTransaction transaction = ((AppCompatActivity) getContext()).getSupportFragmentManager().beginTransaction();
-//                NetFragment fragment = new NetFragment();
-//                transaction.replace(R.id.fragment_container, fragment);
-//                transaction.commitAllowingStateLoss();
-//            }
-//        });
+        swipeRefresh = (SwipeRefreshLayout) view.findViewById(R.id.swiperefresh);
 
         recyclerView = (RecyclerView) view.findViewById(R.id.recyclerview);
         layoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(layoutManager);
+        swipeRefresh.setColorSchemeResources(R.color.theme_color_PrimaryAccent);
+        swipeRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                reloadAdapter();
+            }
+        });
 
         //先给adapter设置空数据，异步加载好后更新数据，防止Recyclerview no attach
         mAdapter = new MainFragmentAdapter(getActivity(), null, null);
@@ -128,7 +113,6 @@ public class MainFragment extends Fragment {
             reloadAdapter();
         } else {
             //相当于Fragment的onPause
-
         }
     }
 
@@ -171,10 +155,11 @@ public class MainFragment extends Fragment {
         recentMusicCount = recentsongs.size();
         //设置mlistInfo，listview要显示的内容
         localMusicCount = MusicUtils.queryMusic(getContext(), IConstants.START_FROM_LOCAL).size();
+        downLoadCount = DownFileStore.getInstance(getContext()).getDownLoadedListAll().size();
         artistsCount = MusicUtils.queryArtist(getContext()).size();
         setInfo(getContext().getResources().getString(R.string.local_music), localMusicCount, R.drawable.music_icn_local);
         setInfo(getContext().getResources().getString(R.string.recent_play), recentMusicCount, R.drawable.music_icn_recent);
-        setInfo(getContext().getResources().getString(R.string.local_manage), localMusicCount, R.drawable.music_icn_dld);
+        setInfo(getContext().getResources().getString(R.string.local_manage), downLoadCount, R.drawable.music_icn_dld);
         setInfo(getContext().getResources().getString(R.string.my_artist), artistsCount, R.drawable.music_icn_artist);
     }
 
@@ -197,6 +182,7 @@ public class MainFragment extends Fragment {
             @Override
             protected void onPostExecute(Void aVoid) {
                 mAdapter.notifyDataSetChanged();
+                swipeRefresh.setRefreshing(false);
             }
         }.execute();
     }

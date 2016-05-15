@@ -3,11 +3,9 @@ package com.wm.remusic.activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -28,10 +26,9 @@ import com.wm.remusic.recent.TopTracksLoader;
 import com.wm.remusic.service.MediaService;
 import com.wm.remusic.service.MusicPlayer;
 import com.wm.remusic.uitl.CommonUtils;
-import com.wm.remusic.uitl.DividerItemDecoration;
+import com.wm.remusic.widget.DividerItemDecoration;
 import com.wm.remusic.uitl.IConstants;
 
-import java.lang.reflect.Field;
 import java.util.List;
 
 /**

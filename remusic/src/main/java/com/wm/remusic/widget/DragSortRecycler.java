@@ -1,4 +1,4 @@
-package com.wm.remusic.uitl;
+package com.wm.remusic.widget;
 
 import android.graphics.Bitmap;
 import android.graphics.Canvas;

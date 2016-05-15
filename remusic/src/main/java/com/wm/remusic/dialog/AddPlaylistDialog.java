@@ -22,7 +22,7 @@ import com.wm.remusic.info.Playlist;
 import com.wm.remusic.provider.PlaylistInfo;
 import com.wm.remusic.provider.PlaylistsManager;
 import com.wm.remusic.service.MusicTrack;
-import com.wm.remusic.uitl.DividerItemDecoration;
+import com.wm.remusic.widget.DividerItemDecoration;
 import com.wm.remusic.uitl.IConstants;
 import com.wm.remusic.uitl.MusicUtils;
 

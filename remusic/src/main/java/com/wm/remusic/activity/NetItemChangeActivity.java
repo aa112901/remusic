@@ -16,8 +16,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.wm.remusic.R;
-import com.wm.remusic.uitl.DividerItemDecoration;
-import com.wm.remusic.uitl.DragSortRecycler;
+import com.wm.remusic.widget.DividerItemDecoration;
+import com.wm.remusic.widget.DragSortRecycler;
 import com.wm.remusic.uitl.PreferencesUtility;
 
 import java.util.ArrayList;

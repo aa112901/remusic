@@ -27,7 +27,7 @@ import com.wm.remusic.recent.TopTracksLoader;
 import com.wm.remusic.service.MediaService;
 import com.wm.remusic.service.MusicPlayer;
 import com.wm.remusic.uitl.CommonUtils;
-import com.wm.remusic.uitl.DividerItemDecoration;
+import com.wm.remusic.widget.DividerItemDecoration;
 import com.wm.remusic.uitl.IConstants;
 
 import java.lang.reflect.Field;

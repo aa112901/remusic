@@ -1,4 +1,4 @@
-package com.wm.remusic.fragmentnet;
+package com.wm.remusic.widget;
 
 /**
  * Created by wm on 2016/5/15.

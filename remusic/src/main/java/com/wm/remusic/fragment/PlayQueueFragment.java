@@ -21,7 +21,7 @@ import com.wm.remusic.info.MusicInfo;
 import com.wm.remusic.provider.MusicPlaybackState;
 import com.wm.remusic.recent.QueueLoader;
 import com.wm.remusic.service.MusicPlayer;
-import com.wm.remusic.uitl.DividerItemDecoration;
+import com.wm.remusic.widget.DividerItemDecoration;
 
 import java.util.ArrayList;
 

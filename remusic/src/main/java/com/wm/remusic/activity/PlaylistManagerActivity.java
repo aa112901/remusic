@@ -28,8 +28,8 @@ import com.wm.remusic.R;
 import com.wm.remusic.info.Playlist;
 import com.wm.remusic.provider.PlaylistInfo;
 import com.wm.remusic.provider.PlaylistsManager;
-import com.wm.remusic.uitl.DividerItemDecoration;
-import com.wm.remusic.uitl.DragSortRecycler;
+import com.wm.remusic.widget.DividerItemDecoration;
+import com.wm.remusic.widget.DragSortRecycler;
 import com.wm.remusic.uitl.IConstants;
 
 import java.util.ArrayList;

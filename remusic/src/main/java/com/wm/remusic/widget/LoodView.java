@@ -1,4 +1,4 @@
-package com.wm.remusic.fragmentnet;
+package com.wm.remusic.widget;
 
 import android.content.Context;
 import android.graphics.drawable.Drawable;

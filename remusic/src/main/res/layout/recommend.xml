@@ -12,7 +12,7 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <com.wm.remusic.fragmentnet.LoodView
+        <com.wm.remusic.widget.LoodView
             android:id="@+id/loop_view"
             android:layout_width="match_parent"
             android:layout_height="160dp"

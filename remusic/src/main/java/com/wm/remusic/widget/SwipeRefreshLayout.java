@@ -1,4 +1,4 @@
-package com.wm.remusic.fragmentnet;
+package com.wm.remusic.widget;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;

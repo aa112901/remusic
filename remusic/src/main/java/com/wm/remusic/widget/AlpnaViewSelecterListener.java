@@ -1,4 +1,4 @@
-package com.wm.remusic.uitl;
+package com.wm.remusic.widget;
 
 /**
  * 准备滑动选择接口

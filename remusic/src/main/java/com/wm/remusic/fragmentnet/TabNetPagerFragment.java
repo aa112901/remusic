@@ -59,8 +59,15 @@ public class TabNetPagerFragment extends Fragment {
             viewPager.setOffscreenPageLimit(2);
         }
 
-        TabLayout tabLayout = (TabLayout) rootView.findViewById(R.id.tabs);
-        tabLayout.setupWithViewPager(viewPager);
+      final   TabLayout tabLayout = (TabLayout) rootView.findViewById(R.id.tabs);
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                tabLayout.setupWithViewPager(viewPager);
+            }
+        }).start();
+
 
         return rootView;
 
@@ -70,9 +77,9 @@ public class TabNetPagerFragment extends Fragment {
     private void setupViewPager(ViewPager viewPager) {
         Adapter adapter = new Adapter(getChildFragmentManager());
         adapter.addFragment(new NetFragment(), "新曲");
-      //  adapter.addFragment(new NetFragment(),"歌单");
+        adapter.addFragment(new RecommendFragment(),"歌单");
       //  adapter.addFragment(new NetFragment(), "主播电台");
-        adapter.addFragment(new TopFragment(), "排行榜");
+        adapter.addFragment(new RankingFragment(), "排行榜");
 
         viewPager.setAdapter(adapter);
     }

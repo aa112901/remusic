@@ -11,7 +11,7 @@
         android:layout_margin="70dp"
         android:src="@drawable/play_disc" />
 
-    <com.wm.remusic.uitl.CircleImageView xmlns:app="http://schemas.android.com/apk/res-auto"
+    <com.wm.remusic.widget.CircleImageView xmlns:app="http://schemas.android.com/apk/res-auto"
         android:id="@+id/circle"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

@@ -13,7 +13,6 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
 import android.view.Gravity;
 import android.view.KeyEvent;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
@@ -23,7 +22,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.facebook.drawee.view.SimpleDraweeView;
-import com.readystatesoftware.systembartint.SystemBarTintManager;
 import com.wm.remusic.R;
 import com.wm.remusic.fragment.BitSetFragment;
 import com.wm.remusic.fragment.MainFragment;
@@ -46,6 +44,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     private ImageView barnet, barmusic,barfriends,search;
     private ImageView control;
     private DrawerLayout drawerLayout;
+    LinearLayout nowPlay;
 
 
     @Override
@@ -61,7 +60,6 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
 
         String data = MusicUtils.getalbumdata(this, MusicPlayer.getCurrentAudioId());
 
-
         if (data != null) {
             Uri uri1 = Uri.parse("file://" + data);
             navPlayImg.setImageURI(uri1);
@@ -69,7 +67,6 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         } else {
             Uri urr = Uri.parse("res:/" + R.drawable.placeholder_disk_210);
             navPlayImg.setImageURI(urr);
-            // navPlayImg.setImageResource(R.drawable.placeholder_disk_210);
         }
 
         navMusicName.setText(MusicPlayer.getTrackName());
@@ -84,43 +81,28 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         }
     }
 
-//    @TargetApi(19)
-//    private void setTranslucentStatus(boolean on) {
-//        Window win = getWindow();
-//        WindowManager.LayoutParams winParams = win.getAttributes();
-//        final int bits = WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS;
-//        if (on) {
-//            winParams.flags |= bits;
-//        } else {
-//            winParams.flags &= ~bits;
-//        }
-//        win.setAttributes(winParams);
-//    }
+
+
 
     public void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-       setSupportActionBar(toolbar);
+        setSupportActionBar(toolbar);
 
-
-        ab = getSupportActionBar();
-        ab.setDisplayHomeAsUpEnabled(true);
-        ab.setHomeAsUpIndicator(R.drawable.ic_menu);
-        ab.setTitle("");
+        FragmentTransaction  transaction = getSupportFragmentManager().beginTransaction();
+        final MainFragment mfragment = new MainFragment();
+        transaction.add(R.id.fragment_container, mfragment, "music").commitAllowingStateLoss();
+        final  TabNetPagerFragment fragment = new TabNetPagerFragment();
 
         barnet = (ImageView) findViewById(R.id.bar_net);
         barmusic = (ImageView) findViewById(R.id.bar_music);
         barfriends = (ImageView) findViewById(R.id.bar_friends);
         search = (ImageView) findViewById(R.id.bar_search);
-
         barmusic = (ImageView) findViewById(R.id.bar_music);
         barmusic.setSelected(true);
-        FragmentTransaction  transaction = getSupportFragmentManager().beginTransaction();
-       final MainFragment mfragment = new MainFragment();
-        transaction.add(R.id.fragment_container, mfragment, "music").commitAllowingStateLoss();
-        final  TabNetPagerFragment fragment = new TabNetPagerFragment();
 
         barnet.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -149,24 +131,25 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
             }
         });
 
-        search.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                final Intent intent = new Intent(MainActivity.this, SearchActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-                MainActivity.this.startActivity(intent);
-            }
-        });
+
+
+        ab = getSupportActionBar();
+        ab.setDisplayHomeAsUpEnabled(true);
+        ab.setHomeAsUpIndicator(R.drawable.ic_menu);
+        ab.setTitle("");
 
 
 
-        SystemBarTintManager tintManager = new SystemBarTintManager(this);
-        // enable status bar tint
-        tintManager.setStatusBarTintEnabled(true);
-        // enable navigation bar tint
-        tintManager.setNavigationBarTintEnabled(true);
-        //tintManager.setTintColor(Color.parseColor("#00000000"));
+//        SystemBarTintManager tintManager = new SystemBarTintManager(this);
+//        // enable status bar tint
+//        tintManager.setStatusBarTintEnabled(true);
+//        // enable navigation bar tint
+//        tintManager.setNavigationBarTintEnabled(true);
+//        //tintManager.setTintColor(Color.parseColor("#00000000"));
 
+
+        //	获取底部播放栏实例、绑定监听器
+        nowPlay = (LinearLayout) findViewById(R.id.nav_play);
         navPlayImg = (SimpleDraweeView) findViewById(R.id.playbar_img);
         navMusicName = (TextView) findViewById(R.id.playbar_info);
         navArtist = (TextView) findViewById(R.id.playbar_singer);
@@ -176,9 +159,21 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         layoutParams.setMargins(0, -20, 0, -(mProgress.getMeasuredHeight() / 2));
         mProgress.setLayoutParams(layoutParams);
 
-        //	获取底部播放栏实例、绑定监听器
+        setListener();
 
-        LinearLayout nowPlay = (LinearLayout) findViewById(R.id.nav_play);
+        drawerLayout = (DrawerLayout) findViewById(R.id.fd);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawerLayout, null, R.string.app_name, R.string.search);
+        drawerLayout.setDrawerListener(toggle);
+        toggle.syncState();
+
+        NavigationView navigationview = (NavigationView) findViewById(R.id.nav);
+        navigationview.setClickable(true);
+        navigationview.setNavigationItemSelectedListener(this);
+        getWindow().setBackgroundDrawableResource(R.color.background_material_light_1);
+
+    }
+
+    private void setListener(){
         nowPlay.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -245,15 +240,19 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
             }
         });
 
-        drawerLayout = (DrawerLayout) findViewById(R.id.fd);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawerLayout, null, R.string.app_name, R.string.search);
-        drawerLayout.setDrawerListener(toggle);
-        toggle.syncState();
 
-        NavigationView navigationview = (NavigationView) findViewById(R.id.nav);
-        navigationview.setClickable(true);
-        navigationview.setNavigationItemSelectedListener(this);
 
+
+
+
+        search.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final Intent intent = new Intent(MainActivity.this, SearchActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+                MainActivity.this.startActivity(intent);
+            }
+        });
 
     }
 
@@ -328,27 +327,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         }
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-//        MenuInflater inflater = getMenuInflater();
-//        inflater.inflate(R.menu.menu, menu);
-//        MenuItem searchViewButton = menu.findItem(R.id.action_search);
-//        searchViewButton.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
-//            @Override
-//            public boolean onMenuItemClick(MenuItem item) {
-//                final Intent intent = new Intent(MainActivity.this, SearchActivity.class);
-//                intent.setFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-//                // intent.setAction(IConstants.NAVIGATE_SEARCH);
-//                MainActivity.this.startActivity(intent);
-//                return true;
-//            }
-//        });
 
-
-        return true;
-
-    }
 
 //    @Override
 //    public void down(String key) {

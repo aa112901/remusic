@@ -292,6 +292,9 @@ public class MainFragmentAdapter extends RecyclerView.Adapter<MainFragmentAdapte
 
     @Override
     public int getItemViewType(int position) {
+        if(getItemCount() == 0){
+            return -1;
+        }
         if (itemResults.get(position) instanceof MainFragmentItem)
             return 0;
         if (itemResults.get(position) instanceof Playlist)

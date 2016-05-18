@@ -11,7 +11,7 @@
     <android.support.design.widget.TabLayout
         android:id="@+id/tabs"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="39dp"
         android:tag="tab_indicator_accent_color,bg_primary_color" />
 
 

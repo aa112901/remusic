@@ -8,12 +8,14 @@ import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -21,7 +23,7 @@ import com.wm.remusic.R;
 import com.wm.remusic.activity.SelectActivity;
 import com.wm.remusic.info.MusicInfo;
 import com.wm.remusic.service.MusicPlayer;
-import com.wm.remusic.uitl.DividerItemDecoration;
+import com.wm.remusic.widget.DividerItemDecoration;
 import com.wm.remusic.uitl.IConstants;
 import com.wm.remusic.uitl.MusicUtils;
 import com.wm.remusic.uitl.PreferencesUtility;
@@ -40,6 +42,31 @@ public class MusicFragment extends BaseFragment {
     private RecyclerView recyclerView;
     private LinearLayoutManager layoutManager;
     private PreferencesUtility mPreferences;
+    private FrameLayout frameLayout;
+    private View view;
+    private boolean isFirstLoad = true;
+
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+        if(isVisibleToUser){
+            if(view == null){
+                view = LayoutInflater.from(getActivity()).inflate(R.layout.recylerview,frameLayout,false);
+                recyclerView = (RecyclerView) view.findViewById(R.id.recyclerview);
+                layoutManager = new LinearLayoutManager(getActivity());
+                recyclerView.setLayoutManager(layoutManager);
+                mAdapter = new Adapter(null);
+                recyclerView.setAdapter(mAdapter);
+                //fastScroller = (FastScroller) view.findViewById(R.id.fastscroller);
+                recyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL_LIST));
+
+                reloadAdapter();
+
+
+                // new loadSongs().execute("");
+            }
+        }
+    }
 
     @Override
     public void onCreate(final Bundle savedInstanceState) {
@@ -49,21 +76,15 @@ public class MusicFragment extends BaseFragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.recylerview, container, false);
-
-
-        recyclerView = (RecyclerView) view.findViewById(R.id.recyclerview);
-        layoutManager = new LinearLayoutManager(getActivity());
-        recyclerView.setLayoutManager(layoutManager);
-        mAdapter = new Adapter(null);
-        recyclerView.setAdapter(mAdapter);
-        //fastScroller = (FastScroller) view.findViewById(R.id.fastscroller);
-        recyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL_LIST));
-        reloadAdapter();
-        // new loadSongs().execute("");
+        View view = inflater.inflate(R.layout.load_framelayout, container, false);
+        frameLayout = (FrameLayout) view.findViewById(R.id.loadframe);
+        View loadView = LayoutInflater.from(getActivity()).inflate(R.layout.loading,frameLayout,false);
+        frameLayout.addView(loadView);
+        isFirstLoad = true;
 
         return view;
     }
+
 
 
     //去除界面重叠
@@ -85,17 +106,36 @@ public class MusicFragment extends BaseFragment {
 
     //刷新列表
     public void reloadAdapter() {
+        if(mAdapter == null){
+            return;
+        }
+
         new AsyncTask<Void, Void, Void>() {
             @Override
             protected Void doInBackground(final Void... unused) {
+
                 ArrayList<MusicInfo> songList = (ArrayList) MusicUtils.queryMusic(getActivity(), IConstants.START_FROM_LOCAL);
                 mAdapter.updateDataSet(songList);
+
                 return null;
             }
 
             @Override
             protected void onPostExecute(Void aVoid) {
                 mAdapter.notifyDataSetChanged();
+
+                if(isFirstLoad){
+                    frameLayout.removeAllViews();
+                    Log.e("framelayout",frameLayout.toString());
+
+                    //framelayout 创建了新的实例
+                    ViewGroup p = (ViewGroup) view.getParent();
+                    if (p != null) {
+                        p.removeAllViewsInLayout();
+                    }
+                    frameLayout.addView(view);
+                    isFirstLoad = false;
+                }
             }
         }.execute();
     }

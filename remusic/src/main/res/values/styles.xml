@@ -4,6 +4,16 @@
     <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Customize your theme here. -->
         <item name="alertDialogTheme">@style/AppTheme.Dialog.Alert</item>
+        <item name="android:windowBackground">@drawable/art_login_bg</item>
+        <!--导航栏的颜色-->
+
+        <!--状态栏的颜色-->
+
+    </style>
+
+    <style name="LoadTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <!-- Customize your theme here. -->
+        <item name="android:windowBackground">@drawable/art_login_bg</item>
         <!--导航栏的颜色-->
 
         <!--状态栏的颜色-->

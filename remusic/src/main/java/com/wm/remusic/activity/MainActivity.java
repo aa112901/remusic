@@ -103,7 +103,6 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         search = (ImageView) findViewById(R.id.bar_search);
         barmusic = (ImageView) findViewById(R.id.bar_music);
         barmusic.setSelected(true);
-<<<<<<< HEAD
 
         barnet.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -132,15 +131,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
             }
         });
 
-=======
->>>>>>> 1a82775a521c216d9a71faf15a7eebedf7578c04
 
-//        SystemBarTintManager tintManager = new SystemBarTintManager(this);
-//        // enable status bar tint
-//        tintManager.setStatusBarTintEnabled(true);
-//        // enable navigation bar tint
-//        tintManager.setNavigationBarTintEnabled(true);
-//        //tintManager.setTintColor(Color.parseColor("#00000000"));
 
         ab = getSupportActionBar();
         ab.setDisplayHomeAsUpEnabled(true);
@@ -148,7 +139,6 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         ab.setTitle("");
 
 
-<<<<<<< HEAD
 
 //        SystemBarTintManager tintManager = new SystemBarTintManager(this);
 //        // enable status bar tint
@@ -158,8 +148,6 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
 //        //tintManager.setTintColor(Color.parseColor("#00000000"));
 
 
-=======
->>>>>>> 1a82775a521c216d9a71faf15a7eebedf7578c04
         //	获取底部播放栏实例、绑定监听器
         nowPlay = (LinearLayout) findViewById(R.id.nav_play);
         navPlayImg = (SimpleDraweeView) findViewById(R.id.playbar_img);
@@ -181,11 +169,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         NavigationView navigationview = (NavigationView) findViewById(R.id.nav);
         navigationview.setClickable(true);
         navigationview.setNavigationItemSelectedListener(this);
-<<<<<<< HEAD
         getWindow().setBackgroundDrawableResource(R.color.background_material_light_1);
-=======
-
->>>>>>> 1a82775a521c216d9a71faf15a7eebedf7578c04
 
     }
 
@@ -257,56 +241,14 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         });
 
 
-<<<<<<< HEAD
-=======
-        FragmentTransaction  transaction = getSupportFragmentManager().beginTransaction();
-        final MainFragment mfragment = new MainFragment();
-        transaction.add(R.id.fragment_container, mfragment, "music").commitAllowingStateLoss();
-        final  TabNetPagerFragment fragment = new TabNetPagerFragment();
->>>>>>> 1a82775a521c216d9a71faf15a7eebedf7578c04
 
-        barnet.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                barmusic.setSelected(false);
-                barnet.setSelected(true);
-                FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-                transaction.hide(mfragment);
-                if(getSupportFragmentManager().findFragmentByTag("net") == null){
-                    transaction.add(R.id.fragment_container, fragment,"net");
-                }else {
-                    transaction.show(fragment);
-                }
-                transaction.commitAllowingStateLoss();
-            }
-        });
-        barmusic.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                barmusic.setSelected(true);
-                barnet.setSelected(false);
-                FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-                transaction.hide(fragment);
-                transaction.show(mfragment);
-                transaction.commitAllowingStateLoss();
-            }
-        });
-
-        search.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                final Intent intent = new Intent(MainActivity.this, SearchActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-                MainActivity.this.startActivity(intent);
-            }
-        });
 
 
 
         search.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                final Intent intent = new Intent(MainActivity.this, SearchActivity.class);
+                final Intent intent = new Intent(MainActivity.this, NetSearchActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
                 MainActivity.this.startActivity(intent);
             }

@@ -342,7 +342,6 @@ private boolean isFromCache = true;
         public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         final GedanHot info = mList.get(position);
 
-<<<<<<< HEAD
             ImageRequest request = ImageRequestBuilder.newBuilderWithSource(Uri.parse(info.getPic()))
                     .setResizeOptions(new ResizeOptions(width, height))
                     .build();
@@ -354,25 +353,6 @@ private boolean isFromCache = true;
 
             ((ItemView) holder).art.setController(controller);
 
-=======
-            try {
-                ImageRequest imageRequest = ImageRequest.fromUri(info.getPic());
-                CacheKey cacheKey= DefaultCacheKeyFactory.getInstance()
-                        .getEncodedCacheKey(imageRequest);
-                BinaryResource resource = ImagePipelineFactory.getInstance()
-                        .getMainDiskStorageCache().getResource(cacheKey);
-                File file=((FileBinaryResource)resource).getFile();
-
-                if(file != null){
-                    ((ItemView) holder).art.setImageURI(Uri.fromFile(file));
-                }else {
-                    ((ItemView) holder).art.setImageURI(Uri.parse(info.getPic()));
-                }
-
-            } catch (Exception e) {
-
-            }
->>>>>>> 1a82775a521c216d9a71faf15a7eebedf7578c04
 
             ((ItemView) holder).name.setText(info.getTitle());
             ((ItemView) holder).count.setText(spanString);
@@ -546,7 +526,6 @@ private boolean isFromCache = true;
         public void onBindViewHolder(RecyclerView.ViewHolder holder, final int position) {
          final  NewAlbums info = mList.get(position);
 
-<<<<<<< HEAD
 //            ImageRequest imageRequest = ImageRequest.fromUri(info.coverImgUrl);
 //            CacheKey cacheKey= DefaultCacheKeyFactory.getInstance()
 //                    .getEncodedCacheKey(imageRequest);
@@ -575,44 +554,6 @@ private boolean isFromCache = true;
 //            ((ItemView) holder).art.setController(controller);
 
 
-=======
-            ImageRequest imageRequest = ImageRequest.fromUri(info.coverImgUrl);
-            CacheKey cacheKey= DefaultCacheKeyFactory.getInstance()
-                    .getEncodedCacheKey(imageRequest);
-            BinaryResource resource = ImagePipelineFactory.getInstance()
-                    .getMainDiskStorageCache().getResource(cacheKey);
-            File file=((FileBinaryResource)resource).getFile();
-            if(file != null){
-                ImageRequest request = ImageRequestBuilder.fromRequest(imageRequest)
-                        .setResizeOptions(new ResizeOptions(width, height))
-                        .build();
-                DraweeController controller = Fresco.newDraweeControllerBuilder()
-                        .setOldController(((ItemView) holder).art.getController())
-                        .setImageRequest(request)
-                        .build();
-                ((ItemView) holder).art.setController(controller);
-            }else {
-                ImageRequest request = ImageRequestBuilder.newBuilderWithSource(Uri.parse(info.coverImgUrl))
-                        .setResizeOptions(new ResizeOptions(width, height))
-                        .build();
-                DraweeController controller = Fresco.newDraweeControllerBuilder()
-                        .setOldController(((ItemView) holder).art.getController())
-                        .setImageRequest(request)
-                        .build();
-                ((ItemView) holder).art.setController(controller);
-            }
-
-//            ImageRequest request = ImageRequestBuilder.newBuilderWithSource(Uri.parse(info.coverImgUrl))
-//                    .setResizeOptions(new ResizeOptions(width, height))
-//                    .build();
-//            DraweeController controller = Fresco.newDraweeControllerBuilder()
-//                    .setOldController(((ItemView) holder).art.getController())
-//                    .setImageRequest(request)
-//                    .build();
-//            ((ItemView) holder).art.setController(controller);
-
-
->>>>>>> 1a82775a521c216d9a71faf15a7eebedf7578c04
             ((ItemView) holder).albumName.setText(info.albumName);
             ((ItemView) holder).artsit.setText(info.artistName);
             ((ItemView) holder).itemView.setOnClickListener(new View.OnClickListener() {

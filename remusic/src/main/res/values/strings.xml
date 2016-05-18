@@ -18,7 +18,7 @@
     <string name="sure">确定</string>
     <string name="cancel">取消</string>
     <string name="search_local_music">搜索本地歌曲</string>
-
+    <string name="search_net_music">搜索音乐、歌手、歌词、...</string>
     <string name="sure_to_set_ringtone">确定成设置铃声吗</string>
 
     <string name="set_ringtone_successed">设置铃声成功！</string>

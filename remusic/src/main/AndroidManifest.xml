@@ -33,6 +33,8 @@
         <activity
             android:name=".activity.LoadingActivity"
             android:screenOrientation="portrait" />
+        <activity android:name=".activity.NetSearchActivity"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".activity.PlayingActivity"
             android:launchMode="singleTask"

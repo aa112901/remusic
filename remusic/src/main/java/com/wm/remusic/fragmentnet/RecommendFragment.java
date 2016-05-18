@@ -19,12 +19,16 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
+<<<<<<< HEAD
 import com.facebook.drawee.backends.pipeline.Fresco;
 import com.facebook.drawee.interfaces.DraweeController;
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.facebook.imagepipeline.common.ResizeOptions;
 import com.facebook.imagepipeline.request.ImageRequest;
 import com.facebook.imagepipeline.request.ImageRequestBuilder;
+=======
+import com.facebook.drawee.view.SimpleDraweeView;
+>>>>>>> 1a82775a521c216d9a71faf15a7eebedf7578c04
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
@@ -220,6 +224,7 @@ public class RecommendFragment extends Fragment {
             if (holder instanceof ItemView) {
                 final Gedan info = mList.get(position);
 
+<<<<<<< HEAD
                 ImageRequest request = ImageRequestBuilder.newBuilderWithSource(Uri.parse(info.getPic_300()))
                         .setResizeOptions(new ResizeOptions(300, 300))
                         .build();
@@ -232,6 +237,9 @@ public class RecommendFragment extends Fragment {
                 ((ItemView) holder).art.setController(controller);
 
                 //((ItemView) holder).art.setImageURI(Uri.parse(info.getPic_300()));
+=======
+                ((ItemView) holder).art.setImageURI(Uri.parse(info.getPic_300()));
+>>>>>>> 1a82775a521c216d9a71faf15a7eebedf7578c04
                 ((ItemView) holder).name.setText(info.getTitle());
                 ((ItemView) holder).count.setText(spanString);
 

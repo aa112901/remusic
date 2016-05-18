@@ -44,7 +44,10 @@ public class MusicFragment extends BaseFragment {
     private PreferencesUtility mPreferences;
     private FrameLayout frameLayout;
     private View view;
+<<<<<<< HEAD
     private boolean isFirstLoad = true;
+=======
+>>>>>>> 1a82775a521c216d9a71faf15a7eebedf7578c04
 
     @Override
     public void setUserVisibleHint(boolean isVisibleToUser) {
@@ -59,10 +62,14 @@ public class MusicFragment extends BaseFragment {
                 recyclerView.setAdapter(mAdapter);
                 //fastScroller = (FastScroller) view.findViewById(R.id.fastscroller);
                 recyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL_LIST));
+<<<<<<< HEAD
 
                 reloadAdapter();
 
 
+=======
+                reloadAdapter();
+>>>>>>> 1a82775a521c216d9a71faf15a7eebedf7578c04
                 // new loadSongs().execute("");
             }
         }
@@ -80,7 +87,11 @@ public class MusicFragment extends BaseFragment {
         frameLayout = (FrameLayout) view.findViewById(R.id.loadframe);
         View loadView = LayoutInflater.from(getActivity()).inflate(R.layout.loading,frameLayout,false);
         frameLayout.addView(loadView);
+<<<<<<< HEAD
         isFirstLoad = true;
+=======
+
+>>>>>>> 1a82775a521c216d9a71faf15a7eebedf7578c04
 
         return view;
     }
@@ -123,6 +134,7 @@ public class MusicFragment extends BaseFragment {
             @Override
             protected void onPostExecute(Void aVoid) {
                 mAdapter.notifyDataSetChanged();
+<<<<<<< HEAD
 
                 if(isFirstLoad){
                     frameLayout.removeAllViews();
@@ -136,6 +148,10 @@ public class MusicFragment extends BaseFragment {
                     frameLayout.addView(view);
                     isFirstLoad = false;
                 }
+=======
+                frameLayout.removeAllViews();
+                frameLayout.addView(view);
+>>>>>>> 1a82775a521c216d9a71faf15a7eebedf7578c04
             }
         }.execute();
     }

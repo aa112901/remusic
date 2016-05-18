@@ -131,8 +131,6 @@ public class HttpUtil {
             mOkHttpClient.setReadTimeout(1000, TimeUnit.MINUTES);
             Request request = new Request.Builder()
                     .url(action1)
-                    .addHeader("Referer","http://music.163.com/")
-                    .addHeader("Cookie", "appver=1.5.0.75771")
                     .build();
             Response response = mOkHttpClient.newCall(request).execute();
             if(response.isSuccessful()){

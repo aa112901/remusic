@@ -5,7 +5,7 @@ import java.net.URLEncoder;
 public class BMA {
 	
 	public static final String FORMATE = "json";
-	public static final String BASE = "tp://tingapi.ting.baidu.com/v1/restserver/ting?from=android&version=5.6.5.6&format="+FORMATE;
+	public static final String BASE = "http://tingapi.ting.baidu.com/v1/restserver/ting?from=android&version=5.6.5.6&format="+FORMATE;
 
 	/**
 	 * 轮播音乐封面

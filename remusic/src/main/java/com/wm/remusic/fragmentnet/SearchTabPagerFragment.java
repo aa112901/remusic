@@ -8,6 +8,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -66,6 +67,7 @@ public class SearchTabPagerFragment extends Fragment {
                     JsonArray songArray = songObject.get("song_list").getAsJsonArray();
                     for (JsonElement o : songArray) {
                         SearchSongInfo songInfo =  gson.fromJson(o, SearchSongInfo.class);
+                        Log.e("songinfo",songInfo.getTitle());
                         songResults.add(songInfo);
                     }
 
@@ -113,6 +115,8 @@ public class SearchTabPagerFragment extends Fragment {
 
             }
         }.execute();
+
+
     }
 
 

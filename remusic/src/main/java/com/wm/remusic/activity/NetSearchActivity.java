@@ -146,7 +146,7 @@ public class NetSearchActivity extends AppCompatActivity implements SearchView.O
 
         hideInputManager();
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-        SearchTabPagerFragment fragment = new SearchTabPagerFragment();
+        SearchTabPagerFragment fragment = SearchTabPagerFragment.newInstance(0,query);
         ft.replace(R.id.search_frame,fragment).commitAllowingStateLoss();
 
         return true;

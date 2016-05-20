@@ -17,7 +17,7 @@
             android:id="@+id/viewpager_list_img"
             android:layout_width="45dp"
             android:layout_height="45dp"
-            android:scaleType="centerInside"
+            android:scaleType="centerCrop"
             fresco:actualImageScaleType="centerInside" />
 
     </LinearLayout>

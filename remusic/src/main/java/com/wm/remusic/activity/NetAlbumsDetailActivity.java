@@ -39,12 +39,12 @@ import com.google.gson.JsonObject;
 import com.wm.remusic.R;
 import com.wm.remusic.downmusic.DownloadManager;
 import com.wm.remusic.downmusic.DownloadTask;
+import com.wm.remusic.info.MusicInfo;
 import com.wm.remusic.net.BMA;
 import com.wm.remusic.net.HttpUtil;
-import com.wm.remusic.info.MusicInfo;
 import com.wm.remusic.service.MusicPlayer;
-import com.wm.remusic.widget.DividerItemDecoration;
 import com.wm.remusic.uitl.ImageUtils;
+import com.wm.remusic.widget.DividerItemDecoration;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -53,9 +53,9 @@ import java.util.Iterator;
 /**
  * Created by wm on 2016/4/11.
  */
-public class AlbumsDetailActivity extends AppCompatActivity {
-    private long playlsitId = -1;
-    private String albumPath, albumName , artistName;
+public class NetAlbumsDetailActivity extends AppCompatActivity {
+    String albumId;
+    private String albumPath, albumName , artistName ,albumCount;
     private int publishTime;
     private ArrayList<MusicInfo> list = new ArrayList<>();
 
@@ -77,7 +77,7 @@ public class AlbumsDetailActivity extends AppCompatActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getIntent().getExtras() != null) {
-            playlsitId = getIntent().getLongExtra("albumid", -1);
+            albumId = getIntent().getStringExtra("albumid");
             albumPath = getIntent().getStringExtra("albumart");
             albumName = getIntent().getStringExtra("albumname");
             artistName = getIntent().getStringExtra("artistname");
@@ -105,7 +105,7 @@ public class AlbumsDetailActivity extends AppCompatActivity {
 
     private void setUpEverything() {
         setupToolbar();
-        loadAllLists();
+        loadBaiduAllLists();
         setAlbumart();
     }
 
@@ -114,7 +114,7 @@ public class AlbumsDetailActivity extends AppCompatActivity {
         final ActionBar ab = getSupportActionBar();
         ab.setHomeAsUpIndicator(R.drawable.actionbar_back);
         ab.setDisplayHomeAsUpEnabled(true);
-        ab.setTitle("歌单");
+        ab.setTitle("专辑");
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -126,46 +126,7 @@ public class AlbumsDetailActivity extends AppCompatActivity {
 
 
 
-    private void loadAllLists() {
-        new AsyncTask<Void, Void, Void>() {
-            @Override
-            protected Void doInBackground(final Void... unused) {
-              Log.e("playlist",playlsitId + "");
-                String action = "http://music.163.com/api/album/" + String.valueOf(playlsitId);
 
-
-                JsonArray jsonArray = HttpUtil.getResposeJsonObject(action).get("album").getAsJsonObject()
-                        .get("songs").getAsJsonArray();
-
-                Iterator it = jsonArray.iterator();
-                while(it.hasNext()){
-                    JsonElement e = (JsonElement)it.next();
-                    JsonObject jo = e.getAsJsonObject();
-                    MusicInfo mi = new MusicInfo();
-                    mi.url = getStringValue(jo, "mp3Url");
-                    mi.musicName = getStringValue(jo, "name");
-
-                    list.add(mi);
-                }
-
-                String fmtrash = "http://music.163.com/api/radio/get";
-                String  f = "http://music.163.com/api/radio/trash/add?alg=RT&songId=1377688073070385&time=25";
-
-               // HttpUtil.get(BMA.Album.albumInfo(),"albumInfo");
-
-                mAdapter = new PlaylistDetailAdapter(AlbumsDetailActivity.this,list);
-                return null;
-            }
-
-            @Override
-            protected void onPostExecute(Void aVoid) {
-                recyclerView.setAdapter(mAdapter);
-
-                recyclerView.addItemDecoration(new DividerItemDecoration(AlbumsDetailActivity.this, DividerItemDecoration.VERTICAL_LIST));
-            }
-        }.execute();
-    }
-    String albumId;
     private void loadBaiduAllLists() {
         new AsyncTask<Void, Void, Void>() {
             @Override
@@ -178,7 +139,6 @@ public class AlbumsDetailActivity extends AppCompatActivity {
                     JsonElement e = (JsonElement)it.next();
                     JsonObject jo = e.getAsJsonObject();
                     MusicInfo mi = new MusicInfo();
-                    mi.url = getStringValue(jo, "title");
                     mi.artist =  getStringValue(jo, "author");
                     mi.musicName = getStringValue(jo, "title");
 
@@ -186,7 +146,7 @@ public class AlbumsDetailActivity extends AppCompatActivity {
                 }
 
 
-                mAdapter = new PlaylistDetailAdapter(AlbumsDetailActivity.this,list);
+                mAdapter = new PlaylistDetailAdapter(NetAlbumsDetailActivity.this,list);
                 return null;
             }
 
@@ -194,7 +154,7 @@ public class AlbumsDetailActivity extends AppCompatActivity {
             protected void onPostExecute(Void aVoid) {
                 recyclerView.setAdapter(mAdapter);
 
-                recyclerView.addItemDecoration(new DividerItemDecoration(AlbumsDetailActivity.this, DividerItemDecoration.VERTICAL_LIST));
+                recyclerView.addItemDecoration(new DividerItemDecoration(NetAlbumsDetailActivity.this, DividerItemDecoration.VERTICAL_LIST));
             }
         }.execute();
     }
@@ -250,9 +210,7 @@ public class AlbumsDetailActivity extends AppCompatActivity {
             Drawable drawable = null;
 
             try {
-                drawable = ImageUtils.createBlurredImageFromBitmap(loadedImage[0], AlbumsDetailActivity.this, 20);
-//                drawable = ImageUtils.createBlurredImageFromBitmap(ImageUtils.getBitmapFromDrawable(Drawable.createFromStream(new URL(albumPath).openStream(), "src")),
-//                        AlbumsDetailActivity.this, 30);
+                drawable = ImageUtils.createBlurredImageFromBitmap(loadedImage[0], NetAlbumsDetailActivity.this, 20);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -326,22 +284,11 @@ public class AlbumsDetailActivity extends AppCompatActivity {
                                 setPositiveButton(mContext.getString(R.string.sure), new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
-                                      //  DownloadTask task = new DownloadTask(AlbumsDetailActivity.this);
-                                        DownloadTask task = new DownloadTask.Builder(AlbumsDetailActivity.this,localItem.url)
+                                        DownloadTask task = new DownloadTask.Builder(NetAlbumsDetailActivity.this,localItem.url)
                                                 .setSaveDirPath("/storage/emulated/0/")
                                                 .setFileName(localItem.musicName+".mp3").build();
-                                      //  task.setUrl(localItem.url);
-                                      //  task.setFileName(localItem.musicName+".mp3");
-                                      //  task.setSaveDirPath("/storage/emulated/0/");
-                                      //  task.setId((localItem.musicName + "/storage/emulated/0/").hashCode() + "");
 
-                                        DownloadManager.getInstance(AlbumsDetailActivity.this).addDownloadTask(task);
-
-//                                        HttpUtil.downMp3(localItem.url,localItem.musicName);
-//                                        Toast.makeText(AlbumsDetailActivity.this,"已经加入下载",Toast.LENGTH_SHORT).show();
-//                                        Intent intent = new Intent();
-//                                        intent.setAction(IConstants.MUSIC_COUNT_CHANGED);
-//                                        mContext.sendBroadcast(intent);
+                                        DownloadManager.getInstance(NetAlbumsDetailActivity.this).addDownloadTask(task);
                                         dialog.dismiss();
                                     }
                                 }).

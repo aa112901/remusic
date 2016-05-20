@@ -64,6 +64,8 @@
         <activity android:name=".activity.NetPlaylistDetailActivity"/>
         <activity android:name=".activity.RecentActivity"/>
         <activity android:name=".activity.NetItemChangeActivity"/>
+        <activity android:name=".activity.NetAlbumsDetailActivity"/>
+        <activity android:name=".activity.NetArtistDetailActivity"/>
 
         <service
             android:name=".service.MediaService"

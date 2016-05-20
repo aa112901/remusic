@@ -95,6 +95,9 @@ public class SearchTabPagerFragment extends Fragment {
             @Override
             protected void onPostExecute(Void aVoid) {
                 super.onPostExecute(aVoid);
+                if(getActivity() == null){
+                    return;
+                }
                 contentView = LayoutInflater.from(getActivity()).inflate(R.layout.fragment_net_tab,frameLayout,false);
                 viewPager = (ViewPager) contentView.findViewById(R.id.viewpager);
                 if (viewPager != null) {

@@ -42,7 +42,6 @@
     <string name="durationformatshort" translatable="false"><xliff:g id="format">%2$d:%3$02d</xliff:g></string>
     <string name="durationformatlong" translatable="false"><xliff:g id="format">%1$d:%2$02d:%3$02d</xliff:g></string>
 
-
     <string name="menu_sort_by">选择排序方式</string>
     <string name="sort_order_entry_az">按名称排序</string>
     <string name="sort_order_entry_dateadded">按添加时间排序</string>

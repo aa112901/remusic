@@ -108,6 +108,11 @@ public class SearchHistory {
         }
     }
 
+    public void deleteRecentSearches(String name){
+        final SQLiteDatabase database = mMusicDatabase.getReadableDatabase();
+        database.delete(SearchHistoryColumns.NAME , SearchHistoryColumns.SEARCHSTRING + " = ?" ,new String[]{name});
+    }
+
 
     public Cursor queryRecentSearches(final String limit) {
         final SQLiteDatabase database = mMusicDatabase.getReadableDatabase();

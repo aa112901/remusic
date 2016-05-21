@@ -54,14 +54,14 @@
         </RelativeLayout>
     </android.support.v7.widget.Toolbar>
 
-    <LinearLayout
+    <FrameLayout
         android:orientation="vertical"
         android:id="@+id/fragment_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@+id/toolbar"
         android:layout_above="@+id/nav_play">
-    </LinearLayout>
+    </FrameLayout>
 
   <include layout="@layout/bottom_nav"/>
 </RelativeLayout>

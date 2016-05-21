@@ -224,6 +224,9 @@ public class PlaylistManagerActivity extends AppCompatActivity implements View.O
             if (list == null) {
                 throw new IllegalArgumentException("model Data must not be null");
             }
+            if(list.size() ==0){
+                return;
+            }
             list.remove(0);
             mList = list;
         }

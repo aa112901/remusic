@@ -241,14 +241,10 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         });
 
 
-
-
-
-
         search.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                final Intent intent = new Intent(MainActivity.this, NetSearchActivity.class);
+                final Intent intent = new Intent(MainActivity.this, NetSearchWordsActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
                 MainActivity.this.startActivity(intent);
             }

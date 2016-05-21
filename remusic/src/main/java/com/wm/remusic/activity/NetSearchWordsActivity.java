@@ -15,14 +15,10 @@
 package com.wm.remusic.activity;
 
 import android.content.Context;
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
@@ -31,40 +27,20 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.readystatesoftware.systembartint.SystemBarTintManager;
 import com.wm.remusic.R;
-import com.wm.remusic.adapter.SearchAdapter;
+import com.wm.remusic.fragmentnet.SearchWords;
+import com.wm.remusic.fragmentnet.SearchHotWordFragment;
 import com.wm.remusic.fragmentnet.SearchTabPagerFragment;
-import com.wm.remusic.info.MusicInfo;
-import com.wm.remusic.json.SearchAlbumInfo;
-import com.wm.remusic.json.SearchArtistInfo;
-import com.wm.remusic.json.SearchSongInfo;
-import com.wm.remusic.net.BMA;
-import com.wm.remusic.net.HttpUtil;
 import com.wm.remusic.provider.SearchHistory;
 import com.wm.remusic.uitl.CommonUtils;
-import com.wm.remusic.uitl.SearchUtils;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
-
-public class NetSearchActivity extends AppCompatActivity implements SearchView.OnQueryTextListener, View.OnTouchListener {
+public class NetSearchWordsActivity extends AppCompatActivity implements SearchView.OnQueryTextListener, View.OnTouchListener,SearchWords {
 
     private SearchView mSearchView;
     private InputMethodManager mImm;
     private String queryString;
 
-    private SearchAdapter adapter;
-    private RecyclerView recyclerView;
 
-    private List searchResults = Collections.emptyList();
-    private ArrayList<SearchSongInfo> songList = new ArrayList<>();
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -77,25 +53,14 @@ public class NetSearchActivity extends AppCompatActivity implements SearchView.O
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        Fragment f = new Fragment();
+        SearchHotWordFragment f = new SearchHotWordFragment();
+        f.searchWords(NetSearchWordsActivity.this);
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         ft.add(R.id.search_frame,f);
         ft.commit();
 
-
-        SystemBarTintManager tintManager = new SystemBarTintManager(this);
-        // enable status bar tint
-        tintManager.setStatusBarTintEnabled(true);
-        // enable navigation bar tint
-        tintManager.setNavigationBarTintEnabled(true);
-
         mImm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
 
-
-        recyclerView = (RecyclerView) findViewById(R.id.recyclerview);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        adapter = new SearchAdapter(this);
-        recyclerView.setAdapter(adapter);
     }
 
 
@@ -167,13 +132,13 @@ public class NetSearchActivity extends AppCompatActivity implements SearchView.O
 
            // searchResults.addAll((songList.size() < 10 ? songList : songList.subList(0, 10)));
         } else {
-            searchResults.clear();
-            adapter.updateSearchResults(searchResults);
-            adapter.notifyDataSetChanged();
+//            searchResults.clear();
+//            adapter.updateSearchResults(searchResults);
+//            adapter.notifyDataSetChanged();
         }
 
-        adapter.updateSearchResults(searchResults);
-        adapter.notifyDataSetChanged();
+//        adapter.updateSearchResults(searchResults);
+//        adapter.notifyDataSetChanged();
 
         return true;
     }
@@ -191,7 +156,7 @@ public class NetSearchActivity extends AppCompatActivity implements SearchView.O
             }
             mSearchView.clearFocus();
 
-           // SearchHistory.getInstance(this).addSearchString(queryString);
+            SearchHistory.getInstance(this).addSearchString(mSearchView.getQuery().toString());
         }
     }
 
@@ -202,4 +167,8 @@ public class NetSearchActivity extends AppCompatActivity implements SearchView.O
         finish();
     }
 
+    @Override
+    public void onSearch(String t) {
+        mSearchView.setQuery(t,true);
+    }
 }

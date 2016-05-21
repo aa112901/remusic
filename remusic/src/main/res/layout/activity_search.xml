@@ -3,6 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/normalBackground"
     android:orientation="vertical">
 
     <android.support.v7.widget.Toolbar
@@ -13,7 +14,7 @@
         android:minHeight="?attr/actionBarSize"
         android:theme="@style/Theme.AppCompat"
         app:popupTheme="@style/ThemeOverlay.AppCompat.Dark" />
-<FrameLayout
+   <FrameLayout
     android:id="@+id/search_frame"
     android:layout_width="match_parent"
     android:layout_height="match_parent"/>

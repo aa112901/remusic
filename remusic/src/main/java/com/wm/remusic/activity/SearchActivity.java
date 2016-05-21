@@ -30,6 +30,7 @@ import android.view.inputmethod.InputMethodManager;
 
 import com.readystatesoftware.systembartint.SystemBarTintManager;
 import com.wm.remusic.R;
+import com.wm.remusic.adapter.RecentSearchAdapter;
 import com.wm.remusic.adapter.SearchAdapter;
 import com.wm.remusic.info.MusicInfo;
 import com.wm.remusic.provider.SearchHistory;

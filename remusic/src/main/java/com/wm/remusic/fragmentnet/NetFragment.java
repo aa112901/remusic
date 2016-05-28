@@ -40,6 +40,7 @@ import com.google.gson.JsonSyntaxException;
 import com.wm.remusic.R;
 import com.wm.remusic.activity.AlbumsDetailActivity;
 import com.wm.remusic.activity.NetPlaylistDetailActivity;
+import com.wm.remusic.activity.NetRadioDetailActivity;
 import com.wm.remusic.json.BillboardItem;
 import com.wm.remusic.activity.NetItemChangeActivity;
 import com.wm.remusic.json.GedanHot;
@@ -457,13 +458,11 @@ private boolean isFromCache = true;
                 @Override
                 public void onClick(View v) {
 
-                    Intent intent = new Intent(getActivity(), AlbumsDetailActivity.class);
-                    info.getChannelid();
-//                    intent.putExtra("albumid", info.id);
-//                    intent.putExtra("albumart", info.coverImgUrl);
-//                    intent.putExtra("albumname", info.albumName);
-//                    intent.putExtra("artistname", info.artistName);
-//                    intent.putExtra("publisttime", info.publishTime);
+                    Intent intent = new Intent(getActivity(), NetRadioDetailActivity.class);
+                    intent.putExtra("albumid", info.getAlbum_id());
+                    intent.putExtra("albumart", info.getPic());
+                    intent.putExtra("albumname", info.getTitle());
+                    intent.putExtra("artistname", info.getDesc());
                     getActivity().startActivity(intent);
 
                 }

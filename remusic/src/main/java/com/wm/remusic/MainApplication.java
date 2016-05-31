@@ -29,7 +29,7 @@ import java.util.Map;
  * Created by wm on 2016/2/23.
  */
 public class MainApplication extends Application {
-
+    public static Context context;
     //private RefWatcher refWatcher;
     private static int MAX_MEM = (int) Runtime.getRuntime().maxMemory() / 3;
     //private static int MAX_MEM = 60 * ByteConstants.MB;
@@ -136,6 +136,7 @@ public class MainApplication extends Application {
     public void onCreate() {
         frescoInit();
         super.onCreate();
+        context = this;
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP){
             Nammu.init(this);

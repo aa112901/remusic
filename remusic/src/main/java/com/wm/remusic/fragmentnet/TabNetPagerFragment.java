@@ -19,7 +19,7 @@ import java.util.List;
 /**
  * Created by wm on 2016/4/11.
  */
-public class TabNetPagerFragment extends Fragment {
+public class TabNetPagerFragment extends Fragment implements ChangeView {
     //PreferencesUtility mPreferences;
     private ViewPager viewPager;
     private int page = 0;
@@ -76,7 +76,9 @@ public class TabNetPagerFragment extends Fragment {
 
     private void setupViewPager(ViewPager viewPager) {
         Adapter adapter = new Adapter(getChildFragmentManager());
-        adapter.addFragment(new NetFragment(), "新曲");
+        NetFragment fragment = new NetFragment();
+        fragment.setChanger(this);
+        adapter.addFragment(fragment, "新曲");
         adapter.addFragment(new RecommendFragment(),"歌单");
       //  adapter.addFragment(new NetFragment(), "主播电台");
         adapter.addFragment(new RankingFragment(), "排行榜");
@@ -99,6 +101,12 @@ public class TabNetPagerFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
+    }
+
+    @Override
+    public void changeTo(int page) {
+        if(viewPager != null)
+        viewPager.setCurrentItem(page);
     }
 
     static class Adapter extends FragmentStatePagerAdapter {

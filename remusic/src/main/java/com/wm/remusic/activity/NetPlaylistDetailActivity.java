@@ -36,7 +36,9 @@ import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.wm.remusic.MainApplication;
 import com.wm.remusic.R;
+import com.wm.remusic.downmusic.Down;
 import com.wm.remusic.downmusic.DownloadManager;
 import com.wm.remusic.downmusic.DownloadTask;
 import com.wm.remusic.json.GeDanGeInfo;
@@ -60,7 +62,7 @@ public class NetPlaylistDetailActivity extends AppCompatActivity {
 
     private String playlsitId ;
     private String albumPath, albumName ;
-    private ArrayList<GeDanGeInfo> mList = new ArrayList<>();
+    private ArrayList<GeDanGeInfo> mList = new ArrayList<GeDanGeInfo>();
     Gson gson;
 
     private SimpleDraweeView albumArtSmall;
@@ -290,54 +292,56 @@ public class NetPlaylistDetailActivity extends AppCompatActivity {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
 
+
+                                        Down.downMusic(MainApplication.context,localItem.getSong_id(),localItem.getTitle());
                                     //    final DownloadTask task = new DownloadTask(NetPlaylistDetailActivity.this);
-                                        new AsyncTask<Void, Void, Void>() {
-                                            @Override
-                                            protected Void doInBackground(final Void... unused) {
-                                             JsonArray jsonArray  =  HttpUtil.getResposeJsonObject(BMA.Song.songInfo(localItem.getSong_id()).trim()).get("songurl")
-                                                          .getAsJsonObject().get("url").getAsJsonArray();
-                                                int len = jsonArray.size();
-
-                                                int downloadBit = PreferencesUtility.getInstance(NetPlaylistDetailActivity.this).getDownMusicBit();
-
-                                                for(int i = len-1; i>-1;i--){
-                                                    int bit = Integer.parseInt(jsonArray.get(i).getAsJsonObject().get("file_bitrate").toString());
-                                                    if(bit == downloadBit){
-                                                        musicDetailNet = gson.fromJson(jsonArray.get(i), MusicDetailNet.class);
-                                                        return null;
-                                                    }else if(bit < downloadBit && bit >= 64) {
-                                                        musicDetailNet = gson.fromJson(jsonArray.get(i), MusicDetailNet.class);
-                                                        return null;
-                                                    }
-                                                }
-
-                                                return null;
-                                            }
-
-                                            @Override
-                                            protected void onPostExecute(Void aVoid) {
-
-                                                if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
-                                                    File file = new File("/storage/emulated/0/remusic/");
-                                                    if(!file.exists()){
-                                                        file.mkdir();
-                                                    }
-
-                                                    DownloadTask task = new DownloadTask.Builder(NetPlaylistDetailActivity.this, musicDetailNet.getShow_link())
-                                                            .setFileName(localItem.getTitle())
-                                                            .setSaveDirPath("/storage/emulated/0/remusic/").build();
-
-//                                                    task.setUrl(musicNet.getShow_link());
-//                                                    task.setFileName(localItem.getTitle() + ".mp3");
-//                                                    task.setSaveDirPath("/storage/emulated/0/remusic/");
-//                                                    task.setId((localItem.getTitle() + "/storage/emulated/0/remusic/" ).hashCode() + "");
-                                                    DownloadManager.getInstance(NetPlaylistDetailActivity.this).addDownloadTask(task);
-
-                                                } else {
-                                                    return;
-                                                }
-                                            }
-                                        }.execute();
+//                                        new AsyncTask<Void, Void, Void>() {
+//                                            @Override
+//                                            protected Void doInBackground(final Void... unused) {
+//                                             JsonArray jsonArray  =  HttpUtil.getResposeJsonObject(BMA.Song.songInfo(localItem.getSong_id()).trim()).get("songurl")
+//                                                          .getAsJsonObject().get("url").getAsJsonArray();
+//                                                int len = jsonArray.size();
+//
+//                                                int downloadBit = PreferencesUtility.getInstance(NetPlaylistDetailActivity.this).getDownMusicBit();
+//
+//                                                for(int i = len-1; i>-1;i--){
+//                                                    int bit = Integer.parseInt(jsonArray.get(i).getAsJsonObject().get("file_bitrate").toString());
+//                                                    if(bit == downloadBit){
+//                                                        musicDetailNet = gson.fromJson(jsonArray.get(i), MusicDetailNet.class);
+//                                                        return null;
+//                                                    }else if(bit < downloadBit && bit >= 64) {
+//                                                        musicDetailNet = gson.fromJson(jsonArray.get(i), MusicDetailNet.class);
+//                                                        return null;
+//                                                    }
+//                                                }
+//
+//                                                return null;
+//                                            }
+//
+//                                            @Override
+//                                            protected void onPostExecute(Void aVoid) {
+//
+//                                                if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
+//                                                    File file = new File("/storage/emulated/0/remusic/");
+//                                                    if(!file.exists()){
+//                                                        file.mkdir();
+//                                                    }
+//
+//                                                    DownloadTask task = new DownloadTask.Builder(NetPlaylistDetailActivity.this, musicDetailNet.getShow_link())
+//                                                            .setFileName(localItem.getTitle())
+//                                                            .setSaveDirPath("/storage/emulated/0/remusic/").build();
+//
+////                                                    task.setUrl(musicNet.getShow_link());
+////                                                    task.setFileName(localItem.getTitle() + ".mp3");
+////                                                    task.setSaveDirPath("/storage/emulated/0/remusic/");
+////                                                    task.setId((localItem.getTitle() + "/storage/emulated/0/remusic/" ).hashCode() + "");
+//                                                    DownloadManager.getInstance(NetPlaylistDetailActivity.this).addDownloadTask(task);
+//
+//                                                } else {
+//                                                    return;
+//                                                }
+//                                            }
+//                                        }.execute();
 
                                         dialog.dismiss();
                                     }

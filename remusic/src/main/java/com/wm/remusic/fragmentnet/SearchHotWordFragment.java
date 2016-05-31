@@ -10,6 +10,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.TextView;
 
 import com.google.gson.JsonArray;
@@ -18,6 +19,7 @@ import com.wm.remusic.adapter.RecentSearchAdapter;
 import com.wm.remusic.json.SearchSongInfo;
 import com.wm.remusic.net.BMA;
 import com.wm.remusic.net.HttpUtil;
+import com.wm.remusic.net.NetworkUtils;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -32,54 +34,19 @@ public class SearchHotWordFragment extends Fragment implements View.OnClickListe
     SearchWords searchWords;
     private RecentSearchAdapter adapter;
     private RecyclerView recyclerView;
+    private boolean isFromCache = true;
 
     private List searchResults = Collections.emptyList();
     private ArrayList<SearchSongInfo> songList = new ArrayList<>();
-
+    View loadview;
+    FrameLayout frameLayout;
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_search_hot_words,container,false);
-
-//        for(int i = 0; i< 10; i++){
-//            TextView textView = new TextView(getActivity());
-//            textView.setText("what a fuck");
-//            textView.setTextSize(TypedValue.COMPLEX_UNIT_SP,15);
-//            textView.setTextColor(getResources().getColor(R.color.text_color));
-//            textView.setGravity(View.TEXT_ALIGNMENT_CENTER);
-//            Log.e("textview",textView.toString());
-//                    TextView text1 = (TextView) view.findViewById(R.id.text1);
-//        text1.setText("what a fuck");
-//            views.add(text1);
-//        }
-        recyclerView = (RecyclerView) view.findViewById(R.id.recyclerview);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        adapter = new RecentSearchAdapter(getActivity());
-        adapter.setListenter(this);
-        recyclerView.setAdapter(adapter);
-
-
-        TextView text1 = (TextView) view.findViewById(R.id.text1);
-        TextView text2 = (TextView) view.findViewById(R.id.text2);
-        TextView text3 = (TextView) view.findViewById(R.id.text3);
-        TextView text4 = (TextView) view.findViewById(R.id.text4);
-        TextView text5 = (TextView) view.findViewById(R.id.text5);
-        TextView text6 = (TextView) view.findViewById(R.id.text6);
-        TextView text7 = (TextView) view.findViewById(R.id.text7);
-        TextView text8 = (TextView) view.findViewById(R.id.text8);
-        TextView text9 = (TextView) view.findViewById(R.id.text9);
-        TextView text10 = (TextView) view.findViewById(R.id.text10);
-        views.add(text1);
-        views.add(text2);
-        views.add(text3);
-        views.add(text4);
-        views.add(text5);
-        views.add(text6);
-        views.add(text7);
-        views.add(text8);
-        views.add(text9);
-        views.add(text10);
-
+        View view = inflater.inflate(R.layout.load_framelayout,container,false);
+        frameLayout = (FrameLayout) view.findViewById(R.id.loadframe);
+        loadview = LayoutInflater.from(getActivity()).inflate(R.layout.loading,frameLayout,false);
+        frameLayout.addView(loadview);
         loadWords();
 
         return view;
@@ -99,8 +66,13 @@ public class SearchHotWordFragment extends Fragment implements View.OnClickListe
 
             @Override
             protected Boolean doInBackground(Boolean... params) {
+                if(NetworkUtils.isConnectInternet(getActivity())){
+                    isFromCache = false;
+                }
+
+
                 try {
-                    JsonArray jsonArray = HttpUtil.getResposeJsonObject(BMA.Search.hotWord()).get("result").getAsJsonArray();
+                    JsonArray jsonArray = HttpUtil.getResposeJsonObject(BMA.Search.hotWord(),getActivity(),isFromCache).get("result").getAsJsonArray();
                     for(int i = 0; i < 10; i++){
                         texts[i] = jsonArray.get(i).getAsJsonObject().get("word").getAsString();
                     }
@@ -112,13 +84,45 @@ public class SearchHotWordFragment extends Fragment implements View.OnClickListe
                 return true;
             }
 
-
             @Override
             protected void onPostExecute(Boolean load) {
                 super.onPostExecute(load);
-                if(!load){
+                if(!load && getActivity() == null){
+
                     return;
                 }
+                View view = LayoutInflater.from(getActivity()).inflate(R.layout.fragment_search_hot_words,frameLayout,false);
+                recyclerView = (RecyclerView) view.findViewById(R.id.recyclerview);
+                recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+                adapter = new RecentSearchAdapter(getActivity());
+                adapter.setListenter(SearchHotWordFragment.this);
+                recyclerView.setAdapter(adapter);
+
+                TextView text1 = (TextView) view.findViewById(R.id.text1);
+                TextView text2 = (TextView) view.findViewById(R.id.text2);
+                TextView text3 = (TextView) view.findViewById(R.id.text3);
+                TextView text4 = (TextView) view.findViewById(R.id.text4);
+                TextView text5 = (TextView) view.findViewById(R.id.text5);
+                TextView text6 = (TextView) view.findViewById(R.id.text6);
+                TextView text7 = (TextView) view.findViewById(R.id.text7);
+                TextView text8 = (TextView) view.findViewById(R.id.text8);
+                TextView text9 = (TextView) view.findViewById(R.id.text9);
+                TextView text10 = (TextView) view.findViewById(R.id.text10);
+                views.add(text1);
+                views.add(text2);
+                views.add(text3);
+                views.add(text4);
+                views.add(text5);
+                views.add(text6);
+                views.add(text7);
+                views.add(text8);
+                views.add(text9);
+                views.add(text10);
+
+
+                frameLayout.removeAllViews();
+                frameLayout.addView(view);
+
                 int w = getActivity().getResources().getDisplayMetrics().widthPixels;
                 int xdistance = -1;
                 int ydistance = 0;

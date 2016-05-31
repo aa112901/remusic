@@ -36,7 +36,9 @@ import com.facebook.imagepipeline.request.ImageRequest;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.wm.remusic.MainApplication;
 import com.wm.remusic.R;
+import com.wm.remusic.downmusic.Down;
 import com.wm.remusic.downmusic.DownloadManager;
 import com.wm.remusic.downmusic.DownloadTask;
 import com.wm.remusic.info.MusicInfo;
@@ -141,6 +143,7 @@ public class NetAlbumsDetailActivity extends AppCompatActivity {
                     MusicInfo mi = new MusicInfo();
                     mi.artist =  getStringValue(jo, "author");
                     mi.musicName = getStringValue(jo, "title");
+                    mi.url = getStringValue(jo,"song_id");
 
                     list.add(mi);
                 }
@@ -284,11 +287,7 @@ public class NetAlbumsDetailActivity extends AppCompatActivity {
                                 setPositiveButton(mContext.getString(R.string.sure), new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
-                                        DownloadTask task = new DownloadTask.Builder(NetAlbumsDetailActivity.this,localItem.url)
-                                                .setSaveDirPath("/storage/emulated/0/")
-                                                .setFileName(localItem.musicName+".mp3").build();
-
-                                        DownloadManager.getInstance(NetAlbumsDetailActivity.this).addDownloadTask(task);
+                                        Down.downMusic(MainApplication.context,localItem.url + "",localItem.musicName);
                                         dialog.dismiss();
                                     }
                                 }).

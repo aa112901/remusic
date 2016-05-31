@@ -1,10 +1,12 @@
 package com.wm.remusic.fragmentnet;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -14,8 +16,10 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.wm.remusic.MainApplication;
 import com.wm.remusic.R;
 import com.wm.remusic.activity.SelectActivity;
+import com.wm.remusic.downmusic.Down;
 import com.wm.remusic.fragment.MoreFragment;
 import com.wm.remusic.info.MusicInfo;
 import com.wm.remusic.json.SearchSongInfo;
@@ -111,9 +115,6 @@ public class SearchMusicFragment extends Fragment {
                 ((ListItemViewHolder) holder).mainTitle.setText(model.getTitle());
                 ((ListItemViewHolder) holder).title.setText(model.getAuthor());
 
-            } else if (holder instanceof CommonItemViewHolder) {
-
-
             }
         }
 
@@ -142,7 +143,7 @@ public class SearchMusicFragment extends Fragment {
         }
 
 
-        public class ListItemViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+        public class ListItemViewHolder extends RecyclerView.ViewHolder{
             //ViewHolder
             ImageView moreOverflow, playState;
             TextView mainTitle, title;
@@ -157,18 +158,26 @@ public class SearchMusicFragment extends Fragment {
                 moreOverflow.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-
+                        final SearchSongInfo model = mList.get(getAdapterPosition());
+                        new AlertDialog.Builder(getActivity()).setTitle("要下载音乐吗").
+                                setPositiveButton(getActivity().getString(R.string.sure), new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        Down.downMusic(MainApplication.context,model.getSong_id() + "",model.getTitle());
+                                        dialog.dismiss();
+                                    }
+                                }).
+                                setNegativeButton(getActivity().getString(R.string.cancel), new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        dialog.dismiss();
+                                    }
+                                }).show();
                     }
                 });
-                view.setOnClickListener(this);
 
             }
 
-            @Override
-            public void onClick(View v) {
-
-
-            }
 
         }
     }

@@ -85,8 +85,10 @@ public class NetFragment extends Fragment {
     LinearLayout itemChanged;
     HashMap<String,View> hashMap;
     String position;
-    private ArrayList<BillboardItem> items = new ArrayList<>(7);
-    private static ExecutorService exec = Executors.newFixedThreadPool(6);
+    private ChangeView changeView;
+    public void setChanger(ChangeView changer){
+        changeView = changer;
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -240,6 +242,14 @@ private boolean isFromCache = true;
                 gridLayoutManager = new GridLayoutManager(getActivity(),3);
                 recyclerView1.setLayoutManager(gridLayoutManager);
                 recyclerView1.setAdapter(recomendAdapter);
+                TextView more = (TextView) v1.findViewById(R.id.more);
+                more.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                         changeView.changeTo(1);
+                    }
+                });
+
 
 
                 v2 = layoutInflater.inflate(R.layout.recommend_newalbums, linearLayout,false);

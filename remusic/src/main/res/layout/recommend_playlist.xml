@@ -25,12 +25,14 @@
             android:textColor="@color/text_color"
             android:text="推荐歌单"/>
         <TextView
+            android:id="@+id/more"
+            android:layout_marginRight="7dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
             android:layout_alignParentRight="true"
             android:textSize="12sp"
-            android:textColor="@color/whaite_text"
+            android:textColor="@color/text_color"
             android:text="更多>"/>
     </RelativeLayout>
 

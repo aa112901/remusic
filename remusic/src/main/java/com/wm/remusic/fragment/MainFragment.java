@@ -1,13 +1,18 @@
 package com.wm.remusic.fragment;
 
 
+import android.Manifest;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.LinearLayoutManager;
@@ -31,6 +36,7 @@ import com.wm.remusic.widget.DividerItemDecoration;
 import com.wm.remusic.uitl.IConstants;
 import com.wm.remusic.uitl.MusicUtils;
 
+import java.security.Permission;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -53,6 +59,20 @@ public class MainFragment extends Fragment {
 
     private ImageView barnet, barmusic,barfriends;
 
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        if(requestCode == 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
+            List<Song> recentsongs = SongLoader.getSongsForCursor(TopTracksLoader.getCursor());
+            recentMusicCount = recentsongs.size();
+            //设置mlistInfo，listview要显示的内容
+            localMusicCount = MusicUtils.queryMusic(getContext(), IConstants.START_FROM_LOCAL).size();
+            downLoadCount = DownFileStore.getInstance(getContext()).getDownLoadedListAll().size();
+            artistsCount = MusicUtils.queryArtist(getContext()).size();
+            return;
+        }
+    }
 
     @Override
     public void onCreate(final Bundle savedInstanceState) {
@@ -147,12 +167,18 @@ public class MainFragment extends Fragment {
     //设置音乐overflow条目
     private void setMusicInfo() {
         TopTracksLoader recentloader = new TopTracksLoader(getActivity().getApplicationContext(), TopTracksLoader.QueryType.RecentSongs);
-        List<Song> recentsongs = SongLoader.getSongsForCursor(TopTracksLoader.getCursor());
-        recentMusicCount = recentsongs.size();
-        //设置mlistInfo，listview要显示的内容
-        localMusicCount = MusicUtils.queryMusic(getContext(), IConstants.START_FROM_LOCAL).size();
-        downLoadCount = DownFileStore.getInstance(getContext()).getDownLoadedListAll().size();
-        artistsCount = MusicUtils.queryArtist(getContext()).size();
+        if(ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED){
+            requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},0);
+        }else {
+            List<Song> recentsongs = SongLoader.getSongsForCursor(TopTracksLoader.getCursor());
+            recentMusicCount = recentsongs.size();
+            //设置mlistInfo，listview要显示的内容
+            localMusicCount = MusicUtils.queryMusic(getContext(), IConstants.START_FROM_LOCAL).size();
+            downLoadCount = DownFileStore.getInstance(getContext()).getDownLoadedListAll().size();
+            artistsCount = MusicUtils.queryArtist(getContext()).size();
+        }
+
+
         setInfo(getContext().getResources().getString(R.string.local_music), localMusicCount, R.drawable.music_icn_local);
         setInfo(getContext().getResources().getString(R.string.recent_play), recentMusicCount, R.drawable.music_icn_recent);
         setInfo(getContext().getResources().getString(R.string.local_manage), downLoadCount, R.drawable.music_icn_dld);

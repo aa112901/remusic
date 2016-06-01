@@ -125,23 +125,28 @@ public class NetRadioDetailActivity extends AppCompatActivity {
             @Override
             protected Void doInBackground(final Void... unused) {
 
-                JsonArray jsonArray = HttpUtil.getResposeJsonObject(BMA.Lebo.albumInfo(albumId,10)).get("result").getAsJsonObject()
-                        .get("latest_song").getAsJsonArray();
+                try {
+                    JsonArray jsonArray = HttpUtil.getResposeJsonObject(BMA.Lebo.albumInfo(albumId,10)).get("result").getAsJsonObject()
+                            .get("latest_song").getAsJsonArray();
 
-                Iterator it = jsonArray.iterator();
-                while(it.hasNext()){
-                    JsonElement e = (JsonElement)it.next();
-                    JsonObject jo = e.getAsJsonObject();
-                    MusicInfo mi = new MusicInfo();
-                    mi.artist =  getStringValue(jo, "song_duration");
-                    mi.musicName = getStringValue(jo, "song_name");
-                    mi.songId = Integer.parseInt(getStringValue(jo,"song_id"));
+                    Iterator it = jsonArray.iterator();
+                    while(it.hasNext()){
+                        JsonElement e = (JsonElement)it.next();
+                        JsonObject jo = e.getAsJsonObject();
+                        MusicInfo mi = new MusicInfo();
+                        mi.artist =  getStringValue(jo, "song_duration");
+                        mi.musicName = getStringValue(jo, "song_name");
+                        mi.songId = Integer.parseInt(getStringValue(jo,"song_id"));
 
-                    list.add(mi);
+                        list.add(mi);
+                    }
+
+
+                    mAdapter = new PlaylistDetailAdapter(NetRadioDetailActivity.this,list);
+
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
-
-
-                mAdapter = new PlaylistDetailAdapter(NetRadioDetailActivity.this,list);
                 return null;
             }
 

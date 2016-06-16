@@ -17,6 +17,7 @@ package com.wm.remusic.uitl;
 import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.Context;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -25,6 +26,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.ParcelFileDescriptor;
+import android.provider.MediaStore;
 import android.support.v8.renderscript.RenderScript;
 
 import java.io.ByteArrayInputStream;
@@ -167,7 +169,8 @@ public class ImageUtils {
 	 *
 	 * @Override public void setColorFilter(ColorFilter cf) { } }
 	 */
-
+     private static String[] proj_album = new String[]{MediaStore.Audio.Albums._ID, MediaStore.Audio.Albums.ALBUM_ART,
+             MediaStore.Audio.Albums.ALBUM, MediaStore.Audio.Albums.NUMBER_OF_SONGS, MediaStore.Audio.Albums.ARTIST};
     // Get album art for specified album. This method will not try to
     // fall back to getting artwork directly from the file, nor will
     // it attempt to repair the database.
@@ -181,10 +184,18 @@ public class ImageUtils {
         w -= 1;
         ContentResolver res = context.getContentResolver();
         Uri uri = ContentUris.withAppendedId(sArtworkUri, album_id);
+//        Cursor cursor = res.query(uri, new String[]{}, null, null, null);
+//        if(cursor == null){
+//            return null;
+//        }else {
+
         if (uri != null) {
             ParcelFileDescriptor fd = null;
             try {
                 fd = res.openFileDescriptor(uri, "r");
+                if(fd == null){
+                    return null;
+                }
                 int sampleSize = 1;
 
                 // Compute the closest power-of-two scale factor

@@ -537,19 +537,9 @@ public class MediaService extends Service {
         }
 
         if (newNotifyMode == NOTIFY_MODE_FOREGROUND) {
-            if (isMiui || isFlyme) {
                 startForeground(notificationId, getNotification());
-            } else {
-                startForeground(notificationId, buildNotification());
-            }
-
-
         } else if (newNotifyMode == NOTIFY_MODE_BACKGROUND) {
-            if (isMiui || isFlyme) {
                 mNotificationManager.notify(notificationId, getNotification());
-            } else {
-                mNotificationManager.notify(notificationId, buildNotification());
-            }
         }
 
         mNotifyMode = newNotifyMode;

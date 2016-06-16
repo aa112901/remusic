@@ -453,8 +453,8 @@ public class MusicPlayer {
         }
     }
 
-
     public static void playAll(final Context context, final long[] list, int position, final boolean forceShuffle) {
+        Log.e("play","net" + list.length);
         if (list == null || list.length == 0 || mService == null) {
             return;
         }

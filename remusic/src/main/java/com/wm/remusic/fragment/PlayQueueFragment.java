@@ -115,7 +115,8 @@ public class PlayQueueFragment extends DialogFragment {
         @Override
         protected Void doInBackground(Void... params) {
             if (getActivity() != null) {
-                playlist = QueueLoader.getQueueSongs(getActivity());
+              //  playlist = QueueLoader.getQueueSongs(getActivity());
+                playlist = null;
 
             }
             return null;

@@ -1,6 +1,9 @@
 package com.wm.remusic.net;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.os.Environment;
 import android.util.Log;
 
 import com.google.gson.JsonArray;
@@ -9,6 +12,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.squareup.okhttp.Cache;
 import com.squareup.okhttp.CacheControl;
+import com.squareup.okhttp.Callback;
 import com.squareup.okhttp.FormEncodingBuilder;
 import com.squareup.okhttp.MediaType;
 import com.squareup.okhttp.OkHttpClient;
@@ -18,8 +22,12 @@ import com.squareup.okhttp.Response;
 import com.wm.remusic.R;
 import com.wm.remusic.net.PersistentCookieStore;
 
+import org.json.JSONObject;
+
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.CookieManager;
 import java.net.CookiePolicy;
 import java.util.Iterator;
@@ -55,6 +63,93 @@ public class HttpUtil {
             e.printStackTrace();
         }
     }
+
+
+    public static Bitmap getBitmapStream(String url){
+        try {
+            mOkHttpClient.setConnectTimeout(1000, TimeUnit.MINUTES);
+            mOkHttpClient.setReadTimeout(1000, TimeUnit.MINUTES);
+            Request request = new Request.Builder()
+                    .url(url)
+                    .build();
+            Response response = mOkHttpClient.newCall(request).execute();
+            if(response.isSuccessful()){
+//                try {
+//                    File file = new File("/storage/emulated/0/c.jpg");
+//                    FileOutputStream fos = new FileOutputStream(file);
+//                    fos.write(response.body().bytes());
+//                }catch (Exception e){
+//                    e.printStackTrace();
+//                }
+
+                return _decodeBitmapFromStream(response.body().byteStream(),160,160);
+            }
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    private static int _calculateInSampleSize(BitmapFactory.Options options,
+                                              int reqWidth, int reqHeight) {
+        final int height = options.outHeight;
+        final int width = options.outWidth;
+        int inSampleSize = 1;
+
+        if (height > reqHeight || width > reqWidth) {
+
+            final int heightRatio = Math.round((float) height
+                    / (float) reqHeight);
+            final int widthRatio = Math.round((float) width / (float) reqWidth);
+
+            inSampleSize = heightRatio < widthRatio ? heightRatio : widthRatio;
+        }
+
+        return inSampleSize;
+    }
+
+    public static Bitmap _decodeBitmapFromStream(InputStream inputStream,
+                                                 int reqWidth, int reqHeight) {
+        byte[] byteArr = new byte[0];
+        byte[] buffer = new byte[1024];
+        int len;
+        int count = 0;
+
+        try {
+            while ((len = inputStream.read(buffer)) > -1) {
+                if (len != 0) {
+                    if (count + len > byteArr.length) {
+                        byte[] newbuf = new byte[(count + len) * 2];
+                        System.arraycopy(byteArr, 0, newbuf, 0, count);
+                        byteArr = newbuf;
+                    }
+
+                    System.arraycopy(buffer, 0, byteArr, count, len);
+                    count += len;
+                }
+            }
+
+            final BitmapFactory.Options options = new BitmapFactory.Options();
+            options.inJustDecodeBounds = true;
+            BitmapFactory.decodeByteArray(byteArr, 0, count, options);
+
+            options.inSampleSize = _calculateInSampleSize(options, reqWidth,
+                    reqHeight);
+            options.inPurgeable = false;
+            options.inInputShareable = true;
+            options.inJustDecodeBounds = false;
+            options.inPreferredConfig = Bitmap.Config.RGB_565;
+
+            return BitmapFactory.decodeByteArray(byteArr, 0, count, options);
+
+        } catch (Exception e) {
+            // close_print_exception
+
+            return null;
+        }
+    }
+
 
     public static String getResposeString(String action1 ){
         try {
@@ -125,14 +220,16 @@ public class HttpUtil {
         return null;
     }
 
+
+
     public static JsonObject getResposeJsonObject(String action1){
         try {
-            mOkHttpClient.setConnectTimeout(1000, TimeUnit.MINUTES);
-            mOkHttpClient.setReadTimeout(1000, TimeUnit.MINUTES);
+            mOkHttpClient.setConnectTimeout(3000, TimeUnit.MINUTES);
+            mOkHttpClient.setReadTimeout(3000, TimeUnit.MINUTES);
             Request request = new Request.Builder()
                     .url(action1)
-                    .addHeader("Referer","http://music.163.com/")
-                    .addHeader("Cookie", "appver=1.5.0.75771")
+//                    .addHeader("Referer","http://music.163.com/")
+//                    .addHeader("Cookie", "appver=1.5.0.75771")
                     .build();
             Response response = mOkHttpClient.newCall(request).execute();
             if(response.isSuccessful()){

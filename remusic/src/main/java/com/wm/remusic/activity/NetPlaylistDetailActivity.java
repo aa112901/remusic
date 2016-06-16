@@ -19,6 +19,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -426,21 +427,12 @@ public class NetPlaylistDetailActivity extends AppCompatActivity {
                     public void run() {
 
                         try{
-
-                            JsonArray jsonArray = HttpUtil.getResposeJsonObject(BMA.Song.songInfo(BMA.Song.songInfo(arraylist.get(getAdapterPosition()).getSong_id()))).get("songurl").getAsJsonObject()
-                                    .get("url").getAsJsonArray();
-
-                            int len = jsonArray.size();
-//                                                for(int i = 0;i < len; i++){
-//                                                    MusicNet musicNet = gson.fromJson(jsonArray.get(i),MusicNet.class);
-//                                                }
-                         //   MusicNet musicNet = gson.fromJson(jsonArray.get(3),MusicNet.class);
-
-                            mediaPlayer.reset();
-                            mediaPlayer.setDataSource(musicDetailNet.getShow_link());
-                            mediaPlayer.prepare();
-                            mediaPlayer.start();
-                            MusicPlayer.clearQueue();
+                            long[] list = new long[arraylist.size()];
+                            for (int i = 0; i < arraylist.size(); i++) {
+                                list[i] = Long.parseLong(arraylist.get(i).getSong_id());
+                            }
+                            Log.e("play","net" + arraylist.size());
+                        //    MusicPlayer.playAll(NetPlaylistDetailActivity.this, list, getAdapterPosition()-1, false);
 
                         }catch (Exception e){
                             e.printStackTrace();

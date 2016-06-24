@@ -20,6 +20,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -42,6 +43,7 @@ import com.wm.remusic.R;
 import com.wm.remusic.downmusic.Down;
 import com.wm.remusic.downmusic.DownloadManager;
 import com.wm.remusic.downmusic.DownloadTask;
+import com.wm.remusic.info.MusicInfo;
 import com.wm.remusic.json.GeDanGeInfo;
 import com.wm.remusic.json.GeDanSrc;
 import com.wm.remusic.json.MusicDetailNet;
@@ -55,6 +57,7 @@ import com.wm.remusic.uitl.PreferencesUtility;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * Created by wm on 2016/4/15.
@@ -428,11 +431,22 @@ public class NetPlaylistDetailActivity extends AppCompatActivity {
 
                         try{
                             long[] list = new long[arraylist.size()];
+                            HashMap<Long,MusicInfo> infos = new HashMap<Long,MusicInfo>();
                             for (int i = 0; i < arraylist.size(); i++) {
                                 list[i] = Long.parseLong(arraylist.get(i).getSong_id());
+
+
+
+                                MusicInfo musicInfo = new MusicInfo();
+                                musicInfo.musicName = arraylist.get(i).getTitle();
+                                musicInfo.artist = arraylist.get(i).getAlbum_title();
+                                musicInfo.favorite = 1;
+                                infos.put(list[i] , musicInfo);
                             }
+
+
                             Log.e("play","net" + arraylist.size());
-                        //    MusicPlayer.playAll(NetPlaylistDetailActivity.this, list, getAdapterPosition()-1, false);
+                            MusicPlayer.playAll(infos, list, getAdapterPosition()-1, false);
 
                         }catch (Exception e){
                             e.printStackTrace();

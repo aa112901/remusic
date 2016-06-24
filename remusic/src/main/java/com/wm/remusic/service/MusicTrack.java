@@ -41,16 +41,25 @@ public class MusicTrack implements Parcelable {
     };
     public long mId;
     public int mSourcePosition;
+    public String mTitle;
+    public String mAlbum;
+    public String mArtist;
 
 
     public MusicTrack(long id, int sourcePosition) {
         mId = id;
         mSourcePosition = sourcePosition;
+//        mTitle = title;
+//        mArtist = artist;
+//        mAlbum = album;
     }
 
     public MusicTrack(Parcel in) {
         mId = in.readLong();
         mSourcePosition = in.readInt();
+//        mTitle = in.readString();
+//        mArtist = in.readString();
+//        mAlbum = in.readString();
     }
 
     @Override
@@ -62,6 +71,10 @@ public class MusicTrack implements Parcelable {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeLong(mId);
         dest.writeInt(mSourcePosition);
+//        dest.writeString(mTitle);
+//        dest.writeString(mArtist);
+//        dest.writeString(mArtist);
+
     }
 
 }

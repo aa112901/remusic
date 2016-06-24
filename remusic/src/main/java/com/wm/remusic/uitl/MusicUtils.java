@@ -382,7 +382,6 @@ public class MusicUtils implements IConstants {
         ContentResolver cr = context.getContentResolver();
         Cursor cursor = cr.query(Media.EXTERNAL_CONTENT_URI, proj_music, "_id = " + String.valueOf(musicid), null, null);
         if (cursor == null) {
-            cursor.close();
             return null;
         }
         long albumId = -1;
@@ -394,7 +393,6 @@ public class MusicUtils implements IConstants {
             cursor = cr.query(Albums.EXTERNAL_CONTENT_URI, proj_album, Albums._ID + " = " + String.valueOf(albumId), null, null);
         }
         if (cursor == null) {
-            cursor.close();
             return null;
         }
         String data = "";

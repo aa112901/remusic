@@ -20,6 +20,7 @@ import com.wm.remusic.activity.SelectActivity;
 import com.wm.remusic.info.AlbumInfo;
 import com.wm.remusic.info.MusicInfo;
 import com.wm.remusic.service.MusicPlayer;
+import com.wm.remusic.service.MusicTrack;
 import com.wm.remusic.uitl.CommonUtils;
 import com.wm.remusic.widget.DividerItemDecoration;
 import com.wm.remusic.uitl.IConstants;
@@ -204,7 +205,11 @@ public class AlbumDetailFragment extends BaseFragment {
                         for (int i = 0; i < mList.size(); i++) {
                             list[i] = mList.get(i).songId;
                         }
-                        MusicPlayer.playAll(getContext(), list, 0, false);
+//                        ArrayList<MusicTrack> l = new ArrayList<MusicTrack>();
+//                        for (int i = 0; i < mList.size(); i++) {
+//                            l.add(new MusicTrack(mList.get(i).songId ,-1,mList.get(i).musicName,mList.get(i).artist,mList.get(i).albumName));
+//                        }
+                        MusicPlayer.playAll(null, list, 0, false);
                     }
                 }, 50);
             }
@@ -247,7 +252,7 @@ public class AlbumDetailFragment extends BaseFragment {
                         for (int i = 0; i < mList.size(); i++) {
                             list[i] = mList.get(i).songId;
                         }
-                        MusicPlayer.playAll(getContext(), list, getAdapterPosition() - 1, false);
+                        MusicPlayer.playAll(null, list, getAdapterPosition() - 1, false);
                         Handler handler1 = new Handler();
                         handler1.postDelayed(new Runnable() {
                             @Override

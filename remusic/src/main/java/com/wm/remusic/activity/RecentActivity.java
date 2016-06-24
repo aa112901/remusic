@@ -229,7 +229,7 @@ public class RecentActivity extends AppCompatActivity {
                         for (int i = 0; i < mList.size(); i++) {
                             list[i] = mList.get(i).id;
                         }
-                        MusicPlayer.playAll(RecentActivity.this, list, 0, false);
+                        MusicPlayer.playAll(null, list, 0, false);
                     }
                 }, 100);
 
@@ -282,7 +282,7 @@ public class RecentActivity extends AppCompatActivity {
                         for (int i = 0; i < mList.size(); i++) {
                             list[i] = mList.get(i).id;
                         }
-                        MusicPlayer.playAll(RecentActivity.this, list, getAdapterPosition() - 1, false);
+                        MusicPlayer.playAll(null, list, getAdapterPosition() - 1, false);
                         Handler handler1 = new Handler();
                         handler1.postDelayed(new Runnable() {
                             @Override

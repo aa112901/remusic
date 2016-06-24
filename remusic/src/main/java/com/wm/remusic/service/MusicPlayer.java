@@ -30,12 +30,15 @@ import android.os.IBinder;
 import android.os.RemoteException;
 import android.provider.MediaStore;
 import android.util.Log;
+import android.util.SparseArray;
 import android.widget.Toast;
 
 import com.wm.remusic.MediaAidlInterface;
 import com.wm.remusic.R;
+import com.wm.remusic.info.MusicInfo;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.WeakHashMap;
 
 public class MusicPlayer {
@@ -453,8 +456,7 @@ public class MusicPlayer {
         }
     }
 
-    public static void playAll(final Context context, final long[] list, int position, final boolean forceShuffle) {
-        Log.e("play","net" + list.length);
+    public static void playAll(final HashMap<Long,MusicInfo> infos, final long[] list, int position, final boolean forceShuffle) {
         if (list == null || list.length == 0 || mService == null) {
             return;
         }
@@ -474,7 +476,8 @@ public class MusicPlayer {
             if (position < 0) {
                 position = 0;
             }
-            mService.open(list, forceShuffle ? -1 : position);
+
+            mService.open(infos,list, forceShuffle ? -1 : position);
             mService.play();
         } catch (final RemoteException ignored) {
         } catch (IllegalStateException e) {

@@ -209,7 +209,7 @@ public class ArtistDetailFragment extends BaseFragment {
                         for (int i = 0; i < mList.size(); i++) {
                             list[i] = mList.get(i).songId;
                         }
-                        MusicPlayer.playAll(getContext(), list, 0, false);
+                        MusicPlayer.playAll(null, list, 0, false);
                     }
                 }, 50);
             }
@@ -253,7 +253,7 @@ public class ArtistDetailFragment extends BaseFragment {
                         for (int i = 0; i < mList.size(); i++) {
                             list[i] = mList.get(i).songId;
                         }
-                        MusicPlayer.playAll(getContext(), list, getAdapterPosition() - 1, false);
+                        MusicPlayer.playAll(null, list, getAdapterPosition() - 1, false);
                         Handler handler1 = new Handler();
                         handler1.postDelayed(new Runnable() {
                             @Override

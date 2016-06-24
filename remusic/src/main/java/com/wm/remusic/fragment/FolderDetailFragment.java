@@ -215,7 +215,7 @@ public class FolderDetailFragment extends BaseFragment {
                         for (int i = 0; i < mList.size(); i++) {
                             list[i] = mList.get(i).songId;
                         }
-                        MusicPlayer.playAll(getContext(), list, 0, false);
+                        MusicPlayer.playAll(null, list, 0, false);
                         //MusicPlayer.playAll(getContext(), list, 0, IConstants.PLAYLIST_ID_DEFAULT);
                     }
                 }, 50);
@@ -260,7 +260,7 @@ public class FolderDetailFragment extends BaseFragment {
                         for (int i = 0; i < mList.size(); i++) {
                             list[i] = mList.get(i).songId;
                         }
-                        MusicPlayer.playAll(getContext(), list, getAdapterPosition() - 1, false);
+                        MusicPlayer.playAll(null, list, getAdapterPosition() - 1, false);
                         // MusicPlayer.play(mList.get(getAdapterPosition() - 1).songId);
                         Handler handler1 = new Handler();
                         handler1.postDelayed(new Runnable() {

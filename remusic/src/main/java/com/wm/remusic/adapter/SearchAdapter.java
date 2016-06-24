@@ -107,7 +107,7 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ItemHolder
                 public void run() {
                     long[] ret = new long[1];
                     ret[0] = ((MusicInfo) searchResults.get(getAdapterPosition())).songId;
-                    MusicPlayer.playAll(mContext, ret, 0, false);
+                    MusicPlayer.playAll(null, ret, 0, false);
                 }
             }, 100);
 

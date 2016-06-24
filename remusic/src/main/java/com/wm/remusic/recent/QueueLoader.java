@@ -15,6 +15,7 @@
 package com.wm.remusic.recent;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.wm.remusic.info.MusicInfo;
 
@@ -28,6 +29,7 @@ public class QueueLoader {
     public static ArrayList<MusicInfo> getQueueSongs(Context context) {
 
         final ArrayList<MusicInfo> mMusicQueues = new ArrayList<>();
+        Log.e("queueloader","created");
         mCursor = new PlayQueueCursor(context);
 
         while (mCursor.moveToNext()) {

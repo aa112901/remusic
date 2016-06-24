@@ -2,6 +2,7 @@ package com.wm.remusic.activity;
 
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.graphics.drawable.Animatable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
@@ -21,6 +22,10 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.facebook.drawee.backends.pipeline.Fresco;
+import com.facebook.drawee.controller.BaseControllerListener;
+import com.facebook.drawee.controller.ControllerListener;
+import com.facebook.drawee.interfaces.DraweeController;
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.wm.remusic.R;
 import com.wm.remusic.fragment.BitSetFragment;
@@ -68,6 +73,30 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
             Uri urr = Uri.parse("res:/" + R.drawable.placeholder_disk_210);
             navPlayImg.setImageURI(urr);
         }
+
+//        ControllerListener listener = new BaseControllerListener(){
+//            @Override
+//            public void onFinalImageSet(String id, Object imageInfo, Animatable animatable) {
+//                super.onFinalImageSet(id, imageInfo, animatable);
+//            }
+//
+//            @Override
+//            public void onFailure(String id, Throwable throwable) {
+//                super.onFailure(id, throwable);
+//
+//
+//            }
+//
+//            @Override
+//            public void onIntermediateImageFailed(String id, Throwable throwable) {
+//                super.onIntermediateImageFailed(id, throwable);
+//            }
+//        };
+//        DraweeController controller = Fresco.newDraweeControllerBuilder()
+//                .setUri(uri)
+//                .setControllerListener(listener)
+//                .build();
+//        navPlayImg.setController(controller);
 
         navMusicName.setText(MusicPlayer.getTrackName());
         navArtist.setText(MusicPlayer.getArtistName());

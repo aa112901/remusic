@@ -31,6 +31,7 @@ import com.wm.remusic.uitl.SortOrder;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * Created by wm on 2016/1/19.
@@ -303,7 +304,7 @@ public class MusicFragment extends BaseFragment {
                         for (int i = 0; i < mList.size(); i++) {
                             list[i] = mList.get(i).songId;
                         }
-                        MusicPlayer.playAll(getContext(), list, 0, false);
+                        MusicPlayer.playAll(null, list, 0, false);
                     }
                 }, 100);
 
@@ -343,10 +344,15 @@ public class MusicFragment extends BaseFragment {
                     @Override
                     public void run() {
                         long[] list = new long[mList.size()];
+                        HashMap<Long,MusicInfo> infos = new HashMap();
                         for (int i = 0; i < mList.size(); i++) {
                             list[i] = mList.get(i).songId;
+                            mList.get(i).favorite = 0;
+                            infos.put(list[i] , mList.get(i));
                         }
-                        MusicPlayer.playAll(getContext(), list, getAdapterPosition() - 1, false);
+
+
+                        MusicPlayer.playAll(infos, list, getAdapterPosition() - 1, false);
                         Handler handler1 = new Handler();
                         handler1.postDelayed(new Runnable() {
                             @Override

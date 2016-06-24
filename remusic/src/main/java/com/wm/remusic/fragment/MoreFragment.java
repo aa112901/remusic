@@ -310,7 +310,7 @@ public class MoreFragment extends DialogFragment {
                                 for (int i = 0; i < list.size(); i++) {
                                     queuelist[i] = list.get(i).songId;
                                 }
-                                MusicPlayer.playAll(mContext, queuelist, 0, false);
+                                MusicPlayer.playAll(null, queuelist, 0, false);
                             }
                         }, 100);
                         dismiss();

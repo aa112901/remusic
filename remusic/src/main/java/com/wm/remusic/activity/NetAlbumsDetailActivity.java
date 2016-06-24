@@ -350,7 +350,7 @@ public class NetAlbumsDetailActivity extends AppCompatActivity {
                         for (int i = 0; i < arraylist.size(); i++) {
                             list[i] = arraylist.get(i).songId;
                         }
-                        MusicPlayer.playAll(mContext, list, 0, false);
+                        MusicPlayer.playAll(null, list, 0, false);
                     }
                 }, 100);
 

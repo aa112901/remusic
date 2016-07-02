@@ -41,6 +41,8 @@ interface MediaAidlInterface
     String getTrackName();
     boolean isTrackLocal();
     String getAlbumName();
+    String getAlbumPath();
+    String[] getAlbumPathtAll();
     String getPath();
     int getShuffleMode();
     int removeTracks(int first, int last);

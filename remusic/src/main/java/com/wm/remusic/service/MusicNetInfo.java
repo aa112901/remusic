@@ -3,9 +3,22 @@
  */
 package com.wm.remusic.service;
 
+import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.support.annotation.Nullable;
+
+import com.facebook.common.executors.CallerThreadExecutor;
+import com.facebook.common.references.CloseableReference;
+import com.facebook.datasource.DataSource;
+import com.facebook.drawee.backends.pipeline.Fresco;
+import com.facebook.imagepipeline.core.ImagePipeline;
+import com.facebook.imagepipeline.datasource.BaseBitmapDataSubscriber;
+import com.facebook.imagepipeline.image.CloseableImage;
+import com.facebook.imagepipeline.request.ImageRequest;
+import com.facebook.imagepipeline.request.ImageRequestBuilder;
 
 public class MusicNetInfo implements Parcelable {
 
@@ -67,6 +80,7 @@ public class MusicNetInfo implements Parcelable {
         bundle.putString(KEY_URL,url);
         dest.writeBundle(bundle);
     }
+
 
 
 }

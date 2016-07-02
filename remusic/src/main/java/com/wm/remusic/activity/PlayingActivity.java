@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.TransitionDrawable;
 import android.net.Uri;
@@ -37,6 +38,7 @@ import com.wm.remusic.fragment.RoundFragment;
 import com.wm.remusic.fragment.SimpleMoreFragment;
 import com.wm.remusic.handler.HandlerUtil;
 import com.wm.remusic.info.MusicInfo;
+import com.wm.remusic.net.HttpUtil;
 import com.wm.remusic.provider.PlaylistsManager;
 import com.wm.remusic.service.MediaService;
 import com.wm.remusic.service.MusicPlayer;
@@ -45,9 +47,12 @@ import com.wm.remusic.uitl.IConstants;
 import com.wm.remusic.uitl.ImageUtils;
 import com.wm.remusic.uitl.MusicUtils;
 
+import java.io.InputStream;
 import java.lang.ref.WeakReference;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+
+import static com.wm.remusic.service.MusicPlayer.getAlbumPath;
 
 
 /**
@@ -409,9 +414,7 @@ public class PlayingActivity extends BaseActivity implements IConstants {
         if (MusicPlayer.getQueueSize() == 0) {
             return;
         }
-        if(MusicPlayer.getCurrentAudioId() != bluredId){
-            new setBlurredAlbumArt().execute();
-        }
+
 
         if (!duetoplaypause) {
             isFav = false;
@@ -482,6 +485,9 @@ public class PlayingActivity extends BaseActivity implements IConstants {
             isNextOrPreSetPage = true;
         }
 
+        if(MusicPlayer.getCurrentAudioId() != bluredId){
+            new setBlurredAlbumArt().execute();
+        }
         bluredId = MusicPlayer.getCurrentAudioId();
     }
 
@@ -631,21 +637,36 @@ public class PlayingActivity extends BaseActivity implements IConstants {
                 newOpts.inPreferredConfig = Bitmap.Config.RGB_565;
             }
 
-            try {
-                Bitmap bitmap;
-                String art = MusicUtils.getAlbumInfo(PlayingActivity.this.getApplication(), albumid).album_art;
-
-                if (art != null) {
-                    bitmap = BitmapFactory.decodeFile(art, newOpts);
-                } else {
-                    bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.login_bg_night, newOpts);
+            if(!MusicPlayer.isTrackLocal()){
+                InputStream stream = null;
+                try {
+                    stream = HttpUtil.getFromCache(PlayingActivity.this,getAlbumPath());
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
-                if (bitmap != null) {
-                    drawable = ImageUtils.createBlurredImageFromBitmap(bitmap, PlayingActivity.this.getApplication(), 3);
+               Bitmap bitmap = BitmapFactory.decodeStream(stream);
+                if(bitmap != null){
+                        drawable = ImageUtils.createBlurredImageFromBitmap(bitmap, PlayingActivity.this.getApplication(), 3);
                 }
+            }else {
+                try {
+                    Bitmap bitmap;
+                    String art = MusicUtils.getAlbumInfo(PlayingActivity.this.getApplication(), albumid).album_art;
 
-            } catch (Exception e) {
-                e.printStackTrace();
+                    if (art != null) {
+                        bitmap = BitmapFactory.decodeFile(art, newOpts);
+                    } else {
+
+
+                        bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.login_bg_night, newOpts);
+                    }
+                    if (bitmap != null) {
+                        drawable = ImageUtils.createBlurredImageFromBitmap(bitmap, PlayingActivity.this.getApplication(), 3);
+                    }
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
 
             return drawable;
@@ -699,9 +720,10 @@ public class PlayingActivity extends BaseActivity implements IConstants {
         public Fragment getItem(int position) {
 
             if (position == MusicPlayer.getQueue().length + 1 || position == 0) {
-                return RoundFragment.newInstance(-1);
+                return RoundFragment.newInstance("");
             }
-            return RoundFragment.newInstance(MusicPlayer.getQueue()[position - 1]);
+           // return RoundFragment.newInstance(MusicPlayer.getQueue()[position - 1]);
+            return RoundFragment.newInstance(MusicPlayer.getAlbumPathAll()[position - 1]);
         }
 
         @Override

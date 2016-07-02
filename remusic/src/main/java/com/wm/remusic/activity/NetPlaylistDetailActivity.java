@@ -46,9 +46,12 @@ import com.wm.remusic.downmusic.DownloadTask;
 import com.wm.remusic.info.MusicInfo;
 import com.wm.remusic.json.GeDanGeInfo;
 import com.wm.remusic.json.GeDanSrc;
+import com.wm.remusic.json.MusicDetailInfo;
 import com.wm.remusic.json.MusicDetailNet;
 import com.wm.remusic.net.BMA;
+import com.wm.remusic.net.GetJson;
 import com.wm.remusic.net.HttpUtil;
+import com.wm.remusic.net.JsonGet;
 import com.wm.remusic.service.MusicPlayer;
 import com.wm.remusic.uitl.CommonUtils;
 import com.wm.remusic.widget.DividerItemDecoration;
@@ -133,9 +136,8 @@ public class NetPlaylistDetailActivity extends AppCompatActivity {
         });
 
     }
-
+    SparseArray<MusicDetailInfo> sparseArray;
     GeDanSrc geDanSrc;
-    MusicDetailNet musicDetailNet;
     private void loadAllLists() {
         new AsyncTask<Void, Void, Void>() {
             @Override
@@ -146,14 +148,31 @@ public class NetPlaylistDetailActivity extends AppCompatActivity {
                     geDanSrc = gson.fromJson(jsonObject.toString(), GeDanSrc.class);
                     JsonArray pArray = jsonObject.get("content").getAsJsonArray();
                     int plen = pArray.size();
-
+                    sparseArray = new SparseArray<MusicDetailInfo>();
                     for(int i = 0;i < plen; i++){
                         GeDanGeInfo geDanGeInfo = gson.fromJson(pArray.get(i),GeDanGeInfo.class);
                         mList.add(geDanGeInfo);
+                        JsonGet.get(new GetJson(geDanGeInfo.getSong_id(),i,sparseArray));
                     }
                 } catch (NullPointerException e) {
                     e.printStackTrace();
                 }
+
+
+//                try {
+//                    MusicDetailInfo info = null;
+//                    gson = new Gson();
+//                    JsonObject jsonObject =  HttpUtil.getResposeJsonObject(BMA.Song.songBaseInfo(id).trim()).get("result")
+//                            .getAsJsonObject().get("items").getAsJsonArray().get(0).getAsJsonObject();
+//                    info = gson.fromJson(jsonObject,MusicDetailInfo.class);
+//
+//                    for(int i = 0;i < plen; i++){
+//                        GeDanGeInfo geDanGeInfo = gson.fromJson(pArray.get(i),GeDanGeInfo.class);
+//                        mList.add(geDanGeInfo);
+//                    }
+//                } catch (NullPointerException e) {
+//                    e.printStackTrace();
+//                }
 
                 return null;
             }
@@ -196,12 +215,13 @@ public class NetPlaylistDetailActivity extends AppCompatActivity {
         albumArtSmall.setImageURI(Uri.parse(albumPath));
         try {
             //drawable = Drawable.createFromStream( new URL(albumPath).openStream(),"src");
-            ImageRequest imageRequest=ImageRequest.fromUri(albumPath);
+            ImageRequest imageRequest = ImageRequest.fromUri(albumPath);
             CacheKey cacheKey= DefaultCacheKeyFactory.getInstance()
                     .getEncodedCacheKey(imageRequest);
             BinaryResource resource = ImagePipelineFactory.getInstance()
                     .getMainDiskStorageCache().getResource(cacheKey);
             File file=((FileBinaryResource)resource).getFile();
+
             new setBlurredAlbumArt().execute(ImageUtils.getArtworkQuick(file, 300, 300));
 
 
@@ -424,36 +444,63 @@ public class NetPlaylistDetailActivity extends AppCompatActivity {
 
             @Override
             public void onClick(View v) {
-                Handler handler = new Handler();
-                handler.postDelayed(new Runnable() {
+                new Thread(new Runnable() {
                     @Override
                     public void run() {
-
-                        try{
+                 //       try{
+                            Log.e("playlist","net");
                             long[] list = new long[arraylist.size()];
                             HashMap<Long,MusicInfo> infos = new HashMap<Long,MusicInfo>();
                             for (int i = 0; i < arraylist.size(); i++) {
+                                Log.e("playlist",sparseArray.get(0).getTitle()+ "");
                                 list[i] = Long.parseLong(arraylist.get(i).getSong_id());
-
-
-
                                 MusicInfo musicInfo = new MusicInfo();
                                 musicInfo.musicName = arraylist.get(i).getTitle();
-                                musicInfo.artist = arraylist.get(i).getAlbum_title();
+                                musicInfo.artist = sparseArray.get(i).getArtist_name();
                                 musicInfo.favorite = 1;
+                                musicInfo.albumName = sparseArray.get(i).getAlbum_title();
+                                musicInfo.albumId = Integer.parseInt(arraylist.get(i).getAlbum_id());
+                                musicInfo.artistId = Integer.parseInt(sparseArray.get(i).getArtist_id());
+                                musicInfo.data = sparseArray.get(i).getLrclink();
+                                musicInfo.albumData = sparseArray.get(i).getPic_radio();
                                 infos.put(list[i] , musicInfo);
                             }
-
-
                             Log.e("play","net" + arraylist.size());
                             MusicPlayer.playAll(infos, list, getAdapterPosition()-1, false);
 
-                        }catch (Exception e){
-                            e.printStackTrace();
-                        }
-
+                    //    }catch (Exception e){
+                            //e.printStackTrace();
+                      //  }
                     }
-                }, 100);
+                }).start();
+
+//                Handler handler = new Handler();
+//                handler.postDelayed(new Runnable() {
+//                    @Override
+//                    public void run() {
+//
+//                        try{
+//                            long[] list = new long[arraylist.size()];
+//                            HashMap<Long,MusicInfo> infos = new HashMap<Long,MusicInfo>();
+//                            for (int i = 0; i < arraylist.size(); i++) {
+//                                list[i] = Long.parseLong(arraylist.get(i).getSong_id());
+//                                MusicInfo musicInfo = new MusicInfo();
+//                                musicInfo.musicName = arraylist.get(i).getTitle();
+//                                musicInfo.artist = arraylist.get(i).getAlbum_title();
+//                                musicInfo.favorite = 1;
+//                                infos.put(list[i] , musicInfo);
+//                            }
+//
+//
+//                            Log.e("play","net" + arraylist.size());
+//                            MusicPlayer.playAll(infos, list, getAdapterPosition()-1, false);
+//
+//                        }catch (Exception e){
+//                            e.printStackTrace();
+//                        }
+//
+//                    }
+//                }, 100);
 
             }
 

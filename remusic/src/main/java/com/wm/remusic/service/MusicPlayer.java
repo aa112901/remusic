@@ -142,6 +142,18 @@ public class MusicPlayer {
         }
     }
 
+
+    public static boolean isTrackLocal(){
+        try {
+            if(mService != null){
+                mService.isTrackLocal();
+            }
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
     public static void cycleRepeat() {
         try {
             if (mService != null) {
@@ -258,6 +270,26 @@ public class MusicPlayer {
         if (mService != null) {
             try {
                 return mService.getAlbumName();
+            } catch (final RemoteException ignored) {
+            }
+        }
+        return null;
+    }
+
+    public static final String getAlbumPath() {
+        if (mService != null) {
+            try {
+                return mService.getAlbumPath();
+            } catch (final RemoteException ignored) {
+            }
+        }
+        return null;
+    }
+
+    public static final String[] getAlbumPathAll() {
+        if (mService != null) {
+            try {
+                return mService.getAlbumPathtAll();
             } catch (final RemoteException ignored) {
             }
         }
@@ -465,20 +497,28 @@ public class MusicPlayer {
                 mService.setShuffleMode(MediaService.SHUFFLE_NORMAL);
             }
             final long currentId = mService.getAudioId();
+            long playId = list[position];
+            Log.e("currentId",currentId + "");
             final int currentQueuePosition = getQueuePosition();
-            if (position != -1 && currentQueuePosition == position && currentId == list[position]) {
+            if (position != -1 ) {
                 final long[] playlist = getQueue();
                 if (Arrays.equals(list, playlist)) {
-                    mService.play();
-                    return;
+                    if(currentQueuePosition == position && currentId == list[position]){
+                        mService.play();
+                        return;
+                    }else {
+                        mService.setQueuePosition(position);
+                        return;
+                    }
+
                 }
             }
             if (position < 0) {
                 position = 0;
             }
-
             mService.open(infos,list, forceShuffle ? -1 : position);
             mService.play();
+            Log.e("time",System.currentTimeMillis() + "");
         } catch (final RemoteException ignored) {
         } catch (IllegalStateException e) {
             e.printStackTrace();

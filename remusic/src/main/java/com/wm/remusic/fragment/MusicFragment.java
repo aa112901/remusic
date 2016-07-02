@@ -19,6 +19,7 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.google.gson.Gson;
 import com.wm.remusic.R;
 import com.wm.remusic.activity.SelectActivity;
 import com.wm.remusic.info.MusicInfo;
@@ -29,6 +30,8 @@ import com.wm.remusic.uitl.MusicUtils;
 import com.wm.remusic.uitl.PreferencesUtility;
 import com.wm.remusic.uitl.SortOrder;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -46,6 +49,7 @@ public class MusicFragment extends BaseFragment {
     private FrameLayout frameLayout;
     private View view;
     private boolean isFirstLoad = true;
+    Gson gson = new Gson();
 
     @Override
     public void setUserVisibleHint(boolean isVisibleToUser) {
@@ -338,7 +342,21 @@ public class MusicFragment extends BaseFragment {
 
             @Override
             public void onClick(View v) {
-
+//                new Thread(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        long[] list = new long[mList.size()];
+//                        HashMap<Long,MusicInfo> infos = new HashMap();
+//                        for (int i = 0; i < mList.size(); i++) {
+//                            list[i] = mList.get(i).songId;
+//                            mList.get(i).favorite = 0;
+//                            infos.put(list[i] , mList.get(i));
+//                        }
+//
+//
+//                        MusicPlayer.playAll(infos, list, getAdapterPosition() - 1, false);
+//                    }
+//                }).start();
                 final Handler handler = new Handler();
                 handler.postDelayed(new Runnable() {
                     @Override
@@ -348,10 +366,16 @@ public class MusicFragment extends BaseFragment {
                         for (int i = 0; i < mList.size(); i++) {
                             list[i] = mList.get(i).songId;
                             mList.get(i).favorite = 0;
+                            mList.get(i).url = MusicUtils.getAlbumArtUri(mList.get(i).songId) + "";
                             infos.put(list[i] , mList.get(i));
                         }
-
-
+//                        String c  = gson.toJson(infos);
+//                        try{
+//                            FileOutputStream fo = new FileOutputStream(new File("/storage/emulated/0/playlist"));
+//                            fo.write(c.getBytes());
+//                        }catch (Exception e){
+//                            e.printStackTrace();
+//                        }
                         MusicPlayer.playAll(infos, list, getAdapterPosition() - 1, false);
                         Handler handler1 = new Handler();
                         handler1.postDelayed(new Runnable() {

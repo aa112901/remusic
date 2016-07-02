@@ -9,6 +9,7 @@ import android.util.Log;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonSyntaxException;
 import com.wm.remusic.json.MusicDetailInfo;
 import com.wm.remusic.json.MusicDetailNet;
 import com.wm.remusic.net.BMA;
@@ -75,19 +76,27 @@ public class Down {
     public static MusicDetailNet getUrl(final Context context ,final String id){
         MusicDetailNet musicDetailNet = null;
         gson = new Gson();
-        JsonArray jsonArray  =  HttpUtil.getResposeJsonObject(BMA.Song.songInfo(id).trim()).get("songurl")
-                .getAsJsonObject().get("url").getAsJsonArray();
-        int len = jsonArray.size();
-        int downloadBit = 128;
+        try {
+            JsonArray jsonArray  =  HttpUtil.getResposeJsonObject(BMA.Song.songInfo(id).trim()).get("songurl")
+                    .getAsJsonObject().get("url").getAsJsonArray();
+            int len = jsonArray.size();
+            int downloadBit = 128;
 
-        for(int i = len-1; i>-1;i--){
-            int bit = Integer.parseInt(jsonArray.get(i).getAsJsonObject().get("file_bitrate").toString());
-            if(bit == downloadBit){
-                musicDetailNet = gson.fromJson(jsonArray.get(i), MusicDetailNet.class);
+            for(int i = len-1; i>-1;i--){
+                int bit = Integer.parseInt(jsonArray.get(i).getAsJsonObject().get("file_bitrate").toString());
+                if(bit == downloadBit){
+                    musicDetailNet = gson.fromJson(jsonArray.get(i), MusicDetailNet.class);
 
-            }else if(bit < downloadBit && bit >= 64) {
-                musicDetailNet = gson.fromJson(jsonArray.get(i), MusicDetailNet.class);
+                }else if(bit < downloadBit && bit >= 64) {
+                    musicDetailNet = gson.fromJson(jsonArray.get(i), MusicDetailNet.class);
+                }
             }
+        } catch (NumberFormatException e) {
+            e.printStackTrace();
+        } catch (JsonSyntaxException e) {
+            e.printStackTrace();
+        } catch (NullPointerException e){
+            e.printStackTrace();
         }
 
         return musicDetailNet;
@@ -96,13 +105,16 @@ public class Down {
     public static MusicDetailInfo getInfo( final String id){
         MusicDetailInfo info = null;
         gson = new Gson();
-        JsonObject jsonObject =  HttpUtil.getResposeJsonObject(BMA.Song.songBaseInfo(id).trim()).get("result")
-                .getAsJsonObject().get("items").getAsJsonArray().get(0).getAsJsonObject();
-        info = gson.fromJson(jsonObject,MusicDetailInfo.class);
+        try {
+            JsonObject jsonObject =  HttpUtil.getResposeJsonObject(BMA.Song.songBaseInfo(id).trim()).get("result")
+                    .getAsJsonObject().get("items").getAsJsonArray().get(0).getAsJsonObject();
+            info = gson.fromJson(jsonObject,MusicDetailInfo.class);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
         return info;
     }
-
 
 
 

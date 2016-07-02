@@ -5,6 +5,7 @@ import android.content.ServiceConnection;
 import android.graphics.drawable.Animatable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
@@ -12,6 +13,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.MenuItem;
@@ -22,11 +24,16 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.facebook.common.logging.FLog;
 import com.facebook.drawee.backends.pipeline.Fresco;
 import com.facebook.drawee.controller.BaseControllerListener;
 import com.facebook.drawee.controller.ControllerListener;
 import com.facebook.drawee.interfaces.DraweeController;
 import com.facebook.drawee.view.SimpleDraweeView;
+import com.facebook.imagepipeline.image.ImageInfo;
+import com.facebook.imagepipeline.image.QualityInfo;
+import com.facebook.imagepipeline.request.ImageRequest;
+import com.facebook.imagepipeline.request.ImageRequestBuilder;
 import com.wm.remusic.R;
 import com.wm.remusic.fragment.BitSetFragment;
 import com.wm.remusic.fragment.MainFragment;
@@ -34,10 +41,15 @@ import com.wm.remusic.fragment.PlayQueueFragment;
 import com.wm.remusic.fragmentnet.TabNetPagerFragment;
 import com.wm.remusic.fragment.TimingFragment;
 import com.wm.remusic.handler.HandlerUtil;
+import com.wm.remusic.net.HttpUtil;
+import com.wm.remusic.service.MediaService;
 import com.wm.remusic.service.MusicPlayer;
 import com.wm.remusic.uitl.IConstants;
 import com.wm.remusic.uitl.MusicUtils;
 
+import java.io.InputStream;
+
+import static com.wm.remusic.service.MusicPlayer.getAlbumPath;
 import static com.wm.remusic.service.MusicPlayer.mService;
 
 public class MainActivity extends BaseActivity implements NavigationView.OnNavigationItemSelectedListener,
@@ -63,16 +75,66 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
             return;
         }
 
-        String data = MusicUtils.getalbumdata(this, MusicPlayer.getCurrentAudioId());
+//        if(!MusicPlayer.isTrackLocal()){
+//            InputStream stream = null;
+//            try {
+//               stream = HttpUtil.getFromCache(MainActivity.this,getAlbumPath());
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//            }
+//            navPlayImg.setImageBitmap(HttpUtil._decodeBitmapFromStream(stream,160,160));
+//        }
 
-        if (data != null) {
-            Uri uri1 = Uri.parse("file://" + data);
-            navPlayImg.setImageURI(uri1);
+        ControllerListener controllerListener = new BaseControllerListener<ImageInfo>() {
+            @Override
+            public void onFinalImageSet(String id, @Nullable ImageInfo imageInfo, @Nullable Animatable anim) {
+                if (imageInfo == null) {
+                    return;
+                }
+                QualityInfo qualityInfo = imageInfo.getQualityInfo();
+                FLog.d("Final image received! " +
+                                "Size %d x %d",
+                        "Quality level %d, good enough: %s, full quality: %s",
+                        imageInfo.getWidth(),
+                        imageInfo.getHeight(),
+                        qualityInfo.getQuality(),
+                        qualityInfo.isOfGoodEnoughQuality(),
+                        qualityInfo.isOfFullQuality());
+            }
 
-        } else {
-            Uri urr = Uri.parse("res:/" + R.drawable.placeholder_disk_210);
-            navPlayImg.setImageURI(urr);
-        }
+            @Override
+            public void onIntermediateImageSet(String id, @Nullable ImageInfo imageInfo) {
+                //FLog.d("Intermediate image received");
+            }
+
+            @Override
+            public void onFailure(String id, Throwable throwable) {
+                navPlayImg.setImageURI(Uri.parse("res:/" + R.drawable.placeholder_disk_play_song));
+            }
+        };
+
+        ImageRequest request = ImageRequestBuilder.newBuilderWithSource(Uri.parse(getAlbumPath())).build();
+
+        DraweeController controller = Fresco.newDraweeControllerBuilder()
+                .setOldController(navPlayImg.getController())
+                .setImageRequest(request)
+                .setControllerListener(controllerListener)
+                .build();
+
+        navPlayImg.setController(controller);
+
+        //String data = MusicUtils.getalbumdata(this, MusicPlayer.getCurrentAudioId());
+//        String data = MusicPlayer.getAlbumPath();
+//        if (data != null) {
+//            Log.e("data",data);
+//            //Uri uri1 = Uri.parse("file://" + data);
+//            //navPlayImg.setImageURI(uri1);
+//            navPlayImg.setImageURI(Uri.parse(data));
+//
+//        } else {
+//            Uri urr = Uri.parse("res:/" + R.drawable.placeholder_disk_210);
+//            navPlayImg.setImageURI(urr);
+//        }
 
 //        ControllerListener listener = new BaseControllerListener(){
 //            @Override

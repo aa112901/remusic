@@ -19,6 +19,9 @@ import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
 import com.squareup.okhttp.RequestBody;
 import com.squareup.okhttp.Response;
+import com.squareup.okhttp.internal.DiskLruCache;
+import com.squareup.okhttp.internal.Util;
+import com.squareup.okhttp.internal.io.FileSystem;
 import com.wm.remusic.R;
 import com.wm.remusic.net.PersistentCookieStore;
 
@@ -26,6 +29,7 @@ import org.json.JSONObject;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.FilterInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.CookieManager;
@@ -33,6 +37,8 @@ import java.net.CookiePolicy;
 import java.util.Iterator;
 import java.util.concurrent.TimeUnit;
 
+import okio.BufferedSource;
+import okio.Okio;
 import retrofit.client.OkClient;
 
 /**
@@ -65,23 +71,23 @@ public class HttpUtil {
     }
 
 
-    public static Bitmap getBitmapStream(String url){
+    public static Bitmap getBitmapStream(Context context, String url,boolean forceCache){
         try {
+            File sdcache = context.getExternalCacheDir();
+            //File cacheFile = new File(context.getCacheDir(), "[缓存目录]");
+            Cache cache = new Cache(sdcache.getAbsoluteFile(), 1024 * 1024 * 30); //30Mb
+            mOkHttpClient.setCache(cache);
+
             mOkHttpClient.setConnectTimeout(1000, TimeUnit.MINUTES);
             mOkHttpClient.setReadTimeout(1000, TimeUnit.MINUTES);
-            Request request = new Request.Builder()
-                    .url(url)
-                    .build();
+            Request.Builder builder = new Request.Builder()
+                    .url(url);
+            if(forceCache){
+                builder.cacheControl(CacheControl.FORCE_CACHE);
+            }
+            Request request = builder.build();
             Response response = mOkHttpClient.newCall(request).execute();
             if(response.isSuccessful()){
-//                try {
-//                    File file = new File("/storage/emulated/0/c.jpg");
-//                    FileOutputStream fos = new FileOutputStream(file);
-//                    fos.write(response.body().bytes());
-//                }catch (Exception e){
-//                    e.printStackTrace();
-//                }
-
                 return _decodeBitmapFromStream(response.body().byteStream(),160,160);
             }
 
@@ -89,6 +95,33 @@ public class HttpUtil {
             e.printStackTrace();
         }
         return null;
+    }
+
+    public static FilterInputStream getFromCache(Context context,String url) throws Exception {
+      //  File cacheDirectory = new File("/storage/emulated/0/Android/data/com.name.demo .dev/cache/HttpCache");
+        File cacheDirectory = context.getExternalCacheDir();
+                DiskLruCache cache = DiskLruCache.create(FileSystem.SYSTEM, cacheDirectory, 201105, 2, 1024 * 1024 * 30);
+        cache.flush();
+        String key = Util.md5Hex(url);
+        final DiskLruCache.Snapshot snapshot;
+        try {
+            snapshot = cache.get(key);
+            if (snapshot == null) {
+                return null;
+            }
+        } catch (IOException e) {
+            return null;
+        }
+        okio.Source source = snapshot.getSource(1) ;
+        BufferedSource metadata = Okio.buffer(source);
+        FilterInputStream bodyIn = new FilterInputStream(metadata.inputStream()) {
+            @Override
+            public void close() throws IOException {
+                snapshot.close();
+                super.close();
+            }
+        };
+        return bodyIn ;
     }
 
     private static int _calculateInSampleSize(BitmapFactory.Options options,

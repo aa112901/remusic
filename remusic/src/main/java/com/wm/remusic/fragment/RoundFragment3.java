@@ -2,43 +2,25 @@ package com.wm.remusic.fragment;
 
 
 import android.animation.ObjectAnimator;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
-import android.graphics.drawable.Animatable;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.LinearInterpolator;
 
-import com.facebook.common.executors.CallerThreadExecutor;
-import com.facebook.common.logging.FLog;
-import com.facebook.common.references.CloseableReference;
-import com.facebook.datasource.DataSource;
 import com.facebook.drawee.backends.pipeline.Fresco;
-import com.facebook.drawee.controller.BaseControllerListener;
-import com.facebook.drawee.controller.ControllerListener;
 import com.facebook.drawee.generic.GenericDraweeHierarchy;
 import com.facebook.drawee.generic.GenericDraweeHierarchyBuilder;
 import com.facebook.drawee.generic.RoundingParams;
 import com.facebook.drawee.interfaces.DraweeController;
 import com.facebook.drawee.view.SimpleDraweeView;
-import com.facebook.imagepipeline.common.ResizeOptions;
-import com.facebook.imagepipeline.core.ImagePipeline;
-import com.facebook.imagepipeline.datasource.BaseBitmapDataSubscriber;
-import com.facebook.imagepipeline.image.CloseableImage;
-import com.facebook.imagepipeline.image.ImageInfo;
-import com.facebook.imagepipeline.image.QualityInfo;
 import com.facebook.imagepipeline.request.ImageRequest;
 import com.facebook.imagepipeline.request.ImageRequestBuilder;
 import com.wm.remusic.R;
-import com.wm.remusic.net.HttpUtil;
 import com.wm.remusic.service.MusicPlayer;
-import com.wm.remusic.uitl.MusicUtils;
 
 import java.lang.ref.WeakReference;
 
@@ -48,18 +30,17 @@ import static com.wm.remusic.service.MusicPlayer.getAlbumPath;
 /**
  * Created by wm on 2016/3/11.
  */
-public class RoundFragment extends Fragment {
+public class RoundFragment3 extends Fragment {
 
     private WeakReference<ObjectAnimator> animatorWeakReference;
     private SimpleDraweeView sdv;
     private long musicId = -1;
     private ObjectAnimator animator;
-    private String albumPath;
 
-    public static RoundFragment newInstance(String albumpath) {
-        RoundFragment fragment = new RoundFragment();
+    public static RoundFragment3 newInstance(long musicId) {
+        RoundFragment3 fragment = new RoundFragment3();
         Bundle bundle = new Bundle();
-        bundle.putString("album", albumpath);
+        bundle.putLong("musicId", musicId);
         fragment.setArguments(bundle);
         return fragment;
     }
@@ -70,7 +51,7 @@ public class RoundFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_roundimage, container, false);
 
         if (getArguments() != null) {
-            albumPath = getArguments().getString("album");
+            musicId = getArguments().getLong("musicId");
         }
         //  CircleImageView  circleImageView = (CircleImageView) rootView.findViewById(R.id.circle);
 
@@ -125,43 +106,14 @@ public class RoundFragment extends Fragment {
 //            sdv.setImageURI(urr);
 //        }
 
-        ControllerListener controllerListener = new BaseControllerListener<ImageInfo>() {
-            @Override
-            public void onFinalImageSet(String id, @Nullable ImageInfo imageInfo, @Nullable Animatable anim) {
-                if (imageInfo == null) {
-                    return;
-                }
-                QualityInfo qualityInfo = imageInfo.getQualityInfo();
-                FLog.d("Final image received! " +
-                                "Size %d x %d",
-                        "Quality level %d, good enough: %s, full quality: %s",
-                        imageInfo.getWidth(),
-                        imageInfo.getHeight(),
-                        qualityInfo.getQuality(),
-                        qualityInfo.isOfGoodEnoughQuality(),
-                        qualityInfo.isOfFullQuality());
-            }
-
-            @Override
-            public void onIntermediateImageSet(String id, @Nullable ImageInfo imageInfo) {
-                //FLog.d("Intermediate image received");
-            }
-
-            @Override
-            public void onFailure(String id, Throwable throwable) {
-                sdv.setImageURI(Uri.parse("res:/" + R.drawable.placeholder_disk_play_song));
-            }
-        };
-
         if(!MusicPlayer.isTrackLocal()){
             try {
 
-                ImageRequest request = ImageRequestBuilder.newBuilderWithSource(Uri.parse(albumPath)).build();
+                ImageRequest request = ImageRequestBuilder.newBuilderWithSource(Uri.parse(getAlbumPath())).build();
 
                 DraweeController controller = Fresco.newDraweeControllerBuilder()
                         .setOldController(sdv.getController())
                         .setImageRequest(request)
-                        .setControllerListener(controllerListener)
                         .build();
 
                 sdv.setController(controller);

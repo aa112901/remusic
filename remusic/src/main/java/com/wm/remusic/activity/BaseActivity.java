@@ -35,7 +35,7 @@ public class BaseActivity extends AppCompatActivity implements ServiceConnection
 
     ;
 
-    public void updateTrackInfo() {
+    public void updateTrackInfo()  {
     }
 
     ;

@@ -13,6 +13,9 @@ import android.graphics.drawable.TransitionDrawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.ParcelFileDescriptor;
+import android.support.annotation.Nullable;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
@@ -32,6 +35,15 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.facebook.common.executors.CallerThreadExecutor;
+import com.facebook.common.references.CloseableReference;
+import com.facebook.datasource.DataSource;
+import com.facebook.drawee.backends.pipeline.Fresco;
+import com.facebook.imagepipeline.core.ImagePipeline;
+import com.facebook.imagepipeline.datasource.BaseBitmapDataSubscriber;
+import com.facebook.imagepipeline.image.CloseableImage;
+import com.facebook.imagepipeline.request.ImageRequest;
+import com.facebook.imagepipeline.request.ImageRequestBuilder;
 import com.wm.remusic.R;
 import com.wm.remusic.fragment.PlayQueueFragment;
 import com.wm.remusic.fragment.RoundFragment;
@@ -428,6 +440,11 @@ public class PlayingActivity extends BaseActivity implements IConstants {
             updateFav(isFav);
            // new setBlurredAlbumArt().execute();
 
+            if(MusicPlayer.getCurrentAudioId() != bluredId){
+                new setBlurredAlbumArt().execute();
+            }
+            bluredId = MusicPlayer.getCurrentAudioId();
+
         }
         duetoplaypause = false;
 
@@ -485,10 +502,7 @@ public class PlayingActivity extends BaseActivity implements IConstants {
             isNextOrPreSetPage = true;
         }
 
-        if(MusicPlayer.getCurrentAudioId() != bluredId){
-            new setBlurredAlbumArt().execute();
-        }
-        bluredId = MusicPlayer.getCurrentAudioId();
+
     }
 
 
@@ -623,7 +637,7 @@ public class PlayingActivity extends BaseActivity implements IConstants {
         }
 
     }
-
+    Bitmap mBitmap;
     private class setBlurredAlbumArt extends AsyncTask<Void, Void, Drawable> {
 
         long albumid = MusicPlayer.getCurrentAlbumId();
@@ -631,6 +645,7 @@ public class PlayingActivity extends BaseActivity implements IConstants {
         @Override
         protected Drawable doInBackground(Void... loadedImage) {
             Drawable drawable = null;
+            mBitmap = null;
             if (newOpts == null) {
                 newOpts = new BitmapFactory.Options();
                 newOpts.inSampleSize = 6;
@@ -638,23 +653,56 @@ public class PlayingActivity extends BaseActivity implements IConstants {
             }
 
             if(!MusicPlayer.isTrackLocal()){
-                InputStream stream = null;
-                try {
-                    stream = HttpUtil.getFromCache(PlayingActivity.this,getAlbumPath());
-                } catch (Exception e) {
-                    e.printStackTrace();
+             if(getAlbumPath() == null){
+                 drawable = ImageUtils.createBlurredImageFromBitmap(mBitmap, PlayingActivity.this.getApplication(), 3);
+                 return drawable;
+             }
+                ImageRequest imageRequest = ImageRequestBuilder
+                        .newBuilderWithSource( Uri.parse(getAlbumPath()))
+                        .setProgressiveRenderingEnabled(true)
+                        .build();
+
+                ImagePipeline imagePipeline = Fresco.getImagePipeline();
+                DataSource<CloseableReference<CloseableImage>>
+                        dataSource = imagePipeline.fetchDecodedImage(imageRequest,PlayingActivity.this);
+
+                dataSource.subscribe(new BaseBitmapDataSubscriber() {
+
+                                         @Override
+                                         public void onNewResultImpl(@Nullable Bitmap bitmap) {
+                                             // You can use the bitmap in only limited ways
+                                             // No need to do any cleanup.
+                                             if(bitmap != null){
+                                                 mBitmap = bitmap;
+
+                                             };
+
+                                         }
+
+                                         @Override
+                                         public void onFailureImpl(DataSource dataSource) {
+                                             // No cleanup required here.
+                                             mBitmap = BitmapFactory.decodeResource(getResources(),R.drawable.placeholder_disk_210);
+
+                                         }
+                                     },
+                        CallerThreadExecutor.getInstance());
+                if(mBitmap != null){
+                    drawable = ImageUtils.createBlurredImageFromBitmap(mBitmap, PlayingActivity.this.getApplication(), 3);
                 }
-               Bitmap bitmap = BitmapFactory.decodeStream(stream);
-                if(bitmap != null){
-                        drawable = ImageUtils.createBlurredImageFromBitmap(bitmap, PlayingActivity.this.getApplication(), 3);
-                }
+
             }else {
                 try {
+                    mBitmap = null;
                     Bitmap bitmap;
-                    String art = MusicUtils.getAlbumInfo(PlayingActivity.this.getApplication(), albumid).album_art;
+                    Uri art = Uri.parse(getAlbumPath());
 
                     if (art != null) {
-                        bitmap = BitmapFactory.decodeFile(art, newOpts);
+                        ParcelFileDescriptor fd = getContentResolver().openFileDescriptor(art, "r");
+                            if(fd == null){
+                                return null;
+                            }
+                        bitmap = BitmapFactory.decodeFileDescriptor(fd.getFileDescriptor(),null, newOpts);
                     } else {
 
 
@@ -679,32 +727,27 @@ public class PlayingActivity extends BaseActivity implements IConstants {
                 this.cancel(true);
                 return;
             }
-            if (result != null) {
-                if (backAlbum.getDrawable() != null) {
-                  final TransitionDrawable td =
-                            new TransitionDrawable(new Drawable[]{backAlbum.getDrawable(), result});
+            setDrawable(result);
 
-
-                    backAlbum.setImageDrawable(td);
-                    //去除过度绘制
-                    td.setCrossFadeEnabled(true);
-                    td.startTransition(370);
-//                    HandlerUtil.getInstance(PlayingActivity.this).postDelayed(new Runnable() {
-//                        @Override
-//                        public void run() {
-//
-//                        }
-//                    },1600);
-
-
-                } else {
-                    backAlbum.setImageDrawable(result);
-                }
-            }
         }
 
-        @Override
-        protected void onPreExecute() {
+    }
+
+    private void setDrawable(Drawable result){
+        if (result != null) {
+            if (backAlbum.getDrawable() != null) {
+                final TransitionDrawable td =
+                        new TransitionDrawable(new Drawable[]{backAlbum.getDrawable(), result});
+
+
+                backAlbum.setImageDrawable(td);
+                //去除过度绘制
+                td.setCrossFadeEnabled(true);
+                td.startTransition(370);
+
+            } else {
+                backAlbum.setImageDrawable(result);
+            }
         }
     }
 

@@ -117,6 +117,13 @@ import java.util.ListIterator;
 import java.util.Map;
 import java.util.Random;
 import java.util.TreeSet;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.FutureTask;
+
+import bolts.Task;
 
 @SuppressLint("NewApi")
 public class MediaService extends Service {
@@ -267,7 +274,8 @@ public class MediaService extends Service {
     };
     private ContentObserver mMediaStoreObserver;
 
-
+    private ExecutorService executor = Executors.newFixedThreadPool(2);
+    private ExecutorService nextExecutor = Executors.newSingleThreadExecutor();
     private boolean isMiui;
     private boolean isFlyme;
     private MusicDetailInfo mInfo;
@@ -851,6 +859,41 @@ public class MediaService extends Service {
         }
     }
 
+    class GetPlayUrl implements Runnable{
+        long id;
+        public GetPlayUrl(long id) {
+            this.id = id;
+        }
+
+        @Override
+        public void run() {
+            MusicDetailNet song = Down.getUrl(MediaService.this,id + "");
+            if(song != null) {
+                Log.e("current_url", song.getShow_link());
+                mPlayer.setDataSource(song.getShow_link());
+                play();
+            }
+        }
+    }
+
+    class GetPlayUrl1 implements Callable<Void>{
+        long id;
+        public GetPlayUrl1(long id) {
+            this.id = id;
+        }
+
+        @Override
+        public Void call() throws Exception {
+            MusicDetailNet song = Down.getUrl(MediaService.this,id + "");
+            mPlayer.setDataSource(song.getShow_link());
+            play();
+
+            return null;
+        }
+
+    }
+
+
     private void openCurrentAndNext() {
         openCurrentAndMaybeNext(true);
     }
@@ -887,46 +930,50 @@ public class MediaService extends Service {
                     mCursor = cursor;
                     cursor.close();
                 }
-//                MatrixCursor cursor = new MatrixCursor(PROJECTION);
-//                cursor.addRow(new Object[]{info.getSong_id(),info.getArtist_name(),info.getAlbum_title(),info.getTitle()
-//                        ,info.getLrclink(),info.getPic_small(),info.getAlbum_id(),info.getArtist_id()});
-//                cursor.moveToFirst();
-//                mCursor = cursor;
-//                cursor.close();
 
-                new AsyncTask<Void, Void, Void>() {
+                executor.shutdownNow();
+                executor = Executors.newSingleThreadExecutor();
 
-                    MusicDetailNet song = null;
-                 //   MusicDetailInfo info = null;
-                    @Override
-                    protected Void doInBackground(Void... params) {
-                       noBit = HttpUtil.getBitmapStream(MediaService.this,getAlbumPath(),false);
-                        song = Down.getUrl(MediaService.this,id + "");
-                   //     info = Down.getInfo(id + "");
-                        return null;
-                    }
 
-                    @Override
-                    protected void onPostExecute(Void aVoid) {
-                        super.onPostExecute(aVoid);
-                        if(song != null){
-                            Log.e("current_url",song.getShow_link());
-                            mPlayer.setDataSource(song.getShow_link());
-//                            MatrixCursor cursor = new MatrixCursor(PROJECTION);
-//                            cursor.addRow(new Object[]{info.getSong_id(),info.getArtist_name(),info.getAlbum_title(),info.getTitle()
-//                                    ,info.getLrclink(),info.getPic_small(),info.getAlbum_id(),info.getArtist_id()});
-//                            cursor.moveToFirst();
-//                            mCursor = cursor;
-//                            cursor.close();
-                            play();
-
-                          if (openNext) {
+                executor.submit(new GetPlayUrl(id));
+                if (openNext) {
                                 setNextTrack();
                             }
+               // futureTask.cancel(true);
 
-                        }
-                    }
-                }.execute();
+//                new AsyncTask<Void, Void, Void>() {
+//
+//                    MusicDetailNet song = null;
+//                 //   MusicDetailInfo info = null;
+//                    @Override
+//                    protected Void doInBackground(Void... params) {
+//                     //  noBit = HttpUtil.getBitmapStream(MediaService.this,getAlbumPath(),false);
+//                        song = Down.getUrl(MediaService.this,id + "");
+//                   //     info = Down.getInfo(id + "");
+//                        return null;
+//                    }
+//
+//                    @Override
+//                    protected void onPostExecute(Void aVoid) {
+//                        super.onPostExecute(aVoid);
+//                        if(song != null){
+//                            Log.e("current_url",song.getShow_link());
+//                            mPlayer.setDataSource(song.getShow_link());
+////                            MatrixCursor cursor = new MatrixCursor(PROJECTION);
+////                            cursor.addRow(new Object[]{info.getSong_id(),info.getArtist_name(),info.getAlbum_title(),info.getTitle()
+////                                    ,info.getLrclink(),info.getPic_small(),info.getAlbum_id(),info.getArtist_id()});
+////                            cursor.moveToFirst();
+////                            mCursor = cursor;
+////                            cursor.close();
+//                            play();
+//
+//                          if (openNext) {
+//                                setNextTrack();
+//                            }
+//
+//                        }
+//                    }
+//                }.execute();
 
                 return;
             }else {
@@ -1063,6 +1110,8 @@ public class MediaService extends Service {
         setNextTrack(getNextPosition(false));
     }
 
+
+
     int isnextnet;
     private void setNextTrack(int position) {
         mNextPlayPos = position;
@@ -1079,27 +1128,46 @@ public class MediaService extends Service {
             if( isNextLocal){
                 mPlayer.setNextDataSource(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI + "/" + id);
             }else {
-                new AsyncTask<Void, Void, Void>() {
-                    MusicDetailNet song = null;
-                    MusicDetailInfo info = null;
-                    @Override
-                    protected Void doInBackground(Void... params) {
-                        song = Down.getUrl(MediaService.this,id + "");
-                        info = Down.getInfo(id + "");
-                        return null;
-                    }
 
+            Runnable next = new Runnable() {
                     @Override
-                    protected void onPostExecute(Void aVoid) {
-                        super.onPostExecute(aVoid);
-                        if(song.getShow_link() != null){
+                    public void run() {
+                        MusicDetailNet song = Down.getUrl(MediaService.this,id + "");
+                        if(song != null){
                             Log.e("next_url",song.getShow_link());
                             mPlayer.setNextDataSource(song.getShow_link());
-                            mInfo = info;
+                            //   mInfo = mPlaylistInfo.get(id);
                         }
-
                     }
-                }.execute();
+                };
+                nextExecutor.shutdownNow();
+                if(!nextExecutor.isShutdown()){
+                    nextExecutor.shutdownNow();
+                }
+                nextExecutor = Executors.newSingleThreadExecutor();
+                nextExecutor.execute(next);
+
+//                new AsyncTask<Void, Void, Void>() {
+//                    MusicDetailNet song = null;
+//                  //  MusicDetailInfo info = null;
+//                    @Override
+//                    protected Void doInBackground(Void... params) {
+//                        song = Down.getUrl(MediaService.this,id + "");
+//                  //      info = Down.getInfo(id + "");
+//                        return null;
+//                    }
+//
+//                    @Override
+//                    protected void onPostExecute(Void aVoid) {
+//                        super.onPostExecute(aVoid);
+//                        if(song.getShow_link() != null){
+//                            Log.e("next_url",song.getShow_link());
+//                            mPlayer.setNextDataSource(song.getShow_link());
+//                         //   mInfo = mPlaylistInfo.get(id);
+//                        }
+//
+//                    }
+//                }.execute();
             }
 
         } else {
@@ -2464,14 +2532,13 @@ public class MediaService extends Service {
                         if(service.isNextLocal){
                             service.updateCursor(service.mPlaylist.get(service.mPlayPos).mId);
                         }else {
-                            if(service.mInfo != null){
-                                MatrixCursor cursor = new MatrixCursor(PROJECTION);
-                                cursor.addRow(new Object[]{service.mInfo.getSong_id(),service.mInfo.getArtist_name(),service.mInfo.getAlbum_title(),
-                                        service.mInfo.getTitle(),service.mInfo.getLrclink(),service.mInfo.getPic_small(),service.mInfo.getAlbum_id(),service.mInfo.getArtist_id()});
-                                cursor.moveToFirst();
-                                service.mCursor = cursor;
-                                cursor.close();
-                            }
+                            MusicInfo info = service.mPlaylistInfo.get(service.mPlaylist.get(service.mPlayPos).mId);
+                            MatrixCursor cursor = new MatrixCursor(PROJECTION);
+                            cursor.addRow(new Object[]{info.songId,info.artist,info.albumName,info.musicName
+                                    ,info.data,info.albumData,info.albumId,info.artistId});
+                            cursor.moveToFirst();
+                            service.mCursor = cursor;
+                            cursor.close();
                         }
 
                         service.notifyChange(META_CHANGED);

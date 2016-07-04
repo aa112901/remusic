@@ -112,16 +112,18 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
                 navPlayImg.setImageURI(Uri.parse("res:/" + R.drawable.placeholder_disk_play_song));
             }
         };
+        if(MusicPlayer.getAlbumPath() != null){
+            ImageRequest request = ImageRequestBuilder.newBuilderWithSource(Uri.parse(MusicPlayer.getAlbumPath())).build();
 
-        ImageRequest request = ImageRequestBuilder.newBuilderWithSource(Uri.parse(getAlbumPath())).build();
+            DraweeController controller = Fresco.newDraweeControllerBuilder()
+                    .setOldController(navPlayImg.getController())
+                    .setImageRequest(request)
+                    .setControllerListener(controllerListener)
+                    .build();
 
-        DraweeController controller = Fresco.newDraweeControllerBuilder()
-                .setOldController(navPlayImg.getController())
-                .setImageRequest(request)
-                .setControllerListener(controllerListener)
-                .build();
+            navPlayImg.setController(controller);
+        }
 
-        navPlayImg.setController(controller);
 
         //String data = MusicUtils.getalbumdata(this, MusicPlayer.getCurrentAudioId());
 //        String data = MusicPlayer.getAlbumPath();

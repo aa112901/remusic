@@ -62,6 +62,11 @@
         android:layout_below="@+id/toolbar"
         android:layout_above="@+id/nav_play">
     </FrameLayout>
+    <FrameLayout
+        android:layout_alignParentBottom="true"
+        android:id="@+id/bottom_container"
+        android:layout_width="match_parent"
+        android:layout_height="46dp"/>
 
-  <include layout="@layout/bottom_nav"/>
+  <!--<include layout="@layout/bottom_nav"/>-->
 </RelativeLayout>

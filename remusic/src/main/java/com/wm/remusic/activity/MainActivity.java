@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.graphics.drawable.Animatable;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
@@ -38,6 +39,7 @@ import com.wm.remusic.R;
 import com.wm.remusic.fragment.BitSetFragment;
 import com.wm.remusic.fragment.MainFragment;
 import com.wm.remusic.fragment.PlayQueueFragment;
+import com.wm.remusic.fragment.QuickControlsFragment;
 import com.wm.remusic.fragmentnet.TabNetPagerFragment;
 import com.wm.remusic.fragment.TimingFragment;
 import com.wm.remusic.handler.HandlerUtil;
@@ -67,10 +69,22 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         //        super.onSaveInstanceState(outState);
+        init();
+    }
+    private void init(){
+        new AsyncTask<Void,Void,Void>(){
+
+            @Override
+            protected Void doInBackground(Void... params) {
+                FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+                QuickControlsFragment fragment = QuickControlsFragment.getSingleInstance();
+                ft.replace(R.id.bottom_container,fragment).commitAllowingStateLoss();
+                return null;
+            }
+        }.execute();
     }
 
-
-    public void updateTrackInfo() {
+    public void updateTrackInfo1() {
         if (mService == null) {
             return;
         }
@@ -109,10 +123,11 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
 
             @Override
             public void onFailure(String id, Throwable throwable) {
-                navPlayImg.setImageURI(Uri.parse("res:/" + R.drawable.placeholder_disk_play_song));
+                navPlayImg.setImageURI(Uri.parse("res:/" + R.drawable.placeholder_disk_210));
             }
         };
-        if(MusicPlayer.getAlbumPath() != null){
+        if(MusicPlayer.getAlbumPath() != null) {
+            Log.e("albumpath",MusicPlayer.getAlbumPath());
             ImageRequest request = ImageRequestBuilder.newBuilderWithSource(Uri.parse(MusicPlayer.getAlbumPath())).build();
 
             DraweeController controller = Fresco.newDraweeControllerBuilder()
@@ -122,8 +137,9 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
                     .build();
 
             navPlayImg.setController(controller);
+        }else {
+            navPlayImg.setImageURI(Uri.parse("content://" + MusicPlayer.getAlbumPath()));
         }
-
 
         //String data = MusicUtils.getalbumdata(this, MusicPlayer.getCurrentAudioId());
 //        String data = MusicPlayer.getAlbumPath();
@@ -242,17 +258,17 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
 
 
         //	获取底部播放栏实例、绑定监听器
-        nowPlay = (LinearLayout) findViewById(R.id.nav_play);
-        navPlayImg = (SimpleDraweeView) findViewById(R.id.playbar_img);
-        navMusicName = (TextView) findViewById(R.id.playbar_info);
-        navArtist = (TextView) findViewById(R.id.playbar_singer);
-        mProgress = (ProgressBar) findViewById(R.id.song_progress_normal);
-        LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams) mProgress.getLayoutParams();
-        mProgress.measure(0, 0);
-        layoutParams.setMargins(0, -20, 0, -(mProgress.getMeasuredHeight() / 2));
-        mProgress.setLayoutParams(layoutParams);
+//        nowPlay = (LinearLayout) findViewById(R.id.nav_play);
+//        navPlayImg = (SimpleDraweeView) findViewById(R.id.playbar_img);
+//        navMusicName = (TextView) findViewById(R.id.playbar_info);
+//        navArtist = (TextView) findViewById(R.id.playbar_singer);
+//        mProgress = (ProgressBar) findViewById(R.id.song_progress_normal);
+//        LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams) mProgress.getLayoutParams();
+//        mProgress.measure(0, 0);
+//        layoutParams.setMargins(0, -20, 0, -(mProgress.getMeasuredHeight() / 2));
+//        mProgress.setLayoutParams(layoutParams);
 
-        setListener();
+  //      setListener();
 
         drawerLayout = (DrawerLayout) findViewById(R.id.fd);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawerLayout, null, R.string.app_name, R.string.search);

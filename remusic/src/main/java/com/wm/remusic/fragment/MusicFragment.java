@@ -342,7 +342,24 @@ public class MusicFragment extends BaseFragment {
 
             @Override
             public void onClick(View v) {
-//                new Thread(new Runnable() {
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        long[] list = new long[mList.size()];
+                        HashMap<Long,MusicInfo> infos = new HashMap();
+                        for (int i = 0; i < mList.size(); i++) {
+                            MusicInfo info = mList.get(i);
+                            list[i] = info.songId;
+                            info.islocal = true;
+                            info.albumData = MusicUtils.getAlbumArtUri(info.albumId) + "";
+                            infos.put(list[i] , mList.get(i));
+                        }
+
+                        MusicPlayer.playAll(infos, list, getAdapterPosition() - 1, false);
+                    }
+                }).start();
+//                final Handler handler = new Handler();
+//                handler.postDelayed(new Runnable() {
 //                    @Override
 //                    public void run() {
 //                        long[] list = new long[mList.size()];
@@ -350,43 +367,27 @@ public class MusicFragment extends BaseFragment {
 //                        for (int i = 0; i < mList.size(); i++) {
 //                            list[i] = mList.get(i).songId;
 //                            mList.get(i).favorite = 0;
+//                            mList.get(i).url = MusicUtils.getAlbumArtUri(mList.get(i).songId) + "";
 //                            infos.put(list[i] , mList.get(i));
 //                        }
-//
-//
+////                        String c  = gson.toJson(infos);
+////                        try{
+////                            FileOutputStream fo = new FileOutputStream(new File("/storage/emulated/0/playlist"));
+////                            fo.write(c.getBytes());
+////                        }catch (Exception e){
+////                            e.printStackTrace();
+////                        }
 //                        MusicPlayer.playAll(infos, list, getAdapterPosition() - 1, false);
+//                        Handler handler1 = new Handler();
+//                        handler1.postDelayed(new Runnable() {
+//                            @Override
+//                            public void run() {
+//                                notifyItemChanged(currentlyPlayingPosition);
+//                                notifyItemChanged(getAdapterPosition());
+//                            }
+//                        }, 50);
 //                    }
-//                }).start();
-                final Handler handler = new Handler();
-                handler.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        long[] list = new long[mList.size()];
-                        HashMap<Long,MusicInfo> infos = new HashMap();
-                        for (int i = 0; i < mList.size(); i++) {
-                            list[i] = mList.get(i).songId;
-                            mList.get(i).favorite = 0;
-                            mList.get(i).url = MusicUtils.getAlbumArtUri(mList.get(i).songId) + "";
-                            infos.put(list[i] , mList.get(i));
-                        }
-//                        String c  = gson.toJson(infos);
-//                        try{
-//                            FileOutputStream fo = new FileOutputStream(new File("/storage/emulated/0/playlist"));
-//                            fo.write(c.getBytes());
-//                        }catch (Exception e){
-//                            e.printStackTrace();
-//                        }
-                        MusicPlayer.playAll(infos, list, getAdapterPosition() - 1, false);
-                        Handler handler1 = new Handler();
-                        handler1.postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                notifyItemChanged(currentlyPlayingPosition);
-                                notifyItemChanged(getAdapterPosition());
-                            }
-                        }, 50);
-                    }
-                }, 100);
+//                }, 100);
             }
 
         }

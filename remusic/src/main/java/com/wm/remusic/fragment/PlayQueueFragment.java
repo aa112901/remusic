@@ -143,7 +143,7 @@ public class PlayQueueFragment extends DialogFragment {
 
                 try {
                     Gson gson = new Gson();
-                    FileInputStream fo = new FileInputStream(new File("/storage/emulated/0/playlist"));
+                    FileInputStream fo = new FileInputStream(new File(getContext().getCacheDir().getAbsolutePath() + "playlist"));
                     String c = readTextFromSDcard(fo);
                     HashMap<Long,MusicInfo> play = gson.fromJson(c,new TypeToken<HashMap<Long,MusicInfo>>(){}.getType());
                     if(play != null && play.size()> 0){
@@ -211,6 +211,7 @@ public class PlayQueueFragment extends DialogFragment {
             ((ItemViewHolder) holder).MusicName.setText(playlist.get(position).musicName);
             ((ItemViewHolder) holder).Artist.setText("-" + playlist.get(position).artist);
             //判断该条目音乐是否在播放
+            Log.e("current",MusicPlayer.getCurrentAudioId() + ""  + "   " +  musicInfo.songId);
             if (MusicPlayer.getCurrentAudioId() == musicInfo.songId) {
                 Log.e("current",MusicPlayer.getCurrentAudioId() + ""  + "   " +  musicInfo.songId);
                 ((ItemViewHolder) holder).playstate.setVisibility(View.VISIBLE);

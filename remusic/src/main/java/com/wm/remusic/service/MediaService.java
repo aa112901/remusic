@@ -90,6 +90,7 @@ import com.wm.remusic.net.HttpUtil;
 import com.wm.remusic.permissions.Nammu;
 import com.wm.remusic.provider.MusicPlaybackState;
 import com.wm.remusic.provider.RecentStore;
+import com.wm.remusic.proxy.utils.MediaPlayerProxy;
 import com.wm.remusic.receiver.MediaButtonIntentReceiver;
 import com.wm.remusic.recent.QueueLoader;
 import com.wm.remusic.recent.SongPlayCount;
@@ -97,6 +98,7 @@ import com.wm.remusic.recent.SortedCursor;
 import com.wm.remusic.uitl.CommonUtils;
 import com.wm.remusic.uitl.ImageUtils;
 import com.wm.remusic.uitl.MusicUtils;
+import com.wm.remusic.uitl.PreferencesUtility;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -281,6 +283,7 @@ public class MediaService extends Service {
     private MusicDetailInfo mInfo;
     boolean isNextLocal = true;
     Gson gson = new Gson();
+    MediaPlayerProxy proxy;
 
     @Override
     public IBinder onBind(final Intent intent) {
@@ -319,6 +322,10 @@ public class MediaService extends Service {
     public void onCreate() {
         if (D) Log.d(TAG, "Creating service");
         super.onCreate();
+
+        proxy = new MediaPlayerProxy(this);
+        proxy.init();
+        proxy.start();
 
         mNotificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
 
@@ -783,9 +790,21 @@ public class MediaService extends Service {
         }
     }
 
-
+    public static final String TRACK_CHANGE = "track_has_change";
     private void updateCursor(final long trackId) {
-        updateCursor("_id=" + trackId, null);
+
+
+            MusicInfo info = mPlaylistInfo.get(trackId);
+            if(mPlaylistInfo.get(trackId) != null){
+                MatrixCursor cursor = new MatrixCursor(PROJECTION);
+                cursor.addRow(new Object[]{info.songId,info.artist,info.albumName,info.musicName
+                        ,info.data,info.albumData,info.albumId,info.artistId});
+                cursor.moveToFirst();
+                mCursor = cursor;
+                cursor.close();
+            }
+
+      //  updateCursor("_id=" + trackId, null);
     }
 
     private void updateCursor(final String selection, final String[] selectionArgs) {
@@ -861,47 +880,46 @@ public class MediaService extends Service {
 
     class GetPlayUrl implements Runnable{
         long id;
-        public GetPlayUrl(long id) {
+        boolean play;
+        public GetPlayUrl(long id ,boolean play) {
             this.id = id;
+            this.play = play;
         }
 
         @Override
         public void run() {
-            MusicDetailNet song = Down.getUrl(MediaService.this,id + "");
-            if(song != null) {
-                Log.e("current_url", song.getShow_link());
-                mPlayer.setDataSource(song.getShow_link());
+
+            String url = PreferencesUtility.getInstance(MediaService.this).getPlayLink(id);
+            if(url == null){
+                MusicDetailNet song = Down.getUrl(MediaService.this,id + "");
+                if(song != null && song.getShow_link() !=null) {
+                    url = song.getShow_link();
+                    PreferencesUtility.getInstance(MediaService.this).setPlayLink(id,url);
+                }
+            }
+                Log.e("current_url", url);
+                startProxy();
+                String urlEn = HttpUtil.urlEncode(url);
+                urlEn = proxy.getProxyURL(urlEn);
+                mPlayer.setDataSource(urlEn);
+            if(play) {
                 play();
+
             }
         }
     }
 
-    class GetPlayUrl1 implements Callable<Void>{
-        long id;
-        public GetPlayUrl1(long id) {
-            this.id = id;
-        }
-
-        @Override
-        public Void call() throws Exception {
-            MusicDetailNet song = Down.getUrl(MediaService.this,id + "");
-            mPlayer.setDataSource(song.getShow_link());
-            play();
-
-            return null;
-        }
-
+    private void openCurrentAndNextPlay(boolean play) {
+        openCurrentAndMaybeNext(play ,true);
     }
-
 
     private void openCurrentAndNext() {
-        openCurrentAndMaybeNext(true);
+        openCurrentAndMaybeNext(false,true);
     }
-    boolean openFile = true;
-    int isNet;
-    private void openCurrentAndMaybeNext(final boolean openNext) {
-        openFile = true;
+
+    private void openCurrentAndMaybeNext(final boolean play ,final boolean openNext) {
         synchronized (this) {
+
             closeCursor();
 
             if (mPlaylist.size() == 0) {
@@ -909,81 +927,24 @@ public class MediaService extends Service {
             }
             stop(false);
 
-           boolean shutdown = false;
+            boolean shutdown = false;
 
+            final long id = mPlaylist.get(mPlayPos).mId;
+            updateCursor(id);
 
-            final long id = mPlaylist.get(mPlayPos).mId ;
-            if(mPlaylistInfo == null){
-                return;
-            }
-            isNet = mPlaylistInfo.get(id).favorite;
-
-
-            if(isNet == 1){
-
-                MusicInfo info = mPlaylistInfo.get(id);
-                if(mPlaylistInfo.get(id) != null){
-                    MatrixCursor cursor = new MatrixCursor(PROJECTION);
-                    cursor.addRow(new Object[]{info.songId,info.artist,info.albumName,info.musicName
-                            ,info.data,info.albumData,info.albumId,info.artistId});
-                    cursor.moveToFirst();
-                    mCursor = cursor;
-                    cursor.close();
-                }
-
+            if (!mPlaylistInfo.get(id).islocal) {
                 executor.shutdownNow();
                 executor = Executors.newSingleThreadExecutor();
+                executor.submit(new GetPlayUrl(id, play));
 
-
-                executor.submit(new GetPlayUrl(id));
-                if (openNext) {
-                                setNextTrack();
-                            }
-               // futureTask.cancel(true);
-
-//                new AsyncTask<Void, Void, Void>() {
-//
-//                    MusicDetailNet song = null;
-//                 //   MusicDetailInfo info = null;
-//                    @Override
-//                    protected Void doInBackground(Void... params) {
-//                     //  noBit = HttpUtil.getBitmapStream(MediaService.this,getAlbumPath(),false);
-//                        song = Down.getUrl(MediaService.this,id + "");
-//                   //     info = Down.getInfo(id + "");
-//                        return null;
-//                    }
-//
-//                    @Override
-//                    protected void onPostExecute(Void aVoid) {
-//                        super.onPostExecute(aVoid);
-//                        if(song != null){
-//                            Log.e("current_url",song.getShow_link());
-//                            mPlayer.setDataSource(song.getShow_link());
-////                            MatrixCursor cursor = new MatrixCursor(PROJECTION);
-////                            cursor.addRow(new Object[]{info.getSong_id(),info.getArtist_name(),info.getAlbum_title(),info.getTitle()
-////                                    ,info.getLrclink(),info.getPic_small(),info.getAlbum_id(),info.getArtist_id()});
-////                            cursor.moveToFirst();
-////                            mCursor = cursor;
-////                            cursor.close();
-//                            play();
-//
-//                          if (openNext) {
-//                                setNextTrack();
-//                            }
-//
-//                        }
-//                    }
-//                }.execute();
-
-                return;
-            }else {
-                updateCursor(mPlaylist.get(mPlayPos).mId);
+            } else {
                 while (true) {
                     if (mCursor != null
                             && openFile(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI + "/"
                             + mCursor.getLong(IDCOLIDX))) {
                         break;
                     }
+
                     closeCursor();
                     if (mOpenFailedCounter++ < 10 && mPlaylist.size() > 1) {
                         final int pos = getNextPosition(false);
@@ -1001,11 +962,8 @@ public class MediaService extends Service {
                         shutdown = true;
                         break;
                     }
-
-                    break;
                 }
             }
-
 
             if (shutdown) {
                 scheduleDelayedShutdown();
@@ -1016,7 +974,14 @@ public class MediaService extends Service {
             } else if (openNext) {
                 setNextTrack();
             }
+        }
+    }
 
+    private void startProxy() {
+        if (proxy == null) {
+            proxy = new MediaPlayerProxy(this);
+            proxy.init();
+            proxy.start();
         }
     }
 
@@ -1107,67 +1072,52 @@ public class MediaService extends Service {
     }
 
     private void setNextTrack() {
-        setNextTrack(getNextPosition(false));
+        //setNextTrack(getNextPosition(false));
     }
 
 
 
-    int isnextnet;
     private void setNextTrack(int position) {
         mNextPlayPos = position;
         if (D) Log.d(TAG, "setNextTrack: next play position = " + mNextPlayPos);
         if (mNextPlayPos >= 0 && mPlaylist != null && mNextPlayPos < mPlaylist.size()) {
             final long id = mPlaylist.get(mNextPlayPos).mId;
-            isnextnet = mPlaylistInfo.get(id).getFavorite();
-            if(isNet == 1){
-                isNextLocal = false;
-            }else {
-                isNextLocal = true;
-            }
 
-            if( isNextLocal){
+            if( mPlaylistInfo.get(id).islocal){
                 mPlayer.setNextDataSource(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI + "/" + id);
             }else {
 
             Runnable next = new Runnable() {
                     @Override
                     public void run() {
-                        MusicDetailNet song = Down.getUrl(MediaService.this,id + "");
-                        if(song != null){
-                            Log.e("next_url",song.getShow_link());
-                            mPlayer.setNextDataSource(song.getShow_link());
-                            //   mInfo = mPlaylistInfo.get(id);
+
+                        String url = PreferencesUtility.getInstance(MediaService.this).getPlayLink(id);
+                        if(url == null){
+                            MusicDetailNet song = Down.getUrl(MediaService.this,id + "");
+                            if(song != null && song.getShow_link() !=null) {
+                                url = song.getShow_link();
+                                PreferencesUtility.getInstance(MediaService.this).setPlayLink(id,url);
+                            }
                         }
+                            Log.e("next_url",url);
+                        startProxy();
+                        String urlEn = HttpUtil.urlEncode(url);
+                        urlEn = proxy.getProxyURL(urlEn);
+                        mPlayer.setNextDataSource(urlEn);
+
                     }
                 };
                 nextExecutor.shutdownNow();
                 if(!nextExecutor.isShutdown()){
+                    try {
+                        Thread.sleep(60);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
                     nextExecutor.shutdownNow();
                 }
                 nextExecutor = Executors.newSingleThreadExecutor();
                 nextExecutor.execute(next);
-
-//                new AsyncTask<Void, Void, Void>() {
-//                    MusicDetailNet song = null;
-//                  //  MusicDetailInfo info = null;
-//                    @Override
-//                    protected Void doInBackground(Void... params) {
-//                        song = Down.getUrl(MediaService.this,id + "");
-//                  //      info = Down.getInfo(id + "");
-//                        return null;
-//                    }
-//
-//                    @Override
-//                    protected void onPostExecute(Void aVoid) {
-//                        super.onPostExecute(aVoid);
-//                        if(song.getShow_link() != null){
-//                            Log.e("next_url",song.getShow_link());
-//                            mPlayer.setNextDataSource(song.getShow_link());
-//                         //   mInfo = mPlaylistInfo.get(id);
-//                        }
-//
-//                    }
-//                }.execute();
             }
 
         } else {
@@ -1274,6 +1224,9 @@ public class MediaService extends Service {
         musicIntent.setAction(what.replace(TIMBER_PACKAGE_NAME, MUSIC_PACKAGE_NAME));
         sendStickyBroadcast(musicIntent);
 
+        if(what.equals(TRACK_CHANGE)){
+            return;
+        }
         if (what.equals(META_CHANGED)) {
 
             mRecentStore.addSongId(getAudioId());
@@ -1384,18 +1337,16 @@ public class MediaService extends Service {
             // remoteViews.setImageViewUri(R.id.image, MusicUtils.getAlbumUri(this, getAudioId()));
             noBit = null;
 
-        } else if(isNet == 1){
+        } else if(!isTrackLocal()){
                 if(noBit != null) {
                     remoteViews.setImageViewBitmap(R.id.image, noBit);
                     noBit = null;
 
                 }else {
-
                     ImageRequest imageRequest = ImageRequestBuilder
                             .newBuilderWithSource( Uri.parse(getAlbumPath()))
                             .setProgressiveRenderingEnabled(true)
                             .build();
-
                     ImagePipeline imagePipeline = Fresco.getImagePipeline();
                     DataSource<CloseableReference<CloseableImage>>
                             dataSource = imagePipeline.fetchDecodedImage(imageRequest,MediaService.this);
@@ -1420,29 +1371,6 @@ public class MediaService extends Service {
                                              }
                                          },
                             CallerThreadExecutor.getInstance());
-
-
-
-//                    new AsyncTask<Void,Void,Bitmap>(){
-//                        @Override
-//                        protected Bitmap doInBackground(Void... params) {
-//
-////                            Log.e("notification pic",url);
-//                            return HttpUtil.getBitmapStream(MediaService.this,getAlbumPath(),false);
-//                        }
-//
-//                        @Override
-//                        protected void onPostExecute(Bitmap bitmap1) {
-//                            if(bitmap1 != null){
-//                                noBit = bitmap1;
-//                                //remoteViews.setImageViewBitmap(R.id.image, BitmapFactory.decodeFile("/storage/emulated/0/c.jpg"));
-//                            }
-//                            else {
-//                                noBit = BitmapFactory.decodeResource(getResources(),R.drawable.placeholder_disk_210);
-//                            }
-//                            updateNotification();
-//                        }
-//                    }.execute();
                 }
             }else {
                 remoteViews.setImageViewResource(R.id.image, R.drawable.placeholder_disk_210);
@@ -1502,21 +1430,20 @@ public class MediaService extends Service {
         final SharedPreferences.Editor editor = mPreferences.edit();
         if (full) {
 
-//            Log.e("playlist",getQueue()[1] + "");
-          //  ArrayList<MusicInfo> playlist = QueueLoader.getQueueSongs(MediaService.this);
-          //  Log.e("playlist",playlist.size() + "");
             new Thread(new Runnable() {
                 @Override
                 public void run() {
                     mPlaybackStateStore.saveState(mPlaylist, mShuffleMode != SHUFFLE_NONE ? mHistory : null);
 
-                    if(mPlaylistInfo.size() >  0 ){
-                        String c  = gson.toJson(mPlaylistInfo);
-                        try{
-                            FileOutputStream fo = new FileOutputStream(new File("/storage/emulated/0/playlist"));
-                            fo.write(c.getBytes());
-                        }catch (Exception e){
-                            e.printStackTrace();
+                    synchronized (this) {
+                        if(mPlaylistInfo.size() >  0 ){
+                            String c  = gson.toJson(mPlaylistInfo);
+                            try{
+                                FileOutputStream fo = new FileOutputStream(new File(getCacheDir().getAbsolutePath() + "playlist"));
+                                fo.write(c.getBytes());
+                            }catch (Exception e){
+                                e.printStackTrace();
+                            }
                         }
                     }
                     editor.putInt("cardid", mCardId);
@@ -1564,7 +1491,7 @@ public class MediaService extends Service {
             mPlaylist = mPlaybackStateStore.getQueue();
 
             try {
-                FileInputStream fo = new FileInputStream(new File("/storage/emulated/0/playlist"));
+                FileInputStream fo = new FileInputStream(new File(getCacheDir().getAbsolutePath() + "playlist"));
                 String c = readTextFromSDcard(fo);
                 HashMap<Long,MusicInfo> play = gson.fromJson(c,new TypeToken<HashMap<Long,MusicInfo>>(){}.getType());
                 if(play != null && play.size()> 0){
@@ -2151,25 +2078,6 @@ public class MediaService extends Service {
 
             mPlaylistInfo = infos;
 
-
-//                try {
-//                    FileInputStream fo = new FileInputStream(new File("/storage/emulated/0/playlist"));
-//                    String c = readTextFromSDcard(fo);
-//                    HashMap<Long,MusicInfo> play = gson.fromJson(c,new TypeToken<HashMap<Long,MusicInfo>>(){}.getType());
-//                    if(play != null && play.size()> 0){
-//                        mPlaylistInfo = play;
-//                        Log.e("reload",mPlaylistInfo.keySet().toString());
-//                    }
-//
-//                } catch (FileNotFoundException e) {
-//                    e.printStackTrace();
-//                } catch (Exception e) {
-//                    e.printStackTrace();
-//                }
-
-                // mPlaylistInfo = infos;
-
-
             if (mShuffleMode == SHUFFLE_AUTO) {
                 mShuffleMode = SHUFFLE_NORMAL;
             }
@@ -2197,7 +2105,7 @@ public class MediaService extends Service {
 
 
             mHistory.clear();
-            openCurrentAndNext();
+            openCurrentAndNextPlay(true);
             if (oldId != getAudioId()) {
                 notifyChange(META_CHANGED);
             }
@@ -2369,7 +2277,7 @@ public class MediaService extends Service {
     }
 
     private void openCurrent() {
-        openCurrentAndMaybeNext(false);
+        openCurrentAndMaybeNext(false,false);
     }
 
     public void moveQueueItem(int index1, int index2) {
@@ -2529,17 +2437,7 @@ public class MediaService extends Service {
                             service.mCursor.close();
                             service.mCursor = null;
                         }
-                        if(service.isNextLocal){
-                            service.updateCursor(service.mPlaylist.get(service.mPlayPos).mId);
-                        }else {
-                            MusicInfo info = service.mPlaylistInfo.get(service.mPlaylist.get(service.mPlayPos).mId);
-                            MatrixCursor cursor = new MatrixCursor(PROJECTION);
-                            cursor.addRow(new Object[]{info.songId,info.artist,info.albumName,info.musicName
-                                    ,info.data,info.albumData,info.albumId,info.artistId});
-                            cursor.moveToFirst();
-                            service.mCursor = cursor;
-                            cursor.close();
-                        }
+                        service.updateCursor(service.mPlaylist.get(service.mPlayPos).mId);
 
                         service.notifyChange(META_CHANGED);
                         service.updateNotification();

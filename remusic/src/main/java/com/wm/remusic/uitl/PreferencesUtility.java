@@ -19,8 +19,10 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.os.AsyncTask;
 import android.preference.PreferenceManager;
+import android.util.ArraySet;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Set;
 
 public final class PreferencesUtility {
@@ -57,6 +59,16 @@ public final class PreferencesUtility {
             sInstance = new PreferencesUtility(context.getApplicationContext());
         }
         return sInstance;
+    }
+
+    public void setPlayLink(long id,String link){
+        final SharedPreferences.Editor editor = mPreferences.edit();
+        editor.putString(id + "",link);
+        editor.apply();
+    }
+
+    public String getPlayLink(long id){
+        return mPreferences.getString(id + "",null);
     }
 
 

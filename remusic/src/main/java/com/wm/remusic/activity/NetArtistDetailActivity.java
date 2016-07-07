@@ -158,7 +158,7 @@ public class NetArtistDetailActivity extends AppCompatActivity {
                         MusicInfo mi = new MusicInfo();
                         mi.artist =  getStringValue(jo, "author");
                         mi.musicName = getStringValue(jo, "title");
-                        mi.url = getStringValue(jo,"song_id");
+                        mi.data = getStringValue(jo,"song_id");
                         list.add(mi);
                     }
                 } catch (Exception e) {
@@ -321,7 +321,7 @@ public class NetArtistDetailActivity extends AppCompatActivity {
                                 setPositiveButton(mContext.getString(R.string.sure), new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
-                                        Down.downMusic(MainApplication.context,localItem.url + "",localItem.musicName);
+                                        Down.downMusic(MainApplication.context,localItem.data + "",localItem.musicName);
                                         dialog.dismiss();
                                     }
                                 }).

@@ -152,8 +152,9 @@ public class RoundFragment extends Fragment {
                 sdv.setImageURI(Uri.parse("res:/" + R.drawable.placeholder_disk_play_song));
             }
         };
-
-        if(!MusicPlayer.isTrackLocal()){
+        if(albumPath == null){
+            sdv.setImageURI(Uri.parse("res:/" + R.drawable.placeholder_disk_play_song));
+        }else {
             try {
 
                 ImageRequest request = ImageRequestBuilder.newBuilderWithSource(Uri.parse(albumPath)).build();
@@ -165,11 +166,12 @@ public class RoundFragment extends Fragment {
                         .build();
 
                 sdv.setController(controller);
-              //  sdv.setImageBitmap(BitmapFactory.decodeStream(HttpUtil.getFromCache(getActivity(),getAlbumPath())));
+                //  sdv.setImageBitmap(BitmapFactory.decodeStream(HttpUtil.getFromCache(getActivity(),getAlbumPath())));
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
+
 
         return rootView;
     }

@@ -21,6 +21,7 @@ public class BaseFragment extends Fragment {
             String action = intent.getAction();
             if (action.equals(MediaService.META_CHANGED)) {
                 reloadAdapter();
+                updateTrackInfo();
             } else if (action.equals(IConstants.MUSIC_COUNT_CHANGED)) {
                 reloadAdapter();
             } else if (action.equals(IConstants.PLAYLIST_COUNT_CHANGED)) {
@@ -39,6 +40,7 @@ public class BaseFragment extends Fragment {
         getActivity().registerReceiver(mStatusListener, f);
     }
 
+
     @Override
     public void onPause() {
         super.onPause();
@@ -46,6 +48,9 @@ public class BaseFragment extends Fragment {
     }
 
     public void reloadAdapter() {
+    }
+
+    public void updateTrackInfo()  {
     }
 
 }

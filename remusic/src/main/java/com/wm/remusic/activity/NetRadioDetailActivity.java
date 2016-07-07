@@ -284,7 +284,7 @@ public class NetRadioDetailActivity extends AppCompatActivity {
                                 setPositiveButton(mContext.getString(R.string.sure), new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
-                                        DownloadTask task = new DownloadTask.Builder(NetRadioDetailActivity.this,localItem.url)
+                                        DownloadTask task = new DownloadTask.Builder(NetRadioDetailActivity.this,localItem.data)
                                                 .setSaveDirPath("/storage/emulated/0/")
                                                 .setFileName(localItem.musicName+".mp3").build();
 
@@ -381,7 +381,7 @@ public class NetRadioDetailActivity extends AppCompatActivity {
 
                         try{
                             mediaPlayer.reset();
-                            mediaPlayer.setDataSource(arraylist.get(getAdapterPosition()).url);
+                            mediaPlayer.setDataSource(arraylist.get(getAdapterPosition()).data);
                             mediaPlayer.prepare();
                             mediaPlayer.start();
                             MusicPlayer.clearQueue();

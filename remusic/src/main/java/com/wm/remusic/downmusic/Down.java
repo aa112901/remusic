@@ -77,7 +77,7 @@ public class Down {
         MusicDetailNet musicDetailNet = null;
         gson = new Gson();
         try {
-            JsonArray jsonArray  =  HttpUtil.getResposeJsonObject(BMA.Song.songInfo(id).trim()).get("songurl")
+            JsonArray jsonArray  =  HttpUtil.getResposeJsonObject(BMA.Song.songInfo(id).trim(),context,false).get("songurl")
                     .getAsJsonObject().get("url").getAsJsonArray();
             int len = jsonArray.size();
             int downloadBit = 128;

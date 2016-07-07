@@ -142,7 +142,7 @@ public class AlbumsDetailActivity extends AppCompatActivity {
                     JsonElement e = (JsonElement)it.next();
                     JsonObject jo = e.getAsJsonObject();
                     MusicInfo mi = new MusicInfo();
-                    mi.url = getStringValue(jo, "mp3Url");
+                    mi.data = getStringValue(jo, "mp3Url");
                     mi.musicName = getStringValue(jo, "name");
 
                     list.add(mi);
@@ -178,7 +178,7 @@ public class AlbumsDetailActivity extends AppCompatActivity {
                     JsonElement e = (JsonElement)it.next();
                     JsonObject jo = e.getAsJsonObject();
                     MusicInfo mi = new MusicInfo();
-                    mi.url = getStringValue(jo, "title");
+                    mi.data = getStringValue(jo, "title");
                     mi.artist =  getStringValue(jo, "author");
                     mi.musicName = getStringValue(jo, "title");
 
@@ -327,7 +327,7 @@ public class AlbumsDetailActivity extends AppCompatActivity {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
                                       //  DownloadTask task = new DownloadTask(AlbumsDetailActivity.this);
-                                        DownloadTask task = new DownloadTask.Builder(AlbumsDetailActivity.this,localItem.url)
+                                        DownloadTask task = new DownloadTask.Builder(AlbumsDetailActivity.this,localItem.data)
                                                 .setSaveDirPath("/storage/emulated/0/")
                                                 .setFileName(localItem.musicName+".mp3").build();
                                       //  task.setUrl(localItem.url);
@@ -434,7 +434,7 @@ public class AlbumsDetailActivity extends AppCompatActivity {
 
                         try{
                             mediaPlayer.reset();
-                            mediaPlayer.setDataSource(arraylist.get(getAdapterPosition()).url);
+                            mediaPlayer.setDataSource(arraylist.get(getAdapterPosition()).data);
                             mediaPlayer.prepare();
                             mediaPlayer.start();
                             MusicPlayer.clearQueue();

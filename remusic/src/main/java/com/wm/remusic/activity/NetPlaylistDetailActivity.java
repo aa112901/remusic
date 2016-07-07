@@ -13,6 +13,7 @@ import android.os.Environment;
 import android.os.Handler;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -24,6 +25,7 @@ import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -43,6 +45,7 @@ import com.wm.remusic.R;
 import com.wm.remusic.downmusic.Down;
 import com.wm.remusic.downmusic.DownloadManager;
 import com.wm.remusic.downmusic.DownloadTask;
+import com.wm.remusic.fragment.QuickControlsFragment;
 import com.wm.remusic.info.MusicInfo;
 import com.wm.remusic.json.GeDanGeInfo;
 import com.wm.remusic.json.GeDanSrc;
@@ -83,13 +86,18 @@ public class NetPlaylistDetailActivity extends AppCompatActivity {
 
     private CollapsingToolbarLayout collapsingToolbarLayout;
     private AppBarLayout appBarLayout;
-    MediaPlayer mediaPlayer = new MediaPlayer();
+    LayoutInflater layoutInflater;
+
+    @Override
+    public void onAttachedToWindow() {
+        super.onAttachedToWindow();
+      //  init();
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-       gson = new Gson();
         if (getIntent().getExtras() != null) {
             playlsitId = getIntent().getStringExtra("albumid");
             albumPath = getIntent().getStringExtra("albumart");
@@ -119,8 +127,21 @@ public class NetPlaylistDetailActivity extends AppCompatActivity {
         setupToolbar();
         loadAllLists();
         setAlbumart();
+
     }
 
+    private void init(){
+        new AsyncTask<Void,Void,Void>(){
+
+            @Override
+            protected Void doInBackground(Void... params) {
+                FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+                QuickControlsFragment fragment = QuickControlsFragment.getSingleInstance();
+                ft.replace(R.id.bottom_container,fragment).commitAllowingStateLoss();
+                return null;
+            }
+        }.execute();
+    }
     private void setupToolbar() {
         setSupportActionBar(toolbar);
         final ActionBar ab = getSupportActionBar();
@@ -150,7 +171,7 @@ public class NetPlaylistDetailActivity extends AppCompatActivity {
                     int plen = pArray.size();
                     sparseArray = new SparseArray<MusicDetailInfo>();
                     for(int i = 0;i < plen; i++){
-                        GeDanGeInfo geDanGeInfo = gson.fromJson(pArray.get(i),GeDanGeInfo.class);
+                        GeDanGeInfo geDanGeInfo = MainApplication.gsonInstance().fromJson(pArray.get(i),GeDanGeInfo.class);
                         mList.add(geDanGeInfo);
                         JsonGet.get(new GetJson(geDanGeInfo.getSong_id(),i,sparseArray));
                     }
@@ -180,7 +201,7 @@ public class NetPlaylistDetailActivity extends AppCompatActivity {
             @Override
             protected void onPostExecute(Void aVoid) {
 
-
+                Log.e("mlist",mList.toString());
                 mAdapter = new PlaylistDetailAdapter(NetPlaylistDetailActivity.this, mList);
                 recyclerView.setAdapter(mAdapter);
                 recyclerView.addItemDecoration(new DividerItemDecoration(NetPlaylistDetailActivity.this, DividerItemDecoration.VERTICAL_LIST));
@@ -447,14 +468,12 @@ public class NetPlaylistDetailActivity extends AppCompatActivity {
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
-                 //       try{
-                            Log.e("playlist","net");
                             long[] list = new long[arraylist.size()];
                             HashMap<Long,MusicInfo> infos = new HashMap<Long,MusicInfo>();
                             for (int i = 0; i < arraylist.size(); i++) {
-                                Log.e("playlist",sparseArray.get(0).getTitle()+ "");
                                 list[i] = Long.parseLong(arraylist.get(i).getSong_id());
                                 MusicInfo musicInfo = new MusicInfo();
+                                musicInfo.songId = Integer.parseInt(arraylist.get(i).getSong_id());
                                 musicInfo.musicName = arraylist.get(i).getTitle();
                                 musicInfo.artist = sparseArray.get(i).getArtist_name();
                                 musicInfo.favorite = 1;
@@ -465,12 +484,7 @@ public class NetPlaylistDetailActivity extends AppCompatActivity {
                                 musicInfo.albumData = sparseArray.get(i).getPic_radio();
                                 infos.put(list[i] , musicInfo);
                             }
-                            Log.e("play","net" + arraylist.size());
                             MusicPlayer.playAll(infos, list, getAdapterPosition()-1, false);
-
-                    //    }catch (Exception e){
-                            //e.printStackTrace();
-                      //  }
                     }
                 }).start();
 

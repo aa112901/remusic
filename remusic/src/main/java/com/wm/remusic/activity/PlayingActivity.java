@@ -22,6 +22,7 @@ import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -382,25 +383,6 @@ public class PlayingActivity extends BaseActivity implements IConstants {
     }
 
 
-//    public BroadcastReceiver mStatusListener = new BroadcastReceiver() {
-//        @Override
-//        public void onReceive(Context context, Intent intent) {
-//            String action = intent.getAction();
-//            if (action.equals(MediaService.META_CHANGED)) {
-//
-//                updateTrackInfo();
-//                //setPauseButtonImage();
-//                //queueNextRefresh(1);
-//            } else if (action.equals(MediaService.PLAYSTATE_CHANGED)) {
-//                //setPauseButtonImage();
-//            } else if (action.equals(MediaService.QUEUE_CHANGED)) {
-//                updateQueue();
-//            } else if (action.equals(IConstants.MUSIC_COUNT_CHANGED)) {
-//
-//            }
-//        }
-//    };
-
 
     public void updateQueue() {
         if (MusicPlayer.getQueueSize() == 0) {
@@ -426,8 +408,6 @@ public class PlayingActivity extends BaseActivity implements IConstants {
         if (MusicPlayer.getQueueSize() == 0) {
             return;
         }
-
-
         if (!duetoplaypause) {
             isFav = false;
             ArrayList<MusicTrack> favlists = playlistsManager.getPlaylist(IConstants.FAV_PLAYLIST);
@@ -438,7 +418,6 @@ public class PlayingActivity extends BaseActivity implements IConstants {
                 }
             }
             updateFav(isFav);
-           // new setBlurredAlbumArt().execute();
 
             if(MusicPlayer.getCurrentAudioId() != bluredId){
                 new setBlurredAlbumArt().execute();
@@ -639,11 +618,11 @@ public class PlayingActivity extends BaseActivity implements IConstants {
     }
     Bitmap mBitmap;
     private class setBlurredAlbumArt extends AsyncTask<Void, Void, Drawable> {
-
         long albumid = MusicPlayer.getCurrentAlbumId();
 
         @Override
         protected Drawable doInBackground(Void... loadedImage) {
+
             Drawable drawable = null;
             mBitmap = null;
             if (newOpts == null) {
@@ -654,6 +633,7 @@ public class PlayingActivity extends BaseActivity implements IConstants {
 
             if(!MusicPlayer.isTrackLocal()){
              if(getAlbumPath() == null){
+                 mBitmap = BitmapFactory.decodeResource(getResources(),R.drawable.placeholder_disk_210);
                  drawable = ImageUtils.createBlurredImageFromBitmap(mBitmap, PlayingActivity.this.getApplication(), 3);
                  return drawable;
              }
@@ -667,18 +647,15 @@ public class PlayingActivity extends BaseActivity implements IConstants {
                         dataSource = imagePipeline.fetchDecodedImage(imageRequest,PlayingActivity.this);
 
                 dataSource.subscribe(new BaseBitmapDataSubscriber() {
-
                                          @Override
                                          public void onNewResultImpl(@Nullable Bitmap bitmap) {
                                              // You can use the bitmap in only limited ways
                                              // No need to do any cleanup.
                                              if(bitmap != null){
                                                  mBitmap = bitmap;
-
                                              };
 
                                          }
-
                                          @Override
                                          public void onFailureImpl(DataSource dataSource) {
                                              // No cleanup required here.

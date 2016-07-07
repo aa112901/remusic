@@ -143,7 +143,7 @@ public class NetAlbumsDetailActivity extends AppCompatActivity {
                     MusicInfo mi = new MusicInfo();
                     mi.artist =  getStringValue(jo, "author");
                     mi.musicName = getStringValue(jo, "title");
-                    mi.url = getStringValue(jo,"song_id");
+                    mi.data = getStringValue(jo,"song_id");
 
                     list.add(mi);
                 }
@@ -287,7 +287,7 @@ public class NetAlbumsDetailActivity extends AppCompatActivity {
                                 setPositiveButton(mContext.getString(R.string.sure), new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
-                                        Down.downMusic(MainApplication.context,localItem.url + "",localItem.musicName);
+                                        Down.downMusic(MainApplication.context,localItem.data + "",localItem.musicName);
                                         dialog.dismiss();
                                     }
                                 }).
@@ -380,7 +380,7 @@ public class NetAlbumsDetailActivity extends AppCompatActivity {
 
                         try{
                             mediaPlayer.reset();
-                            mediaPlayer.setDataSource(arraylist.get(getAdapterPosition()).url);
+                            mediaPlayer.setDataSource(arraylist.get(getAdapterPosition()).data);
                             mediaPlayer.prepare();
                             mediaPlayer.start();
                             MusicPlayer.clearQueue();

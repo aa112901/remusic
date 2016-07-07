@@ -290,8 +290,6 @@ public class MusicUtils implements IConstants {
             music.data = filePath;
             String folderPath = filePath.substring(0, filePath.lastIndexOf(File.separator));
             music.folder = folderPath;
-            music.musicNameKey = StringHelper.getPingYin(music.musicName);
-            //music.artistKey = StringHelper.getPingYin(music.artist);
             music.size = cursor.getInt(cursor
                     .getColumnIndex(Media.SIZE));
             musicList.add(music);
@@ -470,8 +468,6 @@ public class MusicUtils implements IConstants {
             String folderPath = filePath.substring(0,
                     filePath.lastIndexOf(File.separator));
             music.folder = folderPath;
-            music.musicNameKey = StringHelper.getPingYin(music.musicName);
-            //music.artistKey = StringHelper.getPingYin(music.artist);
         }
         cursor.close();
         return music;

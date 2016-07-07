@@ -32,6 +32,7 @@ import java.io.FileOutputStream;
 import java.io.FilterInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.net.CookieManager;
 import java.net.CookiePolicy;
 import java.util.Iterator;
@@ -142,6 +143,24 @@ public class HttpUtil {
         return inSampleSize;
     }
 
+    /**
+     * URL编码
+     *
+     * @param url
+     * @return
+     */
+    public static String urlEncode(String url) {
+        try {
+            url = java.net.URLEncoder.encode(url, "UTF-8");
+            url = url.replaceAll("%2F", "/");
+            url = url.replaceAll("%3A", ":");
+            url = url.replaceAll("\\+", "%20");
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+        return url;
+    }
+
     public static Bitmap _decodeBitmapFromStream(InputStream inputStream,
                                                  int reqWidth, int reqHeight) {
         byte[] byteArr = new byte[0];
@@ -216,8 +235,8 @@ public class HttpUtil {
 
     public static JsonObject getResposeJsonObject(String action1 , Context context ,boolean forceCache){
         try {
-
-            File sdcache = context.getExternalCacheDir();
+            Log.e("action-cache",action1);
+            File sdcache = context.getCacheDir();
             //File cacheFile = new File(context.getCacheDir(), "[缓存目录]");
             Cache cache = new Cache(sdcache.getAbsoluteFile(), 1024 * 1024 * 30); //30Mb
             mOkHttpClient.setCache(cache);
@@ -235,7 +254,7 @@ public class HttpUtil {
             Response response = mOkHttpClient.newCall(request).execute();
             if(response.isSuccessful()){
                 String c = response.body().string();
-                Log.e("re",c);
+                Log.e("cache",c);
                 JsonParser parser = new JsonParser();
                 JsonElement el = parser.parse(c);
                 return el.getAsJsonObject();

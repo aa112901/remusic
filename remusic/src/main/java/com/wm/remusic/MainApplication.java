@@ -35,6 +35,7 @@ public class MainApplication extends Application {
     //private static int MAX_MEM = 60 * ByteConstants.MB;
     private long favPlaylist = IConstants.FAV_PLAYLIST;
     public static Gson gson;
+
     public static Gson gsonInstance(){
         if(gson == null){
             gson = new Gson();

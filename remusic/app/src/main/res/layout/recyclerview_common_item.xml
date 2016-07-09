@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:fresco="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="50dp"
+    android:background="?android:attr/selectableItemBackground"
+    android:baselineAligned="false"
+    android:orientation="horizontal"
+    android:padding="6dp">
+
+        <com.facebook.drawee.view.SimpleDraweeView
+            android:layout_marginLeft="7dp"
+            android:layout_alignParentLeft="true"
+            android:id="@+id/viewpager_list_img"
+            android:layout_width="45dp"
+            android:layout_height="match_parent"
+            android:scaleType="centerCrop"
+            fresco:placeholderImage="@drawable/placeholder_disk_210"
+            fresco:placeholderImageScaleType="fitXY"
+            fresco:actualImageScaleType="centerInside" />
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_marginLeft="7dp"
+        android:layout_toRightOf="@+id/viewpager_list_img"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/viewpager_list_toptext"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:singleLine="true"
+            android:text="如果我变成回忆"
+            android:textColor="@color/text_color"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/viewpager_list_bottom_text"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:ellipsize="end"
+            android:maxLength="20"
+            android:maxLines="1"
+            android:singleLine="true"
+            android:textColor="@color/small_font"
+            android:textSize="12sp" />
+    </LinearLayout>
+
+
+        <ImageView
+            android:layout_alignParentRight="true"
+            android:id="@+id/viewpager_list_button"
+            android:layout_width="wrap_content"
+            android:scaleType="centerInside"
+            android:padding="6dp"
+            android:layout_height="match_parent"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:focusable="false"
+            android:foregroundTint="#434343"
+            android:src="@drawable/abc_ic_menu_moreoverflow_mtrl_alpha" />
+
+</RelativeLayout>

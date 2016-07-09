@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <ImageView
+        android:id="@+id/play_disc"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_margin="70dp"
+        android:src="@drawable/play_disc" />
+
+    <com.wm.remusic.widget.CircleImageView xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/circle"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_margin="100dp"
+        android:scaleType="centerCrop"
+        app:border_width="5dp"
+
+        />
+
+</FrameLayout>

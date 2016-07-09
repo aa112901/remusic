@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <android.support.v4.view.ViewPager
+        android:id="@+id/viewPager"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:gravity="center_horizontal"
+        android:layout_marginBottom="10dp"
+        android:orientation="horizontal">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <View
+                android:id="@+id/v_dot1"
+                android:layout_width="9dp"
+                android:layout_height="9dp"
+                android:layout_centerInParent="true"
+                android:layout_toLeftOf="@+id/v_dot2"
+                android:background="@mipmap/red_point" />
+
+            <View
+                android:id="@+id/v_dot2"
+                android:layout_width="9dp"
+                android:layout_height="9dp"
+                android:layout_marginStart="3dp"
+                android:layout_centerInParent="true"
+                android:layout_toLeftOf="@+id/v_dot3"
+                android:background="@mipmap/grey_point" />
+
+            <View
+                android:id="@+id/v_dot3"
+                android:layout_width="9dp"
+                android:layout_height="9dp"
+                android:layout_marginStart="3dp"
+                android:layout_centerInParent="true"
+                android:layout_toLeftOf="@+id/v_dot4"
+                android:background="@mipmap/grey_point" />
+
+            <View
+                android:id="@+id/v_dot4"
+                android:layout_width="9dp"
+                android:layout_marginStart="3dp"
+                android:layout_height="9dp"
+                android:layout_centerInParent="true"
+                android:background="@mipmap/grey_point" />
+
+            <View
+                android:id="@+id/v_dot5"
+                android:layout_width="9dp"
+                android:layout_marginStart="3dp"
+                android:layout_height="9dp"
+                android:layout_centerInParent="true"
+                android:layout_toRightOf="@+id/v_dot4"
+                android:background="@mipmap/grey_point" />
+
+            <View
+                android:id="@+id/v_dot6"
+                android:layout_width="9dp"
+                android:layout_marginStart="3dp"
+                android:layout_height="9dp"
+                android:layout_centerInParent="true"
+                android:layout_gravity="center"
+                android:layout_toRightOf="@+id/v_dot5"
+                android:background="@mipmap/grey_point" />
+
+            <View
+                android:id="@+id/v_dot7"
+                android:layout_marginStart="3dp"
+                android:layout_width="9dp"
+                android:layout_height="9dp"
+                android:layout_centerInParent="true"
+                android:layout_toRightOf="@+id/v_dot6"
+                android:background="@mipmap/grey_point" />
+
+
+        </RelativeLayout>
+
+    </LinearLayout>
+</RelativeLayout>

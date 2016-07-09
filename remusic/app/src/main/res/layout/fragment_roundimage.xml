@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.percent.PercentFrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal">
+
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_gravity="center"
+            app:layout_widthPercent="76%"
+            android:layout_height="match_parent"
+            android:layout_margin="1dp"
+            android:src="@drawable/play_disc" />
+
+        <!--fresco:placeholderImage="@drawable/play_disc"-->
+        <com.facebook.drawee.view.SimpleDraweeView
+            android:id="@+id/sdv"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            app:layout_widthPercent="52%"
+            />
+        <!--<com.wm.remusic.widget.CircleImageView-->
+        <!--xmlns:app="http://schemas.android.com/apk/res-auto"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="match_parent"-->
+        <!--android:scaleType="centerCrop"-->
+        <!--android:id="@+id/circle"-->
+        <!--android:layout_margin="43dp"-->
+        <!--app:border_width="5dp"-->
+        <!--/>-->
+</android.support.percent.PercentFrameLayout>

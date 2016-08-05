@@ -6,7 +6,6 @@ import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -16,7 +15,8 @@ import android.text.style.ImageSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.FrameLayout;
+import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.facebook.drawee.backends.pipeline.Fresco;
@@ -28,231 +28,362 @@ import com.facebook.imagepipeline.request.ImageRequestBuilder;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import com.wm.remusic.MainApplication;
 import com.wm.remusic.R;
-import com.wm.remusic.activity.NetPlaylistDetailActivity;
-import com.wm.remusic.json.Gedan;
-import com.wm.remusic.net.BMA;
+import com.wm.remusic.activity.AlbumsDetailActivity;
+import com.wm.remusic.activity.NetItemChangeActivity;
+import com.wm.remusic.activity.PlaylistActivity;
+import com.wm.remusic.activity.RadioDetailActivity;
+import com.wm.remusic.json.GedanHotInfo;
+import com.wm.remusic.json.RadioNetInfo;
+import com.wm.remusic.json.RecommendListNewAlbumInfo;
+import com.wm.remusic.json.RecommendListRadioInfo;
+import com.wm.remusic.json.RecommendListRecommendInfo;
 import com.wm.remusic.net.HttpUtil;
+import com.wm.remusic.net.NetworkUtils;
+import com.wm.remusic.uitl.PreferencesUtility;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.HashMap;
 
 /**
- * Created by wm on 2016/5/15.
+ * Created by wm on 2016/4/9.
  */
 public class RecommendFragment extends Fragment {
 
-    FrameLayout frameLayout;
-    View view;
-    private GridLayoutManager gridLayoutManager;
-    private RecommendAdapter recomendAdapter;
-    private RecyclerView recyclerView;
-    private int lastVisibleItem;
-    private ArrayList<Gedan> recommendList = new ArrayList<>();
-    int pageCount = 1;
-    Gson gson;
 
-    @Nullable
+    private RecyclerView recyclerView1, recyclerView2, recyclerView3;
+    private GridLayoutManager gridLayoutManager, gridLayoutManager2, gridLayoutManager3;
+    private RecommendAdapter recomendAdapter;
+    private NewAlbumsAdapter newAlbumsAdapter;
+    private RadioAdapter radioAdapter;
+
+    private ArrayList<GedanHotInfo> recomendList = new ArrayList<>();
+    private ArrayList<NewAlbums> newAlbumsList = new ArrayList<>();
+    private ArrayList<RadioNetInfo> radioList = new ArrayList<>();
+    private ArrayList<RecommendListRecommendInfo> mRecomendList = new ArrayList<>();
+    private ArrayList<RecommendListNewAlbumInfo> mNewAlbumsList = new ArrayList<>();
+    private ArrayList<RecommendListRadioInfo> mRadioList = new ArrayList<>();
+    int width = 160, height = 160;
+
+    String newAlbums = "http://music.163.com/api/album/new?area=ALL&offset=" + "0" + "&total=true&limit=" + "6";
+    LayoutInflater layoutInflater;
+    View loadView, v1, v2, v3;
+    LinearLayout itemChanged;
+    HashMap<String, View> hashMap;
+    String position;
+    private ChangeView changeView;
+    private boolean isFromCache = true;
+
+    public void setChanger(ChangeView changer) {
+        changeView = changer;
+    }
+
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.load_framelayout, container, false);
-        frameLayout = (FrameLayout) view.findViewById(R.id.loadframe);
-        View loadView = LayoutInflater.from(getActivity()).inflate(R.layout.loading, frameLayout, false);
-        frameLayout.addView(loadView);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.recommend, container, false);
+
+        ImageButton privateFm = (ImageButton) view.findViewById(R.id.private_fm);
+
+        layoutInflater = LayoutInflater.from(getContext());
+        TextView dailyText = (TextView) view.findViewById(R.id.daily_text);
+        dailyText.setText(Calendar.getInstance().get(Calendar.DAY_OF_MONTH) + "");
+//        recyclerView1 = (RecyclerView) view.findViewById(R.id.recommend_playlist_recyclerview);
+//        recyclerView2 = (RecyclerView) view.findViewById(R.id.recommend_newalbums_recyclerview);
+//        recyclerView3 = (RecyclerView) view.findViewById(R.id.recommend_radio_recyclerview);
+//        gridLayoutManager = new GridLayoutManager(getActivity(),3);
+//        gridLayoutManager2 = new GridLayoutManager(getActivity(),3);
+//        gridLayoutManager3 = new GridLayoutManager(getActivity(),3);
+//        recyclerView1.setLayoutManager(gridLayoutManager);
+//        recyclerView2.setLayoutManager(gridLayoutManager2);
+//        recyclerView3.setLayoutManager(gridLayoutManager3);
+//        recomendAdapter = new RecommendAdapter(null);
+//        newAlbumsAdapter = new NewAlbumsAdapter(null);
+//        radioAdapter = new RadioAdapter(null);
+//        recyclerView1.setAdapter(recomendAdapter);
+//        recyclerView2.setAdapter(newAlbumsAdapter);
+//        recyclerView3.setAdapter(radioAdapter);
+
+        itemChanged = (LinearLayout) view.findViewById(R.id.item_change);
+        linearLayout = (LinearLayout) view.findViewById(R.id.recommend_layout);
+        loadView = layoutInflater.inflate(R.layout.loading, null, false);
+        itemChanged.setVisibility(View.INVISIBLE);
+        linearLayout.addView(loadView);
+
+        recomendAdapter = new RecommendAdapter(null);
+        newAlbumsAdapter = new NewAlbumsAdapter(null);
+        radioAdapter = new RadioAdapter(null);
+
+        reloadAdapter();
+
+        TextView change = (TextView) view.findViewById(R.id.change_item_position);
+        change.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent itent = new Intent(getContext(), NetItemChangeActivity.class);
+                getActivity().startActivity(itent);
+            }
+        });
+
         return view;
     }
 
-    @Override
-    public void setUserVisibleHint(boolean isVisibleToUser) {
-        super.setUserVisibleHint(isVisibleToUser);
-        if (isVisibleToUser) {
-            if (view == null) {
-                view = LayoutInflater.from(getActivity()).inflate(R.layout.recommend_all_playlist, frameLayout, false);
-                recyclerView = (RecyclerView) view.findViewById(R.id.recommend_playlist_recyclerview);
-                gridLayoutManager = new GridLayoutManager(getActivity(), 2);
-                recyclerView.setLayoutManager(gridLayoutManager);
-                recyclerView.setHasFixedSize(true);
-
-                recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
-                    @Override
-                    public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
-                        super.onScrollStateChanged(recyclerView, newState);
-                        if (newState == RecyclerView.SCROLL_STATE_IDLE && lastVisibleItem + 1 == recomendAdapter.getItemCount()) {
-                            new MAsyncTask(++pageCount).execute();
-                        }
-                    }
-
-                    @Override
-                    public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-                        super.onScrolled(recyclerView, dx, dy);
-                        lastVisibleItem = gridLayoutManager.findLastVisibleItemPosition();
-                    }
-
-                });
+    LinearLayout linearLayout;
 
 
-                loadData();
-
-            }
-        }
+    public String getThisMonthDate() {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        Calendar cc2 = Calendar.getInstance();
+        int maxMonthDay = cc2.getActualMaximum(Calendar.DAY_OF_MONTH);
+        cc2.set(cc2.get(Calendar.YEAR), cc2.get(Calendar.MONTH), maxMonthDay, 23, 59, 59);
+        String end = sdf.format(cc2.getTime());
+        cc2.set(cc2.get(Calendar.YEAR), cc2.get(Calendar.MONTH), 1, 0, 0, 0);
+        String start = sdf.format(cc2.getTime());
+        return start + "|" + end;
     }
 
-    class MAsyncTask extends AsyncTask {
 
-        private int next;
-
-        public MAsyncTask(int next) {
-            this.next = next;
-        }
-
-        @Override
-        protected Object doInBackground(Object[] params) {
-
-            JsonObject result = HttpUtil.getResposeJsonObject(BMA.GeDan.geDan(next, 10));
-            if (result == null) {
-                return null;
-            }
-            //热门歌单
-            JsonArray pArray = result.get("content").getAsJsonArray();
-            if (pArray == null) {
-                return null;
-            }
-
-            int plen = pArray.size();
-
-            for (int i = 0; i < plen; i++) {
-                Gedan gedan = gson.fromJson(pArray.get(i), Gedan.class);
-                recommendList.add(gedan);
-            }
-
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Object o) {
-            super.onPostExecute(o);
-            recomendAdapter.update(recommendList);
-        }
-
-    }
-
-    private void loadData() {
+    private void reloadAdapter() {
+        final Gson gson = new Gson();
         new AsyncTask<Void, Void, Void>() {
 
             @Override
             protected Void doInBackground(Void... params) {
-                gson = new Gson();
-                JsonObject result = HttpUtil.getResposeJsonObject(BMA.GeDan.geDan(1, 10));
-                if (result == null) {
-                    return null;
-                }
-                //热门歌单
-                JsonArray pArray = result.get("content").getAsJsonArray();
-                if (pArray == null) {
-                    return null;
-                }
 
-                int plen = pArray.size();
+                if (NetworkUtils.isConnectInternet(getActivity())) {
+                    isFromCache = false;
+                }
+                String fmtrash = "http://music.163.com/api/radio/get";
 
-                for (int i = 0; i < plen; i++) {
-                    Gedan Gedan = gson.fromJson(pArray.get(i), Gedan.class);
-                    recommendList.add(Gedan);
+
+//                //热门歌单
+//                try {
+//                    JsonObject result = HttpUtil.getResposeJsonObject(BMA.GeDan.hotGeDan(6),getActivity() , isFromCache);
+//
+//                    if(result == null){
+//                        return null;
+//                    }
+//
+//                    JsonArray pArray = result.get("content")
+//                            .getAsJsonObject().get("list").getAsJsonArray();
+//                    if(pArray == null){
+//                        return null;
+//                    }
+//
+//                    int plen = pArray.size();
+//
+//                    for(int i = 0;i < plen; i++){
+//                        GedanHotInfo gedanHotInfo = gson.fromJson(pArray.get(i),GedanHotInfo.class);
+//                        recomendList.add(gedanHotInfo);
+//                    }
+//                } catch (NullPointerException e) {
+//                    e.printStackTrace();
+//                }
+//
+//                //新专辑
+//                try {
+//                    JsonObject result2 = HttpUtil.getResposeJsonObject(newAlbums,getContext() ,isFromCache);
+//                    JsonArray jsonArray2  = result2.get("albums").getAsJsonArray();
+//
+//                    Iterator it2 = jsonArray2.iterator();
+//                    while(it2.hasNext()){
+//                        JsonElement e = (JsonElement)it2.next();
+//                        JsonObject jo = e.getAsJsonObject();
+//
+//                        String artistName = jo.get("artist").getAsJsonObject().get("name").getAsString();
+//                        NewAlbums newAlbums = new NewAlbums(getStringValue(jo, "blurPicUrl"),getIntValue(jo, "id"),
+//                                getStringValue(jo, "name"), artistName, getIntValue(jo, "publishTime"));
+//                        newAlbumsList.add(newAlbums);
+//                    }
+//                } catch (NullPointerException e) {
+//                    e.printStackTrace();
+//                }
+//
+//                //推荐电台
+//                try {
+//                    JsonObject result3 = HttpUtil.getResposeJsonObject(BMA.Radio.recommendRadioList(6),getActivity() , isFromCache);
+//
+//                    JsonArray rArray = result3.get("list").getAsJsonArray();
+//
+//                    int rlen = rArray.size();
+//
+//                    for(int i = 0;i < rlen; i++){
+//                        RadioNetInfo radioNetInfo = gson.fromJson(rArray.get(i),RadioNetInfo.class);
+//                        radioList.add(radioNetInfo);
+//                    }
+//                } catch (NullPointerException e) {
+//                    e.printStackTrace();
+//                }
+
+                //推荐电台
+                try {
+                    JsonObject list = HttpUtil.getResposeJsonObject("http://tingapi.ting.baidu.com/v1/restserver/ting?from=android&version=5.8.1.0&channel=ppzs&operator=3&method=baidu.ting.plaza.index&cuid=89CF1E1A06826F9AB95A34DC0F6AAA14"
+                            , getActivity(), isFromCache);
+
+                    JsonObject object = list.get("result").getAsJsonObject();
+                    JsonArray radioArray = object.get("radio").getAsJsonObject().get("result").getAsJsonArray();
+                    JsonArray recommendArray = object.get("diy").getAsJsonObject().get("result").getAsJsonArray();
+                    JsonArray newAlbumArray = object.get("mix_1").getAsJsonObject().get("result").getAsJsonArray();
+
+
+                    for (int i = 0; i < 6; i++) {
+                        mRecomendList.add(MainApplication.gsonInstance().fromJson(recommendArray.get(i), RecommendListRecommendInfo.class));
+                        mNewAlbumsList.add(MainApplication.gsonInstance().fromJson(newAlbumArray.get(i), RecommendListNewAlbumInfo.class));
+                        mRadioList.add(MainApplication.gsonInstance().fromJson(radioArray.get(i), RecommendListRadioInfo.class));
+                    }
+                } catch (NullPointerException e) {
+                    e.printStackTrace();
                 }
 
                 return null;
             }
 
             @Override
-            protected void onPostExecute(Void aVoid) {
-                super.onPostExecute(aVoid);
-                recomendAdapter = new RecommendAdapter(recommendList);
-                recyclerView.setAdapter(recomendAdapter);
-                frameLayout.removeAllViews();
-                frameLayout.addView(view);
+            protected void onPostExecute(Void v) {
+
+                v1 = layoutInflater.inflate(R.layout.recommend_playlist, linearLayout, false);
+                recyclerView1 = (RecyclerView) v1.findViewById(R.id.recommend_playlist_recyclerview);
+                gridLayoutManager = new GridLayoutManager(getActivity(), 3);
+                recyclerView1.setLayoutManager(gridLayoutManager);
+                recyclerView1.setAdapter(recomendAdapter);
+                TextView more = (TextView) v1.findViewById(R.id.more);
+                more.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        changeView.changeTo(1);
+                    }
+                });
+
+
+                v2 = layoutInflater.inflate(R.layout.recommend_newalbums, linearLayout, false);
+                recyclerView2 = (RecyclerView) v2.findViewById(R.id.recommend_newalbums_recyclerview);
+                gridLayoutManager2 = new GridLayoutManager(getActivity(), 3);
+                recyclerView2.setLayoutManager(gridLayoutManager2);
+                recyclerView2.setAdapter(newAlbumsAdapter);
+
+                v3 = layoutInflater.inflate(R.layout.recommend_radio, linearLayout, false);
+                recyclerView3 = (RecyclerView) v3.findViewById(R.id.recommend_radio_recyclerview);
+                gridLayoutManager3 = new GridLayoutManager(getActivity(), 3);
+                recyclerView3.setLayoutManager(gridLayoutManager3);
+                recyclerView3.setAdapter(radioAdapter);
+
+
+                recomendAdapter.update(mRecomendList);
+                newAlbumsAdapter.update(mNewAlbumsList);
+                radioAdapter.update(mRadioList);
+
+                hashMap = new HashMap<>();
+                hashMap.put("推荐歌单", v1);
+                hashMap.put("最新专辑", v2);
+                hashMap.put("主播电台", v3);
+                position = PreferencesUtility.getInstance(getActivity()).getItemPosition();
+                linearLayout.removeView(loadView);
+
+                addViews();
+
+                itemChanged.setVisibility(View.VISIBLE);
 
             }
+
         }.execute();
+
 
     }
 
+    public void addViews() {
+
+        String[] strs = position.split(" ");
+        for (int i = 0; i < strs.length; i++) {
+            linearLayout.addView(hashMap.get(strs[i]));
+        }
+
+    }
+
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (position == null) {
+            return;
+        }
+        String st = PreferencesUtility.getInstance(getActivity()).getItemPosition();
+        if (!st.equals(position)) {
+            position = st;
+            linearLayout.removeAllViews();
+            addViews();
+        }
+
+    }
+
+
     class RecommendAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
-        private ArrayList<Gedan> mList;
-        public int TYPE_ITEM = 0;
-        public int TYPE_FOOTER = 1;
+        private ArrayList<RecommendListRecommendInfo> mList;
         SpannableString spanString;
 
-        public RecommendAdapter(ArrayList<Gedan> list) {
-            mList = list;
-
+        public RecommendAdapter(ArrayList<RecommendListRecommendInfo> list) {
             Bitmap b = BitmapFactory.decodeResource(getResources(), R.mipmap.index_icn_earphone);
             ImageSpan imgSpan = new ImageSpan(getActivity(), b, ImageSpan.ALIGN_BASELINE);
             spanString = new SpannableString("icon");
             spanString.setSpan(imgSpan, 0, 4, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+            mList = list;
         }
 
-        public void update(ArrayList<Gedan> list) {
+        public void update(ArrayList<RecommendListRecommendInfo> list) {
             mList = list;
             notifyDataSetChanged();
         }
 
         @Override
-        public int getItemViewType(int position) {
-            if (position + 1 == mList.size() + 1) {
-                return TYPE_FOOTER;
-            }
-            return TYPE_ITEM;
-        }
-
-        @Override
         public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
             LayoutInflater layoutInflater = LayoutInflater.from(parent.getContext());
+            ItemView viewholder = new ItemView(layoutInflater.inflate(R.layout.recommend_playlist_item, parent, false));
 
-            if (viewType == TYPE_ITEM) {
-                return new ItemView(layoutInflater.inflate(R.layout.recommend_all_playlist_item, parent, false));
-            } else {
-                return new Footer(layoutInflater.inflate(R.layout.loading, parent, false));
-            }
-
+            return viewholder;
         }
 
         @Override
         public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+            final RecommendListRecommendInfo info = mList.get(position);
 
-            if (holder instanceof ItemView) {
-                final Gedan info = mList.get(position);
+            ImageRequest request = ImageRequestBuilder.newBuilderWithSource(Uri.parse(info.getPic()))
+                    .setResizeOptions(new ResizeOptions(width, height))
+                    .build();
 
-                ImageRequest request = ImageRequestBuilder.newBuilderWithSource(Uri.parse(info.getPic_300()))
-                        .setResizeOptions(new ResizeOptions(300, 300))
-                        .build();
+            DraweeController controller = Fresco.newDraweeControllerBuilder()
+                    .setOldController(((ItemView) holder).art.getController())
+                    .setImageRequest(request)
+                    .build();
 
-                DraweeController controller = Fresco.newDraweeControllerBuilder()
-                        .setOldController(((ItemView) holder).art.getController())
-                        .setImageRequest(request)
-                        .build();
+            ((ItemView) holder).art.setController(controller);
 
-                ((ItemView) holder).art.setController(controller);
 
-                //((ItemView) holder).art.setImageURI(Uri.parse(info.getPic_300()));
-                ((ItemView) holder).name.setText(info.getTitle());
-                ((ItemView) holder).count.setText(spanString);
+            ((ItemView) holder).name.setText(info.getTitle());
+            ((ItemView) holder).count.setText(spanString);
 
-                int count = Integer.parseInt(info.getListenum());
-                if(count > 10000){
-                    count = count / 10000;
-                    ((ItemView) holder).count.append(" " + count + "万");
-                }else {
-                    ((ItemView) holder).count.append(" " + info.getListenum());
-                }
-                ((ItemView) holder).itemView.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        Intent intent = new Intent(getActivity(), NetPlaylistDetailActivity.class);
-                        intent.putExtra("albumid", info.getListid());
-                        intent.putExtra("albumart", info.getPic_300());
-                        intent.putExtra("albumname", info.getTitle());
-                        getActivity().startActivity(intent);
-                    }
-                });
+            int count = Integer.parseInt(info.getListenum());
+            if (count > 10000) {
+                count = count / 10000;
+                ((ItemView) holder).count.append(" " + count + "万");
+            } else {
+                ((ItemView) holder).count.append(" " + info.getListenum());
             }
+            ((ItemView) holder).itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(getActivity(), PlaylistActivity.class);
+                    intent.putExtra("playlistid", info.getListid());
+                    intent.putExtra("islocal", false);
+                    intent.putExtra("albumart", info.getPic());
+                    intent.putExtra("playlistname", info.getTitle());
+                    intent.putExtra("playlistDetail", info.getTag());
+                    intent.putExtra("playlistcount", info.getListenum());
+
+                    getActivity().startActivity(intent);
+                }
+            });
 
         }
 
@@ -261,14 +392,11 @@ public class RecommendFragment extends Fragment {
             if (mList == null) {
                 return 0;
             }
-            return mList.size() + 1;
 
-        }
-
-        class Footer extends RecyclerView.ViewHolder {
-
-            public Footer(View itemView) {
-                super(itemView);
+            if (mList.size() < 7) {
+                return mList.size();
+            } else {
+                return 6;
             }
         }
 
@@ -281,6 +409,213 @@ public class RecommendFragment extends Fragment {
                 art = (SimpleDraweeView) itemView.findViewById(R.id.playlist_art);
                 name = (TextView) itemView.findViewById(R.id.playlist_name);
                 count = (TextView) itemView.findViewById(R.id.playlist_listen_count);
+            }
+        }
+
+    }
+
+    class RadioAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+        private ArrayList<RecommendListRadioInfo> mList;
+
+        public RadioAdapter(ArrayList<RecommendListRadioInfo> list) {
+            mList = list;
+        }
+
+        public void update(ArrayList<RecommendListRadioInfo> list) {
+            mList = list;
+            notifyDataSetChanged();
+        }
+
+        @Override
+        public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+            LayoutInflater layoutInflater = LayoutInflater.from(parent.getContext());
+            ItemView viewholder = new ItemView(layoutInflater.inflate(R.layout.recommend_newalbums_item, parent, false));
+
+            return viewholder;
+        }
+
+        @Override
+        public void onBindViewHolder(RecyclerView.ViewHolder holder, final int position) {
+            final RecommendListRadioInfo info = mList.get(position);
+
+            ImageRequest request = ImageRequestBuilder.newBuilderWithSource(Uri.parse(info.getPic()))
+                    .setResizeOptions(new ResizeOptions(width, height))
+                    .build();
+
+            DraweeController controller = Fresco.newDraweeControllerBuilder()
+                    .setOldController(((ItemView) holder).art.getController())
+                    .setImageRequest(request)
+                    .build();
+
+            ((ItemView) holder).art.setController(controller);
+
+
+//            ImageRequest request = ImageRequestBuilder.newBuilderWithSource(Uri.parse(info.getPic()))
+//                    .setResizeOptions(new ResizeOptions(width, height))
+//                    .build();
+//            DraweeController controller = Fresco.newDraweeControllerBuilder()
+//                    .setOldController(((ItemView) holder).art.getController())
+//                    .setImageRequest(request)
+//                    .build();
+//            ((ItemView) holder).art.setController(controller);
+
+
+            ((ItemView) holder).albumName.setText(info.getTitle());
+            ((ItemView) holder).artsit.setText(info.getDesc());
+            ((ItemView) holder).itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                    Intent intent = new Intent(getActivity(), RadioDetailActivity.class);
+                    intent.putExtra("albumid", info.getAlbum_id());
+                    intent.putExtra("albumart", info.getPic());
+                    intent.putExtra("albumname", info.getTitle());
+                    intent.putExtra("artistname", info.getDesc());
+                    getActivity().startActivity(intent);
+
+                }
+            });
+        }
+
+        @Override
+        public int getItemCount() {
+            if (mList == null) {
+                return 0;
+            }
+
+            if (mList.size() < 7) {
+                return mList.size();
+            } else {
+                return 6;
+            }
+        }
+
+        class ItemView extends RecyclerView.ViewHolder implements View.OnClickListener {
+            private SimpleDraweeView art;
+            private TextView albumName, artsit;
+
+            public ItemView(View itemView) {
+                super(itemView);
+                art = (SimpleDraweeView) itemView.findViewById(R.id.album_art);
+                albumName = (TextView) itemView.findViewById(R.id.album_name);
+                artsit = (TextView) itemView.findViewById(R.id.artist_name);
+            }
+
+            @Override
+            public void onClick(View v) {
+
+            }
+        }
+
+    }
+
+    class NewAlbumsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+        private ArrayList<RecommendListNewAlbumInfo> mList;
+
+        public NewAlbumsAdapter(ArrayList<RecommendListNewAlbumInfo> list) {
+            mList = list;
+        }
+
+        public void update(ArrayList<RecommendListNewAlbumInfo> list) {
+            mList = list;
+            notifyDataSetChanged();
+        }
+
+        @Override
+        public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+            LayoutInflater layoutInflater = LayoutInflater.from(parent.getContext());
+            ItemView viewholder = new ItemView(layoutInflater.inflate(R.layout.recommend_newalbums_item, parent, false));
+
+            return viewholder;
+        }
+
+        @Override
+        public void onBindViewHolder(RecyclerView.ViewHolder holder, final int position) {
+            final RecommendListNewAlbumInfo info = mList.get(position);
+
+//            ImageRequest imageRequest = ImageRequest.fromUri(info.coverImgUrl);
+//            CacheKey cacheKey= DefaultCacheKeyFactory.getInstance()
+//                    .getEncodedCacheKey(imageRequest);
+//            BinaryResource resource = ImagePipelineFactory.getInstance()
+//                    .getMainDiskStorageCache().getResource(cacheKey);
+//            File file=((FileBinaryResource)resource).getFile();
+
+            ImageRequest request = ImageRequestBuilder.newBuilderWithSource(Uri.parse(info.getPic()))
+                    .setResizeOptions(new ResizeOptions(width, height))
+                    .build();
+
+            DraweeController controller = Fresco.newDraweeControllerBuilder()
+                    .setOldController(((ItemView) holder).art.getController())
+                    .setImageRequest(request)
+                    .build();
+
+            ((ItemView) holder).art.setController(controller);
+
+//            ImageRequest request = ImageRequestBuilder.newBuilderWithSource(Uri.parse(info.coverImgUrl))
+//                    .setResizeOptions(new ResizeOptions(width, height))
+//                    .build();
+//            DraweeController controller = Fresco.newDraweeControllerBuilder()
+//                    .setOldController(((ItemView) holder).art.getController())
+//                    .setImageRequest(request)
+//                    .build();
+//            ((ItemView) holder).art.setController(controller);
+
+
+            ((ItemView) holder).albumName.setText(info.getTitle());
+            ((ItemView) holder).artsit.setText(info.getAuthor());
+            ((ItemView) holder).itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                    Intent intent = new Intent(getActivity(), AlbumsDetailActivity.class);
+//                    intent.putExtra("albumid",info.getType_id());
+//                    intent.putExtra("albumart",info.getPic());
+//                    intent.putExtra("albumname",info.getTitle());
+//                    intent.putExtra("artistname",info.getAuthor());
+
+                    intent.putExtra("albumid", info.getType_id());
+                    intent.putExtra("albumart", info.getPic());
+                    intent.putExtra("albumname", info.getTitle());
+                    intent.putExtra("albumdetail", info.getDesc());
+                    // intent.putExtra("playlistcount",info.get);
+                    getActivity().startActivity(intent);
+
+//                    AlbumsDetail fragment = AlbumsDetail.newInstance(info.id, info.coverImgUrl, info.albumName,
+//                            info.artistName, info.publishTime);
+//                    FragmentTransaction transaction = ((AppCompatActivity) getContext()).getSupportFragmentManager().beginTransaction();
+//                    transaction.replace(R.id.fragment_container, fragment);
+//                    transaction.commitAllowingStateLoss();
+                }
+            });
+        }
+
+        @Override
+        public int getItemCount() {
+            if (mList == null) {
+                return 0;
+            }
+
+            if (mList.size() < 7) {
+                return mList.size();
+            } else {
+                return 6;
+            }
+        }
+
+        class ItemView extends RecyclerView.ViewHolder implements View.OnClickListener {
+            private SimpleDraweeView art;
+            private TextView albumName, artsit;
+
+            public ItemView(View itemView) {
+                super(itemView);
+                art = (SimpleDraweeView) itemView.findViewById(R.id.album_art);
+                albumName = (TextView) itemView.findViewById(R.id.album_name);
+                artsit = (TextView) itemView.findViewById(R.id.artist_name);
+            }
+
+            @Override
+            public void onClick(View v) {
+
             }
         }
 

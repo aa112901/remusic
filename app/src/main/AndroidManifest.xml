@@ -39,20 +39,20 @@
             android:launchMode="singleTask"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".activity.SearchActivity"
+            android:name=".activity.LocalSearchActivity"
             android:screenOrientation="portrait" />
         <activity
             android:name=".activity.SelectActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/NoAnimation" />
+             />
         <activity
             android:name=".activity.PlaylistSelectActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/NoAnimation" />
+            />
         <activity
             android:name=".activity.PlaylistManagerActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/NoAnimation" />
+            />
         <activity android:name=".activity.AlbumsDetailActivity"
             android:screenOrientation="portrait"/>
         <activity android:name=".activity.TabActivity"
@@ -60,16 +60,20 @@
         <activity android:name=".activity.PlaylistDetailActivity"
             android:screenOrientation="portrait"/>
         <activity android:name=".activity.DownActivity"/>
-        <activity android:name=".activity.NetPlaylistDetailActivity"/>
+        <activity android:name=".activity.PlaylistActivity"/>
         <activity android:name=".activity.RecentActivity"/>
         <activity android:name=".activity.NetItemChangeActivity"/>
         <activity android:name=".activity.NetAlbumsDetailActivity"/>
         <activity android:name=".activity.NetArtistDetailActivity"/>
         <activity android:name=".activity.NetRadioDetailActivity"/>
+        <activity android:name=".activity.ArtistDetailActivity"/>
+        <activity android:name=".activity.RadioDetailActivity"/>
 
         <service
             android:name=".service.MediaService"
-            android:process=":main" />
+            android:process=":main"
+
+             />
 
         <receiver android:name=".receiver.MediaButtonIntentReceiver">
             <intent-filter>

@@ -1,6 +1,7 @@
 package com.wm.remusic.fragment;
 
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
@@ -13,8 +14,10 @@ import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 
 import com.wm.remusic.R;
+import com.wm.remusic.activity.LocalSearchActivity;
 import com.wm.remusic.uitl.CommonUtils;
 
 import java.util.ArrayList;
@@ -28,17 +31,17 @@ public class TabPagerFragment extends Fragment {
     private ViewPager viewPager;
     private int page = 0;
     private ActionBar ab;
-    private  String[] title;
+    private String[] title;
 
-    public static final TabPagerFragment newInstance(int page,String[] title) {
+
+    public static final TabPagerFragment newInstance(int page, String[] title) {
         TabPagerFragment f = new TabPagerFragment();
         Bundle bdl = new Bundle(1);
         bdl.putInt("page_number", page);
-        bdl.putStringArray("title",title);
+        bdl.putStringArray("title", title);
         f.setArguments(bdl);
         return f;
     }
-
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
@@ -73,6 +76,16 @@ public class TabPagerFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 getActivity().onBackPressed();
+            }
+        });
+        ImageView search = (ImageView) rootView.findViewById(R.id.bar_search);
+
+        search.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final Intent intent = new Intent(getContext(), LocalSearchActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+                getActivity().startActivity(intent);
             }
         });
 
@@ -110,8 +123,8 @@ public class TabPagerFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        if(title[0].equals("单曲"))
-        ab.setTitle("本地音乐");
+        if (title[0].equals("单曲"))
+            ab.setTitle("本地音乐");
     }
 
 

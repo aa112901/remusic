@@ -17,7 +17,7 @@ import com.facebook.drawee.view.SimpleDraweeView;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.wm.remusic.R;
-import com.wm.remusic.json.BillboardItem;
+import com.wm.remusic.json.BillboardInfo;
 import com.wm.remusic.net.BMA;
 import com.wm.remusic.net.HttpUtil;
 
@@ -51,16 +51,16 @@ public class RankingFragment extends Fragment {
     RecyclerView recyclerView;
     LinearLayoutManager linearLayoutManager;
     RankingAdapter rankingAdapter;
-    ArrayList<BillboardItem> items = new ArrayList<>();
+    ArrayList<BillboardInfo> items = new ArrayList<>();
     private static ExecutorService exec = Executors.newFixedThreadPool(6);
 
 
     @Override
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
-        if(isVisibleToUser){
-            if(view == null){
-                view = LayoutInflater.from(getActivity()).inflate(R.layout.ranking,null,false);
+        if (isVisibleToUser) {
+            if (view == null) {
+                view = LayoutInflater.from(getActivity()).inflate(R.layout.ranking, null, false);
                 recyclerView = (RecyclerView) view.findViewById(R.id.recyclerview);
                 linearLayoutManager = new LinearLayoutManager(getActivity());
                 recyclerView.setLayoutManager(linearLayoutManager);
@@ -74,9 +74,9 @@ public class RankingFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.load_framelayout , container,false);
-        frameLayout = (FrameLayout)view.findViewById(R.id.loadframe);
-        View loadView = LayoutInflater.from(getActivity()).inflate(R.layout.loading,frameLayout,false);
+        View view = inflater.inflate(R.layout.load_framelayout, container, false);
+        frameLayout = (FrameLayout) view.findViewById(R.id.loadframe);
+        View loadView = LayoutInflater.from(getActivity()).inflate(R.layout.loading, frameLayout, false);
         frameLayout.addView(loadView);
 
         return view;
@@ -84,22 +84,22 @@ public class RankingFragment extends Fragment {
     }
 
 
-    public class MAsyncTask extends AsyncTask<Integer , Void, Void>{
+    public class MAsyncTask extends AsyncTask<Integer, Void, Void> {
 
         @Override
         protected Void doInBackground(Integer... params) {
 
             JsonArray array = null;
             try {
-                JsonObject jsonObject = HttpUtil.getResposeJsonObject(BMA.Billboard.billSongList(params[0],0,3));
+                JsonObject jsonObject = HttpUtil.getResposeJsonObject(BMA.Billboard.billSongList(params[0], 0, 3));
                 array = jsonObject.get("song_list").getAsJsonArray();
 
-                for(int i = 0; i< array.size(); i++){
-                    BillboardItem billboardItem = new BillboardItem();
-                    billboardItem.title = array.get(i).getAsJsonObject().get("title").toString();
-                    billboardItem.author = array.get(i).getAsJsonObject().get("author").toString();
-                    billboardItem.id = array.get(i).getAsJsonObject().get("artist_id").toString();
-                    items.add(billboardItem);
+                for (int i = 0; i < array.size(); i++) {
+                    BillboardInfo billboardInfo = new BillboardInfo();
+                    billboardInfo.title = array.get(i).getAsJsonObject().get("title").toString();
+                    billboardInfo.author = array.get(i).getAsJsonObject().get("author").toString();
+                    billboardInfo.id = array.get(i).getAsJsonObject().get("artist_id").toString();
+                    items.add(billboardInfo);
                 }
 
             } catch (NullPointerException e) {
@@ -112,27 +112,27 @@ public class RankingFragment extends Fragment {
     }
 
 
-    private void loadData(){
+    private void loadData() {
 
         new MAsyncTask().execute(BILLBOARD_NEW_MUSIC);
         new MAsyncTask().execute(BILLBOARD_ORIGINAL);
         new MAsyncTask().execute(BILLBOARD_HOT_MUSIC);
         new MAsyncTask().execute(BILLBOARD_EU_UK);
         new MAsyncTask().execute(BILLBOARD_NET_MUSIC);
-        new AsyncTask<Void,Void,Void>(){
+        new AsyncTask<Void, Void, Void>() {
 
             @Override
             protected Void doInBackground(Void... params) {
                 try {
-                    JsonObject jsonObject = HttpUtil.getResposeJsonObject(BMA.Billboard.billSongList(BILLBOARD_KING,0,3));
+                    JsonObject jsonObject = HttpUtil.getResposeJsonObject(BMA.Billboard.billSongList(BILLBOARD_KING, 0, 3));
                     JsonArray array = jsonObject.get("song_list").getAsJsonArray();
 
-                    for(int i = 0; i< array.size(); i++){
-                        BillboardItem billboardItem = new BillboardItem();
-                        billboardItem.title = array.get(i).getAsJsonObject().get("title").toString();
-                        billboardItem.author = array.get(i).getAsJsonObject().get("author").toString();
-                        billboardItem.id = array.get(i).getAsJsonObject().get("artist_id").toString();
-                        items.add(billboardItem);
+                    for (int i = 0; i < array.size(); i++) {
+                        BillboardInfo billboardInfo = new BillboardInfo();
+                        billboardInfo.title = array.get(i).getAsJsonObject().get("title").toString();
+                        billboardInfo.author = array.get(i).getAsJsonObject().get("author").toString();
+                        billboardInfo.id = array.get(i).getAsJsonObject().get("artist_id").toString();
+                        items.add(billboardInfo);
                     }
                 } catch (NullPointerException e) {
                     e.printStackTrace();
@@ -152,47 +152,48 @@ public class RankingFragment extends Fragment {
 
     }
 
-    class RankingAdapter extends RecyclerView.Adapter<RankingAdapter.RankingViewHolder>{
+    class RankingAdapter extends RecyclerView.Adapter<RankingAdapter.RankingViewHolder> {
 
-        ArrayList<BillboardItem> mList;
-        int[] pic = {R.mipmap.ranklist_first,R.mipmap.ranklist_second,R.mipmap.ranklist_third
-        ,R.mipmap.ranklist_fifth,R.mipmap.ranklist_acg,R.mipmap.ranklist_six};
+        ArrayList<BillboardInfo> mList;
+        int[] pic = {R.mipmap.ranklist_first, R.mipmap.ranklist_second, R.mipmap.ranklist_third
+                , R.mipmap.ranklist_fifth, R.mipmap.ranklist_acg, R.mipmap.ranklist_six};
+
         public RankingAdapter() {
 
         }
 
-        public void updateAdapter(ArrayList<BillboardItem> list){
+        public void updateAdapter(ArrayList<BillboardInfo> list) {
             mList = list;
             this.notifyDataSetChanged();
         }
 
         @Override
         public RankingViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            return new RankingViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.ranking_recyclerview_adapter,parent,false));
+            return new RankingViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.ranking_recyclerview_adapter, parent, false));
         }
 
 
         @Override
         public void onBindViewHolder(RankingViewHolder holder, int position) {
 
-            BillboardItem billboardItem1 = mList.get(position * 3);
-            BillboardItem billboardItem2 = mList.get(position * 3 + 1);
-            BillboardItem billboardItem3 = mList.get(position * 3 + 2);
-            holder.textView1.setText(billboardItem1.title + "-" + billboardItem1.author);
-            holder.textView2.setText(billboardItem2.title + "-" + billboardItem2.author);
-            holder.textView3.setText(billboardItem3.title + "-" + billboardItem3.author);
+            BillboardInfo billboardInfo1 = mList.get(position * 3);
+            BillboardInfo billboardInfo2 = mList.get(position * 3 + 1);
+            BillboardInfo billboardInfo3 = mList.get(position * 3 + 2);
+            holder.textView1.setText(billboardInfo1.title + "-" + billboardInfo1.author);
+            holder.textView2.setText(billboardInfo2.title + "-" + billboardInfo2.author);
+            holder.textView3.setText(billboardInfo3.title + "-" + billboardInfo3.author);
             holder.draweeView.setImageResource(pic[position]);
 
         }
 
         @Override
         public int getItemCount() {
-            return mList == null ? 0 : mList.size()/3;
+            return mList == null ? 0 : mList.size() / 3;
         }
 
-        class RankingViewHolder extends RecyclerView.ViewHolder{
+        class RankingViewHolder extends RecyclerView.ViewHolder {
             SimpleDraweeView draweeView;
-            TextView textView1,textView2,textView3;
+            TextView textView1, textView2, textView3;
 
             public RankingViewHolder(View itemView) {
                 super(itemView);

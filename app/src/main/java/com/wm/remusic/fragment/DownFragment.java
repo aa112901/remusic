@@ -5,7 +5,6 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -24,7 +23,6 @@ import com.wm.remusic.downmusic.DownloadManager;
 import com.wm.remusic.downmusic.DownloadStatus;
 import com.wm.remusic.downmusic.DownloadTask;
 import com.wm.remusic.handler.HandlerUtil;
-import com.wm.remusic.uitl.CommonUtils;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -35,18 +33,17 @@ import java.util.Map;
  */
 public class DownFragment extends Fragment {
 
-    LinearLayout allStart,allStop,clear;
+    LinearLayout allStart, allStop, clear;
     ArrayList mList = new ArrayList();
     RecyclerView recyclerView;
     LinearLayoutManager layoutManager;
     DownloadManager downloadManager;
     DownLoadAdapter adapter;
-    Toolbar toolbar;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_down ,container,false);
+        View view = inflater.inflate(R.layout.fragment_down, container, false);
 
 
         allStart = (LinearLayout) view.findViewById(R.id.down_start_all);
@@ -57,15 +54,13 @@ public class DownFragment extends Fragment {
         recyclerView = (RecyclerView) view.findViewById(R.id.recyclerview);
         layoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(layoutManager);
-        adapter = new DownLoadAdapter(null,null);
+        adapter = new DownLoadAdapter(null, null);
         recyclerView.setAdapter(adapter);
-        HandlerUtil.getInstance(getActivity()).postDelayed(mUpdateProgress,100);
+        HandlerUtil.getInstance(getActivity()).postDelayed(mUpdateProgress, 100);
         reload();
 
         return view;
     }
-
-
 
 
     @Override
@@ -86,32 +81,32 @@ public class DownFragment extends Fragment {
         }
     };
 
-    private void reload(){
+    private void reload() {
         new AsyncTask<Void, Void, Void>() {
             @Override
             protected Void doInBackground(Void... params) {
-                downloadManager =  DownloadManager.getInstance(getActivity());
-                mList = (ArrayList) downloadManager.loadAllDownloadTaskFromDB();
+                downloadManager = DownloadManager.getInstance(getActivity());
+                mList = (ArrayList) downloadManager.loadDownloadingTaskFromDB();
 
                 return null;
             }
 
             @Override
-            protected void onPostExecute(Void aVoid){
-                adapter.update(mList,downloadManager.getCurrentTaskList());
+            protected void onPostExecute(Void aVoid) {
+                adapter.update(mList, downloadManager.getCurrentTaskList());
             }
         }.execute();
     }
 
-    private void setListener(){
+    private void setListener() {
 
 
         allStart.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ArrayList<DownloadTask> taskslist = (ArrayList) downloadManager.loadAllDownloadTaskFromDB();
+                ArrayList<DownloadTask> taskslist = (ArrayList) downloadManager.loadDownloadingTaskFromDB();
                 Iterator iterator = taskslist.iterator();
-                while (iterator.hasNext()){
+                while (iterator.hasNext()) {
                     DownloadTask task = (DownloadTask) iterator.next();
                     downloadManager.resume(task.getId());
                 }
@@ -121,9 +116,9 @@ public class DownFragment extends Fragment {
         allStop.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ArrayList<DownloadTask> taskslist = (ArrayList) downloadManager.loadAllDownloadTaskFromDB();
+                ArrayList<DownloadTask> taskslist = (ArrayList) downloadManager.loadDownloadingTaskFromDB();
                 Iterator iterator = taskslist.iterator();
-                while (iterator.hasNext()){
+                while (iterator.hasNext()) {
                     DownloadTask task = (DownloadTask) iterator.next();
                     downloadManager.pause(task);
                 }
@@ -133,7 +128,7 @@ public class DownFragment extends Fragment {
         clear.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ArrayList<DownloadTask> taskslist = (ArrayList) downloadManager.loadAllDownloadTaskFromDB();
+                ArrayList<DownloadTask> taskslist = (ArrayList) downloadManager.loadDownloadingTaskFromDB();
                 Iterator iterator = taskslist.iterator();
                 while (iterator.hasNext()) {
                     DownloadTask task = (DownloadTask) iterator.next();
@@ -144,19 +139,18 @@ public class DownFragment extends Fragment {
     }
 
 
-
     class DownLoadAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
         private ArrayList mList;
         boolean showPro = false;
-        private Map<String,DownloadTask> currentTaskList;
+        private Map<String, DownloadTask> currentTaskList;
 
-        public DownLoadAdapter(ArrayList list,Map<String,DownloadTask> currentTaskList){
+        public DownLoadAdapter(ArrayList list, Map<String, DownloadTask> currentTaskList) {
             mList = list;
             this.currentTaskList = currentTaskList;
         }
 
-        public void update(ArrayList list,Map<String,DownloadTask> currentTaskList){
+        public void update(ArrayList list, Map<String, DownloadTask> currentTaskList) {
             mList = list;
             this.currentTaskList = currentTaskList;
             notifyDataSetChanged();
@@ -164,7 +158,7 @@ public class DownFragment extends Fragment {
 
         @Override
         public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            return new ItemViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.activity_down_item,parent,false));
+            return new ItemViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.activity_down_item, parent, false));
         }
 
         @Override
@@ -175,23 +169,23 @@ public class DownFragment extends Fragment {
             final boolean isCurrent = currentTaskList.containsKey(task.getId());
 
 
-            if(task.getPercent() == 100){
-                ((ItemViewHolder) holder).artist.setText(task.getFileName());
-                ((ItemViewHolder) holder).count.setText((float) (Math.round((float) task.getCompletedSize() / (1024 * 1024) * 10)) / 10 + "M");
-                ((ItemViewHolder) holder).progressBar.setVisibility(View.GONE);
-                ((ItemViewHolder) holder).downloaded.setVisibility(View.VISIBLE);
-
-            }else {
-                ((ItemViewHolder)holder).count.setText((float) (Math.round((float) task.getCompletedSize() / (1024 * 1024) * 10)) / 10 + "M/" +
+//            if (task.getPercent() == 100) {
+//                ((ItemViewHolder) holder).artist.setText(task.getFileName());
+//                ((ItemViewHolder) holder).count.setText((float) (Math.round((float) task.getCompletedSize() / (1024 * 1024) * 10)) / 10 + "M");
+//                ((ItemViewHolder) holder).progressBar.setVisibility(View.GONE);
+//                ((ItemViewHolder) holder).downloaded.setVisibility(View.VISIBLE);
+//
+//            } else {
+                ((ItemViewHolder) holder).count.setText((float) (Math.round((float) task.getCompletedSize() / (1024 * 1024) * 10)) / 10 + "M/" +
                         (float) (Math.round((float) task.getTotalSize() / (1024 * 1024) * 10)) / 10 + "M");
                 ;
-                if(isCurrent){
-                    ((ItemViewHolder) holder).progressBar.setVisibility(View.VISIBLE );
+                if (isCurrent) {
+                    ((ItemViewHolder) holder).progressBar.setVisibility(View.VISIBLE);
                     ((ItemViewHolder) holder).progressBar.setProgress((int) task.getPercent());
 
-                }else {
+                } else {
                     ((ItemViewHolder) holder).progressBar.removeCallbacks(mUpdateProgress);
-                    ((ItemViewHolder) holder).progressBar.setVisibility(View.GONE );
+                    ((ItemViewHolder) holder).progressBar.setVisibility(View.GONE);
                     ((ItemViewHolder) holder).count.setText("已经暂停，点击继续下载");
                 }
 
@@ -199,13 +193,13 @@ public class DownFragment extends Fragment {
                 ((ItemViewHolder) holder).itemView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        if(!isCurrent){
+                        if (!isCurrent) {
                             downloadManager.resume(task.getId());
                             return;
                         }
                         if (task.getDownloadStatus() != DownloadStatus.DOWNLOAD_STATUS_COMPLETED) {
 
-                            if (task.getDownloadStatus() == DownloadStatus.DOWNLOAD_STATUS_DOWNLOADING ) {
+                            if (task.getDownloadStatus() == DownloadStatus.DOWNLOAD_STATUS_DOWNLOADING) {
                                 downloadManager.pause(downloadManager.getTaskById(task.getId()));
 
                             } else {
@@ -215,7 +209,7 @@ public class DownFragment extends Fragment {
 
                     }
                 });
-            }
+      //      }
 
             ((ItemViewHolder) holder).clear.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -238,7 +232,6 @@ public class DownFragment extends Fragment {
             });
 
 
-
         }
 
         @Override
@@ -246,11 +239,11 @@ public class DownFragment extends Fragment {
             return mList == null ? 0 : mList.size();
         }
 
-        class ItemViewHolder extends RecyclerView.ViewHolder{
+        class ItemViewHolder extends RecyclerView.ViewHolder {
 
             SimpleDraweeView draweeView;
-            ImageView downloaded ,clear;
-            TextView title,count,artist;
+            ImageView downloaded, clear;
+            TextView title, count, artist;
             ProgressBar progressBar;
 
             public ItemViewHolder(View itemView) {

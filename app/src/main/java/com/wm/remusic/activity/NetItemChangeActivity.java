@@ -16,16 +16,18 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.wm.remusic.R;
+import com.wm.remusic.uitl.PreferencesUtility;
 import com.wm.remusic.widget.DividerItemDecoration;
 import com.wm.remusic.widget.DragSortRecycler;
-import com.wm.remusic.uitl.PreferencesUtility;
 
 import java.util.ArrayList;
 
 /**
  * Created by wm on 2016/5/13.
  */
-public class NetItemChangeActivity extends AppCompatActivity{
+//主页条目排序
+
+public class NetItemChangeActivity extends AppCompatActivity {
     SelectAdapter mAdapter;
     ActionBar ab;
     private RecyclerView recyclerView;
@@ -49,8 +51,8 @@ public class NetItemChangeActivity extends AppCompatActivity{
             }
         });
 
-        TextView defaultPosition = (TextView)findViewById(R.id.default_item_position);
-        defaultPosition.getPaint().setFlags(Paint. UNDERLINE_TEXT_FLAG ); //下划线
+        TextView defaultPosition = (TextView) findViewById(R.id.default_item_position);
+        defaultPosition.getPaint().setFlags(Paint.UNDERLINE_TEXT_FLAG); //下划线
         defaultPosition.getPaint().setAntiAlias(true);//抗锯齿
         defaultPosition.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -86,8 +88,8 @@ public class NetItemChangeActivity extends AppCompatActivity{
 
 
                 String st = "";
-                for(int i = 0 ; i< mAdapter.strs.size(); i++){
-                    if(i == mAdapter.strs.size()-1){
+                for (int i = 0; i < mAdapter.strs.size(); i++) {
+                    if (i == mAdapter.strs.size() - 1) {
                         st = st + mAdapter.strs.get(i);
                         continue;
                     }
@@ -104,7 +106,6 @@ public class NetItemChangeActivity extends AppCompatActivity{
     }
 
 
-
     @Override
     public void onPause() {
         super.onPause();
@@ -114,10 +115,6 @@ public class NetItemChangeActivity extends AppCompatActivity{
     public void onStop() {
         super.onStop();
     }
-
-
-
-
 
 
     public class SelectAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {

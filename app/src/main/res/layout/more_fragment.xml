@@ -26,8 +26,8 @@
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/pop_list"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:fadeScrollbars="true"></android.support.v7.widget.RecyclerView>
+            android:fadeScrollbars="true"/>
     </LinearLayout>
 </FrameLayout>

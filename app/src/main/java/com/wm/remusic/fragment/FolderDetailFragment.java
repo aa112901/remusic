@@ -4,7 +4,6 @@ package com.wm.remusic.fragment;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -21,12 +20,13 @@ import com.wm.remusic.activity.SelectActivity;
 import com.wm.remusic.info.MusicInfo;
 import com.wm.remusic.service.MusicPlayer;
 import com.wm.remusic.uitl.CommonUtils;
-import com.wm.remusic.widget.DividerItemDecoration;
 import com.wm.remusic.uitl.IConstants;
 import com.wm.remusic.uitl.MusicUtils;
+import com.wm.remusic.widget.DividerItemDecoration;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -64,7 +64,7 @@ public class FolderDetailFragment extends BaseFragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.frgment_common, container, false);
+        View view = inflater.inflate(R.layout.fragment_common, container, false);
 
         layoutManager = new LinearLayoutManager(getActivity());
         recyclerView = (RecyclerView) view.findViewById(R.id.recyclerview);
@@ -142,7 +142,7 @@ public class FolderDetailFragment extends BaseFragment {
             if (viewType == FIRST_ITEM) {
                 return new CommonItemViewHolder(LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.common_item, viewGroup, false));
             } else {
-                return new ListItemViewHolder(LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.frament_musci_common_item, viewGroup, false));
+                return new ListItemViewHolder(LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.fragment_musci_common_item, viewGroup, false));
             }
         }
 
@@ -202,23 +202,21 @@ public class FolderDetailFragment extends BaseFragment {
             //播放文件夹
             @Override
             public void onClick(View v) {
-                //Add add = new Add(getContext());
-//                Add.clear(getContext());
-//                for (MusicInfo music : mList) {
-//                    Add.addToPlayList(getContext(),music.songId);
-//                }
-                final Handler handler = new Handler();
-                handler.postDelayed(new Runnable() {
+                new Thread(new Runnable() {
                     @Override
                     public void run() {
                         long[] list = new long[mList.size()];
+                        HashMap<Long, MusicInfo> infos = new HashMap();
                         for (int i = 0; i < mList.size(); i++) {
-                            list[i] = mList.get(i).songId;
+                            MusicInfo info = mList.get(i);
+                            list[i] = info.songId;
+                            info.islocal = true;
+                            info.albumData = MusicUtils.getAlbumArtUri(info.albumId) + "";
+                            infos.put(list[i], mList.get(i));
                         }
-                        MusicPlayer.playAll(getContext(), list, 0, false);
-                        //MusicPlayer.playAll(getContext(), list, 0, IConstants.PLAYLIST_ID_DEFAULT);
+                        MusicPlayer.playAll(infos, list, 0, false);
                     }
-                }, 50);
+                }).start();
             }
 
 
@@ -240,7 +238,7 @@ public class FolderDetailFragment extends BaseFragment {
                 moreOverflow.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        MoreFragment moreFragment = new MoreFragment().newInstance(mList.get(getAdapterPosition() - 1).songId + "", IConstants.MUSICOVERFLOW);
+                        MoreFragment moreFragment = new MoreFragment().newInstance(mList.get(getAdapterPosition() - 1), IConstants.MUSICOVERFLOW);
                         moreFragment.show(getFragmentManager(), "music");
                     }
                 });
@@ -252,27 +250,21 @@ public class FolderDetailFragment extends BaseFragment {
             @Override
             public void onClick(View v) {
                 //// TODO: 2016/1/19
-                final Handler handler = new Handler();
-                handler.postDelayed(new Runnable() {
+                new Thread(new Runnable() {
                     @Override
                     public void run() {
                         long[] list = new long[mList.size()];
+                        HashMap<Long, MusicInfo> infos = new HashMap();
                         for (int i = 0; i < mList.size(); i++) {
-                            list[i] = mList.get(i).songId;
+                            MusicInfo info = mList.get(i);
+                            list[i] = info.songId;
+                            info.islocal = true;
+                            info.albumData = MusicUtils.getAlbumArtUri(info.albumId) + "";
+                            infos.put(list[i], mList.get(i));
                         }
-                        MusicPlayer.playAll(getContext(), list, getAdapterPosition() - 1, false);
-                        // MusicPlayer.play(mList.get(getAdapterPosition() - 1).songId);
-                        Handler handler1 = new Handler();
-                        handler1.postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                notifyItemChanged(currentlyPlayingPosition);
-                                notifyItemChanged(getAdapterPosition());
-                                currentlyPlayingPosition = getAdapterPosition();
-                            }
-                        }, 50);
+                        MusicPlayer.playAll(infos, list, getAdapterPosition() - 1, false);
                     }
-                }, 100);
+                }).start();
             }
 
         }

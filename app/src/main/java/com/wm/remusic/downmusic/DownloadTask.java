@@ -3,10 +3,10 @@ package com.wm.remusic.downmusic;
 /**
  * Created by wm on 2016/4/12.
  */
+
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
-import android.support.v4.app.NotificationCompat;
 import android.text.TextUtils;
 import android.util.Log;
 import android.widget.Toast;
@@ -25,7 +25,6 @@ import java.io.InputStream;
 import java.io.RandomAccessFile;
 import java.util.ArrayList;
 import java.util.List;
-
 
 
 /**
@@ -60,14 +59,14 @@ public class DownloadTask implements Runnable {
         downFileStore = DownFileStore.getInstance(context);
     }
 
-    public DownloadTask(Context context,Builder builder) {
-      //  mContext = context.getApplicationContext();
+    public DownloadTask(Context context, Builder builder) {
+        //  mContext = context.getApplicationContext();
         listeners = new ArrayList<>();
         downFileStore = DownFileStore.getInstance(context);
         init(builder);
     }
 
-    private void init(Builder builder){
+    private void init(Builder builder) {
         mContext = builder.context;
         fileName = builder.fileName;
         saveDirPath = builder.saveDirPath;
@@ -83,7 +82,7 @@ public class DownloadTask implements Runnable {
 
     }
 
-    public static class Builder{
+    public static class Builder {
 
         private String url;
         private String fileName = url;    // File name when saving
@@ -101,12 +100,12 @@ public class DownloadTask implements Runnable {
 
         private List<DownloadTaskListener> listeners;
 
-        public Builder(Context context){
+        public Builder(Context context) {
             this.context = context.getApplicationContext();
         }
 
 
-        public Builder(Context context,String url){
+        public Builder(Context context, String url) {
             this.url = url;
             this.context = context.getApplicationContext();
         }
@@ -116,12 +115,12 @@ public class DownloadTask implements Runnable {
             return this;
         }
 
-        public Builder setSaveDirPath(String saveDirPath){
+        public Builder setSaveDirPath(String saveDirPath) {
             this.saveDirPath = saveDirPath;
             return this;
         }
 
-        public Builder setId (String id){
+        public Builder setId(String id) {
             this.id = id;
             return this;
         }
@@ -132,8 +131,7 @@ public class DownloadTask implements Runnable {
         }
 
 
-
-        public Builder setCompletedSize (long completedSize) {
+        public Builder setCompletedSize(long completedSize) {
             this.completedSize = completedSize;
             return this;
         }
@@ -143,7 +141,7 @@ public class DownloadTask implements Runnable {
             return this;
         }
 
-        public Builder setDBEntity (DownloadDBEntity dbEntity) {
+        public Builder setDBEntity(DownloadDBEntity dbEntity) {
             this.dbEntity = dbEntity;
             downloadStatus = dbEntity.getDownloadStatus();
             url = dbEntity.getUrl();
@@ -157,7 +155,7 @@ public class DownloadTask implements Runnable {
         }
 
 
-        public Builder setListeners (List<DownloadTaskListener> listeners) {
+        public Builder setListeners(List<DownloadTaskListener> listeners) {
             this.listeners = listeners;
             return this;
         }
@@ -168,10 +166,10 @@ public class DownloadTask implements Runnable {
         }
 
 
-        public DownloadTask build(){
+        public DownloadTask build() {
             id = (saveDirPath + fileName).hashCode() + "";
 
-            return new DownloadTask(context,this);
+            return new DownloadTask(context, this);
         }
 
     }
@@ -179,9 +177,9 @@ public class DownloadTask implements Runnable {
 
     @Override
     public void run() {
-        Log.e("start",completedSize + "");
+        Log.e("start", completedSize + "");
         downloadStatus = DownloadStatus.DOWNLOAD_STATUS_PREPARE;
-      //  id = (saveDirPath + fileName).hashCode() + "";
+        //  id = (saveDirPath + fileName).hashCode() + "";
 
         onPrepare();
 
@@ -190,7 +188,7 @@ public class DownloadTask implements Runnable {
         try {
             dbEntity = downFileStore.getDownLoadedList(id);
             file = new RandomAccessFile(saveDirPath + fileName, "rwd");
-            if(dbEntity!=null){
+            if (dbEntity != null) {
                 completedSize = dbEntity.getCompletedSize();
                 totalSize = dbEntity.getTotalSize();
             }
@@ -198,12 +196,12 @@ public class DownloadTask implements Runnable {
                 completedSize = file.length();
             }
             long fileLength = file.length();
-            if(fileLength!=0&& totalSize <=fileLength){
+            if (fileLength != 0 && totalSize <= fileLength) {
                 downloadStatus = DownloadStatus.DOWNLOAD_STATUS_COMPLETED;
                 totalSize = completedSize = fileLength;
                 dbEntity = new DownloadDBEntity(id, totalSize, totalSize, url, saveDirPath, fileName, downloadStatus);
                 downFileStore.insert(dbEntity);
-                Toast.makeText(mContext,fileName +"已经下载完成",Toast.LENGTH_SHORT).show();
+                Toast.makeText(mContext, fileName + "已经下载完成", Toast.LENGTH_SHORT).show();
                 onCompleted();
                 return;
             }
@@ -215,13 +213,13 @@ public class DownloadTask implements Runnable {
                     .header("RANGE", "bytes=" + completedSize + "-")//  Http value set breakpoints RANGE
                     .addHeader("Referer", url)
                     .build();
-            Log.e("comlesize",completedSize + "");
+            Log.e("comlesize", completedSize + "");
             file.seek(completedSize);
             Response response = client.newCall(request).execute();
             ResponseBody responseBody = response.body();
             if (responseBody != null) {
                 downloadStatus = DownloadStatus.DOWNLOAD_STATUS_DOWNLOADING;
-                if(totalSize <=0) totalSize = responseBody.contentLength();
+                if (totalSize <= 0) totalSize = responseBody.contentLength();
 
                 inputStream = responseBody.byteStream();
                 bis = new BufferedInputStream(inputStream);
@@ -232,7 +230,7 @@ public class DownloadTask implements Runnable {
                     dbEntity = new DownloadDBEntity(id, totalSize, 0L, url, saveDirPath, fileName, downloadStatus);
                     downFileStore.insert(dbEntity);
                 }
-                while ((length = bis.read(buffer)) > 0 && downloadStatus != DownloadStatus.DOWNLOAD_STATUS_CANCEL &&downloadStatus!=DownloadStatus.DOWNLOAD_STATUS_PAUSE) {
+                while ((length = bis.read(buffer)) > 0 && downloadStatus != DownloadStatus.DOWNLOAD_STATUS_CANCEL && downloadStatus != DownloadStatus.DOWNLOAD_STATUS_PAUSE) {
                     file.write(buffer, 0, length);
                     completedSize += length;
                     buffOffset += length;
@@ -284,23 +282,23 @@ public class DownloadTask implements Runnable {
             }
 
         }
-        if(totalSize ==completedSize){
+        if (totalSize == completedSize) {
             String path = saveDirPath + fileName;
             File file = new File(path);
             Log.e("rename", path.substring(0, path.length() - 5));
             boolean c = file.renameTo(new File(path + ".mp3"));
-            Log.e("rename",c + "");
+            Log.e("rename", c + "");
 
             downloadStatus = DownloadStatus.DOWNLOAD_STATUS_COMPLETED;
             dbEntity.setDownloadStatus(downloadStatus);
             downFileStore.update(dbEntity);
             Uri contentUri = Uri.fromFile(new File(saveDirPath + fileName + ".mp3"));
-            Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE,contentUri);
+            Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, contentUri);
             mContext.sendBroadcast(mediaScanIntent);
         }
 
 
-        switch (downloadStatus){
+        switch (downloadStatus) {
             case DownloadStatus.DOWNLOAD_STATUS_COMPLETED:
                 onCompleted();
                 break;
@@ -310,12 +308,11 @@ public class DownloadTask implements Runnable {
             case DownloadStatus.DOWNLOAD_STATUS_CANCEL:
                 downFileStore.deleteTask(dbEntity.getDownloadId());
                 File temp = new File(saveDirPath + fileName);
-                if(temp.exists())temp.delete();
+                if (temp.exists()) temp.delete();
                 onCancel();
                 break;
         }
     }
-
 
 
     public String getId() {
@@ -397,14 +394,15 @@ public class DownloadTask implements Runnable {
     public void cancel() {
         setDownloadStatus(DownloadStatus.DOWNLOAD_STATUS_CANCEL);
         File temp = new File(saveDirPath + fileName);
-        if(temp.exists())temp.delete();
+        if (temp.exists()) temp.delete();
     }
 
-    public void pause(){
+    public void pause() {
         setDownloadStatus(DownloadStatus.DOWNLOAD_STATUS_PAUSE);
     }
+
     private void onPrepare() {
-        if(listeners == null){
+        if (listeners == null) {
             return;
         }
         for (DownloadTaskListener listener : listeners) {
@@ -413,7 +411,7 @@ public class DownloadTask implements Runnable {
     }
 
     private void onStart() {
-        if(listeners == null){
+        if (listeners == null) {
             return;
         }
         for (DownloadTaskListener listener : listeners) {
@@ -422,7 +420,7 @@ public class DownloadTask implements Runnable {
     }
 
     private void onDownloading() {
-        if(listeners == null){
+        if (listeners == null) {
             return;
         }
         for (DownloadTaskListener listener : listeners) {
@@ -431,7 +429,7 @@ public class DownloadTask implements Runnable {
     }
 
     private void onCompleted() {
-        if(listeners == null){
+        if (listeners == null) {
             return;
         }
         for (DownloadTaskListener listener : listeners) {
@@ -440,7 +438,7 @@ public class DownloadTask implements Runnable {
     }
 
     private void onPause() {
-        if(listeners == null){
+        if (listeners == null) {
             return;
         }
         for (DownloadTaskListener listener : listeners) {
@@ -449,7 +447,7 @@ public class DownloadTask implements Runnable {
     }
 
     private void onCancel() {
-        if(listeners == null){
+        if (listeners == null) {
             return;
         }
         for (DownloadTaskListener listener : listeners) {
@@ -458,7 +456,7 @@ public class DownloadTask implements Runnable {
     }
 
     private void onError(int errorCode) {
-        if(listeners == null){
+        if (listeners == null) {
             return;
         }
         for (DownloadTaskListener listener : listeners) {
@@ -472,12 +470,13 @@ public class DownloadTask implements Runnable {
 
     /**
      * if listener is null,clear all listener
+     *
      * @param listener
      */
     public void removeDownloadListener(DownloadTaskListener listener) {
-        if(listener==null){
+        if (listener == null) {
             listeners.clear();
-        }else{
+        } else {
             listeners.remove(listener);
         }
     }
@@ -501,8 +500,8 @@ public class DownloadTask implements Runnable {
         return url.equals(((DownloadTask) o).url) && saveDirPath.equals(((DownloadTask) o).saveDirPath);
     }
 
-    public static DownloadTask parse(DownloadDBEntity entity,Context context) {
-      //  DownloadTask task = new DownloadTask(context);
+    public static DownloadTask parse(DownloadDBEntity entity, Context context) {
+        //  DownloadTask task = new DownloadTask(context);
         DownloadTask task = new Builder(context).setDBEntity(entity).build();
 
 //        task.setDownloadStatus(entity.getDownloadStatus());

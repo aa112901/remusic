@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:layout_marginBottom="3dp"
-    android:layout_marginTop="3dp"
+    android:layout_height="wrap_content"
+    android:paddingBottom="3dp"
+    android:paddingTop="3dp"
     android:background="?android:attr/selectableItemBackground"
     android:orientation="horizontal">
 
@@ -11,17 +11,20 @@
         android:id="@+id/pop_list_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_vertical"
         android:gravity="center_vertical"
+        android:layout_alignParentLeft="true"
+        android:layout_centerVertical="true"
         android:paddingLeft="15dp" />
 
     <TextView
+        android:layout_toRightOf="@+id/pop_list_view"
         android:id="@+id/pop_list_item"
         android:layout_width="match_parent"
         android:layout_height="39dp"
         android:gravity="center_vertical"
+        android:layout_centerVertical="true"
         android:paddingLeft="15dp"
         android:textColor="@color/text_color"
         android:textSize="15sp" />
 
-</LinearLayout>
+</RelativeLayout>

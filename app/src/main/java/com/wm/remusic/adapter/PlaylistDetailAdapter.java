@@ -129,7 +129,7 @@ public class PlaylistDetailAdapter extends RecyclerView.Adapter<RecyclerView.Vie
                     for (int i = 0; i < arraylist.size(); i++) {
                         list[i] = arraylist.get(i).songId;
                     }
-                    MusicPlayer.playAll(mContext, list, 0, false);
+                    MusicPlayer.playAll(null, list, 0, false);
                 }
             }, 100);
 
@@ -156,7 +156,7 @@ public class PlaylistDetailAdapter extends RecyclerView.Adapter<RecyclerView.Vie
             handler.postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    MusicPlayer.playAll(mContext, songIDs, getAdapterPosition() - 1, false);
+                    MusicPlayer.playAll(null, songIDs, getAdapterPosition() - 1, false);
                 }
             }, 100);
 

@@ -13,7 +13,7 @@
         android:fitsSystemWindows="true"
         android:minHeight="?attr/actionBarSize"
         android:theme="@style/Theme.AppCompat"
-        app:layout_scrollFlags="scroll|enterAlways"
+        app:layout_scrollFlags="enterAlways"
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
     />
 

@@ -15,11 +15,9 @@ import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -39,8 +37,6 @@ import com.google.gson.JsonObject;
 import com.wm.remusic.MainApplication;
 import com.wm.remusic.R;
 import com.wm.remusic.downmusic.Down;
-import com.wm.remusic.downmusic.DownloadManager;
-import com.wm.remusic.downmusic.DownloadTask;
 import com.wm.remusic.info.MusicInfo;
 import com.wm.remusic.net.BMA;
 import com.wm.remusic.net.HttpUtil;
@@ -55,9 +51,9 @@ import java.util.Iterator;
 /**
  * Created by wm on 2016/4/11.
  */
-public class NetAlbumsDetailActivity extends AppCompatActivity {
+public class NetAlbumsDetailActivity extends BaseActivity {
     String albumId;
-    private String albumPath, albumName , artistName ,albumCount;
+    private String albumPath, albumName, artistName, albumCount;
     private int publishTime;
     private ArrayList<MusicInfo> list = new ArrayList<>();
 
@@ -83,7 +79,7 @@ public class NetAlbumsDetailActivity extends AppCompatActivity {
             albumPath = getIntent().getStringExtra("albumart");
             albumName = getIntent().getStringExtra("albumname");
             artistName = getIntent().getStringExtra("artistname");
-            publishTime = getIntent().getIntExtra("publishtime",-1);
+            publishTime = getIntent().getIntExtra("publishtime", -1);
 
         }
         setContentView(R.layout.fragment_playlist_detail);
@@ -127,8 +123,6 @@ public class NetAlbumsDetailActivity extends AppCompatActivity {
     }
 
 
-
-
     private void loadBaiduAllLists() {
         new AsyncTask<Void, Void, Void>() {
             @Override
@@ -137,19 +131,19 @@ public class NetAlbumsDetailActivity extends AppCompatActivity {
                 JsonArray jsonArray = HttpUtil.getResposeJsonObject(BMA.Album.albumInfo(albumId)).get("songlist").getAsJsonArray();
 
                 Iterator it = jsonArray.iterator();
-                while(it.hasNext()){
-                    JsonElement e = (JsonElement)it.next();
+                while (it.hasNext()) {
+                    JsonElement e = (JsonElement) it.next();
                     JsonObject jo = e.getAsJsonObject();
                     MusicInfo mi = new MusicInfo();
-                    mi.artist =  getStringValue(jo, "author");
+                    mi.artist = getStringValue(jo, "author");
                     mi.musicName = getStringValue(jo, "title");
-                    mi.url = getStringValue(jo,"song_id");
+                    mi.data = getStringValue(jo, "song_id");
 
                     list.add(mi);
                 }
 
 
-                mAdapter = new PlaylistDetailAdapter(NetAlbumsDetailActivity.this,list);
+                mAdapter = new PlaylistDetailAdapter(NetAlbumsDetailActivity.this, list);
                 return null;
             }
 
@@ -163,12 +157,12 @@ public class NetAlbumsDetailActivity extends AppCompatActivity {
     }
 
 
-    private String getStringValue(JsonObject jsonObject,String key){
+    private String getStringValue(JsonObject jsonObject, String key) {
         JsonElement nameElement = jsonObject.get(key);
         return nameElement.getAsString();
     }
 
-    private int getIntValue(JsonObject jsonObject,String key){
+    private int getIntValue(JsonObject jsonObject, String key) {
         JsonElement nameElement = jsonObject.get(key);
         return nameElement.getAsInt();
     }
@@ -190,13 +184,13 @@ public class NetAlbumsDetailActivity extends AppCompatActivity {
         albumArtSmall.setImageURI(Uri.parse(albumPath));
         try {
             //drawable = Drawable.createFromStream( new URL(albumPath).openStream(),"src");
-            ImageRequest imageRequest=ImageRequest.fromUri(albumPath);
-            CacheKey cacheKey= DefaultCacheKeyFactory.getInstance()
+            ImageRequest imageRequest = ImageRequest.fromUri(albumPath);
+            CacheKey cacheKey = DefaultCacheKeyFactory.getInstance()
                     .getEncodedCacheKey(imageRequest);
             BinaryResource resource = ImagePipelineFactory.getInstance()
                     .getMainDiskStorageCache().getResource(cacheKey);
-            File file=((FileBinaryResource)resource).getFile();
-            new setBlurredAlbumArt().execute(ImageUtils.getArtworkQuick(file,300,300));
+            File file = ((FileBinaryResource) resource).getFile();
+            new setBlurredAlbumArt().execute(ImageUtils.getArtworkQuick(file, 300, 300));
 
 
         } catch (Exception e) {
@@ -287,7 +281,7 @@ public class NetAlbumsDetailActivity extends AppCompatActivity {
                                 setPositiveButton(mContext.getString(R.string.sure), new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
-                                        Down.downMusic(MainApplication.context,localItem.url + "",localItem.musicName);
+                                        Down.downMusic(MainApplication.context, localItem.data + "", localItem.musicName);
                                         dialog.dismiss();
                                     }
                                 }).
@@ -350,7 +344,7 @@ public class NetAlbumsDetailActivity extends AppCompatActivity {
                         for (int i = 0; i < arraylist.size(); i++) {
                             list[i] = arraylist.get(i).songId;
                         }
-                        MusicPlayer.playAll(mContext, list, 0, false);
+                        MusicPlayer.playAll(null, list, 0, false);
                     }
                 }, 100);
 
@@ -378,14 +372,14 @@ public class NetAlbumsDetailActivity extends AppCompatActivity {
                     @Override
                     public void run() {
 
-                        try{
+                        try {
                             mediaPlayer.reset();
-                            mediaPlayer.setDataSource(arraylist.get(getAdapterPosition()).url);
+                            mediaPlayer.setDataSource(arraylist.get(getAdapterPosition()).data);
                             mediaPlayer.prepare();
                             mediaPlayer.start();
                             MusicPlayer.clearQueue();
 
-                        }catch (Exception e){
+                        } catch (Exception e) {
                             e.printStackTrace();
                         }
 

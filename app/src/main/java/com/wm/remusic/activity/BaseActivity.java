@@ -8,11 +8,14 @@ import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.wm.remusic.MediaAidlInterface;
 import com.wm.remusic.R;
+import com.wm.remusic.fragment.QuickControlsFragment;
 import com.wm.remusic.service.MediaService;
 import com.wm.remusic.service.MusicPlayer;
 import com.wm.remusic.uitl.IConstants;
@@ -23,24 +26,77 @@ import static com.wm.remusic.service.MusicPlayer.mService;
 
 /**
  * Created by wm on 2016/2/25.
+ * activity基类
  */
 public class BaseActivity extends AppCompatActivity implements ServiceConnection {
 
     private MusicPlayer.ServiceToken mToken;
-    private PlaybackStatus mPlaybackStatus;
+    private PlaybackStatus mPlaybackStatus; //receiver 接受播放状态变化等
+    private QuickControlsFragment fragment; //底部播放控制栏
 
 
+    /**
+     * 更新播放队列
+     */
     public void updateQueue() {
+
     }
 
-    ;
-
+    /**
+     * 更新歌曲状态信息
+     */
     public void updateTrackInfo() {
     }
 
-    ;
-
     public void refreshUI() {
+    }
+
+    public void updateTime() {
+
+    }
+
+    /**
+     * @param p 更新歌曲缓冲进度值，p取值从0~100
+     */
+    public void updateBuffer(int p) {
+
+    }
+
+
+    /**
+     * @param outState 取消保存状态
+     */
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        //super.onSaveInstanceState(outState);
+    }
+
+    /**
+     * @param savedInstanceState 取消保存状态
+     */
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        //super.onRestoreInstanceState(savedInstanceState);
+    }
+
+
+    /**
+     * @param show 显示或关闭底部播放控制栏
+     */
+    protected void showQuickControl(boolean show) {
+        Log.e("showorhide", MusicPlayer.getQueue().length + "");
+        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        if (show) {
+            if (fragment == null) {
+                fragment = QuickControlsFragment.newInstance();
+                ft.add(R.id.bottom_container, fragment).commitAllowingStateLoss();
+            } else {
+                ft.show(fragment).commitAllowingStateLoss();
+            }
+        } else {
+            if (fragment != null)
+                ft.hide(fragment).commitAllowingStateLoss();
+        }
     }
 
     @Override
@@ -49,19 +105,21 @@ public class BaseActivity extends AppCompatActivity implements ServiceConnection
         mToken = MusicPlayer.bindToService(this, this);
         mPlaybackStatus = new PlaybackStatus(this);
 
-
         IntentFilter f = new IntentFilter();
         f.addAction(MediaService.PLAYSTATE_CHANGED);
         f.addAction(MediaService.META_CHANGED);
         f.addAction(MediaService.QUEUE_CHANGED);
         f.addAction(IConstants.MUSIC_COUNT_CHANGED);
+        f.addAction(MediaService.TRACK_PREPARED);
+        f.addAction(MediaService.BUFFER_UP);
+        f.addAction("com.wm.remusic.emptyplaylist");
         registerReceiver(mPlaybackStatus, new IntentFilter(f));
+        showQuickControl(true);
     }
 
     @Override
     protected void onStart() {
         super.onStart();
-
     }
 
     @Override
@@ -102,12 +160,8 @@ public class BaseActivity extends AppCompatActivity implements ServiceConnection
             MusicPlayer.unbindFromService(mToken);
             mToken = null;
         }
-
     }
 
-    public void fin() {
-        finish();
-    }
 
     private final static class PlaybackStatus extends BroadcastReceiver {
 
@@ -128,6 +182,12 @@ public class BaseActivity extends AppCompatActivity implements ServiceConnection
                     baseActivity.updateTrackInfo();
 
                 } else if (action.equals(MediaService.PLAYSTATE_CHANGED)) {
+
+                } else if (action.equals(MediaService.TRACK_PREPARED)) {
+                    baseActivity.updateTime();
+                } else if (action.equals(MediaService.BUFFER_UP)) {
+                    baseActivity.updateBuffer(intent.getIntExtra("progress", 0));
+                } else if (action.equals("com.wm.remusic.emptyplaylist")) {
 
                 } else if (action.equals(MediaService.REFRESH)) {
 

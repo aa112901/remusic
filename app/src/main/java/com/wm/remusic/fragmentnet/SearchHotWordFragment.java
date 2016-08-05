@@ -28,7 +28,7 @@ import java.util.List;
 /**
  * Created by wm on 2016/5/21.
  */
-public class SearchHotWordFragment extends Fragment implements View.OnClickListener ,SearchWords {
+public class SearchHotWordFragment extends Fragment implements View.OnClickListener, SearchWords {
     String[] texts = new String[10];
     ArrayList<TextView> views = new ArrayList<>();
     SearchWords searchWords;
@@ -40,40 +40,42 @@ public class SearchHotWordFragment extends Fragment implements View.OnClickListe
     private ArrayList<SearchSongInfo> songList = new ArrayList<>();
     View loadview;
     FrameLayout frameLayout;
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.load_framelayout,container,false);
+        View view = inflater.inflate(R.layout.load_framelayout, container, false);
         frameLayout = (FrameLayout) view.findViewById(R.id.loadframe);
-        loadview = LayoutInflater.from(getActivity()).inflate(R.layout.loading,frameLayout,false);
+        loadview = LayoutInflater.from(getActivity()).inflate(R.layout.loading, frameLayout, false);
         frameLayout.addView(loadview);
         loadWords();
 
         return view;
     }
 
-    public static int px2dip(Context context, float pxValue){
+    public static int px2dip(Context context, float pxValue) {
         final float scale = context.getResources().getDisplayMetrics().density;
-        return (int)(pxValue / scale + 0.5f);
-    }
-    public static int dip2px(Context context, float dipValue){
-        final float scale = context.getResources().getDisplayMetrics().density;
-        return (int)(dipValue * scale + 0.5f);
+        return (int) (pxValue / scale + 0.5f);
     }
 
-    private void loadWords(){
-        new AsyncTask<Boolean,Void,Boolean>(){
+    public static int dip2px(Context context, float dipValue) {
+        final float scale = context.getResources().getDisplayMetrics().density;
+        return (int) (dipValue * scale + 0.5f);
+    }
+
+    private void loadWords() {
+        new AsyncTask<Boolean, Void, Boolean>() {
 
             @Override
             protected Boolean doInBackground(Boolean... params) {
-                if(NetworkUtils.isConnectInternet(getActivity())){
+                if (NetworkUtils.isConnectInternet(getActivity())) {
                     isFromCache = false;
                 }
 
 
                 try {
-                    JsonArray jsonArray = HttpUtil.getResposeJsonObject(BMA.Search.hotWord(),getActivity(),isFromCache).get("result").getAsJsonArray();
-                    for(int i = 0; i < 10; i++){
+                    JsonArray jsonArray = HttpUtil.getResposeJsonObject(BMA.Search.hotWord(), getActivity(), isFromCache).get("result").getAsJsonArray();
+                    for (int i = 0; i < 10; i++) {
                         texts[i] = jsonArray.get(i).getAsJsonObject().get("word").getAsString();
                     }
                 } catch (Exception e) {
@@ -87,11 +89,11 @@ public class SearchHotWordFragment extends Fragment implements View.OnClickListe
             @Override
             protected void onPostExecute(Boolean load) {
                 super.onPostExecute(load);
-                if(!load && getActivity() == null){
+                if (!load && getActivity() == null) {
 
                     return;
                 }
-                View view = LayoutInflater.from(getActivity()).inflate(R.layout.fragment_search_hot_words,frameLayout,false);
+                View view = LayoutInflater.from(getActivity()).inflate(R.layout.fragment_search_hot_words, frameLayout, false);
                 recyclerView = (RecyclerView) view.findViewById(R.id.recyclerview);
                 recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
                 adapter = new RecentSearchAdapter(getActivity());
@@ -126,37 +128,37 @@ public class SearchHotWordFragment extends Fragment implements View.OnClickListe
                 int w = getActivity().getResources().getDisplayMetrics().widthPixels;
                 int xdistance = -1;
                 int ydistance = 0;
-                int distance = dip2px(getActivity(),16);
-                for(int i = 0; i< 10 ; i++){
+                int distance = dip2px(getActivity(), 16);
+                for (int i = 0; i < 10; i++) {
                     views.get(i).setOnClickListener(SearchHotWordFragment.this);
-                     views.get(i).setText(texts[i]);
-                    if(xdistance == -1){
-                        xdistance  = 0;
-                        WidgetController.setLayout(views.get(i),xdistance,ydistance);
+                    views.get(i).setText(texts[i]);
+                    if (xdistance == -1) {
+                        xdistance = 0;
+                        WidgetController.setLayout(views.get(i), xdistance, ydistance);
                         continue;
                     }
-                    xdistance  += WidgetController.getWidth(views.get(i-1)) + distance;
-                    if(xdistance +  WidgetController.getWidth(views.get(i)) + distance  > w){
+                    xdistance += WidgetController.getWidth(views.get(i - 1)) + distance;
+                    if (xdistance + WidgetController.getWidth(views.get(i)) + distance > w) {
                         xdistance = -1;
                         ydistance += 120;
                         i--;
                         continue;
                     }
-                    WidgetController.setLayout(views.get(i),xdistance,ydistance);
+                    WidgetController.setLayout(views.get(i), xdistance, ydistance);
                 }
             }
         }.execute();
 
     }
 
-    public void searchWords(SearchWords searchWords){
-       this.searchWords = searchWords;
+    public void searchWords(SearchWords searchWords) {
+        this.searchWords = searchWords;
     }
 
 
     @Override
     public void onClick(View v) {
-        switch (v.getId()){
+        switch (v.getId()) {
             case R.id.text1:
                 searchWords.onSearch(texts[0]);
                 break;
@@ -192,7 +194,7 @@ public class SearchHotWordFragment extends Fragment implements View.OnClickListe
 
     @Override
     public void onSearch(String t) {
-        if(searchWords != null)
-        searchWords.onSearch(t);
+        if (searchWords != null)
+            searchWords.onSearch(t);
     }
 }

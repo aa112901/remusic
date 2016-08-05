@@ -34,8 +34,10 @@ import android.widget.Toast;
 
 import com.wm.remusic.MediaAidlInterface;
 import com.wm.remusic.R;
+import com.wm.remusic.info.MusicInfo;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.WeakHashMap;
 
 public class MusicPlayer {
@@ -137,6 +139,18 @@ public class MusicPlayer {
             }
         } catch (final Exception ignored) {
         }
+    }
+
+
+    public static boolean isTrackLocal() {
+        try {
+            if (mService != null) {
+                mService.isTrackLocal();
+            }
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 
     public static void cycleRepeat() {
@@ -255,6 +269,26 @@ public class MusicPlayer {
         if (mService != null) {
             try {
                 return mService.getAlbumName();
+            } catch (final RemoteException ignored) {
+            }
+        }
+        return null;
+    }
+
+    public static final String getAlbumPath() {
+        if (mService != null) {
+            try {
+                return mService.getAlbumPath();
+            } catch (final RemoteException ignored) {
+            }
+        }
+        return null;
+    }
+
+    public static final String[] getAlbumPathAll() {
+        if (mService != null) {
+            try {
+                return mService.getAlbumPathtAll();
             } catch (final RemoteException ignored) {
             }
         }
@@ -453,8 +487,7 @@ public class MusicPlayer {
         }
     }
 
-
-    public static void playAll(final Context context, final long[] list, int position, final boolean forceShuffle) {
+    public static void playAll(final HashMap<Long, MusicInfo> infos, final long[] list, int position, final boolean forceShuffle) {
         if (list == null || list.length == 0 || mService == null) {
             return;
         }
@@ -463,19 +496,28 @@ public class MusicPlayer {
                 mService.setShuffleMode(MediaService.SHUFFLE_NORMAL);
             }
             final long currentId = mService.getAudioId();
+            long playId = list[position];
+            Log.e("currentId", currentId + "");
             final int currentQueuePosition = getQueuePosition();
-            if (position != -1 && currentQueuePosition == position && currentId == list[position]) {
+            if (position != -1) {
                 final long[] playlist = getQueue();
                 if (Arrays.equals(list, playlist)) {
-                    mService.play();
-                    return;
+                    if (currentQueuePosition == position && currentId == list[position]) {
+                        mService.play();
+                        return;
+                    } else {
+                        mService.setQueuePosition(position);
+                        return;
+                    }
+
                 }
             }
             if (position < 0) {
                 position = 0;
             }
-            mService.open(list, forceShuffle ? -1 : position);
+            mService.open(infos, list, forceShuffle ? -1 : position);
             mService.play();
+            Log.e("time", System.currentTimeMillis() + "");
         } catch (final RemoteException ignored) {
         } catch (IllegalStateException e) {
             e.printStackTrace();
@@ -606,6 +648,18 @@ public class MusicPlayer {
         if (mService != null) {
             try {
                 return mService.position();
+            } catch (final RemoteException ignored) {
+            } catch (final IllegalStateException ex) {
+
+            }
+        }
+        return 0;
+    }
+
+    public static final int secondPosition() {
+        if (mService != null) {
+            try {
+                return mService.secondPosition();
             } catch (final RemoteException ignored) {
             } catch (final IllegalStateException ex) {
 

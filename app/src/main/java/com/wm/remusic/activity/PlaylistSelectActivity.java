@@ -24,16 +24,16 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.readystatesoftware.systembartint.SystemBarTintManager;
+//import com.readystatesoftware.systembartint.SystemBarTintManager;
 import com.wm.remusic.R;
 import com.wm.remusic.dialog.AddPlaylistDialog;
 import com.wm.remusic.info.MusicInfo;
 import com.wm.remusic.provider.PlaylistsManager;
 import com.wm.remusic.service.MediaService;
 import com.wm.remusic.service.MusicPlayer;
+import com.wm.remusic.uitl.IConstants;
 import com.wm.remusic.widget.DividerItemDecoration;
 import com.wm.remusic.widget.DragSortRecycler;
-import com.wm.remusic.uitl.IConstants;
 
 import java.util.ArrayList;
 
@@ -73,11 +73,11 @@ public class PlaylistSelectActivity extends AppCompatActivity implements View.On
 
         pManager = PlaylistsManager.getInstance(this);
 
-        SystemBarTintManager tintManager = new SystemBarTintManager(this);
-        // enable status bar tint
-        tintManager.setStatusBarTintEnabled(true);
-        // enable navigation bar tint
-        tintManager.setNavigationBarTintEnabled(true);
+//        SystemBarTintManager tintManager = new SystemBarTintManager(this);
+//        // enable status bar tint
+//        tintManager.setStatusBarTintEnabled(true);
+//        // enable navigation bar tint
+//        tintManager.setNavigationBarTintEnabled(true);
 
         nextPlay = (LinearLayout) findViewById(R.id.select_next);
         addtoPlaylist = (LinearLayout) findViewById(R.id.select_addtoplaylist);

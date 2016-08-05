@@ -108,9 +108,9 @@ public class SearchHistory {
         }
     }
 
-    public void deleteRecentSearches(String name){
+    public void deleteRecentSearches(String name) {
         final SQLiteDatabase database = mMusicDatabase.getReadableDatabase();
-        database.delete(SearchHistoryColumns.NAME , SearchHistoryColumns.SEARCHSTRING + " = ?" ,new String[]{name});
+        database.delete(SearchHistoryColumns.NAME, SearchHistoryColumns.SEARCHSTRING + " = ?", new String[]{name});
     }
 
 

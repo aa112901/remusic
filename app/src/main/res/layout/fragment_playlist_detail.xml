@@ -82,7 +82,7 @@
                 android:layout_height="?attr/actionBarSize"
                 android:elevation="5dp"
                 app:layout_collapseMode="pin"
-                 />
+                />
         </android.support.design.widget.CollapsingToolbarLayout>
     </android.support.design.widget.AppBarLayout>
 
@@ -96,4 +96,9 @@
         app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
 
+    <FrameLayout
+        android:id="@+id/bottom_container"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_gravity="end|bottom" />
 </android.support.design.widget.CoordinatorLayout>

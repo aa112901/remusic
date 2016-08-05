@@ -159,8 +159,10 @@
                     android:textSize="10sp" />
 
                 <SeekBar
+                    style="@style/Widget.AppCompat.ProgressBar.Horizontal"
                     android:id="@+id/play_seek"
                     android:layout_width="0dp"
+                    android:secondaryProgress="10"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
                     android:layout_weight="22" />
@@ -185,7 +187,7 @@
                 <ImageView
                     android:id="@+id/playing_mode"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_height="3dp"
                     android:layout_gravity="center_vertical"
                     android:layout_weight="1"
                     android:src="@drawable/play_icn_loop_prs" />

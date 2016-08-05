@@ -35,10 +35,10 @@ import com.wm.remusic.provider.PlaylistsManager;
 import com.wm.remusic.service.MediaService;
 import com.wm.remusic.service.MusicTrack;
 import com.wm.remusic.uitl.CommonUtils;
-import com.wm.remusic.widget.DividerItemDecoration;
 import com.wm.remusic.uitl.IConstants;
 import com.wm.remusic.uitl.ImageUtils;
 import com.wm.remusic.uitl.MusicUtils;
+import com.wm.remusic.widget.DividerItemDecoration;
 
 import java.util.ArrayList;
 

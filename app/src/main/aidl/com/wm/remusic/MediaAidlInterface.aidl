@@ -5,7 +5,7 @@ import com.wm.remusic.service.MusicTrack;
 interface MediaAidlInterface
 {
     void openFile(String path);
-    void open(in long [] list, int position);
+    void open(in Map infos, in long [] list, int position);
     void stop();
     void pause();
     void play();
@@ -28,6 +28,7 @@ interface MediaAidlInterface
     int[] getQueueHistoryList();
     long duration();
     long position();
+    int secondPosition();
     long seek(long pos);
     void seekRelative(long deltaInMs);
     long getAudioId();
@@ -39,7 +40,10 @@ interface MediaAidlInterface
     long getAlbumId();
     String getArtistName();
     String getTrackName();
+    boolean isTrackLocal();
     String getAlbumName();
+    String getAlbumPath();
+    String[] getAlbumPathtAll();
     String getPath();
     int getShuffleMode();
     int removeTracks(int first, int last);

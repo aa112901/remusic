@@ -55,11 +55,11 @@ public class DownFileStore {
             values.put(DownFileStoreColumns.ID, entity.getDownloadId());
             values.put(DownFileStoreColumns.TOOL_SIZE, entity.getTotalSize());
             values.put(DownFileStoreColumns.FILE_LENGTH, entity.getCompletedSize());
-            values.put(DownFileStoreColumns.URL,entity.getUrl());
-            values.put(DownFileStoreColumns.DIR,entity.getSaveDirPath());
-            values.put(DownFileStoreColumns.FILE_NAME,entity.getFileName());
-            values.put(DownFileStoreColumns.DOWNSTATUS,entity.getDownloadStatus());
-            database.replace(DownFileStoreColumns.NAME, null , values);
+            values.put(DownFileStoreColumns.URL, entity.getUrl());
+            values.put(DownFileStoreColumns.DIR, entity.getSaveDirPath());
+            values.put(DownFileStoreColumns.FILE_NAME, entity.getFileName());
+            values.put(DownFileStoreColumns.DOWNSTATUS, entity.getDownloadStatus());
+            database.replace(DownFileStoreColumns.NAME, null, values);
             database.setTransactionSuccessful();
         } finally {
             database.endTransaction();
@@ -74,10 +74,10 @@ public class DownFileStore {
             ContentValues values = new ContentValues(6);
             values.put(DownFileStoreColumns.TOOL_SIZE, entity.getTotalSize());
             values.put(DownFileStoreColumns.FILE_LENGTH, entity.getCompletedSize());
-            values.put(DownFileStoreColumns.URL,entity.getUrl());
-            values.put(DownFileStoreColumns.DIR,entity.getSaveDirPath());
-            values.put(DownFileStoreColumns.FILE_NAME,entity.getFileName());
-            values.put(DownFileStoreColumns.DOWNSTATUS,entity.getDownloadStatus());
+            values.put(DownFileStoreColumns.URL, entity.getUrl());
+            values.put(DownFileStoreColumns.DIR, entity.getSaveDirPath());
+            values.put(DownFileStoreColumns.FILE_NAME, entity.getFileName());
+            values.put(DownFileStoreColumns.DOWNSTATUS, entity.getDownloadStatus());
             database.update(DownFileStoreColumns.NAME, values, DownFileStoreColumns.ID + " = ?",
                     new String[]{entity.getDownloadId()});
             database.setTransactionSuccessful();
@@ -103,19 +103,18 @@ public class DownFileStore {
         try {
             cursor = mMusicDatabase.getReadableDatabase().query(DownFileStoreColumns.NAME, null,
                     DownFileStoreColumns.ID + " = ?", new String[]{String.valueOf(Id)}, null, null, null);
-            if(cursor == null){
-               return null;
+            if (cursor == null) {
+                return null;
             }
 
             if (cursor != null && cursor.moveToFirst()) {
 
                 do {
-                    entity = new DownloadDBEntity(cursor.getString(0),cursor.getLong(1),cursor.getLong(2),
-                            cursor.getString(3),cursor.getString(4),cursor.getString(5),cursor.getInt(6));
+                    entity = new DownloadDBEntity(cursor.getString(0), cursor.getLong(1), cursor.getLong(2),
+                            cursor.getString(3), cursor.getString(4), cursor.getString(5), cursor.getInt(6));
                 } while (cursor.moveToNext());
                 return entity;
-            }
-           else return null;
+            } else return null;
 
         } finally {
             if (cursor != null) {
@@ -139,8 +138,8 @@ public class DownFileStore {
 
                 do {
 
-                    results.add(new DownloadDBEntity(cursor.getString(0),cursor.getLong(1),cursor.getLong(2),
-                            cursor.getString(3),cursor.getString(4),cursor.getString(5),cursor.getInt(6)));
+                    results.add(new DownloadDBEntity(cursor.getString(0), cursor.getLong(1), cursor.getLong(2),
+                            cursor.getString(3), cursor.getString(4), cursor.getString(5), cursor.getInt(6)));
                 } while (cursor.moveToNext());
             }
 

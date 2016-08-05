@@ -7,18 +7,16 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.support.v7.app.ActionBar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
-import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.google.gson.JsonSyntaxException;
+import com.wm.remusic.MainApplication;
 import com.wm.remusic.R;
 import com.wm.remusic.json.SearchAlbumInfo;
 import com.wm.remusic.json.SearchArtistInfo;
@@ -49,39 +47,39 @@ public class SearchTabPagerFragment extends Fragment {
         SearchTabPagerFragment f = new SearchTabPagerFragment();
         Bundle bdl = new Bundle(1);
         bdl.putInt("page_number", page);
-        bdl.putString("key",key);
+        bdl.putString("key", key);
         f.setArguments(bdl);
         return f;
     }
 
 
-    private void search(final String key){
-        new AsyncTask<Void,Void,Void>(){
+    private void search(final String key) {
+        new AsyncTask<Void, Void, Void>() {
 
             @Override
             protected Void doInBackground(Void... params) {
                 try {
-                    Gson gson = new Gson();
-                    JsonObject jsonObject = HttpUtil.getResposeJsonObject(BMA.Search.searchMerge(key,1,10)).get("result").getAsJsonObject();
-                    JsonObject songObject =  jsonObject.get("song_info").getAsJsonObject();
+
+                    JsonObject jsonObject = HttpUtil.getResposeJsonObject(BMA.Search.searchMerge(key, 1, 10)).get("result").getAsJsonObject();
+                    JsonObject songObject = jsonObject.get("song_info").getAsJsonObject();
                     JsonArray songArray = songObject.get("song_list").getAsJsonArray();
                     for (JsonElement o : songArray) {
-                        SearchSongInfo songInfo =  gson.fromJson(o, SearchSongInfo.class);
-                        Log.e("songinfo",songInfo.getTitle());
+                        SearchSongInfo songInfo = MainApplication.gsonInstance().fromJson(o, SearchSongInfo.class);
+                        Log.e("songinfo", songInfo.getTitle());
                         songResults.add(songInfo);
                     }
 
-                    JsonObject artistObject =  jsonObject.get("artist_info").getAsJsonObject();
+                    JsonObject artistObject = jsonObject.get("artist_info").getAsJsonObject();
                     JsonArray artistArray = artistObject.get("artist_list").getAsJsonArray();
                     for (JsonElement o : artistArray) {
-                        SearchArtistInfo artistInfo =  gson.fromJson(o, SearchArtistInfo.class);
+                        SearchArtistInfo artistInfo = MainApplication.gsonInstance().fromJson(o, SearchArtistInfo.class);
                         artistResults.add(artistInfo);
                     }
 
                     JsonObject albumObject = jsonObject.get("album_info").getAsJsonObject();
                     JsonArray albumArray = albumObject.get("album_list").getAsJsonArray();
                     for (JsonElement o : albumArray) {
-                        SearchAlbumInfo albumInfo =  gson.fromJson(o, SearchAlbumInfo.class);
+                        SearchAlbumInfo albumInfo = MainApplication.gsonInstance().fromJson(o, SearchAlbumInfo.class);
                         albumResults.add(albumInfo);
                     }
                 } catch (Exception e) {
@@ -95,15 +93,15 @@ public class SearchTabPagerFragment extends Fragment {
             @Override
             protected void onPostExecute(Void aVoid) {
                 super.onPostExecute(aVoid);
-                if(getActivity() == null){
+                if (getActivity() == null) {
                     return;
                 }
-                contentView = LayoutInflater.from(getActivity()).inflate(R.layout.fragment_net_tab,frameLayout,false);
+                contentView = LayoutInflater.from(getActivity()).inflate(R.layout.fragment_net_tab, frameLayout, false);
                 viewPager = (ViewPager) contentView.findViewById(R.id.viewpager);
                 if (viewPager != null) {
                     Adapter adapter = new Adapter(getChildFragmentManager());
                     adapter.addFragment(SearchMusicFragment.newInstance(songResults), "单曲");
-                    adapter.addFragment(SearchArtistFragment.newInstance(artistResults),"歌手");
+                    adapter.addFragment(SearchArtistFragment.newInstance(artistResults), "歌手");
                     adapter.addFragment(SearchAlbumFragment.newInstance(albumResults), "专辑");
                     viewPager.setAdapter(adapter);
                     viewPager.setOffscreenPageLimit(3);
@@ -123,7 +121,6 @@ public class SearchTabPagerFragment extends Fragment {
     }
 
 
-
     @Override
     public void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -133,12 +130,12 @@ public class SearchTabPagerFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         View rootView = inflater.inflate(R.layout.load_framelayout, container, false);
-        frameLayout  = (FrameLayout) rootView.findViewById(R.id.loadframe);
-        View loadview = LayoutInflater.from(getActivity()).inflate(R.layout.loading,frameLayout,false);
+        frameLayout = (FrameLayout) rootView.findViewById(R.id.loadframe);
+        View loadview = LayoutInflater.from(getActivity()).inflate(R.layout.loading, frameLayout, false);
         frameLayout.addView(loadview);
 
 
-        if(getArguments() != null){
+        if (getArguments() != null) {
             key = getArguments().getString("key");
         }
         search(key);
@@ -147,8 +144,6 @@ public class SearchTabPagerFragment extends Fragment {
         return rootView;
 
     }
-
-
 
 
     @Override

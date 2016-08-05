@@ -24,11 +24,11 @@ import com.wm.remusic.lastfmapi.callbacks.ArtistInfoListener;
 import com.wm.remusic.lastfmapi.models.ArtistQuery;
 import com.wm.remusic.lastfmapi.models.LastfmArtist;
 import com.wm.remusic.service.MusicPlayer;
-import com.wm.remusic.widget.DividerItemDecoration;
 import com.wm.remusic.uitl.IConstants;
 import com.wm.remusic.uitl.MusicUtils;
 import com.wm.remusic.uitl.PreferencesUtility;
 import com.wm.remusic.uitl.SortOrder;
+import com.wm.remusic.widget.DividerItemDecoration;
 
 import java.util.List;
 

@@ -1,245 +1,163 @@
 package com.wm.remusic.activity;
 
 import android.content.Intent;
-import android.content.ServiceConnection;
-import android.net.Uri;
 import android.os.Bundle;
-import android.support.design.widget.NavigationView;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v4.view.GravityCompat;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
 import android.view.Gravity;
 import android.view.KeyEvent;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.ProgressBar;
-import android.widget.TextView;
+import android.widget.ListView;
 import android.widget.Toast;
 
-import com.facebook.drawee.view.SimpleDraweeView;
 import com.wm.remusic.R;
+import com.wm.remusic.adapter.MenuItemAdapter;
 import com.wm.remusic.fragment.BitSetFragment;
 import com.wm.remusic.fragment.MainFragment;
-import com.wm.remusic.fragment.PlayQueueFragment;
-import com.wm.remusic.fragmentnet.TabNetPagerFragment;
 import com.wm.remusic.fragment.TimingFragment;
+import com.wm.remusic.fragmentnet.TabNetPagerFragment;
 import com.wm.remusic.handler.HandlerUtil;
 import com.wm.remusic.service.MusicPlayer;
-import com.wm.remusic.uitl.IConstants;
-import com.wm.remusic.uitl.MusicUtils;
+import com.wm.remusic.widget.CustomViewPager;
+import com.wm.remusic.widget.SplashScreen;
 
-import static com.wm.remusic.service.MusicPlayer.mService;
+import java.util.ArrayList;
+import java.util.List;
 
-public class MainActivity extends BaseActivity implements NavigationView.OnNavigationItemSelectedListener,
-        ServiceConnection {
-    private SimpleDraweeView navPlayImg;
-    private TextView navMusicName,navArtist;
-    private ProgressBar mProgress;
+public class MainActivity extends BaseActivity {
     private ActionBar ab;
-    private ImageView barnet, barmusic,barfriends,search;
-    private ImageView control;
+    private ImageView barnet, barmusic, barfriends, search;
+    private ArrayList<ImageView> tabs = new ArrayList<>();
     private DrawerLayout drawerLayout;
-    LinearLayout nowPlay;
-
-
-    @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        //        super.onSaveInstanceState(outState);
-    }
-
-
-    public void updateTrackInfo() {
-        if (mService == null) {
-            return;
-        }
-
-        String data = MusicUtils.getalbumdata(this, MusicPlayer.getCurrentAudioId());
-
-        if (data != null) {
-            Uri uri1 = Uri.parse("file://" + data);
-            navPlayImg.setImageURI(uri1);
-
-        } else {
-            Uri urr = Uri.parse("res:/" + R.drawable.placeholder_disk_210);
-            navPlayImg.setImageURI(urr);
-        }
-
-        navMusicName.setText(MusicPlayer.getTrackName());
-        navArtist.setText(MusicPlayer.getArtistName());
-        mProgress.setMax((int) MusicPlayer.duration());
-        mProgress.postDelayed(mUpdateProgress, 10);
-        if (MusicPlayer.isPlaying()) {
-            control.setImageResource(R.drawable.playbar_btn_pause);
-
-        } else {
-            control.setImageResource(R.drawable.playbar_btn_play);
-        }
-    }
-
-
-
+    private ListView mLvLeftMenu;
 
     public void onCreate(Bundle savedInstanceState) {
-
+        final SplashScreen splashScreen = new SplashScreen(this);
+        splashScreen.show(R.drawable.art_login_bg,
+                SplashScreen.SLIDE_LEFT);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        HandlerUtil.getInstance(this).postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                splashScreen.removeSplashScreen();
+            }
+        },2000);
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+        getWindow().setBackgroundDrawableResource(R.color.background_material_light_1);
 
-        FragmentTransaction  transaction = getSupportFragmentManager().beginTransaction();
-        final MainFragment mfragment = new MainFragment();
-        transaction.add(R.id.fragment_container, mfragment, "music").commitAllowingStateLoss();
-        final  TabNetPagerFragment fragment = new TabNetPagerFragment();
+        setToolBar();
 
         barnet = (ImageView) findViewById(R.id.bar_net);
         barmusic = (ImageView) findViewById(R.id.bar_music);
         barfriends = (ImageView) findViewById(R.id.bar_friends);
         search = (ImageView) findViewById(R.id.bar_search);
         barmusic = (ImageView) findViewById(R.id.bar_music);
+
+        drawerLayout = (DrawerLayout) findViewById(R.id.fd);
+        mLvLeftMenu = (ListView) findViewById(R.id.id_lv_left_menu);
+
+        setViewPager();
+        setUpDrawer();
+
+
+//        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawerLayout, null, R.string.app_name, R.string.search);
+//        drawerLayout.setDrawerListener(toggle);
+//        toggle.syncState();
+//
+//        final NavigationView navigationview = (NavigationView) findViewById(R.id.nav);
+//        navigationview.setClickable(true);
+//      //  navigationview.setNavigationItemSelectedListener(this);
+//        getWindow().setBackgroundDrawableResource(R.color.background_material_light_1);
+//        View headerView = navigationview.getHeaderView(2);
+//        RelativeLayout relativeLayout = (RelativeLayout) findViewById(R.id.navigation_view);
+//        relativeLayout.setSelected(true);
+//        LinearLayout timePlay = (LinearLayout) findViewById(R.id.timing_play);
+//        LinearLayout downBit = (LinearLayout) findViewById(R.id.down_bit);
+//        TextView exit = (TextView) findViewById(R.id.action_exit);
+//
+//        timePlay.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                TimingFragment fragment = new TimingFragment();
+//                fragment.show(getSupportFragmentManager(), "timing");
+//                drawerLayout.closeDrawers();
+//            }
+//        });
+//
+//        downBit.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//
+//            }
+//        });
+
+
+    }
+
+
+
+    private void setToolBar() {
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        ab = getSupportActionBar();
+        ab.setDisplayHomeAsUpEnabled(true);
+        ab.setHomeAsUpIndicator(R.drawable.ic_menu);
+        ab.setTitle("");
+    }
+
+    private void setViewPager() {
+        tabs.add(barnet);
+        tabs.add(barmusic);
+        final CustomViewPager customViewPager = (CustomViewPager) findViewById(R.id.main_viewpager);
+        final MainFragment mainFragment = new MainFragment();
+        final TabNetPagerFragment tabNetPagerFragment = new TabNetPagerFragment();
+        CustomViewPagerAdapter customViewPagerAdapter = new CustomViewPagerAdapter(getSupportFragmentManager());
+        customViewPagerAdapter.addFragment(tabNetPagerFragment);
+        customViewPagerAdapter.addFragment(mainFragment);
+        customViewPager.setAdapter(customViewPagerAdapter);
+        customViewPager.setCurrentItem(1);
         barmusic.setSelected(true);
+        customViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                switchTabs(position);
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
+        });
 
         barnet.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                barmusic.setSelected(false);
-                barnet.setSelected(true);
-                FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-                transaction.hide(mfragment);
-                if(getSupportFragmentManager().findFragmentByTag("net") == null){
-                    transaction.add(R.id.fragment_container, fragment,"net");
-                }else {
-                    transaction.show(fragment);
+                if (customViewPager != null) {
+                    customViewPager.setCurrentItem(0);
                 }
-                transaction.commitAllowingStateLoss();
             }
         });
         barmusic.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                barmusic.setSelected(true);
-                barnet.setSelected(false);
-                FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-                transaction.hide(fragment);
-                transaction.show(mfragment);
-                transaction.commitAllowingStateLoss();
+                customViewPager.setCurrentItem(1);
             }
         });
-
-
-
-        ab = getSupportActionBar();
-        ab.setDisplayHomeAsUpEnabled(true);
-        ab.setHomeAsUpIndicator(R.drawable.ic_menu);
-        ab.setTitle("");
-
-
-
-//        SystemBarTintManager tintManager = new SystemBarTintManager(this);
-//        // enable status bar tint
-//        tintManager.setStatusBarTintEnabled(true);
-//        // enable navigation bar tint
-//        tintManager.setNavigationBarTintEnabled(true);
-//        //tintManager.setTintColor(Color.parseColor("#00000000"));
-
-
-        //	获取底部播放栏实例、绑定监听器
-        nowPlay = (LinearLayout) findViewById(R.id.nav_play);
-        navPlayImg = (SimpleDraweeView) findViewById(R.id.playbar_img);
-        navMusicName = (TextView) findViewById(R.id.playbar_info);
-        navArtist = (TextView) findViewById(R.id.playbar_singer);
-        mProgress = (ProgressBar) findViewById(R.id.song_progress_normal);
-        LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams) mProgress.getLayoutParams();
-        mProgress.measure(0, 0);
-        layoutParams.setMargins(0, -20, 0, -(mProgress.getMeasuredHeight() / 2));
-        mProgress.setLayoutParams(layoutParams);
-
-        setListener();
-
-        drawerLayout = (DrawerLayout) findViewById(R.id.fd);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawerLayout, null, R.string.app_name, R.string.search);
-        drawerLayout.setDrawerListener(toggle);
-        toggle.syncState();
-
-        NavigationView navigationview = (NavigationView) findViewById(R.id.nav);
-        navigationview.setClickable(true);
-        navigationview.setNavigationItemSelectedListener(this);
-        getWindow().setBackgroundDrawableResource(R.color.background_material_light_1);
-
-    }
-
-    private void setListener(){
-        nowPlay.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (MusicPlayer.getQueueSize() == 0) {
-                    Toast.makeText(MainActivity.this, getResources().getString(R.string.queue_is_empty),
-                            Toast.LENGTH_SHORT).show();
-                } else {
-                    HandlerUtil.getInstance(MainActivity.this).postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            Intent intent = new Intent(MainActivity.this, PlayingActivity.class);
-                            intent.setAction(IConstants.NAVIGATE_NOWPLAYING);
-                            startActivity(intent);
-                        }
-                    }, 60);
-
-                }
-            }
-        });
-        final ImageView playQueue = (ImageView) findViewById(R.id.play_list);
-        playQueue.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                PlayQueueFragment playQueueFragment = new PlayQueueFragment();
-                playQueueFragment.show(getSupportFragmentManager(), "playqueueframent");
-
-            }
-        });
-
-        final ImageView next = (ImageView) findViewById(R.id.play_next);
-        next.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                HandlerUtil.getInstance(MainActivity.this).postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        MusicPlayer.next();
-                    }
-                }, 100);
-            }
-        });
-
-        control = (ImageView) findViewById(R.id.control);
-        control.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                control.setImageResource(MusicPlayer.isPlaying() ? R.drawable.playbar_btn_pause
-                        : R.drawable.playbar_btn_play);
-
-                if (MusicPlayer.getQueueSize() == 0) {
-                    Toast.makeText(MainActivity.this, getResources().getString(R.string.queue_is_empty),
-                            Toast.LENGTH_SHORT).show();
-                } else {
-                    HandlerUtil.getInstance(MainActivity.this).postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            MusicPlayer.playOrPause();
-                        }
-                    }, 100);
-                }
-
-            }
-        });
-
 
         search.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -249,66 +167,107 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
                 MainActivity.this.startActivity(intent);
             }
         });
-
     }
 
-    public Runnable mUpdateProgress = new Runnable() {
+
+    private void setUpDrawer() {
+        LayoutInflater inflater = LayoutInflater.from(this);
+        mLvLeftMenu.addHeaderView(inflater.inflate(R.layout.nav_header_main, mLvLeftMenu, false));
+        mLvLeftMenu.setAdapter(new MenuItemAdapter(this));
+        mLvLeftMenu.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                switch (position) {
+                    case 1:
+                        drawerLayout.closeDrawers();
+                        break;
+                    case 2:
+                        TimingFragment fragment3 = new TimingFragment();
+                        fragment3.show(getSupportFragmentManager(), "timing");
+                        drawerLayout.closeDrawers();
+                        break;
+                    case 3:
+                        BitSetFragment bfragment = new BitSetFragment();
+                        bfragment.show(getSupportFragmentManager(), "bitset");
+                        drawerLayout.closeDrawers();
+                        break;
+                    case 4:
+                        if (MusicPlayer.isPlaying()) {
+                            MusicPlayer.playOrPause();
+                        }
+                        unbindService();
+                        finish();
+                        drawerLayout.closeDrawers();
+                        break;
+                }
+            }
+        });
+    }
+
+
+    private void switchTabs(int position) {
+        for (int i = 0; i < tabs.size(); i++) {
+            if (position == i) {
+                tabs.get(i).setSelected(true);
+            } else {
+                tabs.get(i).setSelected(false);
+            }
+        }
+    }
+
+    static class CustomViewPagerAdapter extends FragmentPagerAdapter {
+        private final List<Fragment> mFragments = new ArrayList<>();
+
+        public CustomViewPagerAdapter(FragmentManager fm) {
+            super(fm);
+        }
+
+        public void addFragment(Fragment fragment) {
+            mFragments.add(fragment);
+        }
 
         @Override
-        public void run() {
-
-            long position = MusicPlayer.position();
-            mProgress.setProgress((int) position);
-
-            if (MusicPlayer.isPlaying()) {
-                mProgress.postDelayed(mUpdateProgress, 50);
-            } else mProgress.removeCallbacks(this);
-
-        }
-    };
-
-
-    @Override
-    public boolean onNavigationItemSelected(MenuItem item) {
-        // Handle navigation view item clicks here.
-        switch (item.getItemId()) {
-
-            case R.id.timing_play:
-                TimingFragment fragment = new TimingFragment();
-                fragment.show(getSupportFragmentManager(), "timing");
-                break;
-            case R.id.action_exit:// 退出
-
-                if (MusicPlayer.isPlaying()) {
-                    MusicPlayer.playOrPause();
-                }
-                unbindService();
-                finish();
-
-            case R.id.down_bit:
-                  BitSetFragment bfragment = new BitSetFragment();
-                   bfragment.show(getSupportFragmentManager(),"bitset");
-
-                break;
-
+        public Fragment getItem(int position) {
+            return mFragments.get(position);
         }
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.fd);
-        drawer.closeDrawer(GravityCompat.START);
-        return true;
+        @Override
+        public int getCount() {
+            return mFragments.size();
+        }
+
     }
 
-    @Override
-    public void onResume() {
 
-        super.onResume();
-    }
-
-    @Override
-    protected void onRestoreInstanceState(Bundle savedInstanceState) {
-        //super.onRestoreInstanceState(savedInstanceState);
-    }
-
+//    @Override
+//    public boolean onNavigationItemSelected(MenuItem item) {
+//        // Handle navigation view item clicks here.
+//        switch (item.getItemId()) {
+//
+//            case R.id.timing_play:
+//                TimingFragment fragment = new TimingFragment();
+//                fragment.show(getSupportFragmentManager(), "timing");
+//                break;
+//            case R.id.action_exit:// 退出
+//
+//                if (MusicPlayer.isPlaying()) {
+//                    MusicPlayer.playOrPause();
+//                }
+//                unbindService();
+//                finish();
+//
+//            case R.id.down_bit:
+//                BitSetFragment bfragment = new BitSetFragment();
+//                bfragment.show(getSupportFragmentManager(), "bitset");
+//
+//                break;
+//
+//        }
+//
+//        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.fd);
+//        drawer.closeDrawer(GravityCompat.START);
+//        return true;
+//    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -322,7 +281,6 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
                 return super.onOptionsItemSelected(item);
         }
     }
-
 
 
 //    @Override
@@ -350,7 +308,8 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
 //    }
 
 
-     long time = 0;
+    long time = 0;
+
     /**
      * 双击返回桌面
      */

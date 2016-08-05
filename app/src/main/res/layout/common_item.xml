@@ -41,10 +41,10 @@
             android:layout_alignParentRight="true"
             android:layout_centerInParent="true"
             android:layout_gravity="center|clip_vertical"
-            android:layout_marginRight="15dp"
             android:background="?android:attr/selectableItemBackground"
             android:focusable="false"
             android:gravity="end"
-            android:padding="9dp"
+            android:paddingLeft="15dp"
+            android:paddingRight="12dp"
             android:src="@drawable/list_icn_mng" />
     </RelativeLayout>

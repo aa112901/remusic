@@ -3,6 +3,7 @@ package com.wm.remusic.net;
 /**
  * Created by wm on 2016/4/14.
  */
+
 import android.support.annotation.NonNull;
 
 import java.io.UnsupportedEncodingException;
@@ -23,10 +24,10 @@ public class RSAUtils {
 
     /**
      * 生成公钥和私钥
-     * @throws NoSuchAlgorithmException
      *
+     * @throws NoSuchAlgorithmException
      */
-    public static HashMap<String, Object> getKeys() throws NoSuchAlgorithmException{
+    public static HashMap<String, Object> getKeys() throws NoSuchAlgorithmException {
         HashMap<String, Object> map = new HashMap<String, Object>();
         KeyPairGenerator keyPairGen = KeyPairGenerator.getInstance("RSA");
         keyPairGen.initialize(1024);
@@ -37,15 +38,14 @@ public class RSAUtils {
         map.put("private", privateKey);
         return map;
     }
+
     /**
      * 使用模和指数生成RSA公钥
      * 注意：【此代码用了默认补位方式，为RSA/None/PKCS1Padding，不同JDK默认的补位方式可能不同，如Android默认是RSA
      * /None/NoPadding】
      *
-     * @param modulus
-     *            模
-     * @param exponent
-     *            指数
+     * @param modulus  模
+     * @param exponent 指数
      * @return
      */
     public static RSAPublicKey getPublicKey(String modulus, String exponent) {
@@ -66,10 +66,8 @@ public class RSAUtils {
      * 注意：【此代码用了默认补位方式，为RSA/None/PKCS1Padding，不同JDK默认的补位方式可能不同，如Android默认是RSA
      * /None/NoPadding】
      *
-     * @param modulus
-     *            模
-     * @param exponent
-     *            指数
+     * @param modulus  模
+     * @param exponent 指数
      * @return
      */
     public static RSAPrivateKey getPrivateKey(String modulus, String exponent) {
@@ -95,7 +93,7 @@ public class RSAUtils {
      */
     public static String encryptByPublicKey(String data, RSAPublicKey publicKey)
             throws Exception {
-       // Cipher cipher = Cipher.getInstance("RSA");
+        // Cipher cipher = Cipher.getInstance("RSA");
         Cipher cipher =
                 Cipher.getInstance("RSA/ECB/NoPadding");
         cipher.init(Cipher.ENCRYPT_MODE, publicKey);
@@ -109,7 +107,7 @@ public class RSAUtils {
 //            mi += bcd2Str(cipher.doFinal(s.getBytes()));
 //        }
         String mi = "";
-       mi = toHex(cipher.doFinal(data.getBytes()));
+        mi = toHex(cipher.doFinal(data.getBytes()));
         return mi;
     }
 
@@ -122,6 +120,7 @@ public class RSAUtils {
         }
         return buf.toString();
     }
+
     /**
      * 私钥解密
      *
@@ -142,14 +141,14 @@ public class RSAUtils {
         //如果密文长度大于模长则要分组解密
         String ming = "";
         byte[][] arrays = splitArray(bcd, key_len);
-        for(byte[] arr : arrays){
+        for (byte[] arr : arrays) {
             ming += new String(cipher.doFinal(arr));
         }
         return ming;
     }
+
     /**
      * ASCII码转BCD码
-     *
      */
     public static byte[] ASCII_To_BCD(byte[] ascii, int asc_len) {
         byte[] bcd = new byte[asc_len / 2];
@@ -160,6 +159,7 @@ public class RSAUtils {
         }
         return bcd;
     }
+
     public static byte asc_to_bcd(byte asc) {
         byte bcd;
 
@@ -173,6 +173,7 @@ public class RSAUtils {
             bcd = (byte) (asc - 48);
         return bcd;
     }
+
     /**
      * BCD转字符串
      */
@@ -188,6 +189,7 @@ public class RSAUtils {
         }
         return new String(temp);
     }
+
     /**
      * 拆分字符串
      */
@@ -200,34 +202,35 @@ public class RSAUtils {
         }
         String[] strings = new String[x + z];
         String str = "";
-        for (int i=0; i<x+z; i++) {
-            if (i==x+z-1 && y!=0) {
-                str = string.substring(i*len, i*len+y);
-            }else{
-                str = string.substring(i*len, i*len+len);
+        for (int i = 0; i < x + z; i++) {
+            if (i == x + z - 1 && y != 0) {
+                str = string.substring(i * len, i * len + y);
+            } else {
+                str = string.substring(i * len, i * len + len);
             }
             strings[i] = str;
         }
         return strings;
     }
+
     /**
-     *拆分数组
+     * 拆分数组
      */
-    public static byte[][] splitArray(byte[] data,int len){
+    public static byte[][] splitArray(byte[] data, int len) {
         int x = data.length / len;
         int y = data.length % len;
         int z = 0;
-        if(y!=0){
+        if (y != 0) {
             z = 1;
         }
-        byte[][] arrays = new byte[x+z][];
+        byte[][] arrays = new byte[x + z][];
         byte[] arr;
-        for(int i=0; i<x+z; i++){
+        for (int i = 0; i < x + z; i++) {
             arr = new byte[len];
-            if(i==x+z-1 && y!=0){
-                System.arraycopy(data, i*len, arr, 0, y);
-            }else{
-                System.arraycopy(data, i*len, arr, 0, len);
+            if (i == x + z - 1 && y != 0) {
+                System.arraycopy(data, i * len, arr, 0, y);
+            } else {
+                System.arraycopy(data, i * len, arr, 0, len);
             }
             arrays[i] = arr;
         }

@@ -23,14 +23,14 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.facebook.drawee.view.SimpleDraweeView;
-import com.readystatesoftware.systembartint.SystemBarTintManager;
+//import com.readystatesoftware.systembartint.SystemBarTintManager;
 import com.wm.remusic.R;
 import com.wm.remusic.info.Playlist;
 import com.wm.remusic.provider.PlaylistInfo;
 import com.wm.remusic.provider.PlaylistsManager;
+import com.wm.remusic.uitl.IConstants;
 import com.wm.remusic.widget.DividerItemDecoration;
 import com.wm.remusic.widget.DragSortRecycler;
-import com.wm.remusic.uitl.IConstants;
 
 import java.util.ArrayList;
 
@@ -67,11 +67,11 @@ public class PlaylistManagerActivity extends AppCompatActivity implements View.O
 
         playlistInfo = PlaylistInfo.getInstance(this);
 
-        SystemBarTintManager tintManager = new SystemBarTintManager(this);
-        // enable status bar tint
-        tintManager.setStatusBarTintEnabled(true);
-        // enable navigation bar tint
-        tintManager.setNavigationBarTintEnabled(true);
+//        SystemBarTintManager tintManager = new SystemBarTintManager(this);
+//        // enable status bar tint
+//        tintManager.setStatusBarTintEnabled(true);
+//        // enable navigation bar tint
+//        tintManager.setNavigationBarTintEnabled(true);
 
         LinearLayout delete = (LinearLayout) findViewById(R.id.select_del);
         delete.setOnClickListener(this);
@@ -224,7 +224,7 @@ public class PlaylistManagerActivity extends AppCompatActivity implements View.O
             if (list == null) {
                 throw new IllegalArgumentException("model Data must not be null");
             }
-            if(list.size() ==0){
+            if (list.size() == 0) {
                 return;
             }
             list.remove(0);

@@ -167,4 +167,8 @@ public final class SortOrder {
                 + " DESC";
     }
 
+    public interface FolderSortOrder {
+        //  String FOLDER_A_Z = MediaS
+    }
+
 }

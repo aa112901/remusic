@@ -28,25 +28,24 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 
 import com.wm.remusic.R;
-import com.wm.remusic.fragmentnet.SearchWords;
 import com.wm.remusic.fragmentnet.SearchHotWordFragment;
 import com.wm.remusic.fragmentnet.SearchTabPagerFragment;
+import com.wm.remusic.fragmentnet.SearchWords;
 import com.wm.remusic.provider.SearchHistory;
 import com.wm.remusic.uitl.CommonUtils;
 
-public class NetSearchWordsActivity extends AppCompatActivity implements SearchView.OnQueryTextListener, View.OnTouchListener,SearchWords {
+public class NetSearchWordsActivity extends AppCompatActivity implements SearchView.OnQueryTextListener, View.OnTouchListener, SearchWords {
 
     private SearchView mSearchView;
     private InputMethodManager mImm;
     private String queryString;
 
 
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_search);
+        setContentView(R.layout.activity_net_search);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setPadding(0, CommonUtils.getStatusHeight(this), 0, 0);
@@ -56,7 +55,7 @@ public class NetSearchWordsActivity extends AppCompatActivity implements SearchV
         SearchHotWordFragment f = new SearchHotWordFragment();
         f.searchWords(NetSearchWordsActivity.this);
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-        ft.add(R.id.search_frame,f);
+        ft.add(R.id.search_frame, f);
         ft.commit();
 
         mImm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -111,8 +110,8 @@ public class NetSearchWordsActivity extends AppCompatActivity implements SearchV
 
         hideInputManager();
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-        SearchTabPagerFragment fragment = SearchTabPagerFragment.newInstance(0,query);
-        ft.replace(R.id.search_frame,fragment).commitAllowingStateLoss();
+        SearchTabPagerFragment fragment = SearchTabPagerFragment.newInstance(0, query);
+        ft.replace(R.id.search_frame, fragment).commitAllowingStateLoss();
 
         return true;
     }
@@ -130,7 +129,7 @@ public class NetSearchWordsActivity extends AppCompatActivity implements SearchV
             //List<MusicInfo> songList = SearchUtils.searchSongs(this, queryString);
 
 
-           // searchResults.addAll((songList.size() < 10 ? songList : songList.subList(0, 10)));
+            // searchResults.addAll((songList.size() < 10 ? songList : songList.subList(0, 10)));
         } else {
 //            searchResults.clear();
 //            adapter.updateSearchResults(searchResults);
@@ -169,6 +168,6 @@ public class NetSearchWordsActivity extends AppCompatActivity implements SearchV
 
     @Override
     public void onSearch(String t) {
-        mSearchView.setQuery(t,true);
+        mSearchView.setQuery(t, true);
     }
 }

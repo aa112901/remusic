@@ -1,11 +1,13 @@
 package com.wm.remusic.fragment;
 
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,6 +17,8 @@ import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.wm.remusic.R;
 import com.wm.remusic.dialog.AddPlaylistDialog;
 import com.wm.remusic.info.MusicInfo;
@@ -23,7 +27,14 @@ import com.wm.remusic.recent.QueueLoader;
 import com.wm.remusic.service.MusicPlayer;
 import com.wm.remusic.widget.DividerItemDecoration;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 
 /**
@@ -51,7 +62,7 @@ public class PlayQueueFragment extends DialogFragment {
 
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(final LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         //设置无标题
         getDialog().requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -87,6 +98,9 @@ public class PlayQueueFragment extends DialogFragment {
             public void onClick(View v) {
                 MusicPlayer.clearQueue();
                 MusicPlayer.stop();
+                Intent intent = new Intent("com.wm.remusic.emptyplaylist");
+                intent.putExtra("showorhide", "hide");
+                getActivity().sendBroadcast(intent);
                 adapter.notifyDataSetChanged();
                 dismiss();
             }
@@ -109,13 +123,47 @@ public class PlayQueueFragment extends DialogFragment {
 
     }
 
+    private String readTextFromSDcard(InputStream is) throws Exception {
+        InputStreamReader reader = new InputStreamReader(is);
+        BufferedReader bufferedReader = new BufferedReader(reader);
+        StringBuffer buffer = new StringBuffer("");
+        String str;
+        while ((str = bufferedReader.readLine()) != null) {
+            buffer.append(str);
+            buffer.append("\n");
+        }
+        return buffer.toString();
+    }
+
     //异步加载recyclerview界面
     private class loadSongs extends AsyncTask<Void, Void, Void> {
 
         @Override
         protected Void doInBackground(Void... params) {
             if (getActivity() != null) {
-                playlist = QueueLoader.getQueueSongs(getActivity());
+                // playlist = QueueLoader.getQueueSongs(getActivity());
+
+                try {
+                    Gson gson = new Gson();
+                    FileInputStream fo = new FileInputStream(new File(getContext().getCacheDir().getAbsolutePath() + "playlist"));
+                    String c = readTextFromSDcard(fo);
+                    HashMap<Long, MusicInfo> play = gson.fromJson(c, new TypeToken<HashMap<Long, MusicInfo>>() {
+                    }.getType());
+                    if (play != null && play.size() > 0) {
+                        long[] queue = MusicPlayer.getQueue();
+                        int len = queue.length;
+                        playlist = new ArrayList<>();
+
+                        for (int i = 0; i < len; i++) {
+                            playlist.add(play.get(queue[i]));
+                        }
+                    }
+
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
 
             }
             return null;
@@ -123,8 +171,7 @@ public class PlayQueueFragment extends DialogFragment {
 
         @Override
         protected void onPostExecute(Void result) {
-
-            if (playlist != null) {
+            if (playlist != null && playlist.size() > 0) {
                 adapter = new PlaylistAdapter(playlist);
                 recyclerView.setAdapter(adapter);
                 itemDecoration = new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL_LIST);
@@ -132,7 +179,9 @@ public class PlayQueueFragment extends DialogFragment {
                 playlistNumber.setText("播放列表（" + playlist.size() + "）");
 
                 for (int i = 0; i < playlist.size(); i++) {
-                    if (MusicPlayer.getCurrentAudioId() == playlist.get(i).songId) {
+                    MusicInfo info = playlist.get(i);
+
+                    if (info != null && MusicPlayer.getCurrentAudioId() == info.songId) {
                         recyclerView.scrollToPosition(i);
                     }
                 }
@@ -165,7 +214,9 @@ public class PlayQueueFragment extends DialogFragment {
             ((ItemViewHolder) holder).MusicName.setText(playlist.get(position).musicName);
             ((ItemViewHolder) holder).Artist.setText("-" + playlist.get(position).artist);
             //判断该条目音乐是否在播放
+            Log.e("current", MusicPlayer.getCurrentAudioId() + "" + "   " + musicInfo.songId);
             if (MusicPlayer.getCurrentAudioId() == musicInfo.songId) {
+                Log.e("current", MusicPlayer.getCurrentAudioId() + "" + "   " + musicInfo.songId);
                 ((ItemViewHolder) holder).playstate.setVisibility(View.VISIBLE);
                 ((ItemViewHolder) holder).playstate.setImageResource(R.drawable.song_play_icon);
                 currentlyPlayingPosition = position;

@@ -33,5 +33,6 @@ dependencies {
     compile 'com.squareup.okhttp:okhttp:2.7.2'
     compile 'com.squareup.okhttp:okhttp-urlconnection:2.7.2'
     compile 'com.squareup.retrofit:retrofit:1.9.0'
-    compile 'com.readystatesoftware.systembartint:systembartint:1.0.3'
+//    compile 'com.readystatesoftware.systembartint:systembartint:1.0.3'
+    compile 'com.github.ksoichiro:android-observablescrollview:1.6.0'
 }

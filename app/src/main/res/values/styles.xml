@@ -2,13 +2,21 @@
 
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+
+        <item  name="android:actionOverflowButtonStyle">@style/MyOverflowStyle</item>
         <!-- Customize your theme here. -->
         <item name="alertDialogTheme">@style/AppTheme.Dialog.Alert</item>
         <item name="android:windowBackground">@null</item>
+        <item name="android:windowAnimationStyle">@style/NoAnimation</item>
         <!--导航栏的颜色-->
+
 
         <!--状态栏的颜色-->
 
+    </style>
+
+    <style name="MyOverflowStyle" parent="@android:style/Widget.ActionButton.Overflow">
+        <item name="android:src">@drawable/actionbar_more</item>
     </style>
 
     <style name="LoadTheme" parent="Theme.AppCompat.Light.NoActionBar">
@@ -20,8 +28,24 @@
 
     </style>
 
-    <style name="NoAnimation" parent="AppTheme">
-        <item name="android:windowAnimationStyle">@anim/no_anim</item>
+ <style name="cccc" parent="Widget.AppCompat.ProgressBar.Horizontal">
+  <item name="android:progressDrawable" >@drawable/progress_horizontal</item>
+
+ </style>
+    <style name="NoAnimation">
+
+        <item name="android:activityOpenEnterAnimation">@null</item>
+        <item name="android:activityOpenExitAnimation">@null</item>
+        <item name="android:activityCloseEnterAnimation">@null</item>
+        <item name="android:activityCloseExitAnimation">@null</item>
+        <item name="android:taskOpenEnterAnimation">@null</item>
+        <item name="android:taskOpenExitAnimation">@null</item>
+        <item name="android:taskCloseEnterAnimation">@null</item>
+        <item name="android:taskCloseExitAnimation">@null</item>
+        <item name="android:taskToFrontEnterAnimation">@null</item>
+        <item name="android:taskToFrontExitAnimation">@null</item>
+        <item name="android:taskToBackEnterAnimation">@null</item>
+        <item name="android:taskToBackExitAnimation">@null</item>
 
     </style>
 
@@ -135,11 +159,12 @@
     <style name="ToolBar.Title" parent="@style/TextAppearance.Widget.AppCompat.Toolbar.Title">
         <item name="android:textSize">17.0sp</item>
         <item name="android:textColor">@color/toolbarTextColor</item>
+        <item name="android:ellipsize">marquee</item>
     </style>
 
     <style name="Toolbar.SubTitle" parent="@style/TextAppearance.Widget.AppCompat.Toolbar.Subtitle">
-        <item name="android:textSize">12.0sp</item>
-        <item name="android:textColor">#ff928e91</item>
+        <item name="android:textSize">9.0sp</item>
+        <item name="android:textColor">@color/menu_item_white</item>
     </style>
 
 

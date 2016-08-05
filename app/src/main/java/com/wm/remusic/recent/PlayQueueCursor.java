@@ -190,6 +190,7 @@ public class PlayQueueCursor extends AbstractCursor {
         mNowPlaying = MusicPlayer.getQueue();
         Log.d("lol1", mNowPlaying.toString() + "   " + mNowPlaying.length);
         mSize = mNowPlaying.length;
+        Log.e("size", mSize + "");
         if (mSize == 0) {
             return;
         }
@@ -207,7 +208,7 @@ public class PlayQueueCursor extends AbstractCursor {
         mQueueCursor = mContext.getContentResolver().query(
                 MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, PROJECTION, selection.toString(),
                 null, MediaStore.Audio.Media._ID);
-
+        Log.e("cursor", mQueueCursor.getCount() + "");
         if (mQueueCursor == null) {
             mSize = 0;
             return;

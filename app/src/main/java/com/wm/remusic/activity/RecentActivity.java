@@ -5,9 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -19,6 +17,7 @@ import android.widget.TextView;
 
 import com.wm.remusic.R;
 import com.wm.remusic.fragment.MoreFragment;
+import com.wm.remusic.info.MusicInfo;
 import com.wm.remusic.provider.RecentStore;
 import com.wm.remusic.recent.Song;
 import com.wm.remusic.recent.SongLoader;
@@ -26,15 +25,17 @@ import com.wm.remusic.recent.TopTracksLoader;
 import com.wm.remusic.service.MediaService;
 import com.wm.remusic.service.MusicPlayer;
 import com.wm.remusic.uitl.CommonUtils;
-import com.wm.remusic.widget.DividerItemDecoration;
 import com.wm.remusic.uitl.IConstants;
+import com.wm.remusic.uitl.MusicUtils;
+import com.wm.remusic.widget.DividerItemDecoration;
 
+import java.util.HashMap;
 import java.util.List;
 
 /**
  * Created by wm on 2016/5/11.
  */
-public class RecentActivity extends AppCompatActivity {
+public class RecentActivity extends BaseActivity {
 
 
     private int currentlyPlayingPosition = 0;
@@ -61,6 +62,7 @@ public class RecentActivity extends AppCompatActivity {
     public void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.fragment_recent);
+        // initQuickControls();
         recentStore = RecentStore.getInstance(this);
 
         TopTracksLoader recentloader = new TopTracksLoader(this, TopTracksLoader.QueryType.RecentSongs);
@@ -156,7 +158,7 @@ public class RecentActivity extends AppCompatActivity {
                 return new CommonItemViewHolder(LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.common_item, viewGroup, false));
 
             else {
-                return new ListItemViewHolder(LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.frament_musci_common_item, viewGroup, false));
+                return new ListItemViewHolder(LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.fragment_musci_common_item, viewGroup, false));
             }
         }
 
@@ -221,17 +223,21 @@ public class RecentActivity extends AppCompatActivity {
 
             public void onClick(View v) {
                 //// TODO: 2016/1/20
-                final Handler handler = new Handler();
-                handler.postDelayed(new Runnable() {
+                new Thread(new Runnable() {
                     @Override
                     public void run() {
                         long[] list = new long[mList.size()];
+                        HashMap<Long, MusicInfo> infos = new HashMap();
                         for (int i = 0; i < mList.size(); i++) {
-                            list[i] = mList.get(i).id;
+                            MusicInfo info = MusicUtils.getMusicInfo(RecentActivity.this, mList.get(i).id);
+                            list[i] = info.songId;
+                            info.islocal = true;
+                            info.albumData = MusicUtils.getAlbumArtUri(info.albumId) + "";
+                            infos.put(list[i], info);
                         }
-                        MusicPlayer.playAll(RecentActivity.this, list, 0, false);
+                        MusicPlayer.playAll(infos, list, 0, false);
                     }
-                }, 100);
+                }).start();
 
             }
 
@@ -262,39 +268,23 @@ public class RecentActivity extends AppCompatActivity {
 
             @Override
             public void onClick(View v) {
-
-                final Handler handler = new Handler();
-                handler.postDelayed(new Runnable() {
+                new Thread(new Runnable() {
                     @Override
                     public void run() {
-                        // MusicPlayer.play(mList.get(getAdapterPosition() - 1).songId);
-//                        long[] ids = new long[1];
-//                        ids[0] = mList.get(getAdapterPosition() - 1).songId;
-//                        long[] list = MusicPlayer.getQueue();
-//                        for(int i = 0; i<list.length;i++){
-//                            if(list[i] == ids[0]){
-//                                MusicPlayer.playAll(getContext(),list,i,false);
-//                                return;
-//                            }
-//                        }
-//                        MusicPlayer.playNext(getContext(), ids, -1);
                         long[] list = new long[mList.size()];
+                        HashMap<Long, MusicInfo> infos = new HashMap();
                         for (int i = 0; i < mList.size(); i++) {
-                            list[i] = mList.get(i).id;
+                            MusicInfo info = MusicUtils.getMusicInfo(RecentActivity.this, mList.get(i).id);
+                            list[i] = info.songId;
+                            info.islocal = true;
+                            info.albumData = MusicUtils.getAlbumArtUri(info.albumId) + "";
+                            infos.put(list[i], info);
                         }
-                        MusicPlayer.playAll(RecentActivity.this, list, getAdapterPosition() - 1, false);
-                        Handler handler1 = new Handler();
-                        handler1.postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                notifyItemChanged(currentlyPlayingPosition);
-                                notifyItemChanged(getAdapterPosition());
-                            }
-                        }, 50);
+                        MusicPlayer.playAll(infos, list, getAdapterPosition() - 1, false);
                     }
-                }, 100);
-            }
+                }).start();
 
+            }
         }
     }
 }

@@ -2,39 +2,21 @@ package com.wm.remusic.fragmentnet;
 
 import android.content.Intent;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.wm.remusic.R;
 import com.wm.remusic.activity.AlbumsDetailActivity;
-import com.wm.remusic.activity.NetAlbumsDetailActivity;
-import com.wm.remusic.activity.NetPlaylistDetailActivity;
-import com.wm.remusic.fragment.AlbumDetailFragment;
-import com.wm.remusic.fragment.MoreFragment;
-import com.wm.remusic.info.AlbumInfo;
 import com.wm.remusic.json.SearchAlbumInfo;
-import com.wm.remusic.json.SearchSongInfo;
-import com.wm.remusic.service.MusicPlayer;
-import com.wm.remusic.uitl.IConstants;
-import com.wm.remusic.uitl.MusicUtils;
-import com.wm.remusic.uitl.PreferencesUtility;
-import com.wm.remusic.uitl.SortOrder;
 import com.wm.remusic.widget.DividerItemDecoration;
 
 import java.util.ArrayList;
@@ -51,10 +33,10 @@ public class SearchAlbumFragment extends Fragment {
     private RecyclerView recyclerView;
     private RecyclerView.ItemDecoration itemDecoration;
 
-    public static SearchAlbumFragment newInstance(ArrayList<SearchAlbumInfo> list){
+    public static SearchAlbumFragment newInstance(ArrayList<SearchAlbumInfo> list) {
         SearchAlbumFragment fragment = new SearchAlbumFragment();
         Bundle bundle = new Bundle();
-        bundle.putParcelableArrayList("searchAlbum",list);
+        bundle.putParcelableArrayList("searchAlbum", list);
         fragment.setArguments(bundle);
         return fragment;
     }
@@ -75,16 +57,13 @@ public class SearchAlbumFragment extends Fragment {
     }
 
 
-
-
-
     //设置分割线
     private void setItemDecoration() {
         itemDecoration = new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL_LIST);
         recyclerView.addItemDecoration(itemDecoration);
     }
 
-    private void loadAlbums(){
+    private void loadAlbums() {
         if (getActivity() == null) {
             return;
         }
@@ -157,12 +136,11 @@ public class SearchAlbumFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 SearchAlbumInfo model = mList.get(getAdapterPosition());
-                Intent intent = new Intent(getActivity(), NetAlbumsDetailActivity.class);
-                intent.putExtra("albumid",model.getAlbum_id());
-                intent.putExtra("albumart",model.getPic_small());
-                intent.putExtra("albumname",model.getTitle());
-                intent.putExtra("artistname",model.getAuthor());
-                intent.putExtra("publisttime",model.getPublishtime());
+                Intent intent = new Intent(getActivity(), AlbumsDetailActivity.class);
+                intent.putExtra("albumid", model.getAlbum_id());
+                intent.putExtra("albumart", model.getPic_small());
+                intent.putExtra("albumname", model.getTitle());
+                intent.putExtra("artistname", model.getAuthor());
                 getActivity().startActivity(intent);
             }
 

@@ -2,18 +2,12 @@ package com.wm.remusic.fragmentnet;
 
 import android.content.Intent;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -21,25 +15,11 @@ import android.widget.TextView;
 
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.wm.remusic.R;
-import com.wm.remusic.activity.NetArtistDetailActivity;
-import com.wm.remusic.fragment.ArtistDetailFragment;
-import com.wm.remusic.fragment.MoreFragment;
-import com.wm.remusic.info.ArtistInfo;
+import com.wm.remusic.activity.ArtistDetailActivity;
 import com.wm.remusic.json.SearchArtistInfo;
-import com.wm.remusic.json.SearchSongInfo;
-import com.wm.remusic.lastfmapi.LastFmClient;
-import com.wm.remusic.lastfmapi.callbacks.ArtistInfoListener;
-import com.wm.remusic.lastfmapi.models.ArtistQuery;
-import com.wm.remusic.lastfmapi.models.LastfmArtist;
-import com.wm.remusic.service.MusicPlayer;
-import com.wm.remusic.uitl.IConstants;
-import com.wm.remusic.uitl.MusicUtils;
-import com.wm.remusic.uitl.PreferencesUtility;
-import com.wm.remusic.uitl.SortOrder;
 import com.wm.remusic.widget.DividerItemDecoration;
 
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by wm on 2016/5/18.
@@ -52,10 +32,10 @@ public class SearchArtistFragment extends Fragment {
     private ArtistAdapter mAdapter;
     private RecyclerView.ItemDecoration itemDecoration;
 
-    public static SearchArtistFragment newInstance(ArrayList<SearchArtistInfo> list){
+    public static SearchArtistFragment newInstance(ArrayList<SearchArtistInfo> list) {
         SearchArtistFragment fragment = new SearchArtistFragment();
         Bundle bundle = new Bundle();
-        bundle.putParcelableArrayList("searchArtist",list);
+        bundle.putParcelableArrayList("searchArtist", list);
         fragment.setArguments(bundle);
         return fragment;
     }
@@ -77,9 +57,6 @@ public class SearchArtistFragment extends Fragment {
     }
 
 
-
-
-
     //设置分割线
     private void setItemDecoration() {
 
@@ -88,9 +65,9 @@ public class SearchArtistFragment extends Fragment {
     }
 
 
-    private void loadArtists(){
+    private void loadArtists() {
 
-        if(getArguments() != null){
+        if (getArguments() != null) {
             artistInfos = getArguments().getParcelableArrayList("searchArtist");
         }
         mAdapter = new ArtistAdapter(artistInfos);
@@ -155,12 +132,12 @@ public class SearchArtistFragment extends Fragment {
             //加载歌手专辑界面fragment
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getActivity(), NetArtistDetailActivity.class);
+                Intent intent = new Intent(getActivity(), ArtistDetailActivity.class);
                 SearchArtistInfo model = mList.get(getAdapterPosition());
-                intent.putExtra("artistid",model.getArtist_id());
-                intent.putExtra("artistart",model.getAvatar_middle());
-                intent.putExtra("artistname",model.getArtist_id());
-                intent.putExtra("artistUid",model.getTing_uid());
+                intent.putExtra("artistid", model.getArtist_id());
+                intent.putExtra("artistart", model.getAvatar_middle());
+                intent.putExtra("artistname", model.getAuthor());
+                intent.putExtra("artistUid", model.getTing_uid());
                 getActivity().startActivity(intent);
             }
 

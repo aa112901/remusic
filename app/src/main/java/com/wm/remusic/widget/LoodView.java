@@ -17,12 +17,11 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 
-
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.wm.remusic.R;
-import com.wm.remusic.json.Focus;
+import com.wm.remusic.json.FocusItemInfo;
 import com.wm.remusic.net.BMA;
 import com.wm.remusic.net.HttpUtil;
 import com.wm.remusic.net.NetworkUtils;
@@ -146,26 +145,25 @@ public class LoodView extends FrameLayout {
         new AsyncTask<Void, Void, Void>() {
             @Override
             protected Void doInBackground(Void... params) {
-                if(NetworkUtils.isConnectInternet(mContext)){
+                if (NetworkUtils.isConnectInternet(mContext)) {
                     isFromCache = false;
                 }
 
-                try{
-                    JsonArray rray = HttpUtil.getResposeJsonObject(BMA.focusPic(7),mContext, isFromCache).get("pic").getAsJsonArray();
+                try {
+                    JsonArray rray = HttpUtil.getResposeJsonObject(BMA.focusPic(7), mContext, isFromCache).get("pic").getAsJsonArray();
                     int en = rray.size();
                     Gson gson = new Gson();
 
                     imageNet.clear();
-                    for(int i = 0;i < en; i++) {
-                        Focus focus = gson.fromJson(rray.get(i), Focus.class);
-                        if(focus != null){
-                            imageNet.add(focus.getRandpic());
-                        }
-                        else {
+                    for (int i = 0; i < en; i++) {
+                        FocusItemInfo focusItemInfo = gson.fromJson(rray.get(i), FocusItemInfo.class);
+                        if (focusItemInfo != null) {
+                            imageNet.add(focusItemInfo.getRandpic());
+                        } else {
                             imageNet.add("");
                         }
                     }
-                }catch (NullPointerException e){
+                } catch (NullPointerException e) {
                     e.printStackTrace();
                 }
 
@@ -175,16 +173,16 @@ public class LoodView extends FrameLayout {
 
             @Override
             protected void onPostExecute(Void aVoid) {
-                for(int i =0;i<7;i++){
+                for (int i = 0; i < 7; i++) {
                     imageViewList.get(i).setImageURI(Uri.parse(imageNet.get(i)));
                 }
             }
         }.execute();
 
 
-        for(int i = 0;i < 7; i++){
-                    imageNet.add("");
-                }
+        for (int i = 0; i < 7; i++) {
+            imageNet.add("");
+        }
 
         imageViewList = new ArrayList<>();
         dotViewList = new ArrayList<>();
@@ -287,8 +285,8 @@ public class LoodView extends FrameLayout {
     //解决滑动冲突
     @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {
-        switch (ev.getAction()){
-            case MotionEvent.ACTION_DOWN:{
+        switch (ev.getAction()) {
+            case MotionEvent.ACTION_DOWN: {
                 getParent().requestDisallowInterceptTouchEvent(true);
                 break;
             }

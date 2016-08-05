@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -17,10 +17,16 @@
     />
 
     <android.support.v7.widget.RecyclerView
+        android:layout_below="@+id/toolbar"
+        android:layout_above="@+id/bottom_container"
         android:id="@+id/recyclerview"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
-        android:fadeScrollbars="true"
-    </android.support.v7.widget.RecyclerView>
+        android:layout_height="wrap_content"/>
 
-</LinearLayout>
+    <FrameLayout
+        android:layout_alignParentBottom="true"
+        android:id="@+id/bottom_container"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"/>
+
+</RelativeLayout>

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/action_search"
+        android:icon="@drawable/actionbar_search"
+        android:orderInCategory="1"
+        android:title="search"
+        app:showAsAction="ifRoom|collapseActionView" />
+    <item
+        android:id="@+id/action_more"
+        android:icon="@drawable/actionbar_more"
+        android:orderInCategory="1"
+        android:title="search"
+        app:showAsAction="ifRoom|collapseActionView" />
+
+
+    <!--<item-->
+    <!--android:id="@+id/action_exit"-->
+    <!--app:showAsAction="ifRoom"-->
+    <!--android:title="@string/exit">-->
+    <!--</item>-->
+    <!--<item android:id="@+id/action_connect"-->
+    <!--android:title="建立蓝牙连接"-->
+    <!--android:orderInCategory="100"  />-->
+
+    <!--<item android:id="@+id/action_show_bluetooth"-->
+    <!--android:title="让本设备可见"-->
+    <!--android:orderInCategory="100" />-->
+</menu>

@@ -1,15 +1,12 @@
 package com.wm.remusic.adapter;
 
 import android.animation.ObjectAnimator;
-import android.app.Activity;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
-import android.os.Bundle;
 import android.os.Handler;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -24,24 +21,16 @@ import android.widget.Toast;
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.wm.remusic.R;
 import com.wm.remusic.activity.DownActivity;
-import com.wm.remusic.activity.PlaylistDetailActivity;
+import com.wm.remusic.activity.PlaylistActivity;
 import com.wm.remusic.activity.PlaylistManagerActivity;
 import com.wm.remusic.activity.RecentActivity;
-import com.wm.remusic.activity.SelectActivity;
 import com.wm.remusic.activity.TabActivity;
-import com.wm.remusic.fragment.PlaylistDetailFragment;
-import com.wm.remusic.fragment.RecentFragment;
-import com.wm.remusic.fragment.TabPagerFragment;
-import com.wm.remusic.info.MusicInfo;
 import com.wm.remusic.info.Playlist;
 import com.wm.remusic.provider.PlaylistInfo;
 import com.wm.remusic.provider.PlaylistsManager;
 import com.wm.remusic.uitl.IConstants;
-import com.wm.remusic.uitl.MusicUtils;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 /**
  * Created by wm on 2016/3/10.
@@ -50,22 +39,23 @@ public class MainFragmentAdapter extends RecyclerView.Adapter<MainFragmentAdapte
 
     private ArrayList<Playlist> playlists;
     private boolean expanded = true;
-    private Activity mContext;
-    private List itemResults = Collections.emptyList();
+    private Context mContext;
+    private ArrayList itemResults = new ArrayList();
 
 
-    public MainFragmentAdapter(Activity context, List list, ArrayList<Playlist> playlists) {
+    public MainFragmentAdapter(Context context, ArrayList list, ArrayList<Playlist> playlists) {
         this.itemResults = new ArrayList();
         this.mContext = context;
         this.itemResults = list;
         this.playlists = playlists;
     }
 
-    public void updateResults(List itemResults, ArrayList<Playlist> playlists) {
+    public void updateResults(ArrayList itemResults, ArrayList<Playlist> playlists) {
 
         this.itemResults = itemResults;
         this.playlists = playlists;
     }
+
 
     public void updatePlaylists(ArrayList<Playlist> playlists) {
         this.playlists = playlists;
@@ -96,9 +86,9 @@ public class MainFragmentAdapter extends RecyclerView.Adapter<MainFragmentAdapte
         switch (getItemViewType(i)) {
             case 0:
                 MainFragmentItem item = (MainFragmentItem) itemResults.get(i);
-                itemHolder.itemtitle.setText(item.getTitle());
-                itemHolder.count.setText("(" + item.getCount() + ")");
-                itemHolder.image.setImageResource(item.getAvatar());
+                itemHolder.itemtitle.setText(item.title);
+                itemHolder.count.setText("(" + item.count + ")");
+                itemHolder.image.setImageResource(item.avatar);
                 setOnListener(itemHolder, i);
                 break;
             case 1:
@@ -142,14 +132,8 @@ public class MainFragmentAdapter extends RecyclerView.Adapter<MainFragmentAdapte
                             @Override
                             public void run() {
                                 Intent intent = new Intent(mContext, TabActivity.class);
-                                intent.putExtra("page_number",0);
+                                intent.putExtra("page_number", 0);
                                 mContext.startActivity(intent);
-
-//                                TabPagerFragment fragment = TabPagerFragment.newInstance(0);
-//                                FragmentTransaction transaction = ((AppCompatActivity) mContext).getSupportFragmentManager().beginTransaction();
-//                                transaction.hide(((AppCompatActivity) mContext).getSupportFragmentManager().findFragmentById(R.id.fragment_container));
-//                                transaction.add(R.id.fragment_container, fragment);
-//                                transaction.addToBackStack(null).commit();
                             }
                         }, 60);
 
@@ -166,11 +150,6 @@ public class MainFragmentAdapter extends RecyclerView.Adapter<MainFragmentAdapte
                             public void run() {
                                 Intent intent = new Intent(mContext, RecentActivity.class);
                                 mContext.startActivity(intent);
-//                                RecentFragment fragment = new RecentFragment();
-//                                FragmentTransaction transaction = ((AppCompatActivity) mContext).getSupportFragmentManager().beginTransaction();
-//                                transaction.hide(((AppCompatActivity) mContext).getSupportFragmentManager().findFragmentById(R.id.fragment_container));
-//                                transaction.add(R.id.fragment_container, fragment);
-//                                transaction.addToBackStack(null).commit();
                             }
                         }, 60);
                     }
@@ -187,9 +166,6 @@ public class MainFragmentAdapter extends RecyclerView.Adapter<MainFragmentAdapte
                             @Override
                             public void run() {
                                 Intent intent = new Intent(mContext, DownActivity.class);
-//                                Intent intent = new Intent(mContext, SelectActivity.class);
-//                                ArrayList<MusicInfo> mList = (ArrayList<MusicInfo>) MusicUtils.queryMusic(mContext, IConstants.START_FROM_LOCAL);
-//                                intent.putParcelableArrayListExtra("ids", mList);
                                 mContext.startActivity(intent);
                             }
                         }, 60);
@@ -203,7 +179,7 @@ public class MainFragmentAdapter extends RecyclerView.Adapter<MainFragmentAdapte
                     public void onClick(View v) {
 
                         Intent intent = new Intent(mContext, TabActivity.class);
-                        intent.putExtra("page_number",1);
+                        intent.putExtra("page_number", 1);
                         mContext.startActivity(intent);
 
                     }
@@ -220,16 +196,12 @@ public class MainFragmentAdapter extends RecyclerView.Adapter<MainFragmentAdapte
                 handler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
-//                        PlaylistDetailFragment fragment = PlaylistDetailFragment.newInstance(playlistid, albumArt, playlistname);
-//                        FragmentTransaction transaction = ((AppCompatActivity) mContext).getSupportFragmentManager().beginTransaction();
-//                        transaction.hide(((AppCompatActivity) mContext).getSupportFragmentManager().findFragmentById(R.id.fragment_container));
-//                        transaction.add(R.id.fragment_container, fragment);
-//                        transaction.addToBackStack(null).commit();
-                        Intent intent = new Intent(mContext, PlaylistDetailActivity.class);
+                        Intent intent = new Intent(mContext, PlaylistActivity.class);
                         intent.setFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-                        intent.putExtra("playlistid",playlistid);
-                        intent.putExtra("albumart",albumArt);
-                        intent.putExtra("playlistname",playlistname);
+                        intent.putExtra("islocal", true);
+                        intent.putExtra("playlistid", playlistid + "");
+                        intent.putExtra("albumart", albumArt);
+                        intent.putExtra("playlistname", playlistname);
                         mContext.startActivity(intent);
 
                     }
@@ -292,7 +264,7 @@ public class MainFragmentAdapter extends RecyclerView.Adapter<MainFragmentAdapte
 
     @Override
     public int getItemViewType(int position) {
-        if(getItemCount() == 0){
+        if (getItemCount() == 0) {
             return -1;
         }
         if (itemResults.get(position) instanceof MainFragmentItem)

@@ -1,21 +1,19 @@
 package com.wm.remusic.net;
 
-import java.math.BigInteger;
 import java.security.MessageDigest;
-import java.util.Objects;
 
 /**
  * Created by wm on 2016/4/14.
  */
 public class IdEncrpte {
 
-    public static void main(String[] args){
+    public static void main(String[] args) {
         byte[] g = ("3go8&$8*3*3h0k(2)2").getBytes();
         byte[] id = "30101323".getBytes();
         int gl = g.length;
         int idl = id.length;
-        for(int i = 0 ; i<idl; i++){
-            id[i] = (byte) (id[i] ^ g[i%gl]);
+        for (int i = 0; i < idl; i++) {
+            id[i] = (byte) (id[i] ^ g[i % gl]);
         }
         try {
             MessageDigest messageDigest = MessageDigest.getInstance("MD5");
@@ -26,9 +24,9 @@ public class IdEncrpte {
             // 字符数组转换成字符串返回
             System.out.println(parseByte2HexStr(resultByteArray));
             System.out.println(Base64Encoder.encode("ÓÙDhﾤBYu]8æÑcè ".getBytes()));
-          // System.out.println(Base64Encoder.encode(binary(resultByteArray, 2)));
+            // System.out.println(Base64Encoder.encode(binary(resultByteArray, 2)));
 
-        }catch (Exception e){
+        } catch (Exception e) {
 
         }
 

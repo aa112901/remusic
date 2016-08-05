@@ -4,9 +4,10 @@ package com.wm.remusic.adapter;
  * Created by wm on 2016/3/10.
  */
 public class MainFragmentItem {
-    private String title;   //信息标题
-    private int count;
-    private int avatar; //图片ID
+    public String title;   //信息标题
+    public int count;
+    public int avatar; //图片ID
+    public boolean countChanged = true;
 
     public String getTitle() {
         return title;

@@ -1,9 +1,5 @@
 package com.wm.remusic.activity;
 
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
@@ -14,7 +10,6 @@ import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -27,20 +22,18 @@ import com.wm.remusic.R;
 import com.wm.remusic.adapter.PlaylistDetailAdapter;
 import com.wm.remusic.info.MusicInfo;
 import com.wm.remusic.provider.PlaylistsManager;
-import com.wm.remusic.service.MediaService;
 import com.wm.remusic.service.MusicTrack;
 import com.wm.remusic.uitl.CommonUtils;
-import com.wm.remusic.widget.DividerItemDecoration;
-import com.wm.remusic.uitl.IConstants;
 import com.wm.remusic.uitl.ImageUtils;
 import com.wm.remusic.uitl.MusicUtils;
+import com.wm.remusic.widget.DividerItemDecoration;
 
 import java.util.ArrayList;
 
 /**
  * Created by wm on 2016/4/11.
  */
-public class PlaylistDetailActivity extends AppCompatActivity {
+public class PlaylistDetailActivity extends BaseActivity {
 
     private long playlsitId = -1;
     private String albumPath, playlistname;
@@ -58,23 +51,6 @@ public class PlaylistDetailActivity extends AppCompatActivity {
 
     private CollapsingToolbarLayout collapsingToolbarLayout;
     private AppBarLayout appBarLayout;
-    private Context context;
-    //接受广播
-    private BroadcastReceiver mStatusListener = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-
-            String action = intent.getAction();
-            if (action.equals(IConstants.PLAYLIST_ITEM_MOVED)) {
-                reloadAdapter();
-
-            } else if (action.equals(IConstants.MUSIC_COUNT_CHANGED)) {
-                refreshPlaylist();
-                reloadAdapter();
-            }
-        }
-    };
-    
 
 
     @Override
@@ -113,7 +89,7 @@ public class PlaylistDetailActivity extends AppCompatActivity {
 //        });
 
     }
-    
+
 
     private void setUpEverything() {
         setupToolbar();
@@ -190,23 +166,12 @@ public class PlaylistDetailActivity extends AppCompatActivity {
         toolbar.setBackgroundColor(Color.TRANSPARENT);
         reloadAdapter();
 
-        IntentFilter f = new IntentFilter();
-        f.addAction(IConstants.MUSIC_COUNT_CHANGED);
-        f.addAction(IConstants.PLAYLIST_ITEM_MOVED);
-        f.addAction(MediaService.META_CHANGED);
-        PlaylistDetailActivity.this.registerReceiver(mStatusListener, f);
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        PlaylistDetailActivity.this.unregisterReceiver(mStatusListener);
     }
-
-    private void refreshPlaylist() {
-
-    }
-
 
     private void setAlbumart() {
         albumTitle.setText(playlistname);

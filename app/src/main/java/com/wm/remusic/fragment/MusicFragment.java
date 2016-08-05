@@ -4,7 +4,6 @@ package com.wm.remusic.fragment;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -23,14 +22,15 @@ import com.wm.remusic.R;
 import com.wm.remusic.activity.SelectActivity;
 import com.wm.remusic.info.MusicInfo;
 import com.wm.remusic.service.MusicPlayer;
-import com.wm.remusic.widget.DividerItemDecoration;
 import com.wm.remusic.uitl.IConstants;
 import com.wm.remusic.uitl.MusicUtils;
 import com.wm.remusic.uitl.PreferencesUtility;
 import com.wm.remusic.uitl.SortOrder;
+import com.wm.remusic.widget.DividerItemDecoration;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * Created by wm on 2016/1/19.
@@ -49,9 +49,9 @@ public class MusicFragment extends BaseFragment {
     @Override
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
-        if(isVisibleToUser){
-            if(view == null){
-                view = LayoutInflater.from(getActivity()).inflate(R.layout.recylerview,frameLayout,false);
+        if (isVisibleToUser) {
+            if (view == null) {
+                view = LayoutInflater.from(getActivity()).inflate(R.layout.recylerview, frameLayout, false);
                 recyclerView = (RecyclerView) view.findViewById(R.id.recyclerview);
                 layoutManager = new LinearLayoutManager(getActivity());
                 recyclerView.setLayoutManager(layoutManager);
@@ -78,13 +78,12 @@ public class MusicFragment extends BaseFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.load_framelayout, container, false);
         frameLayout = (FrameLayout) view.findViewById(R.id.loadframe);
-        View loadView = LayoutInflater.from(getActivity()).inflate(R.layout.loading,frameLayout,false);
+        View loadView = LayoutInflater.from(getActivity()).inflate(R.layout.loading, frameLayout, false);
         frameLayout.addView(loadView);
         isFirstLoad = true;
 
         return view;
     }
-
 
 
     //去除界面重叠
@@ -106,7 +105,7 @@ public class MusicFragment extends BaseFragment {
 
     //刷新列表
     public void reloadAdapter() {
-        if(mAdapter == null){
+        if (mAdapter == null) {
             return;
         }
 
@@ -124,9 +123,9 @@ public class MusicFragment extends BaseFragment {
             protected void onPostExecute(Void aVoid) {
                 mAdapter.notifyDataSetChanged();
 
-                if(isFirstLoad){
+                if (isFirstLoad) {
                     frameLayout.removeAllViews();
-                    Log.e("framelayout",frameLayout.toString());
+                    Log.e("framelayout", frameLayout.toString());
 
                     //framelayout 创建了新的实例
                     ViewGroup p = (ViewGroup) view.getParent();
@@ -215,6 +214,7 @@ public class MusicFragment extends BaseFragment {
 //                throw new IllegalArgumentException("model Data must not be null");
 //            }
             mList = list;
+
         }
 
         //更新adpter的数据
@@ -228,7 +228,7 @@ public class MusicFragment extends BaseFragment {
                 return new CommonItemViewHolder(LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.common_item, viewGroup, false));
 
             else {
-                return new ListItemViewHolder(LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.frament_musci_common_item, viewGroup, false));
+                return new ListItemViewHolder(LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.fragment_musci_common_item, viewGroup, false));
             }
         }
 
@@ -295,17 +295,21 @@ public class MusicFragment extends BaseFragment {
 
             public void onClick(View v) {
                 //// TODO: 2016/1/20
-                final Handler handler = new Handler();
-                handler.postDelayed(new Runnable() {
+                new Thread(new Runnable() {
                     @Override
                     public void run() {
                         long[] list = new long[mList.size()];
+                        HashMap<Long, MusicInfo> infos = new HashMap();
                         for (int i = 0; i < mList.size(); i++) {
-                            list[i] = mList.get(i).songId;
+                            MusicInfo info = mList.get(i);
+                            list[i] = info.songId;
+                            info.islocal = true;
+                            info.albumData = MusicUtils.getAlbumArtUri(info.albumId) + "";
+                            infos.put(list[i], mList.get(i));
                         }
-                        MusicPlayer.playAll(getContext(), list, 0, false);
+                        MusicPlayer.playAll(infos, list, 0, false);
                     }
-                }, 100);
+                }).start();
 
             }
 
@@ -327,7 +331,7 @@ public class MusicFragment extends BaseFragment {
                 moreOverflow.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        MoreFragment morefragment = MoreFragment.newInstance(mList.get(getAdapterPosition() - 1).songId + "", IConstants.MUSICOVERFLOW);
+                        MoreFragment morefragment = MoreFragment.newInstance(mList.get(getAdapterPosition() - 1), IConstants.MUSICOVERFLOW);
                         morefragment.show(getFragmentManager(), "music");
                     }
                 });
@@ -337,26 +341,21 @@ public class MusicFragment extends BaseFragment {
 
             @Override
             public void onClick(View v) {
-
-                final Handler handler = new Handler();
-                handler.postDelayed(new Runnable() {
+                new Thread(new Runnable() {
                     @Override
                     public void run() {
                         long[] list = new long[mList.size()];
+                        HashMap<Long, MusicInfo> infos = new HashMap();
                         for (int i = 0; i < mList.size(); i++) {
-                            list[i] = mList.get(i).songId;
+                            MusicInfo info = mList.get(i);
+                            list[i] = info.songId;
+                            info.islocal = true;
+                            info.albumData = MusicUtils.getAlbumArtUri(info.albumId) + "";
+                            infos.put(list[i], mList.get(i));
                         }
-                        MusicPlayer.playAll(getContext(), list, getAdapterPosition() - 1, false);
-                        Handler handler1 = new Handler();
-                        handler1.postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                notifyItemChanged(currentlyPlayingPosition);
-                                notifyItemChanged(getAdapterPosition());
-                            }
-                        }, 50);
+                        MusicPlayer.playAll(infos, list, getAdapterPosition() - 1, false);
                     }
-                }, 100);
+                }).start();
             }
 
         }

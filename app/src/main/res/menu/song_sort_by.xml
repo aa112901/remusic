@@ -1,7 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
-
+    <item
+        android:id="@+id/action_settings"
+        android:icon="@drawable/actionbar_more"
+        android:orderInCategory="100"
+        android:title="  "
+        app:showAsAction="always" >
+        <menu>
     <item
         android:id="@+id/menu_sort_by_az"
         android:title="@string/sort_order_entry_az" />
@@ -14,5 +21,7 @@
     <item
         android:id="@+id/menu_sort_by_album"
         android:title="@string/sort_order_entry_album" />
+</menu>
 
+    </item>
 </menu>

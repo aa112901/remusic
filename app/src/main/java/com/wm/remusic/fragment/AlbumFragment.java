@@ -21,11 +21,11 @@ import com.facebook.drawee.view.SimpleDraweeView;
 import com.wm.remusic.R;
 import com.wm.remusic.info.AlbumInfo;
 import com.wm.remusic.service.MusicPlayer;
-import com.wm.remusic.widget.DividerItemDecoration;
 import com.wm.remusic.uitl.IConstants;
 import com.wm.remusic.uitl.MusicUtils;
 import com.wm.remusic.uitl.PreferencesUtility;
 import com.wm.remusic.uitl.SortOrder;
+import com.wm.remusic.widget.DividerItemDecoration;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -192,8 +192,8 @@ public class AlbumFragment extends BaseFragment {
         @Override
         public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
             AlbumInfo model = mList.get(position);
-            ((ListItemViewHolder) holder).title.setText(model.album_name);
-            ((ListItemViewHolder) holder).title2.setText(model.number_of_songs + " " + model.album_artist);
+            ((ListItemViewHolder) holder).title.setText(model.album_name.toString());
+            ((ListItemViewHolder) holder).title2.setText(model.number_of_songs + "首" + model.album_artist);
             ((ListItemViewHolder) holder).draweeView.setImageURI(Uri.parse(model.album_art + ""));//要加“” 弹出println needs a message
             //根据播放中歌曲的专辑名判断当前专辑条目是否有播放的歌曲
             if (MusicPlayer.getArtistName() != null && MusicPlayer.getAlbumName().equals(model.album_name)) {

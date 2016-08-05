@@ -44,7 +44,7 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ItemHolder
 
     @Override
     public ItemHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
-        View v0 = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.frament_musci_common_item, null);
+        View v0 = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.fragment_musci_common_item, null);
         ItemHolder ml0 = new ItemHolder(v0);
         return ml0;
     }
@@ -107,7 +107,7 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ItemHolder
                 public void run() {
                     long[] ret = new long[1];
                     ret[0] = ((MusicInfo) searchResults.get(getAdapterPosition())).songId;
-                    MusicPlayer.playAll(mContext, ret, 0, false);
+                    MusicPlayer.playAll(null, ret, 0, false);
                 }
             }, 100);
 

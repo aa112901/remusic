@@ -9,7 +9,6 @@ import android.view.Window;
 import android.widget.TextView;
 
 import com.wm.remusic.R;
-import com.wm.remusic.downmusic.DownloadTask;
 import com.wm.remusic.uitl.PreferencesUtility;
 
 /**
@@ -38,17 +37,17 @@ public class BitSetFragment extends DialogFragment implements View.OnClickListen
         bit320.setOnClickListener(this);
         switch (PreferencesUtility.getInstance(getContext()).getDownMusicBit()) {
             case 64:
-              // TypedValue outValue = new TypedValue();
-              //  getContext().getTheme().resolveAttribute(android.R.attr.selectableItemBackground,outValue, true);
-               // bit1.setBackgroundResource(outValue.resourceId);
-               bit1.setPressed(true);
+                // TypedValue outValue = new TypedValue();
+                //  getContext().getTheme().resolveAttribute(android.R.attr.selectableItemBackground,outValue, true);
+                // bit1.setBackgroundResource(outValue.resourceId);
+                bit1.setPressed(true);
                 break;
             case 128:
-               // bit1.setPressed(true);
+                // bit1.setPressed(true);
                 bit2.setPressed(true);
                 break;
             case 192:
-               // bit1.setPressed(true);
+                // bit1.setPressed(true);
                 bit3.setPressed(true);
                 break;
             case 256:

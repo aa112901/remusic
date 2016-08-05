@@ -27,8 +27,8 @@ import com.wm.remusic.recent.TopTracksLoader;
 import com.wm.remusic.service.MediaService;
 import com.wm.remusic.service.MusicPlayer;
 import com.wm.remusic.uitl.CommonUtils;
-import com.wm.remusic.widget.DividerItemDecoration;
 import com.wm.remusic.uitl.IConstants;
+import com.wm.remusic.widget.DividerItemDecoration;
 
 import java.lang.reflect.Field;
 import java.util.List;
@@ -194,7 +194,7 @@ public class RecentFragment extends Fragment {
                 return new CommonItemViewHolder(LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.common_item, viewGroup, false));
 
             else {
-                return new ListItemViewHolder(LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.frament_musci_common_item, viewGroup, false));
+                return new ListItemViewHolder(LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.fragment_musci_common_item, viewGroup, false));
             }
         }
 
@@ -267,7 +267,7 @@ public class RecentFragment extends Fragment {
                         for (int i = 0; i < mList.size(); i++) {
                             list[i] = mList.get(i).id;
                         }
-                        MusicPlayer.playAll(getContext(), list, 0, false);
+                        MusicPlayer.playAll(null, list, 0, false);
                     }
                 }, 100);
 
@@ -320,7 +320,7 @@ public class RecentFragment extends Fragment {
                         for (int i = 0; i < mList.size(); i++) {
                             list[i] = mList.get(i).id;
                         }
-                        MusicPlayer.playAll(getContext(), list, getAdapterPosition() - 1, false);
+                        MusicPlayer.playAll(null, list, getAdapterPosition() - 1, false);
                         Handler handler1 = new Handler();
                         handler1.postDelayed(new Runnable() {
                             @Override

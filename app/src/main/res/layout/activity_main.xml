@@ -10,15 +10,26 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
-    <android.support.design.widget.NavigationView
-        android:id="@+id/nav"
-        android:layout_width="200dp"
+    <!--<android.support.design.widget.NavigationView-->
+        <!--android:id="@+id/nav"-->
+        <!--android:layout_width="300dp"-->
+        <!--android:layout_height="match_parent"-->
+        <!--android:layout_gravity="start"-->
+        <!--android:fitsSystemWindows="true"-->
+       <!--&gt;-->
+        <!--<include layout="@layout/nav_header_main"/>-->
+    <!--</android.support.design.widget.NavigationView>-->
+    <ListView
+        android:id="@+id/id_lv_left_menu"
+        android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_gravity="start"
-        android:fitsSystemWindows="true"
-        app:headerLayout="@layout/nav_header_main"
-        app:menu="@menu/activity_main_drawer">
+        android:paddingTop="0dp"
+        android:background="#ffffffff"
+        android:clipToPadding="false"
+        android:divider="@null"
+        android:listSelector="?attr/selectableItemBackground"
+        />
 
-    </android.support.design.widget.NavigationView>
 
 </android.support.v4.widget.DrawerLayout>

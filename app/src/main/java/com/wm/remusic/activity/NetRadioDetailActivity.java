@@ -15,7 +15,6 @@ import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -52,9 +51,9 @@ import java.util.Iterator;
 /**
  * Created by wm on 2016/4/11.
  */
-public class NetRadioDetailActivity extends AppCompatActivity {
+public class NetRadioDetailActivity extends BaseActivity {
     String albumId;
-    private String albumPath, albumName , artistName ,albumCount;
+    private String albumPath, albumName, artistName, albumCount;
     private ArrayList<MusicInfo> list = new ArrayList<>();
 
     private SimpleDraweeView albumArtSmall;
@@ -126,23 +125,23 @@ public class NetRadioDetailActivity extends AppCompatActivity {
             protected Void doInBackground(final Void... unused) {
 
                 try {
-                    JsonArray jsonArray = HttpUtil.getResposeJsonObject(BMA.Lebo.albumInfo(albumId,10)).get("result").getAsJsonObject()
+                    JsonArray jsonArray = HttpUtil.getResposeJsonObject(BMA.Lebo.albumInfo(albumId, 10)).get("result").getAsJsonObject()
                             .get("latest_song").getAsJsonArray();
 
                     Iterator it = jsonArray.iterator();
-                    while(it.hasNext()){
-                        JsonElement e = (JsonElement)it.next();
+                    while (it.hasNext()) {
+                        JsonElement e = (JsonElement) it.next();
                         JsonObject jo = e.getAsJsonObject();
                         MusicInfo mi = new MusicInfo();
-                        mi.artist =  getStringValue(jo, "song_duration");
+                        mi.artist = getStringValue(jo, "song_duration");
                         mi.musicName = getStringValue(jo, "song_name");
-                        mi.songId = Integer.parseInt(getStringValue(jo,"song_id"));
+                        mi.songId = Integer.parseInt(getStringValue(jo, "song_id"));
 
                         list.add(mi);
                     }
 
 
-                    mAdapter = new PlaylistDetailAdapter(NetRadioDetailActivity.this,list);
+                    mAdapter = new PlaylistDetailAdapter(NetRadioDetailActivity.this, list);
 
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -160,12 +159,12 @@ public class NetRadioDetailActivity extends AppCompatActivity {
     }
 
 
-    private String getStringValue(JsonObject jsonObject,String key){
+    private String getStringValue(JsonObject jsonObject, String key) {
         JsonElement nameElement = jsonObject.get(key);
         return nameElement.getAsString();
     }
 
-    private int getIntValue(JsonObject jsonObject,String key){
+    private int getIntValue(JsonObject jsonObject, String key) {
         JsonElement nameElement = jsonObject.get(key);
         return nameElement.getAsInt();
     }
@@ -187,13 +186,13 @@ public class NetRadioDetailActivity extends AppCompatActivity {
         albumArtSmall.setImageURI(Uri.parse(albumPath));
         try {
             //drawable = Drawable.createFromStream( new URL(albumPath).openStream(),"src");
-            ImageRequest imageRequest=ImageRequest.fromUri(albumPath);
-            CacheKey cacheKey= DefaultCacheKeyFactory.getInstance()
+            ImageRequest imageRequest = ImageRequest.fromUri(albumPath);
+            CacheKey cacheKey = DefaultCacheKeyFactory.getInstance()
                     .getEncodedCacheKey(imageRequest);
             BinaryResource resource = ImagePipelineFactory.getInstance()
                     .getMainDiskStorageCache().getResource(cacheKey);
-            File file=((FileBinaryResource)resource).getFile();
-            new setBlurredAlbumArt().execute(ImageUtils.getArtworkQuick(file,300,300));
+            File file = ((FileBinaryResource) resource).getFile();
+            new setBlurredAlbumArt().execute(ImageUtils.getArtworkQuick(file, 300, 300));
 
 
         } catch (Exception e) {
@@ -284,9 +283,9 @@ public class NetRadioDetailActivity extends AppCompatActivity {
                                 setPositiveButton(mContext.getString(R.string.sure), new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
-                                        DownloadTask task = new DownloadTask.Builder(NetRadioDetailActivity.this,localItem.url)
+                                        DownloadTask task = new DownloadTask.Builder(NetRadioDetailActivity.this, localItem.data)
                                                 .setSaveDirPath("/storage/emulated/0/")
-                                                .setFileName(localItem.musicName+".mp3").build();
+                                                .setFileName(localItem.musicName + ".mp3").build();
 
                                         DownloadManager.getInstance(NetRadioDetailActivity.this).addDownloadTask(task);
                                         dialog.dismiss();
@@ -351,7 +350,7 @@ public class NetRadioDetailActivity extends AppCompatActivity {
                         for (int i = 0; i < arraylist.size(); i++) {
                             list[i] = arraylist.get(i).songId;
                         }
-                        MusicPlayer.playAll(mContext, list, 0, false);
+                        MusicPlayer.playAll(null, list, 0, false);
                     }
                 }, 100);
 
@@ -379,14 +378,14 @@ public class NetRadioDetailActivity extends AppCompatActivity {
                     @Override
                     public void run() {
 
-                        try{
+                        try {
                             mediaPlayer.reset();
-                            mediaPlayer.setDataSource(arraylist.get(getAdapterPosition()).url);
+                            mediaPlayer.setDataSource(arraylist.get(getAdapterPosition()).data);
                             mediaPlayer.prepare();
                             mediaPlayer.start();
                             MusicPlayer.clearQueue();
 
-                        }catch (Exception e){
+                        } catch (Exception e) {
                             e.printStackTrace();
                         }
 

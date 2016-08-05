@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
@@ -17,13 +17,22 @@
     />
 
     <android.support.design.widget.TabLayout
+        android:layout_below="@+id/toolbar"
         android:id="@+id/tabs"
         android:layout_width="match_parent"
         android:layout_height="39dp"
         android:tag="tab_indicator_accent_color,bg_primary_color" />
  <android.support.v4.view.ViewPager
+     android:layout_below="@+id/tabs"
+     android:layout_above="@+id/bottom_container"
      android:id="@+id/viewPager"
      android:layout_width="match_parent"
      android:layout_height="match_parent"/>
+    <FrameLayout
+        android:layout_alignParentBottom="true"
+        android:layout_gravity="end|bottom"
+        android:id="@+id/bottom_container"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"/>
 
-</LinearLayout>
+</RelativeLayout>

@@ -20,9 +20,6 @@ import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.os.AsyncTask;
 import android.preference.PreferenceManager;
 
-import java.util.ArrayList;
-import java.util.Set;
-
 public final class PreferencesUtility {
 
     public static final String ARTIST_SORT_ORDER = "artist_sort_order";
@@ -59,25 +56,35 @@ public final class PreferencesUtility {
         return sInstance;
     }
 
+    public void setPlayLink(long id, String link) {
+        final SharedPreferences.Editor editor = mPreferences.edit();
+        editor.putString(id + "", link);
+        editor.apply();
+    }
 
-    public void setItemPostion(String str){
+    public String getPlayLink(long id) {
+        return mPreferences.getString(id + "", null);
+    }
+
+
+    public void setItemPostion(String str) {
         final SharedPreferences.Editor editor = mPreferences.edit();
         editor.putString("item_relative_position", str);
         editor.apply();
     }
 
-    public String getItemPosition(){
-        return mPreferences.getString("item_relative_position","推荐歌单 最新专辑 主播电台");
+    public String getItemPosition() {
+        return mPreferences.getString("item_relative_position", "推荐歌单 最新专辑 主播电台");
     }
 
-    public void setDownMusicBit(int bit){
+    public void setDownMusicBit(int bit) {
         final SharedPreferences.Editor editor = mPreferences.edit();
-        editor.putInt(DOWNMUSIC_BIT,bit);
+        editor.putInt(DOWNMUSIC_BIT, bit);
         editor.apply();
     }
 
-    public int getDownMusicBit(){
-        return mPreferences.getInt(DOWNMUSIC_BIT,192);
+    public int getDownMusicBit() {
+        return mPreferences.getInt(DOWNMUSIC_BIT, 192);
     }
 
     public boolean getFavriateMusicPlaylist() {
@@ -194,6 +201,16 @@ public final class PreferencesUtility {
     public final String getArtistSongSortOrder() {
         return mPreferences.getString(ARTIST_SONG_SORT_ORDER,
                 SortOrder.ArtistSongSortOrder.SONG_A_Z);
+    }
+
+    public static String FOLDER_SONG_SORT_ORDER = "folder_sort";
+
+    public void setFolerSortOrder(final String value) {
+        setSortOrder(FOLDER_SONG_SORT_ORDER, value);
+    }
+
+    public final String getFoloerSortOrder() {
+        return mPreferences.getString(FOLDER_SONG_SORT_ORDER, "");
     }
 
     public void setArtistSongSortOrder(final String value) {

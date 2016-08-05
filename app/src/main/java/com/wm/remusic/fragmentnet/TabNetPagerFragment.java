@@ -24,9 +24,9 @@ public class TabNetPagerFragment extends Fragment implements ChangeView {
     private ViewPager viewPager;
     private int page = 0;
     private ActionBar ab;
-    private  String[] title;
+    private String[] title;
 
-    public static final TabNetPagerFragment newInstance(int page,String[] title) {
+    public static final TabNetPagerFragment newInstance(int page, String[] title) {
         TabNetPagerFragment f = new TabNetPagerFragment();
         Bundle bdl = new Bundle(1);
         bdl.putInt("page_number", page);
@@ -59,7 +59,7 @@ public class TabNetPagerFragment extends Fragment implements ChangeView {
             viewPager.setOffscreenPageLimit(2);
         }
 
-      final   TabLayout tabLayout = (TabLayout) rootView.findViewById(R.id.tabs);
+        final TabLayout tabLayout = (TabLayout) rootView.findViewById(R.id.tabs);
 
         new Thread(new Runnable() {
             @Override
@@ -76,11 +76,11 @@ public class TabNetPagerFragment extends Fragment implements ChangeView {
 
     private void setupViewPager(ViewPager viewPager) {
         Adapter adapter = new Adapter(getChildFragmentManager());
-        NetFragment fragment = new NetFragment();
+        RecommendFragment fragment = new RecommendFragment();
         fragment.setChanger(this);
         adapter.addFragment(fragment, "新曲");
-        adapter.addFragment(new RecommendFragment(),"歌单");
-      //  adapter.addFragment(new NetFragment(), "主播电台");
+        adapter.addFragment(new AllPlaylistFragment(), "歌单");
+        //  adapter.addFragment(new NetFragment(), "主播电台");
         adapter.addFragment(new RankingFragment(), "排行榜");
 
         viewPager.setAdapter(adapter);
@@ -105,8 +105,8 @@ public class TabNetPagerFragment extends Fragment implements ChangeView {
 
     @Override
     public void changeTo(int page) {
-        if(viewPager != null)
-        viewPager.setCurrentItem(page);
+        if (viewPager != null)
+            viewPager.setCurrentItem(page);
     }
 
     static class Adapter extends FragmentStatePagerAdapter {

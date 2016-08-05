@@ -27,7 +27,7 @@ public class Aes {
 
     static boolean isInited = false;
 
-    private static  void init() {
+    private static void init() {
         try {
             /**为指定算法生成一个 KeyGenerator 对象。
              *此类提供（对称）密钥生成器的功能。
@@ -112,10 +112,10 @@ public class Aes {
         return encryptedText;
     }
 
-    private static String encrypt(String content, String password)throws  Exception{
+    private static String encrypt(String content, String password) throws Exception {
         try {
-          //  String data = "Test String";
-         //   String key = "1234567812345678";
+            //  String data = "Test String";
+            //   String key = "1234567812345678";
             String iv = "0102030405060708";
 
 
@@ -144,7 +144,7 @@ public class Aes {
             e.printStackTrace();
         } catch (InvalidKeyException e) {
             e.printStackTrace();
-        }  catch (IllegalBlockSizeException e) {
+        } catch (IllegalBlockSizeException e) {
             e.printStackTrace();
         } catch (BadPaddingException e) {
             e.printStackTrace();
@@ -176,9 +176,9 @@ public class Aes {
 
     private static byte[] getKey(String password) {
         byte[] rByte = null;
-        if (password!=null) {
+        if (password != null) {
             rByte = password.getBytes();
-        }else{
+        } else {
             rByte = new byte[24];
         }
         return rByte;
@@ -186,6 +186,7 @@ public class Aes {
 
     /**
      * 将二进制转换成16进制
+     *
      * @param buf
      * @return
      */
@@ -203,6 +204,7 @@ public class Aes {
 
     /**
      * 将16进制转换为二进制
+     *
      * @param hexStr
      * @return
      */
@@ -223,46 +225,46 @@ public class Aes {
     private static final String keyBytes = "0CoJUm6Qyw8W8jud";
 
     /**
-     *加密
+     * 加密
      */
-    public static String encode(String content,String key){
+    public static String encode(String content, String key) {
         //加密之后的字节数组,转成16进制的字符串形式输出
         try {
 
             int pad = 16 - content.length() % 16;
             char c = (char) pad;
             StringBuilder sb = new StringBuilder();
-            for(int i = 0; i<pad;i++){
+            for (int i = 0; i < pad; i++) {
                 sb.append(c);
             }
             content = content + sb.toString();
 
 
             return encrypt(content, key);
-        }catch (Exception e){
+        } catch (Exception e) {
 
         }
-       return "-1";
+        return "-1";
     }
 
- //   parseByte2HexStr(
+    //   parseByte2HexStr(
 
     /**
-     *解密
+     * 解密
      */
-    public static String decode(String content){
+    public static String decode(String content) {
         //解密之前,先将输入的字符串按照16进制转成二进制的字节数组,作为待解密的内容输入
         byte[] b = decrypt(parseHexStr2Byte(content), keyBytes);
         return new String(b);
     }
 
 
-    public static String getText(String username,String password){
-       return  "{\"username\": \"" + username + "\", \"rememberLogin\": \"true\", \"password\": \"" + password + "\"}";
+    public static String getText(String username, String password) {
+        return "{\"username\": \"" + username + "\", \"rememberLogin\": \"true\", \"password\": \"" + password + "\"}";
     }
 
     //创建随机数
-    public static String createSecretKey(int size){
+    public static String createSecretKey(int size) {
         String keys = "abcdefghijklmnopqrstuvwxyz0123456789";
         String key = "";
         for (int i = 0; i < size; i++) {
@@ -273,39 +275,38 @@ public class Aes {
         return key;
     }
 
-     public static String[] get(){
-         String content = getText("aa112901", "963852");
+    public static String[] get() {
+        String content = getText("aa112901", "963852");
 //        System.out.print(content.length());
 //        String pStr = encode(content, keyBytes);
 //        System.out.println("加密前："+content);
 //        System.out.println("加密后:" + pStr);
-         // "7b104953fb112826"
-         String seckey = createSecretKey(16);
-      //   System.out.println("seckey:" + seckey);
-         String  encText = encode(encode(content, keyBytes), seckey);
+        // "7b104953fb112826"
+        String seckey = createSecretKey(16);
+        //   System.out.println("seckey:" + seckey);
+        String encText = encode(encode(content, keyBytes), seckey);
         String encSecKey = RsaCal.rsaEncode(seckey);
-         String[] c = {encText,encSecKey};
+        String[] c = {encText, encSecKey};
 
-         return c;
-     }
+        return c;
+    }
 
     //测试用例
-    public static void test1(){
+    public static void test1() {
         //String content = "{\"username\": \"aa112901\", \"rememberLogin\": \"true\", \"password\": \"963852\"}";
         String content = getText("aa112901", "963852");
 //        System.out.print(content.length());
 //        String pStr = encode(content, keyBytes);
 //        System.out.println("加密前："+content);
 //        System.out.println("加密后:" + pStr);
-       // "7b104953fb112826"
+        // "7b104953fb112826"
         String seckey = createSecretKey(16);
         System.out.println("7b104953fb112826:" + seckey);
-        String  encText = encode(encode(content, keyBytes),seckey );
+        String encText = encode(encode(content, keyBytes), seckey);
         String encSecKey = RsaCal.rsaEncode(seckey);
 
 
-
-        System.out.println("encText："+ encText);
+        System.out.println("encText：" + encText);
         System.out.println("encSecKey:" + encSecKey);
 
         //String postStr = decode(pStr);

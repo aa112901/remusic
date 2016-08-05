@@ -7,10 +7,7 @@ import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.Context;
 import android.database.Cursor;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
-import android.os.ParcelFileDescriptor;
 import android.provider.MediaStore;
 import android.provider.MediaStore.Audio.Albums;
 import android.provider.MediaStore.Audio.Media;
@@ -23,8 +20,6 @@ import com.wm.remusic.info.FolderInfo;
 import com.wm.remusic.info.MusicInfo;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -51,7 +46,6 @@ public class MusicUtils implements IConstants {
     private static String[] proj_folder = new String[]{FileColumns.DATA};
 
 
-
     /**
      * 获取包含音频文件的文件夹信息
      *
@@ -75,7 +69,8 @@ public class MusicUtils implements IConstants {
 //		}
         mSelection.append(") group by ( " + FileColumns.PARENT);
 
-        List<FolderInfo> list = getFolderList(cr.query(uri, proj_folder, mSelection.toString(), null, null));
+        List<FolderInfo> list = getFolderList(cr.query(uri, proj_folder, mSelection.toString(), null,
+                PreferencesUtility.getInstance(context).getFoloerSortOrder()));
 
         return list;
 
@@ -252,6 +247,7 @@ public class MusicUtils implements IConstants {
             music.artist = cursor.getString(cursor
                     .getColumnIndex(Media.ARTIST));
             music.artistId = cursor.getLong(cursor.getColumnIndex(Media.ARTIST_ID));
+            music.islocal = true;
             for (int i = 0; i < id.length; i++) {
                 if (id[i] == music.songId) {
                     musicList.set(i, music);
@@ -290,10 +286,9 @@ public class MusicUtils implements IConstants {
             music.data = filePath;
             String folderPath = filePath.substring(0, filePath.lastIndexOf(File.separator));
             music.folder = folderPath;
-            music.musicNameKey = StringHelper.getPingYin(music.musicName);
-            //music.artistKey = StringHelper.getPingYin(music.artist);
             music.size = cursor.getInt(cursor
                     .getColumnIndex(Media.SIZE));
+            music.islocal = true;
             musicList.add(music);
         }
         cursor.close();
@@ -382,7 +377,6 @@ public class MusicUtils implements IConstants {
         ContentResolver cr = context.getContentResolver();
         Cursor cursor = cr.query(Media.EXTERNAL_CONTENT_URI, proj_music, "_id = " + String.valueOf(musicid), null, null);
         if (cursor == null) {
-            cursor.close();
             return null;
         }
         long albumId = -1;
@@ -394,7 +388,6 @@ public class MusicUtils implements IConstants {
             cursor = cr.query(Albums.EXTERNAL_CONTENT_URI, proj_album, Albums._ID + " = " + String.valueOf(albumId), null, null);
         }
         if (cursor == null) {
-            cursor.close();
             return null;
         }
         String data = "";
@@ -472,8 +465,6 @@ public class MusicUtils implements IConstants {
             String folderPath = filePath.substring(0,
                     filePath.lastIndexOf(File.separator));
             music.folder = folderPath;
-            music.musicNameKey = StringHelper.getPingYin(music.musicName);
-            //music.artistKey = StringHelper.getPingYin(music.artist);
         }
         cursor.close();
         return music;

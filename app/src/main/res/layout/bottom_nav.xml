@@ -4,12 +4,14 @@
         xmlns:fresco="http://schemas.android.com/apk/res-auto"
         android:id="@+id/nav_play"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:layout_alignParentBottom="true"
-        android:background="?attr/selectableItemBackgroundBorderless"
+        android:background="@color/bottomSheetNormalBackground"
         android:orientation="vertical">
 
         <LinearLayout
+            android:id="@+id/linear"
+            android:background="?attr/selectableItemBackgroundBorderless"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="-3dp"
@@ -76,20 +78,15 @@
                 android:src="@drawable/playbar_btn_next" />
         </LinearLayout>
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
-
             <ProgressBar
+                android:layout_marginTop="2dp"
+                android:layout_gravity="bottom"
                 android:id="@+id/song_progress_normal"
                 style="@style/Widget.AppCompat.ProgressBar.Horizontal"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="bottom"
-                android:maxHeight="6dp"
-                android:progress="0"
+                android:layout_height="2dp"
+                android:maxHeight="3dp"
+                android:progress="30"
                 android:progressDrawable="@drawable/progressbar_color"
                 android:tag="tint_accent_color" />
-        </LinearLayout>
     </LinearLayout>

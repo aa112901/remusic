@@ -7,11 +7,15 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -21,9 +25,10 @@ import com.wm.remusic.R;
 import com.wm.remusic.info.FolderInfo;
 import com.wm.remusic.service.MediaService;
 import com.wm.remusic.service.MusicPlayer;
-import com.wm.remusic.widget.DividerItemDecoration;
 import com.wm.remusic.uitl.IConstants;
 import com.wm.remusic.uitl.MusicUtils;
+import com.wm.remusic.uitl.PreferencesUtility;
+import com.wm.remusic.widget.DividerItemDecoration;
 
 import java.io.File;
 import java.util.List;
@@ -37,16 +42,23 @@ public class FolderFragment extends BaseFragment {
     private LinearLayoutManager layoutManager;
     private RecyclerView.ItemDecoration itemDecoration;
     private Adapter mAdapter;
-    //接受广播
-    private BroadcastReceiver mStatusListener = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            String action = intent.getAction();
-            if (action.equals(MediaService.META_CHANGED)) {
-                reloadAdapter();
-            }
-        }
-    };
+    private PreferencesUtility mPreferences;
+//    //接受广播
+//    private BroadcastReceiver mStatusListener = new BroadcastReceiver() {
+//        @Override
+//        public void onReceive(Context context, Intent intent) {
+//            String action = intent.getAction();
+//            if (action.equals(MediaService.META_CHANGED)) {
+//                reloadAdapter();
+//            }
+//        }
+//    };
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        mPreferences = PreferencesUtility.getInstance(getActivity());
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -76,19 +88,47 @@ public class FolderFragment extends BaseFragment {
         super.onResume();
         IntentFilter f = new IntentFilter();
         f.addAction(MediaService.META_CHANGED);
-        getActivity().registerReceiver(mStatusListener, f);
+       // getActivity().registerReceiver(mStatusListener, f);
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        getActivity().unregisterReceiver(mStatusListener);
+      //  getActivity().unregisterReceiver(mStatusListener);
     }
 
     //设置分割线
     private void setItemDecoration() {
         itemDecoration = new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL_LIST);
         recyclerView.addItemDecoration(itemDecoration);
+    }
+
+    @Override
+    public void onActivityCreated(final Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        setHasOptionsMenu(true);
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.album_sort_by, menu);
+
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.menu_sort_by_az:
+
+                //reloadAdapter();
+                return true;
+            case R.id.menu_sort_by_number_of_songs:
+
+                // reloadAdapter();
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     //更新adapter界面

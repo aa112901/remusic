@@ -19,9 +19,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 
-import com.wm.remusic.MainApplication;
 import com.wm.remusic.activity.PlayingActivity;
-import com.wm.remusic.service.MusicPlayer;
 
 public class LaunchNowPlayingReceiver extends BroadcastReceiver {
 
@@ -29,8 +27,8 @@ public class LaunchNowPlayingReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
 
 //        if (MusicPlayer.isPlaying()) {
-            Intent activityIntent = new Intent(context.getApplicationContext(), PlayingActivity.class);
-            activityIntent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT | Intent.FLAG_ACTIVITY_NEW_TASK);
+        Intent activityIntent = new Intent(context.getApplicationContext(), PlayingActivity.class);
+        activityIntent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT | Intent.FLAG_ACTIVITY_NEW_TASK);
         context.getApplicationContext().startActivity(activityIntent);
 //        }
 

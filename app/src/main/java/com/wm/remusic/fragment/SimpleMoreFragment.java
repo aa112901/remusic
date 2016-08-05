@@ -30,9 +30,9 @@ import com.wm.remusic.handler.HandlerUtil;
 import com.wm.remusic.info.MusicInfo;
 import com.wm.remusic.provider.PlaylistsManager;
 import com.wm.remusic.service.MusicPlayer;
-import com.wm.remusic.widget.DividerItemDecoration;
 import com.wm.remusic.uitl.IConstants;
 import com.wm.remusic.uitl.MusicUtils;
+import com.wm.remusic.widget.DividerItemDecoration;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -104,6 +104,9 @@ public class SimpleMoreFragment extends DialogFragment {
         long musicId = args;
         adapterMusicInfo = MusicUtils.getMusicInfo(mContext, musicId);
         musicName = adapterMusicInfo.musicName;
+        if (musicName == null) {
+            musicName = MusicPlayer.getTrackName();
+        }
         topTitle.setText("歌曲：" + " " + musicName);
         setMusicInfo();
         musicflowAdapter = new MusicFlowAdapter(getActivity(), mlistInfo, adapterMusicInfo);

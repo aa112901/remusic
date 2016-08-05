@@ -251,10 +251,10 @@ final class SwipeProgressBar {
      * Draws a circle centered in the view.
      *
      * @param canvas the canvas to draw on
-     * @param cx the center x coordinate
-     * @param cy the center y coordinate
-     * @param color the color to draw
-     * @param pct the percentage of the view that the circle should cover
+     * @param cx     the center x coordinate
+     * @param cy     the center y coordinate
+     * @param color  the color to draw
+     * @param pct    the percentage of the view that the circle should cover
      */
     private void drawCircle(Canvas canvas, float cx, float cy, int color, float pct) {
         mPaint.setColor(color);

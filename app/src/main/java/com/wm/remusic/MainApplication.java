@@ -11,30 +11,31 @@ import com.facebook.drawee.backends.pipeline.Fresco;
 import com.facebook.imagepipeline.cache.MemoryCacheParams;
 import com.facebook.imagepipeline.core.ImagePipeline;
 import com.facebook.imagepipeline.core.ImagePipelineConfig;
-import com.facebook.imagepipeline.producers.Consumer;
-import com.facebook.imagepipeline.producers.FetchState;
-import com.facebook.imagepipeline.producers.NetworkFetchProducer;
-import com.facebook.imagepipeline.producers.NetworkFetcher;
-import com.facebook.imagepipeline.producers.ProducerContext;
 import com.google.gson.Gson;
 import com.wm.remusic.handler.UnceHandler;
 import com.wm.remusic.permissions.Nammu;
 import com.wm.remusic.provider.PlaylistInfo;
 import com.wm.remusic.uitl.IConstants;
 import com.wm.remusic.uitl.PreferencesUtility;
-
-import java.util.Map;
+import com.wm.remusic.widget.SplashScreen;
 
 /**
  * Created by wm on 2016/2/23.
  */
 public class MainApplication extends Application {
-	
     public static Context context;
     //private RefWatcher refWatcher;
     private static int MAX_MEM = (int) Runtime.getRuntime().maxMemory() / 3;
     //private static int MAX_MEM = 60 * ByteConstants.MB;
     private long favPlaylist = IConstants.FAV_PLAYLIST;
+    private static Gson gson;
+
+    public static Gson gsonInstance() {
+        if (gson == null) {
+            gson = new Gson();
+        }
+        return gson;
+    }
 
     private ImagePipelineConfig getConfigureCaches(Context context) {
         final MemoryCacheParams bitmapCacheParams = new MemoryCacheParams(
@@ -42,7 +43,7 @@ public class MainApplication extends Application {
                 Integer.MAX_VALUE,// 内存缓存中图片的最大数量。
                 MAX_MEM,// 内存缓存中准备清除但尚未被删除的总图片的最大大小,以字节为单位。
                 Integer.MAX_VALUE,// 内存缓存中准备清除的总图片的最大数量。
-                Integer.MAX_VALUE/10);// 内存缓存中单个图片的最大大小。
+                Integer.MAX_VALUE / 10);// 内存缓存中单个图片的最大大小。
 
         Supplier<MemoryCacheParams> mSupplierMemoryCacheParams = new Supplier<MemoryCacheParams>() {
             @Override
@@ -56,7 +57,7 @@ public class MainApplication extends Application {
 
 
         //小图片的磁盘配置
-        DiskCacheConfig diskSmallCacheConfig =  DiskCacheConfig.newBuilder(context)
+        DiskCacheConfig diskSmallCacheConfig = DiskCacheConfig.newBuilder(context)
                 .setBaseDirectoryPath(context.getApplicationContext().getCacheDir())//缓存图片基路径
 //                .setBaseDirectoryName(IMAGE_PIPELINE_SMALL_CACHE_DIR)//文件夹名
 //            .setCacheErrorLogger(cacheErrorLogger)//日志记录器用于日志错误的缓存。
@@ -69,7 +70,7 @@ public class MainApplication extends Application {
                 .build();
 
         //默认图片的磁盘配置
-        DiskCacheConfig diskCacheConfig =  DiskCacheConfig.newBuilder(context)
+        DiskCacheConfig diskCacheConfig = DiskCacheConfig.newBuilder(context)
                 .setBaseDirectoryPath(Environment.getExternalStorageDirectory().getAbsoluteFile())//缓存图片基路径
 //                .setBaseDirectoryName(IMAGE_PIPELINE_CACHE_DIR)//文件夹名
 //            .setCacheErrorLogger(cacheErrorLogger)//日志记录器用于日志错误的缓存。
@@ -98,7 +99,7 @@ public class MainApplication extends Application {
 //            .setProgressiveJpegConfig(progressiveJpegConfig)//渐进式JPEG图
 //            .setRequestListeners(requestListeners)//图片请求监听
 //            .setResizeAndRotateEnabledForNetwork(boolean resizeAndRotateEnabledForNetwork)//调整和旋转是否支持网络图片
-        ;
+                ;
         return builder.build();
     }
 
@@ -139,7 +140,7 @@ public class MainApplication extends Application {
         super.onCreate();
         context = this;
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             Nammu.init(this);
         }
 

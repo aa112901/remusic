@@ -18,7 +18,7 @@ public class LoadDialog extends DialogFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         //设置无标题
         getDialog().requestWindowFeature(Window.FEATURE_NO_TITLE);
-        View view = inflater.inflate(R.layout.loading, container,false);
+        View view = inflater.inflate(R.layout.loading, container, false);
 
         return view;
     }

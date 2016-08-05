@@ -9,8 +9,6 @@ import android.os.Parcelable;
 
 public class MusicInfo implements Parcelable {
 
-
-    public static final String KEY_ID = "_id";
     public static final String KEY_SONG_ID = "songid";
     public static final String KEY_ALBUM_ID = "albumid";
     public static final String KEY_ALBUM_NAME = "albumname";
@@ -21,16 +19,15 @@ public class MusicInfo implements Parcelable {
     public static final String KEY_ARTIST_ID = "artist_id";
     public static final String KEY_DATA = "data";
     public static final String KEY_FOLDER = "folder";
-    public static final String KEY_MUSIC_NAME_KEY = "musicnamekey";
     public static final String KEY_SIZE = "size";
     public static final String KEY_FAVORITE = "favorite";
-    public static final String KEY_URL = "url";
+    public static final String KEY_LRC = "lrc";
+    public static final String KEY_ISLOCAL = "islocal";
 
     /**
      * 数据库中的_id
      */
-    public int _id = -1;
-    public int songId = -1;
+    public long songId = -1;
     public int albumId = -1;
     public String albumName;
     public String albumData;
@@ -40,8 +37,9 @@ public class MusicInfo implements Parcelable {
     public long artistId;
     public String data;
     public String folder;
-    public String musicNameKey;
-    public String url;
+    public String lrc;
+    public boolean islocal;
+
 
     public int size;
     /**
@@ -55,8 +53,7 @@ public class MusicInfo implements Parcelable {
             MusicInfo music = new MusicInfo();
             Bundle bundle = new Bundle();
             bundle = source.readBundle();
-            music._id = bundle.getInt(KEY_ID);
-            music.songId = bundle.getInt(KEY_SONG_ID);
+            music.songId = bundle.getLong(KEY_SONG_ID);
             music.albumId = bundle.getInt(KEY_ALBUM_ID);
             music.albumName = bundle.getString(KEY_ALBUM_NAME);
             music.duration = bundle.getInt(KEY_DURATION);
@@ -65,11 +62,10 @@ public class MusicInfo implements Parcelable {
             music.artistId = bundle.getLong(KEY_ARTIST_ID);
             music.data = bundle.getString(KEY_DATA);
             music.folder = bundle.getString(KEY_FOLDER);
-            music.musicNameKey = bundle.getString(KEY_MUSIC_NAME_KEY);
             music.albumData = bundle.getString(KEY_ALBUM_DATA);
             music.size = bundle.getInt(KEY_SIZE);
-            music.favorite = bundle.getInt(KEY_FAVORITE);
-            music.url = bundle.getString(KEY_URL);
+            music.lrc = bundle.getString(KEY_LRC);
+            music.islocal = bundle.getBoolean(KEY_ISLOCAL);
             return music;
         }
 
@@ -87,8 +83,7 @@ public class MusicInfo implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         Bundle bundle = new Bundle();
-        bundle.putInt(KEY_ID, _id);
-        bundle.putInt(KEY_SONG_ID, songId);
+        bundle.putLong(KEY_SONG_ID, songId);
         bundle.putInt(KEY_ALBUM_ID, albumId);
         bundle.putString(KEY_ALBUM_NAME, albumName);
         bundle.putString(KEY_ALBUM_DATA, albumData);
@@ -98,10 +93,9 @@ public class MusicInfo implements Parcelable {
         bundle.putLong(KEY_ARTIST_ID, artistId);
         bundle.putString(KEY_DATA, data);
         bundle.putString(KEY_FOLDER, folder);
-        bundle.putString(KEY_MUSIC_NAME_KEY, musicNameKey);
         bundle.putInt(KEY_SIZE, size);
-        bundle.putInt(KEY_FAVORITE, favorite);
-        bundle.putString(KEY_URL,url);
+        bundle.putString(KEY_LRC, lrc);
+        bundle.putBoolean(KEY_ISLOCAL, islocal);
         dest.writeBundle(bundle);
     }
 

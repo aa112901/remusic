@@ -31,8 +31,8 @@ import com.wm.remusic.info.MusicInfo;
 import com.wm.remusic.provider.PlaylistsManager;
 import com.wm.remusic.service.MediaService;
 import com.wm.remusic.service.MusicPlayer;
-import com.wm.remusic.widget.DividerItemDecoration;
 import com.wm.remusic.uitl.IConstants;
+import com.wm.remusic.widget.DividerItemDecoration;
 
 import java.util.ArrayList;
 
@@ -94,7 +94,7 @@ public class SelectActivity extends AppCompatActivity implements View.OnClickLis
         down.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
-                Intent intent = new Intent(SelectActivity.this,DownActivity.class);
+                Intent intent = new Intent(SelectActivity.this, DownActivity.class);
                 startActivity(intent);
                 return false;
             }

@@ -39,7 +39,7 @@ public class RecentSearchAdapter extends RecyclerView.Adapter<RecentSearchAdapte
         recentSearches = SearchHistory.getInstance(context).getRecentSearches();
     }
 
-    public void setListenter(SearchWords search){
+    public void setListenter(SearchWords search) {
         searchWords = search;
     }
 
@@ -80,7 +80,6 @@ public class RecentSearchAdapter extends RecyclerView.Adapter<RecentSearchAdapte
     }
 
 
-
     public class ItemHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         TextView title;
@@ -96,7 +95,7 @@ public class RecentSearchAdapter extends RecyclerView.Adapter<RecentSearchAdapte
 
         @Override
         public void onClick(View v) {
-            if(searchWords != null){
+            if (searchWords != null) {
                 searchWords.onSearch(recentSearches.get(getAdapterPosition()));
             }
 

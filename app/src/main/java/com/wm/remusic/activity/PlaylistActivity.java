@@ -1,14 +1,17 @@
 package com.wm.remusic.activity;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.TransitionDrawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
@@ -21,15 +24,20 @@ import android.text.SpannableString;
 import android.text.style.ImageSpan;
 import android.util.Log;
 import android.util.SparseArray;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.view.animation.Animation;
+import android.view.animation.LinearInterpolator;
+import android.view.animation.RotateAnimation;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -49,13 +57,18 @@ import com.google.gson.JsonObject;
 import com.nineoldandroids.view.ViewHelper;
 import com.wm.remusic.MainApplication;
 import com.wm.remusic.R;
+import com.wm.remusic.dialog.AddDownTask;
+import com.wm.remusic.dialog.LoadAllDownInfos;
 import com.wm.remusic.downmusic.Down;
+import com.wm.remusic.downmusic.DownloadManager;
+import com.wm.remusic.downmusic.DownloadTask;
 import com.wm.remusic.fragment.MoreFragment;
 import com.wm.remusic.fragment.NetMoreFragment;
 import com.wm.remusic.handler.HandlerUtil;
 import com.wm.remusic.info.MusicInfo;
 import com.wm.remusic.json.GeDanGeInfo;
 import com.wm.remusic.json.MusicDetailInfo;
+import com.wm.remusic.json.MusicFileDownInfo;
 import com.wm.remusic.net.BMA;
 import com.wm.remusic.net.HttpUtil;
 import com.wm.remusic.net.MusicDetailInfoGet;
@@ -68,6 +81,7 @@ import com.wm.remusic.uitl.CommonUtils;
 import com.wm.remusic.uitl.IConstants;
 import com.wm.remusic.uitl.ImageUtils;
 import com.wm.remusic.uitl.MusicUtils;
+import com.wm.remusic.uitl.PreferencesUtility;
 import com.wm.remusic.widget.DividerItemDecoration;
 
 import java.io.File;
@@ -108,6 +122,7 @@ public class PlaylistActivity extends BaseActivity implements ObservableScrollVi
     private String playlistCount;
     private FrameLayout headerViewContent; //上部header
     private RelativeLayout headerDetail; //上部header信息
+    private Context mContext;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -123,6 +138,7 @@ public class PlaylistActivity extends BaseActivity implements ObservableScrollVi
             playlistCount = getIntent().getStringExtra("playlistcount");
 
         }
+        mContext = this;
         setContentView(R.layout.activity_playlist);
         loadFrameLayout = (FrameLayout) findViewById(R.id.state_container);
 
@@ -197,31 +213,62 @@ public class PlaylistActivity extends BaseActivity implements ObservableScrollVi
         downAll.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                new AlertDialog.Builder(PlaylistActivity.this).setTitle("要下载音乐吗").
-                        setPositiveButton(PlaylistActivity.this.getString(R.string.sure), new DialogInterface.OnClickListener() {
 
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
+                new LoadAllDownInfos((Activity)mContext,mList).execute();
+               // addDownTask.show(getSupportFragmentManager(),"");
+//                ArrayList<MusicFileDownInfo> downList = new ArrayList<MusicFileDownInfo>();
+//                int le = mList.size();
+//                for(int j = 0; j< le ; j++){
+//                    try {
+//                        JsonArray jsonArray = HttpUtil.getResposeJsonObject(BMA.Song.songInfo(mList.get(j).getSong_id()))
+//                                .get("songurl").getAsJsonObject().get("url").getAsJsonArray();
+//                        int len = jsonArray.size();
+//
+//                        int downloadBit = PreferencesUtility.getInstance(mContext).getDownMusicBit();
+//                        MusicFileDownInfo musicFileDownInfo = null;
+//                        for (int i = len - 1; i > -1; i--) {
+//                            int bit = Integer.parseInt(jsonArray.get(i).getAsJsonObject().get("file_bitrate").toString());
+//                            if (bit == downloadBit) {
+//                                musicFileDownInfo = MainApplication.gsonInstance().fromJson(jsonArray.get(i), MusicFileDownInfo.class);
+//                            } else if (bit < downloadBit && bit >= 64) {
+//                                musicFileDownInfo = MainApplication.gsonInstance().fromJson(jsonArray.get(i), MusicFileDownInfo.class);
+//                            }
+//                        }
+//                        if(musicFileDownInfo != null)
+//                            downList.add(musicFileDownInfo);
+//
+//
+//                    } catch (Exception e) {
+//                        e.printStackTrace();
+//                    }
+//
+//                }
 
-                                int len = mList.size();
-                                for(int i = 0; i < len ; i++){
-                                    Down.downMusic(MainApplication.context, mList.get(i).getSong_id(),mList.get(i).getTitle());
-                                }
-                                mHandler.post(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        Toast.makeText(PlaylistActivity.this, "已加入到下载", Toast.LENGTH_SHORT).show();
-                                    }
-                                });
-                                dialog.dismiss();
-                            }
-                        }).
-                        setNegativeButton(PlaylistActivity.this.getString(R.string.cancel), new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                dialog.dismiss();
-                            }
-                        }).show();
+//                new AlertDialog.Builder(PlaylistActivity.this).setTitle("要下载音乐吗").
+//                        setPositiveButton(PlaylistActivity.this.getString(R.string.sure), new DialogInterface.OnClickListener() {
+//
+//                            @Override
+//                            public void onClick(DialogInterface dialog, int which) {
+//
+//                                int len = mList.size();
+//                                for(int i = 0; i < len ; i++){
+//                                    Down.downMusic(MainApplication.context, mList.get(i).getSong_id(),mList.get(i).getTitle());
+//                                }
+//                                mHandler.post(new Runnable() {
+//                                    @Override
+//                                    public void run() {
+//                                        Toast.makeText(PlaylistActivity.this, "已加入到下载", Toast.LENGTH_SHORT).show();
+//                                    }
+//                                });
+//                                dialog.dismiss();
+//                            }
+//                        }).
+//                        setNegativeButton(PlaylistActivity.this.getString(R.string.cancel), new DialogInterface.OnClickListener() {
+//                            @Override
+//                            public void onClick(DialogInterface dialog, int which) {
+//                                dialog.dismiss();
+//                            }
+//                        }).show();
 
             }
         });

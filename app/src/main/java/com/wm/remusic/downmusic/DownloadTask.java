@@ -196,10 +196,10 @@ public class DownloadTask implements Runnable {
                 completedSize = file.length();
             }
             long fileLength = file.length();
-            if (fileLength != 0 && totalSize <= fileLength) {
+            if (fileLength != 0 && totalSize == fileLength) {
                 downloadStatus = DownloadStatus.DOWNLOAD_STATUS_COMPLETED;
                 totalSize = completedSize = fileLength;
-                dbEntity = new DownloadDBEntity(id, totalSize, totalSize, url, saveDirPath, fileName, downloadStatus);
+                dbEntity = new DownloadDBEntity(id, totalSize, completedSize, url, saveDirPath, fileName, downloadStatus);
                 downFileStore.insert(dbEntity);
                 Toast.makeText(mContext, fileName + "已经下载完成", Toast.LENGTH_SHORT).show();
                 onCompleted();
@@ -218,8 +218,9 @@ public class DownloadTask implements Runnable {
             Response response = client.newCall(request).execute();
             ResponseBody responseBody = response.body();
             if (responseBody != null) {
-                downloadStatus = DownloadStatus.DOWNLOAD_STATUS_DOWNLOADING;
-                if (totalSize <= 0) totalSize = responseBody.contentLength();
+                  downloadStatus = DownloadStatus.DOWNLOAD_STATUS_DOWNLOADING;
+                if (totalSize <= 0)
+                    totalSize = responseBody.contentLength();
 
                 inputStream = responseBody.byteStream();
                 bis = new BufferedInputStream(inputStream);
@@ -236,6 +237,8 @@ public class DownloadTask implements Runnable {
                     buffOffset += length;
                     if (buffOffset >= UPDATE_SIZE) {
                         // Update download information database
+                        if (totalSize <= 0 || dbEntity.getTotalSize() <= 0)
+                            dbEntity.setToolSize(totalSize);
                         buffOffset = 0;
                         dbEntity.setCompletedSize(completedSize);
                         dbEntity.setDownloadStatus(downloadStatus);
@@ -325,6 +328,9 @@ public class DownloadTask implements Runnable {
 
 
     public float getPercent() {
+        if(totalSize == 0){
+            return 0;
+        }
         return completedSize * 100 / totalSize;
     }
 

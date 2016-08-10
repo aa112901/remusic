@@ -30,7 +30,7 @@ import com.wm.remusic.widget.DividerItemDecoration;
 import java.util.ArrayList;
 
 /**
- * Created by naman on 20/12/15.
+ * Created by wm on 20/12/15.
  */
 public class AddPlaylistDialog extends DialogFragment {
     private PlaylistInfo playlistInfo;

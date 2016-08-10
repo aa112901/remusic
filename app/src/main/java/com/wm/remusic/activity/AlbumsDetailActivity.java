@@ -52,6 +52,7 @@ import com.google.gson.JsonObject;
 import com.nineoldandroids.view.ViewHelper;
 import com.wm.remusic.MainApplication;
 import com.wm.remusic.R;
+import com.wm.remusic.dialog.LoadAllDownInfos;
 import com.wm.remusic.downmusic.Down;
 import com.wm.remusic.fragment.MoreFragment;
 import com.wm.remusic.fragment.NetMoreFragment;
@@ -170,31 +171,32 @@ public class AlbumsDetailActivity extends BaseActivity implements ObservableScro
         downAll.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                new AlertDialog.Builder(AlbumsDetailActivity.this).setTitle("要下载音乐吗").
-                        setPositiveButton(AlbumsDetailActivity.this.getString(R.string.sure), new DialogInterface.OnClickListener() {
-
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-
-                                int len = mList.size();
-                                for(int i = 0; i < len ; i++){
-                                    Down.downMusic(MainApplication.context, mList.get(i).getSong_id(),mList.get(i).getTitle());
-                                }
-                                mHandler.post(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        Toast.makeText(AlbumsDetailActivity.this, "已加入到下载", Toast.LENGTH_SHORT).show();
-                                    }
-                                });
-                                dialog.dismiss();
-                            }
-                        }).
-                        setNegativeButton(AlbumsDetailActivity.this.getString(R.string.cancel), new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                dialog.dismiss();
-                            }
-                        }).show();
+                new LoadAllDownInfos((Activity)AlbumsDetailActivity.this,mList).execute();
+//                new AlertDialog.Builder(AlbumsDetailActivity.this).setTitle("要下载音乐吗").
+//                        setPositiveButton(AlbumsDetailActivity.this.getString(R.string.sure), new DialogInterface.OnClickListener() {
+//
+//                            @Override
+//                            public void onClick(DialogInterface dialog, int which) {
+//
+//                                int len = mList.size();
+//                                for(int i = 0; i < len ; i++){
+//                                    Down.downMusic(MainApplication.context, mList.get(i).getSong_id(),mList.get(i).getTitle());
+//                                }
+//                                mHandler.post(new Runnable() {
+//                                    @Override
+//                                    public void run() {
+//                                        Toast.makeText(AlbumsDetailActivity.this, "已加入到下载", Toast.LENGTH_SHORT).show();
+//                                    }
+//                                });
+//                                dialog.dismiss();
+//                            }
+//                        }).
+//                        setNegativeButton(AlbumsDetailActivity.this.getString(R.string.cancel), new DialogInterface.OnClickListener() {
+//                            @Override
+//                            public void onClick(DialogInterface dialog, int which) {
+//                                dialog.dismiss();
+//                            }
+//                        }).show();
             }
         });
         headerDetail.setVisibility(View.GONE);
@@ -354,15 +356,15 @@ public class AlbumsDetailActivity extends BaseActivity implements ObservableScro
         albumArtSmall.setImageURI(Uri.parse(albumPath));
         try {
             ImageRequest imageRequest = ImageRequest.fromUri(albumPath);
-            CacheKey cacheKey = DefaultCacheKeyFactory.getInstance()
-                    .getEncodedCacheKey(imageRequest);
-            BinaryResource resource = ImagePipelineFactory.getInstance()
-                    .getMainDiskStorageCache().getResource(cacheKey);
-            File file = ((FileBinaryResource) resource).getFile();
-            if (file != null) {
-                new setBlurredAlbumArt().execute(ImageUtils.getArtworkQuick(file, 300, 300));
-                return;
-            }
+//            CacheKey cacheKey = DefaultCacheKeyFactory.getInstance()
+//                    .getEncodedCacheKey(imageRequest);
+//            BinaryResource resource = ImagePipelineFactory.getInstance()
+//                    .getMainDiskStorageCache().getResource(cacheKey);
+//            File file = ((FileBinaryResource) resource).getFile();
+//            if (file != null) {
+//                new setBlurredAlbumArt().execute(ImageUtils.getArtworkQuick(file, 300, 300));
+//                return;
+//            }
 
             imageRequest = ImageRequestBuilder.newBuilderWithSource(Uri.parse(albumPath))
                     .setProgressiveRenderingEnabled(true).build();

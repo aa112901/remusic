@@ -278,7 +278,7 @@
     <color name="sportRadioShareTextColor">#cdffffff</color>
     <color name="statusBarPress">#ff232323</color>
     <color name="statusBarPressVivo">#ffcccccc</color>
-    <color name="statusBarTranslucent">#00000000</color>
+    <color name="statusBarTranslucent">#00ffffff</color>
     <color name="switch_thumb_disabled_material_dark">#ff616161</color>
     <color name="switch_thumb_disabled_material_light">#ffbdbdbd</color>
     <color name="switch_thumb_normal_material_dark">#ffbdbdbd</color>

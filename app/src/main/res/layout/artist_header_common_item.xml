@@ -5,6 +5,7 @@
         android:background="?android:attr/selectableItemBackground"
         android:orientation="horizontal">
     <RelativeLayout
+        android:id="@+id/play_all_layout"
         android:layout_gravity="bottom"
         android:background="?android:attr/selectableItemBackground"
         android:layout_width="match_parent"

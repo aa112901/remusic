@@ -33,7 +33,7 @@
             android:singleLine="true"
             android:text="如果我变成回忆"
             android:textColor="@color/text_color"
-            android:textSize="17sp" />
+            android:textSize="15sp" />
 
         <TextView
             android:id="@+id/fragment_main_playlist_item_count"
@@ -45,7 +45,7 @@
             android:singleLine="true"
             android:text="如果我变成回忆"
             android:textColor="@color/small_font"
-            android:textSize="12sp" />
+            android:textSize="11sp" />
     </LinearLayout>
 
 

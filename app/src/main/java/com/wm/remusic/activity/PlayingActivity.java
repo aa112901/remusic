@@ -9,9 +9,12 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.TransitionDrawable;
+import android.media.MediaRecorder;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Environment;
+import android.os.Handler;
 import android.os.ParcelFileDescriptor;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -20,14 +23,18 @@ import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.Interpolator;
 import android.view.animation.LinearInterpolator;
+import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.Scroller;
 import android.widget.SeekBar;
 import android.widget.TextView;
@@ -48,16 +55,28 @@ import com.wm.remusic.fragment.RoundFragment;
 import com.wm.remusic.fragment.SimpleMoreFragment;
 import com.wm.remusic.handler.HandlerUtil;
 import com.wm.remusic.info.MusicInfo;
+import com.wm.remusic.lrc.DefaultLrcParser;
+import com.wm.remusic.lrc.LrcRow;
+import com.wm.remusic.lrc.LrcView;
 import com.wm.remusic.provider.PlaylistsManager;
 import com.wm.remusic.service.MediaService;
 import com.wm.remusic.service.MusicPlayer;
 import com.wm.remusic.service.MusicTrack;
 import com.wm.remusic.uitl.IConstants;
 import com.wm.remusic.uitl.ImageUtils;
+import com.wm.remusic.uitl.L;
 import com.wm.remusic.uitl.MusicUtils;
+import com.wm.remusic.widget.AlbumViewPager;
 
+import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
+import java.util.List;
 
 import static com.wm.remusic.service.MusicPlayer.getAlbumPath;
 
@@ -73,7 +92,7 @@ public class PlayingActivity extends BaseActivity implements IConstants {
     private ActionBar ab;
     private ObjectAnimator needleAnim, animator;
     private AnimatorSet animatorSet;
-    private ViewPager mViewPager;
+    private AlbumViewPager mViewPager;
     private FragmentAdapter fAdapter;
     private BitmapFactory.Options newOpts;
     private View activeView;
@@ -85,6 +104,12 @@ public class PlayingActivity extends BaseActivity implements IConstants {
     private boolean duetoplaypause = false; //判读是否是播放暂停的通知，不要切换专辑封面
     Toolbar toolbar;
     private FrameLayout albumLayout;
+    private RelativeLayout lrcViewContainer;
+    private LrcView mLrcView;
+    TextView tryGetLrc;
+    LinearLayout musicTool;
+    private boolean print = true;
+    private String TAG = PlayingActivity.class.getSimpleName();
 
 
     @Override
@@ -111,7 +136,12 @@ public class PlayingActivity extends BaseActivity implements IConstants {
                 }
             });
         }
-        albumLayout = (FrameLayout) (FrameLayout) findViewById(R.id.headerView);
+        albumLayout = (FrameLayout) findViewById(R.id.headerView);
+        lrcViewContainer = (RelativeLayout) findViewById(R.id.lrcviewContainer);
+        mLrcView = (LrcView) findViewById(R.id.lrcview);
+        tryGetLrc = (TextView) findViewById(R.id.tragetlrc);
+        musicTool = (LinearLayout) findViewById(R.id.music_tool);
+
         backAlbum = (ImageView) findViewById(R.id.albumArt);
         playingmode = (ImageView) findViewById(R.id.playing_mode);
         control = (ImageView) findViewById(R.id.playing_play);
@@ -126,14 +156,100 @@ public class PlayingActivity extends BaseActivity implements IConstants {
         duration = (TextView) findViewById(R.id.music_duration);
         mProgress = (SeekBar) findViewById(R.id.play_seek);
         needle = (ImageView) findViewById(R.id.needle);
-        mViewPager = (ViewPager) findViewById(R.id.view_pager);
+        mViewPager = (AlbumViewPager) findViewById(R.id.view_pager);
         mProgress.setIndeterminate(false);
         mProgress.setProgress(1);
         //   mProgress.setSecondaryProgress(70);
         //     HandlerUtil.getInstance(this).postDelayed(runnable,1000);
         loadOther();
         setViewPager();
+        initLrcView();
         // setViewPager();
+    }
+
+    private void initLrcView(){
+        mLrcView.setOnSeekToListener(onSeekToListener);
+        mLrcView.setOnLrcClickListener(onLrcClickListener);
+        mViewPager.setOnSingleTouchListener(new AlbumViewPager.OnSingleTouchListener() {
+            @Override
+            public void onSingleTouch(View v) {
+                if(albumLayout.getVisibility() == View.VISIBLE){
+                    albumLayout.setVisibility(View.INVISIBLE);
+                    lrcViewContainer.setVisibility(View.VISIBLE);
+                    musicTool.setVisibility(View.INVISIBLE);
+                }
+            }
+        });
+        lrcViewContainer.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(lrcViewContainer.getVisibility() == View.VISIBLE){
+                    lrcViewContainer.setVisibility(View.INVISIBLE);
+                    albumLayout.setVisibility(View.VISIBLE);
+                    musicTool.setVisibility(View.VISIBLE);
+                }
+            }
+        });
+
+        tryGetLrc.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(getApplicationContext(), "重试被点击啦", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+    }
+
+
+    LrcView.OnLrcClickListener onLrcClickListener = new LrcView.OnLrcClickListener() {
+
+        @Override
+        public void onClick() {
+
+            if(lrcViewContainer.getVisibility() == View.VISIBLE){
+                lrcViewContainer.setVisibility(View.INVISIBLE);
+                albumLayout.setVisibility(View.VISIBLE);
+                musicTool.setVisibility(View.VISIBLE);
+            }
+        }
+    };
+    LrcView.OnSeekToListener onSeekToListener = new LrcView.OnSeekToListener() {
+
+        @Override
+        public void onSeekTo(int progress) {
+           MusicPlayer.seek(progress);
+
+        }
+    };
+
+
+    private List<LrcRow> getLrcRows(){
+
+        List<LrcRow> rows = null;
+        InputStream is = null;
+        try {
+            is = new FileInputStream(Environment.getExternalStorageDirectory().getAbsolutePath() +
+            "/remusic/lrc/" + MusicPlayer.getCurrentAudioId());
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }finally {
+            if(is == null){
+                return null;
+            }
+        }
+        BufferedReader br = new BufferedReader(new InputStreamReader(is));
+        String line ;
+        StringBuilder sb = new StringBuilder();
+        try {
+            while((line = br.readLine()) != null){
+                sb.append(line+"\n");
+            }
+           // System.out.println(sb.toString());
+            rows = DefaultLrcParser.getIstance().getLrcRows(sb.toString());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return rows;
     }
 
     int progress;
@@ -151,7 +267,6 @@ public class PlayingActivity extends BaseActivity implements IConstants {
 
 
     private void loadOther() {
-
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -299,7 +414,7 @@ public class PlayingActivity extends BaseActivity implements IConstants {
             @Override
             public void onClick(View v) {
 
-                SimpleMoreFragment moreFragment = new SimpleMoreFragment().newInstance(MusicPlayer.getCurrentAudioId());
+                SimpleMoreFragment moreFragment = SimpleMoreFragment.newInstance(MusicPlayer.getCurrentAudioId());
                 moreFragment.show(getSupportFragmentManager(), "music");
             }
         });
@@ -379,17 +494,8 @@ public class PlayingActivity extends BaseActivity implements IConstants {
     @Override
     protected void onStart() {
         super.onStart();
-//        IntentFilter f = new IntentFilter();
-//        f.addAction(MediaService.PLAYSTATE_CHANGED);
-//        f.addAction(MediaService.META_CHANGED);
-//        f.addAction(MediaService.QUEUE_CHANGED);
-//        f.addAction(IConstants.MUSIC_COUNT_CHANGED);
-//        registerReceiver(mStatusListener, new IntentFilter(f));
-
         //设置ViewPager的默认项
         mViewPager.setCurrentItem(MusicPlayer.getQueuePosition() + 1);
-        // new setBlurredAlbumArt().execute();
-
     }
 
     @Override
@@ -415,6 +521,16 @@ public class PlayingActivity extends BaseActivity implements IConstants {
             fav.setImageResource(R.drawable.play_rdi_icn_love);
         }
     }
+    private void updateLrc(){
+        if(getLrcRows() != null && getLrcRows().size() > 0){
+            tryGetLrc.setVisibility(View.INVISIBLE);
+            mLrcView.setLrcRows(getLrcRows());
+        }
+        else{
+            tryGetLrc.setVisibility(View.VISIBLE);
+            mLrcView.reset();
+        }
+    }
 
     private long bluredId = -1;
 
@@ -433,6 +549,7 @@ public class PlayingActivity extends BaseActivity implements IConstants {
                 }
             }
             updateFav(isFav);
+            updateLrc();
 
             if (MusicPlayer.getCurrentAudioId() != bluredId) {
                 new setBlurredAlbumArt().execute();
@@ -539,8 +656,9 @@ public class PlayingActivity extends BaseActivity implements IConstants {
 
                 @Override
                 public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
+                    i = (int) (i * MusicPlayer.duration() / 100);
+                    mLrcView.seekTo(i, true,b);
                     if (b) {
-                        i = (int) (i * MusicPlayer.duration() / 100);
                         MusicPlayer.seek((long) i);
                         timePlayed.setText(MusicUtils.makeShortTimeString(PlayingActivity.this.getApplication(), i / 1000));
                     }
@@ -663,8 +781,9 @@ public class PlayingActivity extends BaseActivity implements IConstants {
                 newOpts.inSampleSize = 6;
                 newOpts.inPreferredConfig = Bitmap.Config.RGB_565;
             }
-
+            Log.e("albumuri","start");
             if (!MusicPlayer.isTrackLocal()) {
+                Log.e("albumuri","bitmaplocal");
                 if (getAlbumPath() == null) {
                     mBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.placeholder_disk_210);
                     drawable = ImageUtils.createBlurredImageFromBitmap(mBitmap, PlayingActivity.this.getApplication(), 3);
@@ -706,19 +825,24 @@ public class PlayingActivity extends BaseActivity implements IConstants {
             } else {
                 try {
                     mBitmap = null;
-                    Bitmap bitmap;
+                    Bitmap bitmap = null;
+                    Log.e("albumuri","bitmap");
                     Uri art = Uri.parse(getAlbumPath());
-
+                    L.D(print, TAG, "albumuri ");
                     if (art != null) {
-                        ParcelFileDescriptor fd = getContentResolver().openFileDescriptor(art, "r");
-                        if (fd == null) {
-                            return null;
+                        ParcelFileDescriptor fd = null;
+                        try {
+                            fd = getContentResolver().openFileDescriptor(art, "r");
+                        } catch (FileNotFoundException e) {
+                            e.printStackTrace();
                         }
-                        bitmap = BitmapFactory.decodeFileDescriptor(fd.getFileDescriptor(), null, newOpts);
+                        if (fd != null) {
+                            bitmap = BitmapFactory.decodeFileDescriptor(fd.getFileDescriptor(), null, newOpts);
+                        }else {
+                            bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.placeholder_disk_210, newOpts);
+                        }
                     } else {
-
-
-                        bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.login_bg_night, newOpts);
+                        bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.placeholder_disk_210, newOpts);
                     }
                     if (bitmap != null) {
                         drawable = ImageUtils.createBlurredImageFromBitmap(bitmap, PlayingActivity.this.getApplication(), 3);

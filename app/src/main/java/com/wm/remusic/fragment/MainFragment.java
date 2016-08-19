@@ -149,10 +149,16 @@ public class MainFragment extends BaseFragment {
                 ArrayList results = new ArrayList();
                 setMusicInfo();
                 ArrayList<Playlist> playlists = playlistInfo.getPlaylist();
+                ArrayList<Playlist> netPlaylists = playlistInfo.getNetPlaylist();
                 results.addAll(mList);
                 results.add(mContext.getResources().getString(R.string.created_playlists));
                 results.addAll(playlists);
-                mAdapter.updateResults(results, playlists);
+                if(netPlaylists != null && netPlaylists.size() > 0){
+                    results.add("收藏的歌单");
+                    results.addAll(netPlaylists);
+                }
+
+                mAdapter.updateResults(results, playlists ,netPlaylists);
                 return null;
             }
 

@@ -145,7 +145,7 @@ public class MusicUtils implements IConstants {
     }
 
 
-    public static List<MusicInfo> queryMusic(Context context,
+    public static ArrayList<MusicInfo> queryMusic(Context context,
                                              String selections, String selection, int from) {
 
         Uri uri = Media.EXTERNAL_CONTENT_URI;
@@ -169,7 +169,7 @@ public class MusicUtils implements IConstants {
 
         switch (from) {
             case START_FROM_LOCAL:
-                List<MusicInfo> list3 = getMusicListCursor(cr.query(uri, proj_music,
+                ArrayList<MusicInfo> list3 = getMusicListCursor(cr.query(uri, proj_music,
                         selectionStatement, null,
                         songSortOrder));
                 return list3;

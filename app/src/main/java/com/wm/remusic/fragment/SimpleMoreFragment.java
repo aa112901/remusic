@@ -25,6 +25,7 @@ import android.widget.Toast;
 import com.wm.remusic.R;
 import com.wm.remusic.adapter.MusicFlowAdapter;
 import com.wm.remusic.adapter.OverFlowItem;
+import com.wm.remusic.dialog.AddNetPlaylistDialog;
 import com.wm.remusic.dialog.AddPlaylistDialog;
 import com.wm.remusic.handler.HandlerUtil;
 import com.wm.remusic.info.MusicInfo;
@@ -120,24 +121,25 @@ public class SimpleMoreFragment extends DialogFragment {
                 public void onItemClick(View view, String data) {
                     switch (Integer.parseInt(data)) {
                         case 0:
-                            new Handler().postDelayed(new Runnable() {
-                                @Override
-                                public void run() {
-                                    if (adapterMusicInfo.songId == MusicPlayer.getCurrentAudioId())
-                                        return;
+                            if(adapterMusicInfo.islocal){
+                                new Handler().postDelayed(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        if (adapterMusicInfo.songId == MusicPlayer.getCurrentAudioId())
+                                            return;
 
-                                    long[] ids = new long[1];
-                                    ids[0] = adapterMusicInfo.songId;
-                                    MusicPlayer.playNext(mContext, ids, -1);
-                                }
-                            }, 100);
+                                        long[] ids = new long[1];
+                                        ids[0] = adapterMusicInfo.songId;
+                                        MusicPlayer.playNext(mContext, ids, -1);
+                                    }
+                                }, 100);
+                            }
+
 
                             dismiss();
                             break;
                         case 1:
-                            long[] list = new long[1];
-                            list[0] = adapterMusicInfo.songId;
-                            AddPlaylistDialog.newInstance(list).show(getFragmentManager(), "add");
+                            AddNetPlaylistDialog.newInstance(adapterMusicInfo).show(getFragmentManager(), "add");
                             dismiss();
                             break;
                         case 2:
@@ -149,31 +151,30 @@ public class SimpleMoreFragment extends DialogFragment {
                             dismiss();
                             break;
                         case 3:
-                            new AlertDialog.Builder(mContext).setTitle(getResources().getString(R.string.sure_to_delete_music)).
-                                    setPositiveButton(getResources().getString(R.string.sure), new DialogInterface.OnClickListener() {
-                                        @Override
-                                        public void onClick(DialogInterface dialog, int which) {
+                            if(adapterMusicInfo.islocal){
+                                new AlertDialog.Builder(mContext).setTitle(getResources().getString(R.string.sure_to_delete_music)).
+                                        setPositiveButton(getResources().getString(R.string.sure), new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialog, int which) {
 
-                                            Uri uri = ContentUris.withAppendedId(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, adapterMusicInfo.songId);
-                                            mContext.getContentResolver().delete(uri, null, null);
+                                                Uri uri = ContentUris.withAppendedId(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, adapterMusicInfo.songId);
+                                                mContext.getContentResolver().delete(uri, null, null);
+                                                if (MusicPlayer.getCurrentAudioId() == adapterMusicInfo.songId) {
+                                                    if (MusicPlayer.getQueueSize() == 0) {
+                                                        MusicPlayer.stop();
+                                                    } else {
+                                                        MusicPlayer.next();
+                                                    }
 
-
-                                            if (MusicPlayer.getCurrentAudioId() == adapterMusicInfo.songId) {
-                                                if (MusicPlayer.getQueueSize() == 0) {
-                                                    MusicPlayer.stop();
-                                                } else {
-                                                    MusicPlayer.next();
                                                 }
 
-                                            }
-
-                                            HandlerUtil.getInstance(mContext).postDelayed(new Runnable() {
-                                                @Override
-                                                public void run() {
-                                                    PlaylistsManager.getInstance(mContext).deleteMusic(mContext, adapterMusicInfo.songId);
-                                                    mContext.sendBroadcast(new Intent(IConstants.MUSIC_COUNT_CHANGED));
-                                                }
-                                            }, 200);
+                                                HandlerUtil.getInstance(mContext).postDelayed(new Runnable() {
+                                                    @Override
+                                                    public void run() {
+                                                        PlaylistsManager.getInstance(mContext).deleteMusic(mContext, adapterMusicInfo.songId);
+                                                        mContext.sendBroadcast(new Intent(IConstants.MUSIC_COUNT_CHANGED));
+                                                    }
+                                                }, 200);
 
 //                                            File file;
 //                                            file = new File(adapterMusicInfo.data);
@@ -183,37 +184,41 @@ public class SimpleMoreFragment extends DialogFragment {
 //                                                mContext.getApplicationContext().sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE,
 //                                                        Uri.parse("file://" + adapterMusicInfo.data)));
 //                                            mContext.sendBroadcast(new Intent(IConstants.MUSIC_COUNT_CHANGED));
-                                            dismiss();
-                                        }
-                                    }).
-                                    setNegativeButton(getResources().getString(R.string.cancel), new DialogInterface.OnClickListener() {
-                                        @Override
-                                        public void onClick(DialogInterface dialog, int which) {
-                                            dismiss();
-                                        }
-                                    }).show();
+                                                dismiss();
+                                            }
+                                        }).
+                                        setNegativeButton(getResources().getString(R.string.cancel), new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialog, int which) {
+                                                dismiss();
+                                            }
+                                        }).show();
+                            }
+
                             dismiss();
                             break;
                         case 4:
+                            if(adapterMusicInfo.islocal){
+                                new AlertDialog.Builder(mContext).setTitle(getResources().getString(R.string.sure_to_set_ringtone)).
+                                        setPositiveButton(getResources().getString(R.string.sure), new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialog, int which) {
+                                                Uri ringUri = Uri.parse("file://" + adapterMusicInfo.data);
+                                                RingtoneManager.setActualDefaultRingtoneUri(mContext, RingtoneManager.TYPE_NOTIFICATION, ringUri);
+                                                dialog.dismiss();
+                                                Toast.makeText(mContext, getResources().getString(R.string.set_ringtone_successed),
+                                                        Toast.LENGTH_SHORT).show();
+                                                dismiss();
+                                            }
+                                        }).
+                                        setNegativeButton(getResources().getString(R.string.cancel), new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialog, int which) {
+                                                dialog.dismiss();
+                                            }
+                                        }).show();
+                            }
 
-                            new AlertDialog.Builder(mContext).setTitle(getResources().getString(R.string.sure_to_set_ringtone)).
-                                    setPositiveButton(getResources().getString(R.string.sure), new DialogInterface.OnClickListener() {
-                                        @Override
-                                        public void onClick(DialogInterface dialog, int which) {
-                                            Uri ringUri = Uri.parse("file://" + adapterMusicInfo.data);
-                                            RingtoneManager.setActualDefaultRingtoneUri(mContext, RingtoneManager.TYPE_NOTIFICATION, ringUri);
-                                            dialog.dismiss();
-                                            Toast.makeText(mContext, getResources().getString(R.string.set_ringtone_successed),
-                                                    Toast.LENGTH_SHORT).show();
-                                            dismiss();
-                                        }
-                                    }).
-                                    setNegativeButton(getResources().getString(R.string.cancel), new DialogInterface.OnClickListener() {
-                                        @Override
-                                        public void onClick(DialogInterface dialog, int which) {
-                                            dialog.dismiss();
-                                        }
-                                    }).show();
                             break;
                         case 5:
                             MusicDetailFragment detailFrament = MusicDetailFragment.newInstance(adapterMusicInfo);

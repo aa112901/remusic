@@ -43,6 +43,7 @@ import android.media.session.MediaSession;
 import android.media.session.PlaybackState;
 import android.net.Uri;
 import android.os.Build;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.IBinder;
@@ -70,7 +71,8 @@ import com.facebook.imagepipeline.datasource.BaseBitmapDataSubscriber;
 import com.facebook.imagepipeline.image.CloseableImage;
 import com.facebook.imagepipeline.request.ImageRequest;
 import com.facebook.imagepipeline.request.ImageRequestBuilder;
-import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
 import com.wm.remusic.MainApplication;
 import com.wm.remusic.MediaAidlInterface;
@@ -79,6 +81,8 @@ import com.wm.remusic.activity.PlayingActivity;
 import com.wm.remusic.downmusic.Down;
 import com.wm.remusic.info.MusicInfo;
 import com.wm.remusic.json.MusicFileDownInfo;
+import com.wm.remusic.net.BMA;
+import com.wm.remusic.net.HttpUtil;
 import com.wm.remusic.permissions.Nammu;
 import com.wm.remusic.provider.MusicPlaybackState;
 import com.wm.remusic.provider.RecentStore;
@@ -259,11 +263,12 @@ public class MediaService extends Service {
     private ContentObserver mMediaStoreObserver;
 
     private ExecutorService executor = Executors.newSingleThreadExecutor();
+    private ExecutorService lrcExecutor = Executors.newSingleThreadExecutor();
     private ExecutorService nextExecutor = Executors.newSingleThreadExecutor();
     private boolean isMiui;
     private boolean isFlyme;
-    Gson gson = new Gson();
     MediaPlayerProxy proxy;
+    public static final String LRC_PATH = "/remusic/lrc";
 
 
     @Override
@@ -564,7 +569,8 @@ public class MediaService extends Service {
             newNotifyMode = NOTIFY_MODE_NONE;
         }
 
-        int notificationId = hashCode();
+       // int notificationId = hashCode();
+
         if (mNotifyMode != newNotifyMode) {
             if (mNotifyMode == NOTIFY_MODE_FOREGROUND) {
                 if (CommonUtils.isLollipop())
@@ -586,10 +592,11 @@ public class MediaService extends Service {
 
         mNotifyMode = newNotifyMode;
     }
-
+    int notificationId = 1000;
     private void cancelNotification() {
         stopForeground(true);
-        mNotificationManager.cancel(hashCode());
+        //mNotificationManager.cancel(hashCode());
+        mNotificationManager.cancel(notificationId);
         mNotificationPostTime = 0;
         mNotifyMode = NOTIFY_MODE_NONE;
     }
@@ -710,7 +717,9 @@ public class MediaService extends Service {
                 mHistory.clear();
             } else {
                 for (int i = 0; i < numToRemove; i++) {
+                    mPlaylistInfo.remove(mPlaylist.get(first).mId);
                     mPlaylist.remove(first);
+
                 }
 
                 ListIterator<Integer> positionIterator = mHistory.listIterator();
@@ -901,7 +910,63 @@ public class MediaService extends Service {
         openCurrentAndMaybeNext(false, true);
     }
 
-    private void openCurrentAndMaybeNext(final boolean play, final boolean openNext) {
+    class GetLrc implements Runnable{
+
+        MusicInfo musicInfo;
+        GetLrc(MusicInfo info){
+            this.musicInfo = info;
+        }
+
+        @Override
+        public void run() {
+
+            String url = null;
+            if(musicInfo != null && musicInfo.lrc != null){
+                url = musicInfo.lrc;
+            }
+            try {
+                JsonObject jsonObject = HttpUtil.getResposeJsonObject(BMA.Search.searchLrcPic(musicInfo.musicName,musicInfo.artist));
+                JsonArray array = jsonObject.get("songinfo").getAsJsonArray();
+                int len = array.size();
+                Log.e("getLrc","" + len);
+                url = null;
+                for(int i = 0; i<len ; i++) {
+                    url = array.get(i).getAsJsonObject().get("lrclink").getAsString();
+                    if (url != null) {
+                        Log.e("getLrc",url);
+                        break;
+                    }
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            File file = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/remusic/lrc/" + musicInfo.songId);
+            String lrc = null;
+            try {
+                lrc = HttpUtil.getResposeString(url);
+                if(lrc != null &&!lrc.isEmpty()){
+                    writeToFile(file,lrc);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+        }
+    }
+
+    private synchronized void writeToFile(File file,String lrc){
+        try {
+            FileOutputStream outputStream = new FileOutputStream(file);
+            outputStream.write(lrc.getBytes());
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void openCurrentAndMaybeNext(final boolean play, final boolean openNext)  {
         synchronized (this) {
             if (D) Log.d(TAG, "open current");
             closeCursor();
@@ -915,12 +980,26 @@ public class MediaService extends Service {
 
             final long id = mPlaylist.get(mPlayPos).mId;
             updateCursor(id);
-            Log.d("opencurrent f", "");
+            String lrc = Environment.getExternalStorageDirectory().getAbsolutePath() + LRC_PATH;
+            File file = new File(lrc);
+            if(!file.exists()){
+                try {
+                    file.createNewFile();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }else {
+                file = new File(lrc + id);
+                if(!file.exists()){
+                    //new Thread(new GetLrc(mPlaylistInfo.get(id))).start();
+                    lrcExecutor.submit(new GetLrc(mPlaylistInfo.get(id)));
+                }
+            }
+
             if (!mPlaylistInfo.get(id).islocal) {
                 executor.shutdownNow();
                 executor = Executors.newSingleThreadExecutor();
                 executor.submit(new GetPlayUrl(id, play));
-                Log.e("opencurrent", "");
 
             } else {
                 while (true) {
@@ -1495,7 +1574,7 @@ public class MediaService extends Service {
             try {
                 FileInputStream fo = new FileInputStream(new File(getCacheDir().getAbsolutePath() + "playlist"));
                 String c = readTextFromSDcard(fo);
-                HashMap<Long, MusicInfo> play = gson.fromJson(c, new TypeToken<HashMap<Long, MusicInfo>>() {
+                HashMap<Long, MusicInfo> play = MainApplication.gsonInstance().fromJson(c, new TypeToken<HashMap<Long, MusicInfo>>() {
                 }.getType());
                 if (play != null && play.size() > 0) {
                     mPlaylistInfo = play;
@@ -2308,7 +2387,7 @@ public class MediaService extends Service {
             if (index1 == index2) {
                 return;
             }
-
+            mPlaylistInfo.remove(mPlaylist.get(index1).mId);
             final MusicTrack track = mPlaylist.remove(index1);
             if (index1 < index2) {
                 mPlaylist.add(index2, track);

@@ -108,17 +108,19 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
            <LinearLayout
+               android:id="@+id/playlist_collect"
                android:layout_weight="1"
                android:orientation="vertical"
                android:layout_width="match_parent"
                android:layout_height="match_parent">
                <ImageView
                    android:layout_gravity="center"
-                   android:id="@+id/playlist_collect"
+                   android:id="@+id/playlist_collect_view"
                    android:src="@drawable/list_detail_icn_fav"
                    android:layout_width="wrap_content"
                    android:layout_height="wrap_content" />
                <TextView
+                   android:id="@+id/playlist_collect_state"
                    android:textColor="@color/whaite_text"
                    android:textSize="12sp"
                    android:gravity="center"
@@ -150,13 +152,14 @@
 
 
             <LinearLayout
+                android:id="@+id/playlist_share"
                 android:layout_weight="1"
                 android:orientation="vertical"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
                 <ImageView
                     android:layout_gravity="center"
-                    android:id="@+id/playlist_share"
+                    android:id="@+id/playlist_share_view"
                     android:src="@drawable/list_detail_icn_share"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />

@@ -37,8 +37,9 @@ import java.util.ArrayList;
  */
 public class MainFragmentAdapter extends RecyclerView.Adapter<MainFragmentAdapter.ItemHolder> {
 
-    private ArrayList<Playlist> playlists;
-    private boolean expanded = true;
+    private ArrayList<Playlist> playlists ,netplaylists = new ArrayList<>();
+    private boolean createdExpanded = true;
+    private boolean collectExpanded= true;
     private Context mContext;
     private ArrayList itemResults = new ArrayList();
 
@@ -50,10 +51,11 @@ public class MainFragmentAdapter extends RecyclerView.Adapter<MainFragmentAdapte
         this.playlists = playlists;
     }
 
-    public void updateResults(ArrayList itemResults, ArrayList<Playlist> playlists) {
+    public void updateResults(ArrayList itemResults, ArrayList<Playlist> playlists ,ArrayList<Playlist> netplaylists) {
 
         this.itemResults = itemResults;
         this.playlists = playlists;
+        this.netplaylists = netplaylists;
     }
 
 
@@ -76,6 +78,10 @@ public class MainFragmentAdapter extends RecyclerView.Adapter<MainFragmentAdapte
                 View v2 = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.expandable_item, viewGroup, false);
                 ItemHolder ml2 = new ItemHolder(v2);
                 return ml2;
+            case 3:
+                View v3 = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.expandable_item, viewGroup, false);
+                ItemHolder ml3 = new ItemHolder(v3);
+                return ml3;
 
         }
         return null;
@@ -92,16 +98,29 @@ public class MainFragmentAdapter extends RecyclerView.Adapter<MainFragmentAdapte
                 setOnListener(itemHolder, i);
                 break;
             case 1:
-                if (expanded) {
-                    Playlist playlist = (Playlist) itemResults.get(i);
+                Playlist playlist = (Playlist)itemResults.get(i);
+                if (createdExpanded && playlist.author.equals("local")) {
+                    if(playlist.albumArt != null)
                     itemHolder.albumArt.setImageURI(Uri.parse(playlist.albumArt));
                     itemHolder.title.setText(playlist.name);
                     itemHolder.songcount.setText(playlist.songCount + "首");
-                    setOnPlaylistListener(itemHolder, i, playlist.id, playlist.albumArt, playlist.name);
+
                 }
+                if(collectExpanded && !playlist.author.equals("local")){
+                    if(playlist.albumArt != null)
+                        itemHolder.albumArt.setImageURI(Uri.parse(playlist.albumArt));
+                    itemHolder.title.setText(playlist.name);
+                    itemHolder.songcount.setText(playlist.songCount + "首");
+                }
+                setOnPlaylistListener(itemHolder, i, playlist.id, playlist.albumArt, playlist.name);
                 break;
             case 2:
                 itemHolder.sectionItem.setText("创建的歌单" + "(" + playlists.size() + ")");
+                itemHolder.sectionImg.setImageResource(R.drawable.list_icn_arr_right);
+                setSectionListener(itemHolder, i);
+                break;
+            case 3:
+                itemHolder.sectionItem.setText("收藏的歌单" + "(" + netplaylists.size() + ")");
                 itemHolder.sectionImg.setImageResource(R.drawable.list_icn_arr_right);
                 setSectionListener(itemHolder, i);
                 break;
@@ -115,8 +134,11 @@ public class MainFragmentAdapter extends RecyclerView.Adapter<MainFragmentAdapte
 
     @Override
     public int getItemCount() {
-        if (!expanded) {
+        if (!createdExpanded && playlists != null) {
             itemResults.removeAll(playlists);
+        }
+        if (!collectExpanded){
+            itemResults.removeAll(netplaylists);
         }
         return itemResults == null ? 0 : itemResults.size();
     }
@@ -269,8 +291,13 @@ public class MainFragmentAdapter extends RecyclerView.Adapter<MainFragmentAdapte
         }
         if (itemResults.get(position) instanceof MainFragmentItem)
             return 0;
-        if (itemResults.get(position) instanceof Playlist)
+        if (itemResults.get(position) instanceof Playlist) {
             return 1;
+        }
+        if (itemResults.get(position) instanceof String){
+            if (((String)itemResults.get(position)).equals("收藏的歌单"))
+                return 3;
+        }
         return 2;
     }
 
@@ -299,30 +326,54 @@ public class MainFragmentAdapter extends RecyclerView.Adapter<MainFragmentAdapte
 
         @Override
         public void onClick(View v) {
+            ObjectAnimator anim = null;
+            anim = ObjectAnimator.ofFloat(sectionImg, "rotation", 90, 0);
+            anim.setDuration(100);
+            anim.setRepeatCount(0);
+            anim.setInterpolator(new LinearInterpolator());
             switch (getItemViewType()) {
-                case 2:
-                    ObjectAnimator anim;
-                    anim = ObjectAnimator.ofFloat(sectionImg, "rotation", 90, 0);
-                    anim.setDuration(100);
-                    anim.setRepeatCount(0);
-                    anim.setInterpolator(new LinearInterpolator());
 
-                    if (expanded) {
+                case 2:
+                    if (createdExpanded) {
                         itemResults.removeAll(playlists);
-                        updateResults(itemResults, playlists);
+                        updateResults(itemResults, playlists ,netplaylists);
                         notifyItemRangeRemoved(5, playlists.size());
                         anim.start();
 
-                        expanded = false;
+                        createdExpanded = false;
                     } else {
+                        itemResults.removeAll(netplaylists);
+                        itemResults.remove("收藏的歌单");
                         itemResults.addAll(playlists);
-                        updateResults(itemResults, playlists);
+                        itemResults.add("收藏的歌单");
+                        itemResults.addAll(netplaylists);
+                        updateResults(itemResults, playlists ,netplaylists);
                         notifyItemRangeInserted(5, playlists.size());
                         anim.reverse();
-                        expanded = true;
+                        createdExpanded = true;
                     }
 
                     break;
+
+                case 3:
+                    if (collectExpanded) {
+                        itemResults.removeAll(netplaylists);
+                        updateResults(itemResults, playlists ,netplaylists);
+                        int len = playlists.size();
+                        notifyItemRangeRemoved(6 + len , netplaylists.size());
+                        anim.start();
+
+                        collectExpanded = false;
+                    } else {
+                        itemResults.addAll(netplaylists);
+                        updateResults(itemResults, playlists ,netplaylists);
+                        int len = playlists.size();
+                        notifyItemRangeInserted(6 + len , netplaylists.size());
+                        anim.reverse();
+                        collectExpanded = true;
+                    }
+                    break;
+
             }
         }
 

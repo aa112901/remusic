@@ -150,7 +150,7 @@ public class MainApplication extends Application {
 
         if (!PreferencesUtility.getInstance(this).getFavriateMusicPlaylist()) {
             PlaylistInfo.getInstance(this).addPlaylist(favPlaylist, getResources().getString(R.string.my_fav_playlist),
-                    0, "res:/" + R.mipmap.lay_protype_default);
+                    0, "res:/" + R.mipmap.lay_protype_default ,"local");
             PreferencesUtility.getInstance(this).setFavriateMusicPlaylist(true);
         }
     }

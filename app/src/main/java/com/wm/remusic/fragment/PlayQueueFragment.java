@@ -20,6 +20,7 @@ import android.widget.TextView;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.wm.remusic.R;
+import com.wm.remusic.dialog.AddNetPlaylistDialog;
 import com.wm.remusic.dialog.AddPlaylistDialog;
 import com.wm.remusic.info.MusicInfo;
 import com.wm.remusic.provider.MusicPlaybackState;
@@ -84,11 +85,12 @@ public class PlayQueueFragment extends DialogFragment {
         addToPlaylist.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                long[] list = new long[playlist.size()];
-                for (int i = 0; i < playlist.size(); i++) {
-                    list[i] = playlist.get(i).songId;
-                }
-                AddPlaylistDialog.newInstance(list).show(getFragmentManager(), "add");
+//                long[] list = new long[playlist.size()];
+//                for (int i = 0; i < playlist.size(); i++) {
+//                    list[i] = playlist.get(i).songId;
+//                }
+//                AddPlaylistDialog.newInstance(list).show(getFragmentManager(), "add");
+                AddNetPlaylistDialog.newInstance(playlist).show(getFragmentManager(),"add");
             }
         });
 

@@ -203,12 +203,7 @@ public class HttpUtil {
                     .build();
             Response response = mOkHttpClient.newCall(request).execute();
             if (response.isSuccessful()) {
-
-                File file = new File("/storage/emulated/0/billboard.json");
                 String c = response.body().string();
-                FileOutputStream fo = new FileOutputStream(file);
-                fo.write(c.getBytes());
-
                 Log.e("billboard", c);
                 return c;
             }
@@ -235,9 +230,7 @@ public class HttpUtil {
             mOkHttpClient.setConnectTimeout(1000, TimeUnit.MINUTES);
             mOkHttpClient.setReadTimeout(1000, TimeUnit.MINUTES);
             Request.Builder builder = new Request.Builder()
-                    .url(action1)
-                    .addHeader("Referer", "http://music.163.com/")
-                    .addHeader("Cookie", "appver=1.5.0.75771");
+                    .url(action1);
             if (forceCache) {
                 builder.cacheControl(CacheControl.FORCE_CACHE);
             }

@@ -18,6 +18,7 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.facebook.drawee.backends.pipeline.Fresco;
 import com.facebook.drawee.interfaces.DraweeController;
@@ -60,15 +61,11 @@ public class RecommendFragment extends Fragment {
     private NewAlbumsAdapter newAlbumsAdapter;
     private RadioAdapter radioAdapter;
 
-    private ArrayList<GedanHotInfo> recomendList = new ArrayList<>();
-    private ArrayList<NewAlbums> newAlbumsList = new ArrayList<>();
-    private ArrayList<RadioNetInfo> radioList = new ArrayList<>();
     private ArrayList<RecommendListRecommendInfo> mRecomendList = new ArrayList<>();
     private ArrayList<RecommendListNewAlbumInfo> mNewAlbumsList = new ArrayList<>();
     private ArrayList<RecommendListRadioInfo> mRadioList = new ArrayList<>();
     int width = 160, height = 160;
 
-    String newAlbums = "http://music.163.com/api/album/new?area=ALL&offset=" + "0" + "&total=true&limit=" + "6";
     LayoutInflater layoutInflater;
     View loadView, v1, v2, v3;
     LinearLayout itemChanged;
@@ -90,21 +87,6 @@ public class RecommendFragment extends Fragment {
         layoutInflater = LayoutInflater.from(getContext());
         TextView dailyText = (TextView) view.findViewById(R.id.daily_text);
         dailyText.setText(Calendar.getInstance().get(Calendar.DAY_OF_MONTH) + "");
-//        recyclerView1 = (RecyclerView) view.findViewById(R.id.recommend_playlist_recyclerview);
-//        recyclerView2 = (RecyclerView) view.findViewById(R.id.recommend_newalbums_recyclerview);
-//        recyclerView3 = (RecyclerView) view.findViewById(R.id.recommend_radio_recyclerview);
-//        gridLayoutManager = new GridLayoutManager(getActivity(),3);
-//        gridLayoutManager2 = new GridLayoutManager(getActivity(),3);
-//        gridLayoutManager3 = new GridLayoutManager(getActivity(),3);
-//        recyclerView1.setLayoutManager(gridLayoutManager);
-//        recyclerView2.setLayoutManager(gridLayoutManager2);
-//        recyclerView3.setLayoutManager(gridLayoutManager3);
-//        recomendAdapter = new RecommendAdapter(null);
-//        newAlbumsAdapter = new NewAlbumsAdapter(null);
-//        radioAdapter = new RadioAdapter(null);
-//        recyclerView1.setAdapter(recomendAdapter);
-//        recyclerView2.setAdapter(newAlbumsAdapter);
-//        recyclerView3.setAdapter(radioAdapter);
 
         itemChanged = (LinearLayout) view.findViewById(R.id.item_change);
         linearLayout = (LinearLayout) view.findViewById(R.id.recommend_layout);
@@ -146,7 +128,6 @@ public class RecommendFragment extends Fragment {
 
 
     private void reloadAdapter() {
-        final Gson gson = new Gson();
         new AsyncTask<Void, Void, Void>() {
 
             @Override
@@ -155,67 +136,6 @@ public class RecommendFragment extends Fragment {
                 if (NetworkUtils.isConnectInternet(getActivity())) {
                     isFromCache = false;
                 }
-                String fmtrash = "http://music.163.com/api/radio/get";
-
-
-//                //热门歌单
-//                try {
-//                    JsonObject result = HttpUtil.getResposeJsonObject(BMA.GeDan.hotGeDan(6),getActivity() , isFromCache);
-//
-//                    if(result == null){
-//                        return null;
-//                    }
-//
-//                    JsonArray pArray = result.get("content")
-//                            .getAsJsonObject().get("list").getAsJsonArray();
-//                    if(pArray == null){
-//                        return null;
-//                    }
-//
-//                    int plen = pArray.size();
-//
-//                    for(int i = 0;i < plen; i++){
-//                        GedanHotInfo gedanHotInfo = gson.fromJson(pArray.get(i),GedanHotInfo.class);
-//                        recomendList.add(gedanHotInfo);
-//                    }
-//                } catch (NullPointerException e) {
-//                    e.printStackTrace();
-//                }
-//
-//                //新专辑
-//                try {
-//                    JsonObject result2 = HttpUtil.getResposeJsonObject(newAlbums,getContext() ,isFromCache);
-//                    JsonArray jsonArray2  = result2.get("albums").getAsJsonArray();
-//
-//                    Iterator it2 = jsonArray2.iterator();
-//                    while(it2.hasNext()){
-//                        JsonElement e = (JsonElement)it2.next();
-//                        JsonObject jo = e.getAsJsonObject();
-//
-//                        String artistName = jo.get("artist").getAsJsonObject().get("name").getAsString();
-//                        NewAlbums newAlbums = new NewAlbums(getStringValue(jo, "blurPicUrl"),getIntValue(jo, "id"),
-//                                getStringValue(jo, "name"), artistName, getIntValue(jo, "publishTime"));
-//                        newAlbumsList.add(newAlbums);
-//                    }
-//                } catch (NullPointerException e) {
-//                    e.printStackTrace();
-//                }
-//
-//                //推荐电台
-//                try {
-//                    JsonObject result3 = HttpUtil.getResposeJsonObject(BMA.Radio.recommendRadioList(6),getActivity() , isFromCache);
-//
-//                    JsonArray rArray = result3.get("list").getAsJsonArray();
-//
-//                    int rlen = rArray.size();
-//
-//                    for(int i = 0;i < rlen; i++){
-//                        RadioNetInfo radioNetInfo = gson.fromJson(rArray.get(i),RadioNetInfo.class);
-//                        radioList.add(radioNetInfo);
-//                    }
-//                } catch (NullPointerException e) {
-//                    e.printStackTrace();
-//                }
 
                 //推荐电台
                 try {
@@ -288,8 +208,103 @@ public class RecommendFragment extends Fragment {
             }
 
         }.execute();
+    }
+
+    class LoadRecommend extends AsyncTask<Integer,Void,Integer>{
+        @Override
+        protected Integer doInBackground(Integer... params) {
+
+            if (NetworkUtils.isConnectInternet(getActivity())) {
+                isFromCache = false;
+            }
+
+            //推荐电台
+            try {
+                JsonObject list = HttpUtil.getResposeJsonObject("http://tingapi.ting.baidu.com/v1/restserver/ting?from=android&version=5.8.1.0&channel=ppzs&operator=3&method=baidu.ting.plaza.index&cuid=89CF1E1A06826F9AB95A34DC0F6AAA14"
+                        , getActivity(), isFromCache);
+
+                JsonObject object = list.get("result").getAsJsonObject();
+                JsonArray radioArray = object.get("radio").getAsJsonObject().get("result").getAsJsonArray();
+                JsonArray recommendArray = object.get("diy").getAsJsonObject().get("result").getAsJsonArray();
+                JsonArray newAlbumArray = object.get("mix_1").getAsJsonObject().get("result").getAsJsonArray();
 
 
+                for (int i = 0; i < 6; i++) {
+                    mRecomendList.add(MainApplication.gsonInstance().fromJson(recommendArray.get(i), RecommendListRecommendInfo.class));
+                    mNewAlbumsList.add(MainApplication.gsonInstance().fromJson(newAlbumArray.get(i), RecommendListNewAlbumInfo.class));
+                    mRadioList.add(MainApplication.gsonInstance().fromJson(radioArray.get(i), RecommendListRadioInfo.class));
+                }
+            } catch (NullPointerException e) {
+                e.printStackTrace();
+            }
+
+            return params[0];
+        }
+
+        @Override
+        protected void onPostExecute(Integer tryCount) {
+            if(mRecomendList.size() != 6 && mNewAlbumsList.size() != 6 && mRadioList.size() != 6){
+                if(tryCount < 5){
+                    tryCount++;
+                    new LoadRecommend().execute(tryCount);
+                }else {
+                    Toast.makeText(getContext(),"网络连接失败",Toast.LENGTH_SHORT).show();
+                    View tryAgain = LayoutInflater.from(getContext()).inflate(R.layout.try_again,linearLayout,false);
+                    tryAgain.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            new LoadRecommend().execute(0);
+                        }
+                    });
+                    linearLayout.removeView(loadView);
+                    linearLayout.addView(tryAgain);
+                }
+
+            }
+
+            v1 = layoutInflater.inflate(R.layout.recommend_playlist, linearLayout, false);
+            recyclerView1 = (RecyclerView) v1.findViewById(R.id.recommend_playlist_recyclerview);
+            gridLayoutManager = new GridLayoutManager(getActivity(), 3);
+            recyclerView1.setLayoutManager(gridLayoutManager);
+            recyclerView1.setAdapter(recomendAdapter);
+            TextView more = (TextView) v1.findViewById(R.id.more);
+            more.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    changeView.changeTo(1);
+                }
+            });
+
+
+            v2 = layoutInflater.inflate(R.layout.recommend_newalbums, linearLayout, false);
+            recyclerView2 = (RecyclerView) v2.findViewById(R.id.recommend_newalbums_recyclerview);
+            gridLayoutManager2 = new GridLayoutManager(getActivity(), 3);
+            recyclerView2.setLayoutManager(gridLayoutManager2);
+            recyclerView2.setAdapter(newAlbumsAdapter);
+
+            v3 = layoutInflater.inflate(R.layout.recommend_radio, linearLayout, false);
+            recyclerView3 = (RecyclerView) v3.findViewById(R.id.recommend_radio_recyclerview);
+            gridLayoutManager3 = new GridLayoutManager(getActivity(), 3);
+            recyclerView3.setLayoutManager(gridLayoutManager3);
+            recyclerView3.setAdapter(radioAdapter);
+
+
+            recomendAdapter.update(mRecomendList);
+            newAlbumsAdapter.update(mNewAlbumsList);
+            radioAdapter.update(mRadioList);
+
+            hashMap = new HashMap<>();
+            hashMap.put("推荐歌单", v1);
+            hashMap.put("最新专辑", v2);
+            hashMap.put("主播电台", v3);
+            position = PreferencesUtility.getInstance(getActivity()).getItemPosition();
+            linearLayout.removeView(loadView);
+
+            addViews();
+
+            itemChanged.setVisibility(View.VISIBLE);
+
+        }
     }
 
     public void addViews() {

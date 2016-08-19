@@ -64,7 +64,7 @@
                 <!--android:layout_margin="45dp"-->
                 <!--android:id="@+id/circle_view"-->
                 <!--/>-->
-                <android.support.v4.view.ViewPager
+                <com.wm.remusic.widget.AlbumViewPager
                     android:id="@+id/view_pager"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
@@ -88,7 +88,32 @@
             </android.support.percent.PercentRelativeLayout>
 
         </FrameLayout>
-
+        <RelativeLayout
+            android:id="@+id/lrcviewContainer"
+            android:layout_marginTop="?attr/actionBarSize"
+            android:visibility="invisible"
+            app:layout_heightPercent="70%"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+                <TextView
+                    android:focusable="false"
+                    android:layout_alignParentBottom="true"
+                    android:layout_centerHorizontal="true"
+                    android:id="@+id/tragetlrc"
+                    android:textAlignment="center"
+                    android:padding="5dp"
+                    android:gravity="center"
+                    android:text="获取封面和歌词"
+                    android:layout_gravity="bottom|center_horizontal"
+                    android:background="#70d7d7d7"
+                    android:layout_marginBottom="10dp"
+                    android:layout_width="100dp"
+                    android:layout_height="30dp" />
+            <com.wm.remusic.lrc.LrcView
+                android:id="@+id/lrcview"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+        </RelativeLayout>
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -99,6 +124,7 @@
             android:orientation="vertical">
 
             <LinearLayout
+                android:id="@+id/music_tool"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="70dp"

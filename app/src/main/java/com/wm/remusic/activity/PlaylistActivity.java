@@ -2,19 +2,16 @@ package com.wm.remusic.activity;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.TransitionDrawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Environment;
 import android.os.Handler;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -24,23 +21,18 @@ import android.text.SpannableString;
 import android.text.style.ImageSpan;
 import android.util.Log;
 import android.util.SparseArray;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
-import android.view.animation.Animation;
-import android.view.animation.LinearInterpolator;
-import android.view.animation.RotateAnimation;
+import android.webkit.URLUtil;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.facebook.binaryresource.BinaryResource;
 import com.facebook.binaryresource.FileBinaryResource;
@@ -57,31 +49,25 @@ import com.google.gson.JsonObject;
 import com.nineoldandroids.view.ViewHelper;
 import com.wm.remusic.MainApplication;
 import com.wm.remusic.R;
-import com.wm.remusic.dialog.AddDownTask;
 import com.wm.remusic.dialog.LoadAllDownInfos;
-import com.wm.remusic.downmusic.Down;
-import com.wm.remusic.downmusic.DownloadManager;
-import com.wm.remusic.downmusic.DownloadTask;
 import com.wm.remusic.fragment.MoreFragment;
 import com.wm.remusic.fragment.NetMoreFragment;
 import com.wm.remusic.handler.HandlerUtil;
 import com.wm.remusic.info.MusicInfo;
 import com.wm.remusic.json.GeDanGeInfo;
 import com.wm.remusic.json.MusicDetailInfo;
-import com.wm.remusic.json.MusicFileDownInfo;
 import com.wm.remusic.net.BMA;
 import com.wm.remusic.net.HttpUtil;
 import com.wm.remusic.net.MusicDetailInfoGet;
 import com.wm.remusic.net.NetworkUtils;
 import com.wm.remusic.net.PlaylistPlayInfoGet;
+import com.wm.remusic.provider.PlaylistInfo;
 import com.wm.remusic.provider.PlaylistsManager;
 import com.wm.remusic.service.MusicPlayer;
-import com.wm.remusic.service.MusicTrack;
 import com.wm.remusic.uitl.CommonUtils;
 import com.wm.remusic.uitl.IConstants;
 import com.wm.remusic.uitl.ImageUtils;
-import com.wm.remusic.uitl.MusicUtils;
-import com.wm.remusic.uitl.PreferencesUtility;
+import com.wm.remusic.uitl.L;
 import com.wm.remusic.widget.DividerItemDecoration;
 
 import java.io.File;
@@ -96,13 +82,13 @@ import java.util.HashMap;
 public class PlaylistActivity extends BaseActivity implements ObservableScrollViewCallbacks {
 
     private String playlsitId;
-    private String albumPath, albumName, playlistDetail;
+    private String albumPath, playlistName, playlistDetail;
     private ArrayList<GeDanGeInfo> mList = new ArrayList<GeDanGeInfo>();
     private ArrayList<MusicInfo> adapterList = new ArrayList<>();
 
     private SimpleDraweeView albumArtSmall;
     private ImageView albumArt;
-    private TextView albumTitle, albumDetails;
+    private TextView playlistTitleView, playlistDetailView;
     private boolean isLocalPlaylist;
 
     private PlaylistDetailAdapter mAdapter;
@@ -123,6 +109,10 @@ public class PlaylistActivity extends BaseActivity implements ObservableScrollVi
     private FrameLayout headerViewContent; //上部header
     private RelativeLayout headerDetail; //上部header信息
     private Context mContext;
+    private boolean mCollected;
+    private TextView collectText;
+    private ImageView collectView;
+    private LinearLayout share;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -133,7 +123,7 @@ public class PlaylistActivity extends BaseActivity implements ObservableScrollVi
             isLocalPlaylist = getIntent().getBooleanExtra("islocal", false);
             playlsitId = getIntent().getStringExtra("playlistid");
             albumPath = getIntent().getStringExtra("albumart");
-            albumName = getIntent().getStringExtra("playlistname");
+            playlistName = getIntent().getStringExtra("playlistname");
             playlistDetail = getIntent().getStringExtra("playlistDetail");
             playlistCount = getIntent().getStringExtra("playlistcount");
 
@@ -154,6 +144,9 @@ public class PlaylistActivity extends BaseActivity implements ObservableScrollVi
 
 
         tryAgain = (TextView) findViewById(R.id.try_again);
+        collectText = (TextView) findViewById(R.id.playlist_collect_state);
+        collectView = (ImageView) findViewById(R.id.playlist_collect_view);
+        share = (LinearLayout) findViewById(R.id.playlist_share);
 
         setUpEverything();
 
@@ -189,8 +182,8 @@ public class PlaylistActivity extends BaseActivity implements ObservableScrollVi
 
     private void setHeaderView() {
         albumArt = (ImageView) findViewById(R.id.album_art);
-        albumTitle = (TextView) findViewById(R.id.album_title);
-        albumDetails = (TextView) findViewById(R.id.album_details);
+        playlistTitleView = (TextView) findViewById(R.id.album_title);
+        playlistDetailView = (TextView) findViewById(R.id.album_details);
         albumArtSmall = (SimpleDraweeView) findViewById(R.id.playlist_art);
         SpannableString spanString;
         Bitmap b = BitmapFactory.decodeResource(getResources(), R.mipmap.index_icn_earphone);
@@ -215,63 +208,61 @@ public class PlaylistActivity extends BaseActivity implements ObservableScrollVi
             public void onClick(View v) {
 
                 new LoadAllDownInfos((Activity)mContext,mList).execute();
-               // addDownTask.show(getSupportFragmentManager(),"");
-//                ArrayList<MusicFileDownInfo> downList = new ArrayList<MusicFileDownInfo>();
-//                int le = mList.size();
-//                for(int j = 0; j< le ; j++){
-//                    try {
-//                        JsonArray jsonArray = HttpUtil.getResposeJsonObject(BMA.Song.songInfo(mList.get(j).getSong_id()))
-//                                .get("songurl").getAsJsonObject().get("url").getAsJsonArray();
-//                        int len = jsonArray.size();
-//
-//                        int downloadBit = PreferencesUtility.getInstance(mContext).getDownMusicBit();
-//                        MusicFileDownInfo musicFileDownInfo = null;
-//                        for (int i = len - 1; i > -1; i--) {
-//                            int bit = Integer.parseInt(jsonArray.get(i).getAsJsonObject().get("file_bitrate").toString());
-//                            if (bit == downloadBit) {
-//                                musicFileDownInfo = MainApplication.gsonInstance().fromJson(jsonArray.get(i), MusicFileDownInfo.class);
-//                            } else if (bit < downloadBit && bit >= 64) {
-//                                musicFileDownInfo = MainApplication.gsonInstance().fromJson(jsonArray.get(i), MusicFileDownInfo.class);
-//                            }
-//                        }
-//                        if(musicFileDownInfo != null)
-//                            downList.add(musicFileDownInfo);
-//
-//
-//                    } catch (Exception e) {
-//                        e.printStackTrace();
-//                    }
-//
-//                }
-
-//                new AlertDialog.Builder(PlaylistActivity.this).setTitle("要下载音乐吗").
-//                        setPositiveButton(PlaylistActivity.this.getString(R.string.sure), new DialogInterface.OnClickListener() {
-//
-//                            @Override
-//                            public void onClick(DialogInterface dialog, int which) {
-//
-//                                int len = mList.size();
-//                                for(int i = 0; i < len ; i++){
-//                                    Down.downMusic(MainApplication.context, mList.get(i).getSong_id(),mList.get(i).getTitle());
-//                                }
-//                                mHandler.post(new Runnable() {
-//                                    @Override
-//                                    public void run() {
-//                                        Toast.makeText(PlaylistActivity.this, "已加入到下载", Toast.LENGTH_SHORT).show();
-//                                    }
-//                                });
-//                                dialog.dismiss();
-//                            }
-//                        }).
-//                        setNegativeButton(PlaylistActivity.this.getString(R.string.cancel), new DialogInterface.OnClickListener() {
-//                            @Override
-//                            public void onClick(DialogInterface dialog, int which) {
-//                                dialog.dismiss();
-//                            }
-//                        }).show();
 
             }
         });
+        final LinearLayout addToplaylist = (LinearLayout) headerViewContent.findViewById(R.id.playlist_collect);
+        addToplaylist.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //AddNetPlaylistDialog.newInstance(adapterList ,"net").show(getSupportFragmentManager(),"");
+              //  PlaylistsManager.getInstance(mContext).Insert(mContext,,adapterList);
+                if(!mCollected){
+                    collectText.setText("已收藏");
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            String albumart = null;
+                            boolean isLocal = false;
+                            for (MusicInfo info : adapterList) {
+                                albumart = info.albumData;
+                                if (!albumart.isEmpty()) {
+                                    isLocal = info.islocal;
+                                    break;
+                                }
+                            }
+                            //String albumart = MusicUtils.getMusicInfo(getContext(), musicId[0]).albumData;
+
+                            PlaylistInfo.getInstance(mContext).addPlaylist(Long.parseLong(playlsitId), playlistName,
+                                    adapterList.size(), albumart,"net");
+                            PlaylistsManager.getInstance(mContext).insertLists(mContext,Long.parseLong(playlsitId),adapterList);
+                            Intent intent = new Intent(IConstants.PLAYLIST_COUNT_CHANGED);
+                            MainApplication.context.sendBroadcast(intent);
+
+                            mCollected = true;
+                        }
+                    }).start();
+
+                }else {
+                    collectText.setText("收藏");
+                    PlaylistInfo.getInstance(mContext).deletePlaylist(Long.parseLong(playlsitId));
+                    mCollected = false;
+                }
+
+            }
+        });
+
+        share.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent shareIntent = new Intent();
+                shareIntent.setAction(Intent.ACTION_SEND);
+                shareIntent.putExtra(Intent.EXTRA_STREAM, Uri.parse("http://music.baidu.com/songlist/" + playlsitId));
+                shareIntent.setType("html/*");
+                startActivity(Intent.createChooser(shareIntent, getResources().getString(R.string.shared_to)));
+            }
+        });
+
         if(!isLocalPlaylist)
         headerDetail.setVisibility(View.GONE);
     }
@@ -306,7 +297,6 @@ public class PlaylistActivity extends BaseActivity implements ObservableScrollVi
         if (mActionBarSize + mStatusSize <= -scrollY + headerHeight) {
             headerTranslationY = -scrollY;
         }
-        Log.e("headerY", "  " + headerTranslationY);
         return headerTranslationY;
     }
 
@@ -342,14 +332,7 @@ public class PlaylistActivity extends BaseActivity implements ObservableScrollVi
     class LoadLocalPlaylistInfo extends AsyncTask<Void, Void, Void> {
         @Override
         protected Void doInBackground(final Void... unused) {
-            ArrayList<MusicTrack> musicInfos = PlaylistsManager.getInstance(PlaylistActivity.this).getPlaylist(Long.parseLong(playlsitId));
-            long[] ids = new long[musicInfos.size()];
-            for (int i = 0; i < musicInfos.size(); i++) {
-                ids[i] = musicInfos.get(i).mId;
-
-            }
-            adapterList = MusicUtils.getMusicLists(PlaylistActivity.this, ids);
-
+            adapterList = PlaylistsManager.getInstance(mContext).getMusicInfos(Long.parseLong(playlsitId));
             return null;
         }
 
@@ -375,6 +358,9 @@ public class PlaylistActivity extends BaseActivity implements ObservableScrollVi
                     mList.add(geDanGeInfo);
                     PlaylistPlayInfoGet.get(new MusicDetailInfoGet(geDanGeInfo.getSong_id(), i, sparseArray));
                 }
+                mCollected = PlaylistInfo.getInstance(mContext).hasPlaylist(Long.parseLong(playlsitId));
+                playlistDetail = jsonObject.get("desc").getAsString();
+
             } catch (NullPointerException e) {
                 e.printStackTrace();
             }
@@ -385,7 +371,7 @@ public class PlaylistActivity extends BaseActivity implements ObservableScrollVi
         @Override
         protected void onPostExecute(Void aVoid) {
             mHandler.postDelayed(showPlaylistView, 100);
-
+            playlistDetailView.setText(playlistDetail);
         }
     }
 
@@ -421,10 +407,14 @@ public class PlaylistActivity extends BaseActivity implements ObservableScrollVi
 
                     @Override
                     protected void onPostExecute(Void aVoid) {
-                        Log.e("mlist", mList.toString());
+                        L.D(true,"mlist", mList.toString());
                         loadFrameLayout.removeAllViews();
                         mAdapter.updateDataSet(adapterList);
                         headerDetail.setVisibility(View.VISIBLE);
+                        if(mCollected){
+                            L.D(true,"collect","collected");
+                            collectText.setText("已收藏");
+                        }
                     }
                 }.execute();
             }
@@ -444,12 +434,13 @@ public class PlaylistActivity extends BaseActivity implements ObservableScrollVi
 
 
     private void setAlbumart() {
-        albumTitle.setText(albumName);
+        playlistTitleView.setText(playlistName);
         albumArtSmall.setImageURI(Uri.parse(albumPath));
         try {
 
-            if (isLocalPlaylist) {
+            if (isLocalPlaylist && !URLUtil.isNetworkUrl(albumPath)) {
                 new setBlurredAlbumArt().execute(ImageUtils.getArtworkQuick(PlaylistActivity.this, Uri.parse(albumPath), 300, 300));
+                Log.e("isurl",albumPath);
             } else {
                 //drawable = Drawable.createFromStream( new URL(albumPath).openStream(),"src");
                 ImageRequest imageRequest = ImageRequest.fromUri(albumPath);
@@ -458,7 +449,10 @@ public class PlaylistActivity extends BaseActivity implements ObservableScrollVi
                 BinaryResource resource = ImagePipelineFactory.getInstance()
                         .getMainDiskStorageCache().getResource(cacheKey);
                 File file = ((FileBinaryResource) resource).getFile();
+                if(file != null)
                 new setBlurredAlbumArt().execute(ImageUtils.getArtworkQuick(file, 300, 300));
+
+
             }
 
         } catch (Exception e) {
@@ -510,7 +504,7 @@ public class PlaylistActivity extends BaseActivity implements ObservableScrollVi
         updateViews(scrollY, false);
 
         if (scrollY > 0 && scrollY < mFlexibleSpaceImageHeight - mActionBarSize - mStatusSize) {
-            toolbar.setTitle(albumName);
+            toolbar.setTitle(playlistName);
             toolbar.setSubtitle(playlistDetail);
             actionBar.setBackgroundDrawable(getResources().getDrawable(R.drawable.toolbar_background));
         }
@@ -528,7 +522,6 @@ public class PlaylistActivity extends BaseActivity implements ObservableScrollVi
 
         float a = (float) scrollY / (mFlexibleSpaceImageHeight - mActionBarSize - mStatusSize);
         headerDetail.setAlpha(1f - a);
-        Log.e("alpha", " " + a);
     }
 
     @Override
@@ -621,22 +614,6 @@ public class PlaylistActivity extends BaseActivity implements ObservableScrollVi
                                     IConstants.MUSICOVERFLOW);
                             morefragment.show(((AppCompatActivity) mContext).getSupportFragmentManager(), "music");
                         }
-//                        new AlertDialog.Builder(mContext).setTitle("要下载音乐吗").
-//                                setPositiveButton(mContext.getString(R.string.sure), new DialogInterface.OnClickListener() {
-//
-//                                    @Override
-//                                    public void onClick(DialogInterface dialog, int which) {
-//
-//                                        Down.downMusic(MainApplication.context, localItem.songId + "", localItem.musicName);
-//                                        dialog.dismiss();
-//                                    }
-//                                }).
-//                                setNegativeButton(mContext.getString(R.string.cancel), new DialogInterface.OnClickListener() {
-//                                    @Override
-//                                    public void onClick(DialogInterface dialog, int which) {
-//                                        dialog.dismiss();
-//                                    }
-//                                }).show();
                     }
                 });
 
@@ -726,22 +703,6 @@ public class PlaylistActivity extends BaseActivity implements ObservableScrollVi
                             infos.put(list[i], info);
                         }
 
-//                            long[] list = new long[arraylist.size()];
-//                            HashMap<Long,MusicInfo> infos = new HashMap<Long,MusicInfo>();
-//                            for (int i = 0; i < arraylist.size(); i++) {
-//                                list[i] = Long.parseLong(arraylist.get(i).getSong_id());
-//                                MusicInfo musicInfo = new MusicInfo();
-//                                musicInfo.songId = Integer.parseInt(arraylist.get(i).getSong_id());
-//                                musicInfo.musicName = arraylist.get(i).getTitle();
-//                                musicInfo.artist = sparseArray.get(i).getArtist_name();
-//                                musicInfo.islocal = false;
-//                                musicInfo.albumName = sparseArray.get(i).getAlbum_title();
-//                                musicInfo.albumId = Integer.parseInt(arraylist.get(i).getAlbum_id());
-//                                musicInfo.artistId = Integer.parseInt(sparseArray.get(i).getArtist_id());
-//                                musicInfo.lrc = sparseArray.get(i).getLrclink();
-//                                musicInfo.albumData = sparseArray.get(i).getPic_radio();
-//                                infos.put(list[i] , musicInfo);
-//                            }
                         MusicPlayer.playAll(infos, list, getAdapterPosition() - 1, false);
                     }
                 }).start();

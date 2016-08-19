@@ -35,6 +35,7 @@ import com.wm.remusic.activity.ArtistDetailActivity;
 import com.wm.remusic.adapter.MusicFlowAdapter;
 import com.wm.remusic.adapter.OverFlowAdapter;
 import com.wm.remusic.adapter.OverFlowItem;
+import com.wm.remusic.dialog.AddNetPlaylistDialog;
 import com.wm.remusic.dialog.AddPlaylistDialog;
 import com.wm.remusic.handler.HandlerUtil;
 import com.wm.remusic.info.MusicInfo;
@@ -49,6 +50,7 @@ import com.wm.remusic.uitl.MusicUtils;
 import com.wm.remusic.widget.DividerItemDecoration;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -58,7 +60,7 @@ public class MoreFragment extends DialogFragment {
     private int type;
     private double heightPercent;
     private TextView topTitle;
-    private List<MusicInfo> list = null;
+    private ArrayList<MusicInfo> list = null;
     private MusicFlowAdapter muaicflowAdapter;
     private MusicInfo adapterMusicInfo;
     private OverFlowAdapter commonAdapter;
@@ -70,6 +72,7 @@ public class MoreFragment extends DialogFragment {
     private String musicName, artist, albumId, albumName;
     private Context mContext;
     private Handler mHandler;
+    private long playlistId = -1;
 
     public static MoreFragment newInstance(String id, int startFrom, String albumId, String artistId) {
         MoreFragment fragment = new MoreFragment();
@@ -102,6 +105,15 @@ public class MoreFragment extends DialogFragment {
         return fragment;
     }
 
+    public static MoreFragment newInstance(MusicInfo info, long playlistid) {
+        MoreFragment fragment = new MoreFragment();
+        Bundle args = new Bundle();
+        args.putParcelable("music", info);
+        args.putLong("playlistid", playlistid);
+        fragment.setArguments(args);
+        return fragment;
+    }
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -124,6 +136,7 @@ public class MoreFragment extends DialogFragment {
         if (getArguments() != null) {
             type = getArguments().getInt("type");
             args = getArguments().getString("id");
+            playlistId = getArguments().getLong("playlistid");
         }
         //布局
         View view = inflater.inflate(R.layout.more_fragment, container);
@@ -206,9 +219,11 @@ public class MoreFragment extends DialogFragment {
                             dismiss();
                             break;
                         case 1:
-                            long[] list = new long[1];
-                            list[0] = adapterMusicInfo.songId;
-                            AddPlaylistDialog.newInstance(list).show(getFragmentManager(), "add");
+//                            long[] list = new long[1];
+//                            list[0] = adapterMusicInfo.songId;
+                            ArrayList<MusicInfo> musicList = new ArrayList<MusicInfo>();
+                            musicList.add(adapterMusicInfo);
+                            AddNetPlaylistDialog.newInstance(musicList).show(getFragmentManager(), "add");
                             dismiss();
                             break;
                         case 2:
@@ -376,25 +391,30 @@ public class MoreFragment extends DialogFragment {
                             dismiss();
                             break;
                         case 6:
+                            if(playlistId != -1){
+                                PlaylistsManager.getInstance(mContext).deleteMusicInfo(mContext,playlistId,adapterMusicInfo.songId);
 
-                            new AlertDialog.Builder(mContext).setTitle(getResources().getString(R.string.sure_to_set_ringtone)).
-                                    setPositiveButton(getResources().getString(R.string.sure), new DialogInterface.OnClickListener() {
-                                        @Override
-                                        public void onClick(DialogInterface dialog, int which) {
-                                            Uri ringUri = Uri.parse("file://" + adapterMusicInfo.data);
-                                            RingtoneManager.setActualDefaultRingtoneUri(mContext, RingtoneManager.TYPE_NOTIFICATION, ringUri);
-                                            dialog.dismiss();
-                                            Toast.makeText(mContext, getResources().getString(R.string.set_ringtone_successed),
-                                                    Toast.LENGTH_SHORT).show();
-                                            dismiss();
-                                        }
-                                    }).
-                                    setNegativeButton(getResources().getString(R.string.cancel), new DialogInterface.OnClickListener() {
-                                        @Override
-                                        public void onClick(DialogInterface dialog, int which) {
-                                            dialog.dismiss();
-                                        }
-                                    }).show();
+                            }else {
+                                new AlertDialog.Builder(mContext).setTitle(getResources().getString(R.string.sure_to_set_ringtone)).
+                                        setPositiveButton(getResources().getString(R.string.sure), new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialog, int which) {
+                                                Uri ringUri = Uri.parse("file://" + adapterMusicInfo.data);
+                                                RingtoneManager.setActualDefaultRingtoneUri(mContext, RingtoneManager.TYPE_NOTIFICATION, ringUri);
+                                                dialog.dismiss();
+                                                Toast.makeText(mContext, getResources().getString(R.string.set_ringtone_successed),
+                                                        Toast.LENGTH_SHORT).show();
+                                                dismiss();
+                                            }
+                                        }).
+                                        setNegativeButton(getResources().getString(R.string.cancel), new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialog, int which) {
+                                                dialog.dismiss();
+                                            }
+                                        }).show();
+                            }
+
                             break;
                         case 7:
                             MusicDetailFragment detailFrament = MusicDetailFragment.newInstance(adapterMusicInfo);
@@ -415,24 +435,30 @@ public class MoreFragment extends DialogFragment {
             public void onItemClick(View view, String data) {
                 switch (Integer.parseInt(data)) {
                     case 0:
-                        mHandler.postDelayed(new Runnable() {
+                        new Thread(new Runnable() {
                             @Override
                             public void run() {
-                                long[] queuelist = new long[list.size()];
-                                for (int i = 0; i < list.size(); i++) {
-                                    queuelist[i] = list.get(i).songId;
+                                HashMap<Long, MusicInfo> infos = new HashMap<Long, MusicInfo>();
+                                int len = list.size();
+                                long[] listid = new long[len];
+                                for (int i = 0; i < len; i++) {
+                                    MusicInfo info = list.get(i);
+                                    listid[i] = info.songId;
+                                    infos.put(listid[i], info);
                                 }
-                                MusicPlayer.playAll(null, queuelist, 0, false);
+
+                                MusicPlayer.playAll(infos, listid, 0, false);
                             }
-                        }, 100);
+                        }).start();
                         dismiss();
                         break;
                     case 1:
-                        long[] queuelist = new long[list.size()];
-                        for (int i = 0; i < list.size(); i++) {
-                            queuelist[i] = list.get(i).songId;
-                        }
-                        AddPlaylistDialog.newInstance(queuelist).show(getFragmentManager(), "add");
+//                        long[] queuelist = new long[list.size()];
+//                        for (int i = 0; i < list.size(); i++) {
+//                            queuelist[i] = list.get(i).songId;
+//                        }
+//                        AddPlaylistDialog.newInstance(queuelist).show(getFragmentManager(), "add");
+                        AddNetPlaylistDialog.newInstance(list).show(getFragmentManager(), "add");
 
                         dismiss();
                         break;

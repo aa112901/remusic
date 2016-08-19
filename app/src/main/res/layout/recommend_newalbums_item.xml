@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="110dp"
+    android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="150dp"
     android:layout_marginLeft="7dp"
     android:layout_marginTop="6dp"
@@ -11,6 +11,7 @@
             android:layout_height="110dp"
             android:src="@mipmap/list_third"
             android:id="@+id/album_art"
+            android:scaleType="centerCrop"
             fresco:progressBarAutoRotateInterval="1000"
             fresco:progressBarImage="@mipmap/loading_big"
             fresco:progressBarImageScaleType="centerInside"

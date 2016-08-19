@@ -27,6 +27,7 @@ import android.net.Uri;
 import android.os.ParcelFileDescriptor;
 import android.provider.MediaStore;
 import android.support.v8.renderscript.RenderScript;
+import android.util.Log;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -154,7 +155,43 @@ public class ImageUtils {
         return null;
     }
 
+    public static boolean isAlbumUri(Context context, Uri uri) {
+        // NOTE: There is in fact a 1 pixel border on the right side in the
+        // ImageView
+        // used to display this drawable. Take it into account now, so we don't
+        // have to
+        // scale later.
+        ContentResolver res = context.getContentResolver();
+//        Cursor cursor = res.query(uri, new String[]{}, null, null, null);
+//        if(cursor == null){
+//            return null;
+//        }else {
 
+        if (uri != null) {
+            ParcelFileDescriptor fd = null;
+            try {
+                fd = res.openFileDescriptor(uri, "r");
+                if (fd == null) {
+                    return false;
+                }
+
+                Log.e("album","is true");
+                return true;
+            } catch (FileNotFoundException e) {
+            } finally {
+                if(fd == null){
+                    return false;
+                }
+                try {
+                    if (fd != null)
+                        fd.close();
+                } catch (IOException e) {
+                }
+            }
+        }
+        return false;
+
+    }
     public static Bitmap getArtworkQuick(Context context, Uri uri, int w,
                                          int h) {
         // NOTE: There is in fact a 1 pixel border on the right side in the

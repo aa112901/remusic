@@ -145,7 +145,7 @@ public class MusicPlayer {
     public static boolean isTrackLocal() {
         try {
             if (mService != null) {
-                mService.isTrackLocal();
+                return mService.isTrackLocal();
             }
         } catch (RemoteException e) {
             e.printStackTrace();

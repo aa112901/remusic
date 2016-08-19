@@ -56,7 +56,7 @@ public class RecentStore {
         onCreate(db);
     }
 
-    public void addSongId(final long songId) {
+    public synchronized void addSongId(final long songId) {
         final SQLiteDatabase database = mMusicDatabase.getWritableDatabase();
         database.beginTransaction();
 
@@ -110,7 +110,7 @@ public class RecentStore {
     }
 
 
-    public void removeItem(final long songId) {
+    public synchronized void removeItem(final long songId) {
         final SQLiteDatabase database = mMusicDatabase.getWritableDatabase();
         database.delete(RecentStoreColumns.NAME, RecentStoreColumns.ID + " = ?", new String[]{
                 String.valueOf(songId)
@@ -124,14 +124,14 @@ public class RecentStore {
     }
 
 
-    public Cursor queryRecentIds(final String limit) {
+    public synchronized Cursor queryRecentIds(final String limit) {
         final SQLiteDatabase database = mMusicDatabase.getReadableDatabase();
         return database.query(RecentStoreColumns.NAME,
                 new String[]{RecentStoreColumns.ID}, null, null, null, null,
                 RecentStoreColumns.TIMEPLAYED + " DESC", limit);
     }
 
-    public long[] getRecentIds() {
+    public synchronized long[] getRecentIds() {
         Cursor cursor = queryRecentIds(null);
         if (cursor == null) {
             long[] c = new long[0];

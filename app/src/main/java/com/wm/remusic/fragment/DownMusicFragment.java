@@ -55,7 +55,7 @@ public class DownMusicFragment extends BaseFragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.recylerview, container, false);
+        View view = inflater.inflate(R.layout.down_music_recylerview, container, false);
 
         layoutManager = new LinearLayoutManager(getActivity());
         recyclerView = (RecyclerView) view.findViewById(R.id.recyclerview);

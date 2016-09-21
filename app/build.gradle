@@ -35,4 +35,5 @@ dependencies {
     compile 'com.squareup.retrofit:retrofit:1.9.0'
 //    compile 'com.readystatesoftware.systembartint:systembartint:1.0.3'
     compile 'com.github.ksoichiro:android-observablescrollview:1.6.0'
+    compile 'com.bilibili:magicasakura:0.1.1@arr'
 }

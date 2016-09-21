@@ -46,10 +46,9 @@ public class PlaylistInfo {
     }
 
 
-    public synchronized void addPlaylist(long playlistid, String name, int count, String albumart,String author) {
+    public void addPlaylist(long playlistid, String name, int count, String albumart,String author) {
         final SQLiteDatabase database = mMusicDatabase.getWritableDatabase();
         database.beginTransaction();
-
         try {
             ContentValues values = new ContentValues(5);
             values.put(PlaylistInfoColumns.PLAYLIST_ID, playlistid);

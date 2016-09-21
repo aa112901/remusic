@@ -8,7 +8,6 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Paint;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -138,7 +137,7 @@ public class LrcView extends View implements ILrcView{
 		BitmapFactory.Options options = new BitmapFactory.Options();
 		options.inDensity = 30;
 		options.inTargetDensity = 30;
-		arrowBitmap = BitmapFactory.decodeResource(context.getResources(), R.raw.c,options);
+		arrowBitmap = BitmapFactory.decodeResource(context.getResources(), R.raw.lrc_arrow,options);
 	}
 
 	private int mTotleDrawRow;

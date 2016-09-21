@@ -37,7 +37,11 @@
         <activity
             android:name=".activity.PlayingActivity"
             android:launchMode="singleTask"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait" >
+            <intent-filter >
+                <action android:name="com.wm.remusic.LAUNCH_NOW_PLAYING_ACTION"/>
+            </intent-filter>
+        </activity>
         <activity
             android:name=".activity.LocalSearchActivity"
             android:screenOrientation="portrait" />

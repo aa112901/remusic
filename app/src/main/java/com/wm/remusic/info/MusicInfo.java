@@ -1,5 +1,5 @@
 /**
- * Copyright (c) www.longdw.com
+ * Copyright (lrc_arrow) www.longdw.com
  */
 package com.wm.remusic.info;
 

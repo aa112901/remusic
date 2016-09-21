@@ -16,6 +16,7 @@
 package com.wm.remusic.receiver;
 
 import android.content.BroadcastReceiver;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 
@@ -30,6 +31,9 @@ public class LaunchNowPlayingReceiver extends BroadcastReceiver {
         Intent activityIntent = new Intent(context.getApplicationContext(), PlayingActivity.class);
         activityIntent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT | Intent.FLAG_ACTIVITY_NEW_TASK);
         context.getApplicationContext().startActivity(activityIntent);
+        Intent intent1 = new Intent();
+        intent1.setComponent(new ComponentName("com.wm.remusic","com.wm.remusic.activity.PlayingActivity.class"));
+        context.sendBroadcast(intent1);
 //        }
 
     }

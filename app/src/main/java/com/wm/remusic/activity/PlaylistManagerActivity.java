@@ -23,7 +23,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.facebook.drawee.view.SimpleDraweeView;
-//import com.readystatesoftware.systembartint.SystemBarTintManager;
 import com.wm.remusic.R;
 import com.wm.remusic.info.Playlist;
 import com.wm.remusic.provider.PlaylistInfo;
@@ -33,6 +32,8 @@ import com.wm.remusic.widget.DividerItemDecoration;
 import com.wm.remusic.widget.DragSortRecycler;
 
 import java.util.ArrayList;
+
+//import com.readystatesoftware.systembartint.SystemBarTintManager;
 
 /**
  * Created by wm on 2016/3/16.

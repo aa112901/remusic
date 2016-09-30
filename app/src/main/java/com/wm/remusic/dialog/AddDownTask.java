@@ -2,15 +2,11 @@ package com.wm.remusic.dialog;
 
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,9 +14,6 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.view.animation.Animation;
 import android.view.animation.RotateAnimation;
-import android.widget.EditText;
-import android.widget.LinearLayout;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.facebook.drawee.view.SimpleDraweeView;
@@ -30,17 +23,10 @@ import com.wm.remusic.R;
 import com.wm.remusic.downmusic.DownloadManager;
 import com.wm.remusic.downmusic.DownloadTask;
 import com.wm.remusic.handler.HandlerUtil;
-import com.wm.remusic.info.Playlist;
 import com.wm.remusic.json.MusicFileDownInfo;
 import com.wm.remusic.net.BMA;
 import com.wm.remusic.net.HttpUtil;
-import com.wm.remusic.provider.PlaylistInfo;
-import com.wm.remusic.provider.PlaylistsManager;
-import com.wm.remusic.service.MusicTrack;
-import com.wm.remusic.uitl.IConstants;
-import com.wm.remusic.uitl.MusicUtils;
 import com.wm.remusic.uitl.PreferencesUtility;
-import com.wm.remusic.widget.DividerItemDecoration;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -50,16 +36,16 @@ import java.util.ArrayList;
  */
 public class AddDownTask extends DialogFragment {
 
-    private String[] ids , names;
+    private String[] ids, names;
     private Context mContext;
     private ArrayList<MusicFileDownInfo> mList = new ArrayList<>();
     private String isLoding;
 
-    public static AddDownTask newIntance(String[] ids ,String[] names){
+    public static AddDownTask newIntance(String[] ids, String[] names) {
         AddDownTask addDownTask = new AddDownTask();
         Bundle bundle = new Bundle();
-        bundle.putStringArray("ids",ids);
-        bundle.putStringArray("names",names);
+        bundle.putStringArray("ids", ids);
+        bundle.putStringArray("names", names);
         addDownTask.setArguments(bundle);
         return addDownTask;
     }
@@ -74,7 +60,7 @@ public class AddDownTask extends DialogFragment {
             names = getArguments().getStringArray("names");
         }
 
-        if(getContext() != null){
+        if (getContext() != null) {
             mContext = getContext();
         }
 
@@ -83,8 +69,8 @@ public class AddDownTask extends DialogFragment {
 
         View view = inflater.inflate(R.layout.loading_dialog_fragment, container);
         SimpleDraweeView draweeView = (SimpleDraweeView) view.findViewById(R.id.loding_circle);
-        RotateAnimation animation = new RotateAnimation(0f,360f, Animation.RELATIVE_TO_SELF, 0.5f,
-                Animation.RELATIVE_TO_SELF,0.5f);
+        RotateAnimation animation = new RotateAnimation(0f, 360f, Animation.RELATIVE_TO_SELF, 0.5f,
+                Animation.RELATIVE_TO_SELF, 0.5f);
         animation.setDuration(5000);
         draweeView.setAnimation(animation);
         animation.start();
@@ -92,12 +78,12 @@ public class AddDownTask extends DialogFragment {
         HandlerUtil.getInstance(mContext).postDelayed(new Runnable() {
             @Override
             public void run() {
-                if(isLoding != null){
+                if (isLoding != null) {
                     loadDownInfos.cancel(true);
                     dismiss();
                 }
             }
-        },10000);
+        }, 10000);
 
         return view;
     }
@@ -112,21 +98,21 @@ public class AddDownTask extends DialogFragment {
     public void onStart() {
         super.onStart();
         //设置fragment高度 、宽度
-        int dialogHeight = (int) (getActivity().getResources().getDisplayMetrics().heightPixels );
-        int dialogWidth = (int) (getActivity().getResources().getDisplayMetrics().widthPixels );
+        int dialogHeight = (int) (getActivity().getResources().getDisplayMetrics().heightPixels);
+        int dialogWidth = (int) (getActivity().getResources().getDisplayMetrics().widthPixels);
         getDialog().getWindow().setLayout(dialogWidth, dialogHeight);
         getDialog().setCanceledOnTouchOutside(true);
 
     }
 
 
-    class LoadDownInfos extends AsyncTask<Void,Void,Void>{
+    class LoadDownInfos extends AsyncTask<Void, Void, Void> {
         int size;
 
         @Override
         protected Void doInBackground(Void... params) {
             int le = ids.length;
-            for(int j = 0; j< le ; j++){
+            for (int j = 0; j < le; j++) {
                 try {
                     JsonArray jsonArray = HttpUtil.getResposeJsonObject(BMA.Song.songInfo(ids[j]).trim()).get("songurl")
                             .getAsJsonObject().get("url").getAsJsonArray();
@@ -142,7 +128,7 @@ public class AddDownTask extends DialogFragment {
                             musicFileDownInfo = MainApplication.gsonInstance().fromJson(jsonArray.get(i), MusicFileDownInfo.class);
                         }
                     }
-                    if(musicFileDownInfo != null){
+                    if (musicFileDownInfo != null) {
                         mList.add(musicFileDownInfo);
                         size += musicFileDownInfo.getFile_size();
                     }
@@ -161,14 +147,14 @@ public class AddDownTask extends DialogFragment {
         @Override
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
-            Log.e("size",size + "");
+            Log.e("size", size + "");
 
             String result = null;
-            size = size /(1024 * 1024);
-            Log.e("size",size + "");
-            if(size > 1024){
-                result = (float)Math.round((float) size/(1024 *10))/10 + "G";
-            }else {
+            size = size / (1024 * 1024);
+            Log.e("size", size + "");
+            if (size > 1024) {
+                result = (float) Math.round((float) size / (1024 * 10)) / 10 + "G";
+            } else {
                 result = size + "M";
 
             }
@@ -184,7 +170,7 @@ public class AddDownTask extends DialogFragment {
                                     file.mkdir();
                                 }
                                 int len = mList.size();
-                                for(int i = 0; i<len; i++){
+                                for (int i = 0; i < len; i++) {
                                     DownloadTask task = new DownloadTask.Builder(mContext, mList.get(i).getShow_link())
                                             .setFileName(names[i]).setSaveDirPath(Environment.getExternalStorageDirectory().getAbsolutePath() + "/remusic/").build();
                                     DownloadManager.getInstance(mContext).addDownloadTask(task);
@@ -192,7 +178,7 @@ public class AddDownTask extends DialogFragment {
 
 
                             } else {
-                                Toast.makeText(mContext,"没有储存卡",Toast.LENGTH_SHORT).show();
+                                Toast.makeText(mContext, "没有储存卡", Toast.LENGTH_SHORT).show();
                                 return;
                             }
 

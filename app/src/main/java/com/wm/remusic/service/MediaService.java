@@ -569,7 +569,7 @@ public class MediaService extends Service {
             newNotifyMode = NOTIFY_MODE_NONE;
         }
 
-       // int notificationId = hashCode();
+        // int notificationId = hashCode();
 
         if (mNotifyMode != newNotifyMode) {
             if (mNotifyMode == NOTIFY_MODE_FOREGROUND) {
@@ -592,7 +592,9 @@ public class MediaService extends Service {
 
         mNotifyMode = newNotifyMode;
     }
+
     int notificationId = 1000;
+
     private void cancelNotification() {
         stopForeground(true);
         //mNotificationManager.cancel(hashCode());
@@ -910,10 +912,11 @@ public class MediaService extends Service {
         openCurrentAndMaybeNext(false, true);
     }
 
-    class GetLrc implements Runnable{
+    class GetLrc implements Runnable {
 
         MusicInfo musicInfo;
-        GetLrc(MusicInfo info){
+
+        GetLrc(MusicInfo info) {
             this.musicInfo = info;
         }
 
@@ -921,19 +924,19 @@ public class MediaService extends Service {
         public void run() {
 
             String url = null;
-            if(musicInfo != null && musicInfo.lrc != null){
+            if (musicInfo != null && musicInfo.lrc != null) {
                 url = musicInfo.lrc;
             }
             try {
-                JsonObject jsonObject = HttpUtil.getResposeJsonObject(BMA.Search.searchLrcPic(musicInfo.musicName,musicInfo.artist));
+                JsonObject jsonObject = HttpUtil.getResposeJsonObject(BMA.Search.searchLrcPic(musicInfo.musicName, musicInfo.artist));
                 JsonArray array = jsonObject.get("songinfo").getAsJsonArray();
                 int len = array.size();
-                Log.e("getLrc","" + len);
+                Log.e("getLrc", "" + len);
                 url = null;
-                for(int i = 0; i<len ; i++) {
+                for (int i = 0; i < len; i++) {
                     url = array.get(i).getAsJsonObject().get("lrclink").getAsString();
                     if (url != null) {
-                        Log.e("getLrc",url);
+                        Log.e("getLrc", url);
                         break;
                     }
                 }
@@ -945,8 +948,8 @@ public class MediaService extends Service {
             String lrc = null;
             try {
                 lrc = HttpUtil.getResposeString(url);
-                if(lrc != null &&!lrc.isEmpty()){
-                    writeToFile(file,lrc);
+                if (lrc != null && !lrc.isEmpty()) {
+                    writeToFile(file, lrc);
                 }
             } catch (Exception e) {
                 e.printStackTrace();
@@ -955,7 +958,7 @@ public class MediaService extends Service {
         }
     }
 
-    private synchronized void writeToFile(File file,String lrc){
+    private synchronized void writeToFile(File file, String lrc) {
         try {
             FileOutputStream outputStream = new FileOutputStream(file);
             outputStream.write(lrc.getBytes());
@@ -966,7 +969,7 @@ public class MediaService extends Service {
         }
     }
 
-    private void openCurrentAndMaybeNext(final boolean play, final boolean openNext)  {
+    private void openCurrentAndMaybeNext(final boolean play, final boolean openNext) {
         synchronized (this) {
             if (D) Log.d(TAG, "open current");
             closeCursor();
@@ -982,15 +985,15 @@ public class MediaService extends Service {
             updateCursor(id);
             String lrc = Environment.getExternalStorageDirectory().getAbsolutePath() + LRC_PATH;
             File file = new File(lrc);
-            if(!file.exists()){
+            if (!file.exists()) {
                 try {
                     file.createNewFile();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-            }else {
+            } else {
                 file = new File(lrc + id);
-                if(!file.exists()){
+                if (!file.exists()) {
                     //new Thread(new GetLrc(mPlaylistInfo.get(id))).start();
                     lrcExecutor.submit(new GetLrc(mPlaylistInfo.get(id)));
                 }

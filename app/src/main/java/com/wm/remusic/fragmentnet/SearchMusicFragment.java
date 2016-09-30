@@ -89,7 +89,7 @@ public class SearchMusicFragment extends Fragment {
 //            if (viewType == FIRST_ITEM)
 //                return new CommonItemViewHolder(LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.common_item, viewGroup, false));
 
-                return new ListItemViewHolder(LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.fragment_musci_common_item, viewGroup, false));
+            return new ListItemViewHolder(LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.fragment_musci_common_item, viewGroup, false));
         }
 
 //        //判断布局类型
@@ -102,7 +102,7 @@ public class SearchMusicFragment extends Fragment {
         //将数据与界面进行绑定
         @Override
         public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-            SearchSongInfo model = mList.get(position );
+            SearchSongInfo model = mList.get(position);
             if (holder instanceof ListItemViewHolder) {
 
                 ((ListItemViewHolder) holder).mainTitle.setText(model.getTitle());

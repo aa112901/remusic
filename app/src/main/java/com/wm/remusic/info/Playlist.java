@@ -30,7 +30,7 @@ public class Playlist {
         this.author = "";
     }
 
-    public Playlist(long _id, String _name, int _songCount, String _albumArt ,String author) {
+    public Playlist(long _id, String _name, int _songCount, String _albumArt, String author) {
         this.id = _id;
         this.name = _name;
         this.songCount = _songCount;

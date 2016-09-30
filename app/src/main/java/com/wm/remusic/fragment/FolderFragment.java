@@ -1,9 +1,6 @@
 package com.wm.remusic.fragment;
 
 
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -88,13 +85,13 @@ public class FolderFragment extends BaseFragment {
         super.onResume();
         IntentFilter f = new IntentFilter();
         f.addAction(MediaService.META_CHANGED);
-       // getActivity().registerReceiver(mStatusListener, f);
+        // getActivity().registerReceiver(mStatusListener, f);
     }
 
     @Override
     public void onPause() {
         super.onPause();
-      //  getActivity().unregisterReceiver(mStatusListener);
+        //  getActivity().unregisterReceiver(mStatusListener);
     }
 
     //设置分割线

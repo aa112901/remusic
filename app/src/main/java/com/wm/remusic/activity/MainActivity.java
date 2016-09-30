@@ -51,7 +51,7 @@ public class MainActivity extends BaseActivity {
             public void run() {
                 splashScreen.removeSplashScreen();
             }
-        },2000);
+        }, 2000);
 
         getWindow().setBackgroundDrawableResource(R.color.background_material_light_1);
 
@@ -103,7 +103,6 @@ public class MainActivity extends BaseActivity {
 
 
     }
-
 
 
     private void setToolBar() {

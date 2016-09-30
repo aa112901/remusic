@@ -207,7 +207,7 @@ public class PlaylistActivity extends BaseActivity implements ObservableScrollVi
             @Override
             public void onClick(View v) {
 
-                new LoadAllDownInfos((Activity)mContext,mList).execute();
+                new LoadAllDownInfos((Activity) mContext, mList).execute();
 
             }
         });
@@ -216,8 +216,8 @@ public class PlaylistActivity extends BaseActivity implements ObservableScrollVi
             @Override
             public void onClick(View v) {
                 //AddNetPlaylistDialog.newInstance(adapterList ,"net").show(getSupportFragmentManager(),"");
-              //  PlaylistsManager.getInstance(mContext).Insert(mContext,,adapterList);
-                if(!mCollected){
+                //  PlaylistsManager.getInstance(mContext).Insert(mContext,,adapterList);
+                if (!mCollected) {
                     collectText.setText("已收藏");
                     new Thread(new Runnable() {
                         @Override
@@ -234,8 +234,8 @@ public class PlaylistActivity extends BaseActivity implements ObservableScrollVi
                             //String albumart = MusicUtils.getMusicInfo(getContext(), musicId[0]).albumData;
 
                             PlaylistInfo.getInstance(mContext).addPlaylist(Long.parseLong(playlsitId), playlistName,
-                                    adapterList.size(), albumart,"net");
-                            PlaylistsManager.getInstance(mContext).insertLists(mContext,Long.parseLong(playlsitId),adapterList);
+                                    adapterList.size(), albumart, "net");
+                            PlaylistsManager.getInstance(mContext).insertLists(mContext, Long.parseLong(playlsitId), adapterList);
                             Intent intent = new Intent(IConstants.PLAYLIST_COUNT_CHANGED);
                             MainApplication.context.sendBroadcast(intent);
 
@@ -243,7 +243,7 @@ public class PlaylistActivity extends BaseActivity implements ObservableScrollVi
                         }
                     }).start();
 
-                }else {
+                } else {
                     collectText.setText("收藏");
                     PlaylistInfo.getInstance(mContext).deletePlaylist(Long.parseLong(playlsitId));
                     mCollected = false;
@@ -263,8 +263,8 @@ public class PlaylistActivity extends BaseActivity implements ObservableScrollVi
             }
         });
 
-        if(!isLocalPlaylist)
-        headerDetail.setVisibility(View.GONE);
+        if (!isLocalPlaylist)
+            headerDetail.setVisibility(View.GONE);
     }
 
     private void setList() {
@@ -407,12 +407,12 @@ public class PlaylistActivity extends BaseActivity implements ObservableScrollVi
 
                     @Override
                     protected void onPostExecute(Void aVoid) {
-                        L.D(true,"mlist", mList.toString());
+                        L.D(true, "mlist", mList.toString());
                         loadFrameLayout.removeAllViews();
                         mAdapter.updateDataSet(adapterList);
                         headerDetail.setVisibility(View.VISIBLE);
-                        if(mCollected){
-                            L.D(true,"collect","collected");
+                        if (mCollected) {
+                            L.D(true, "collect", "collected");
                             collectText.setText("已收藏");
                         }
                     }
@@ -440,7 +440,7 @@ public class PlaylistActivity extends BaseActivity implements ObservableScrollVi
 
             if (isLocalPlaylist && !URLUtil.isNetworkUrl(albumPath)) {
                 new setBlurredAlbumArt().execute(ImageUtils.getArtworkQuick(PlaylistActivity.this, Uri.parse(albumPath), 300, 300));
-                Log.e("isurl",albumPath);
+                Log.e("isurl", albumPath);
             } else {
                 //drawable = Drawable.createFromStream( new URL(albumPath).openStream(),"src");
                 ImageRequest imageRequest = ImageRequest.fromUri(albumPath);
@@ -449,8 +449,8 @@ public class PlaylistActivity extends BaseActivity implements ObservableScrollVi
                 BinaryResource resource = ImagePipelineFactory.getInstance()
                         .getMainDiskStorageCache().getResource(cacheKey);
                 File file = ((FileBinaryResource) resource).getFile();
-                if(file != null)
-                new setBlurredAlbumArt().execute(ImageUtils.getArtworkQuick(file, 300, 300));
+                if (file != null)
+                    new setBlurredAlbumArt().execute(ImageUtils.getArtworkQuick(file, 300, 300));
 
 
             }

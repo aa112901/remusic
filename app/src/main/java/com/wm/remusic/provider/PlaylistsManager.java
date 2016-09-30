@@ -41,7 +41,7 @@ public class PlaylistsManager {
                 + PlaylistsColumns.ALBUM_NAME + " CHAR," + PlaylistsColumns.ALBUM_ART + " CHAR,"
                 + PlaylistsColumns.ARTIST_ID + " LONG," + PlaylistsColumns.ARTIST_NAME + " CHAR,"
                 + PlaylistsColumns.IS_LOCAL + " BOOLEAN ," + PlaylistsColumns.PATH + " CHAR,"
-                + PlaylistsColumns.TRACK_ORDER + " LONG NOT NULL, primary key ( " +PlaylistsColumns.PLAYLIST_ID
+                + PlaylistsColumns.TRACK_ORDER + " LONG NOT NULL, primary key ( " + PlaylistsColumns.PLAYLIST_ID
                 + ", " + PlaylistsColumns.TRACK_ID + "));");
     }
 
@@ -78,28 +78,28 @@ public class PlaylistsManager {
 
     }
 
-    public synchronized void insertLists(Context context , long playlistid,ArrayList<MusicInfo> musicInfos){
+    public synchronized void insertLists(Context context, long playlistid, ArrayList<MusicInfo> musicInfos) {
         final SQLiteDatabase database = mMusicDatabase.getWritableDatabase();
         database.beginTransaction();
         int len = musicInfos.size();
         ArrayList<MusicTrack> m = getPlaylist(playlistid);
 
         try {
-            for(int i = 0; i < len ; i++){
+            for (int i = 0; i < len; i++) {
                 MusicInfo info = musicInfos.get(i);
                 ContentValues values = new ContentValues(11);
                 values.put(PlaylistsColumns.PLAYLIST_ID, playlistid);
                 values.put(PlaylistsColumns.TRACK_ID, info.songId);
                 values.put(PlaylistsColumns.TRACK_ORDER, getPlaylist(playlistid).size());
-                values.put(PlaylistsColumns.TRACK_NAME,info.musicName);
-                values.put(PlaylistsColumns.ALBUM_ID,info.albumId);
-                values.put(PlaylistsColumns.ALBUM_NAME,info.albumName);
-                values.put(PlaylistsColumns.ALBUM_ART,info.albumData);
-                values.put(PlaylistsColumns.ARTIST_NAME,info.artist);
-                values.put(PlaylistsColumns.ARTIST_ID,info.artistId);
-                values.put(PlaylistsColumns.PATH,info.data);
-                values.put(PlaylistsColumns.IS_LOCAL,info.islocal);
-                database.insertWithOnConflict(PlaylistsColumns.NAME, null, values,SQLiteDatabase.CONFLICT_REPLACE);
+                values.put(PlaylistsColumns.TRACK_NAME, info.musicName);
+                values.put(PlaylistsColumns.ALBUM_ID, info.albumId);
+                values.put(PlaylistsColumns.ALBUM_NAME, info.albumName);
+                values.put(PlaylistsColumns.ALBUM_ART, info.albumData);
+                values.put(PlaylistsColumns.ARTIST_NAME, info.artist);
+                values.put(PlaylistsColumns.ARTIST_ID, info.artistId);
+                values.put(PlaylistsColumns.PATH, info.data);
+                values.put(PlaylistsColumns.IS_LOCAL, info.islocal);
+                database.insertWithOnConflict(PlaylistsColumns.NAME, null, values, SQLiteDatabase.CONFLICT_REPLACE);
             }
 
             database.setTransactionSuccessful();
@@ -189,14 +189,14 @@ public class PlaylistsManager {
                 {String.valueOf(PlaylistId)});
     }
 
-    public synchronized void deleteMusicInfo(Context context,final long playlistid,final long musicid){
+    public synchronized void deleteMusicInfo(Context context, final long playlistid, final long musicid) {
         final SQLiteDatabase database = mMusicDatabase.getWritableDatabase();
 
         Cursor cursor = null;
         try {
             cursor = mMusicDatabase.getReadableDatabase().query(PlaylistsColumns.NAME, null,
                     PlaylistsColumns.PLAYLIST_ID + " = ? and" + PlaylistsColumns.TRACK_ID + " = ?", new String[]{
-                            String.valueOf(playlistid) ,String.valueOf(musicid)
+                            String.valueOf(playlistid), String.valueOf(musicid)
                     }, null, null, null, null);
             if (cursor != null && cursor.moveToFirst()) {
                 long[] deletedPlaylistIds = new long[cursor.getCount()];

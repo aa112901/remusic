@@ -12,6 +12,5 @@
         android:layout_width="60dp"
         android:layout_height="60dp"
         fresco:placeholderImageScaleType="centerCrop"
-        fresco:placeholderImage="@drawable/loading_big"
-        />
+        fresco:placeholderImage="@drawable/loading_big" />
 </LinearLayout>

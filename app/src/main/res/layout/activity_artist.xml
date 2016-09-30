@@ -12,8 +12,8 @@
     -->
     <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        >
+        android:layout_height="match_parent">
+
         <android.support.v4.view.ViewPager
             android:id="@+id/pager"
             android:layout_width="match_parent"
@@ -25,9 +25,11 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
+
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
+
             <com.facebook.drawee.view.SimpleDraweeView
                 android:id="@+id/artist_art"
                 android:layout_width="match_parent"
@@ -35,38 +37,40 @@
                 fresco:placeholderImage="@drawable/default_artist_ban"
                 fresco:placeholderImageScaleType="centerCrop"
                 android:layout_weight="0" />
+
             <View
                 android:background="#79666666"
                 android:layout_width="match_parent"
-                android:layout_height="200dp"/>
+                android:layout_height="200dp" />
         </FrameLayout>
 
         <android.support.design.widget.TabLayout
             android:background="@color/background_material_light_1"
             android:id="@+id/sliding_tabs"
             android:layout_width="match_parent"
-            android:layout_height="36dp"
-            />
+            android:layout_height="36dp" />
     </LinearLayout>
+
     <ImageView
         android:id="@+id/toolbar_bac"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:minHeight="?attr/actionBarSize"
-        />
+        android:minHeight="?attr/actionBarSize" />
+
     <android.support.v7.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:minHeight="?attr/actionBarSize"
         android:theme="@style/Theme.AppCompat"
-        app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
-        />
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
+
     <FrameLayout
         android:id="@+id/state_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="310dp" >
+        android:layout_marginTop="310dp">
+
         <TextView
             android:id="@+id/try_again"
             android:layout_marginTop="50dp"
@@ -78,6 +82,7 @@
             android:layout_width="match_parent"
             android:layout_height="60dp" />
     </FrameLayout>
+
     <FrameLayout
         android:id="@+id/bottom_container"
         android:layout_width="match_parent"

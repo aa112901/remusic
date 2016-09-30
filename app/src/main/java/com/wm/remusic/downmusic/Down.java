@@ -3,7 +3,6 @@ package com.wm.remusic.downmusic;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Environment;
-import android.util.Log;
 import android.widget.Toast;
 
 import com.google.gson.JsonArray;
@@ -23,13 +22,13 @@ import java.io.File;
  */
 public class Down {
 
-    public static void downMusic(final Context context, final String ids[] , final String names[]){
+    public static void downMusic(final Context context, final String ids[], final String names[]) {
 
         new Thread(new Runnable() {
             @Override
             public void run() {
-               int le = ids.length;
-                for(int j = 0; j< le ; j++){
+                int le = ids.length;
+                for (int j = 0; j < le; j++) {
                     try {
                         JsonArray jsonArray = HttpUtil.getResposeJsonObject(BMA.Song.songInfo(ids[j]).trim()).get("songurl")
                                 .getAsJsonObject().get("url").getAsJsonArray();
@@ -57,7 +56,7 @@ public class Down {
                             DownloadManager.getInstance(context).addDownloadTask(task);
 
                         } else {
-                            Toast.makeText(context,"没有储存卡",Toast.LENGTH_SHORT).show();
+                            Toast.makeText(context, "没有储存卡", Toast.LENGTH_SHORT).show();
                             return;
                         }
                     } catch (Exception e) {
@@ -66,15 +65,13 @@ public class Down {
 
                 }
 
-                Toast.makeText(context,"已经加入下载",Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, "已经加入下载", Toast.LENGTH_SHORT).show();
 
             }
         }).start();
     }
 
     public static void downMusic(final Context context, final String id, final String name) {
-
-
 
 
         new AsyncTask<String, String, MusicFileDownInfo>() {
@@ -114,7 +111,7 @@ public class Down {
                     DownloadManager.getInstance(context).addDownloadTask(task);
 
                 } else {
-                    Toast.makeText(context,"没有储存卡",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(context, "没有储存卡", Toast.LENGTH_SHORT).show();
                     return;
                 }
             }

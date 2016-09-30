@@ -19,13 +19,13 @@
     xmlns:fresco="http://schemas.android.com/apk/res-auto"
     android:id="@+id/headerview"
     android:orientation="vertical">
+
     <ImageView
         android:layout_alignParentTop="true"
         android:id="@+id/album_art"
         android:layout_width="match_parent"
         android:layout_height="270dp"
-        android:scaleType="centerCrop"
-         />
+        android:scaleType="centerCrop" />
 
     <View
         android:id="@+id/overlay"
@@ -53,8 +53,8 @@
                 android:layout_width="123dp"
                 android:layout_height="123dp"
                 android:layout_marginLeft="5dp"
-                android:id="@+id/fra"
-                >
+                android:id="@+id/fra">
+
                 <com.facebook.drawee.view.SimpleDraweeView
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
@@ -62,13 +62,14 @@
                     android:id="@+id/playlist_art"
                     android:scaleType="centerCrop"
                     fresco:placeholderImage="@drawable/placeholder_disk_210"
-                    fresco:placeholderImageScaleType="centerCrop"
-                    />
+                    fresco:placeholderImageScaleType="centerCrop" />
+
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="#1e000000"
                     android:orientation="horizontal">
+
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -76,10 +77,11 @@
                         android:layout_marginRight="3dp"
                         android:textColor="@color/whaite_text"
                         android:textSize="12sp"
-                        android:id="@+id/playlist_listen_count"/>
+                        android:id="@+id/playlist_listen_count" />
                 </LinearLayout>
 
             </FrameLayout>
+
             <TextView
                 android:layout_marginRight="10dp"
                 android:id="@+id/album_title"
@@ -101,39 +103,44 @@
                 android:textColor="#ffffff"
                 android:textSize="16sp" />
         </LinearLayout>
+
         <LinearLayout
             android:layout_marginBottom="10dp"
             android:layout_alignParentBottom="true"
             android:orientation="horizontal"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
-           <LinearLayout
-               android:id="@+id/playlist_collect"
-               android:layout_weight="1"
-               android:orientation="vertical"
-               android:layout_width="match_parent"
-               android:layout_height="match_parent">
-               <ImageView
-                   android:layout_gravity="center"
-                   android:id="@+id/playlist_collect_view"
-                   android:src="@drawable/list_detail_icn_fav"
-                   android:layout_width="wrap_content"
-                   android:layout_height="wrap_content" />
-               <TextView
-                   android:id="@+id/playlist_collect_state"
-                   android:textColor="@color/whaite_text"
-                   android:textSize="12sp"
-                   android:gravity="center"
-                   android:text="收藏"
-                   android:layout_width="match_parent"
-                   android:layout_height="wrap_content" />
-           </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/playlist_collect"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <ImageView
+                    android:layout_gravity="center"
+                    android:id="@+id/playlist_collect_view"
+                    android:src="@drawable/list_detail_icn_fav"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+                <TextView
+                    android:id="@+id/playlist_collect_state"
+                    android:textColor="@color/whaite_text"
+                    android:textSize="12sp"
+                    android:gravity="center"
+                    android:text="收藏"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+            </LinearLayout>
 
             <LinearLayout
                 android:layout_weight="1"
                 android:orientation="vertical"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
+
                 <ImageView
                     android:layout_gravity="center"
                     android:id="@+id/playlist_cmt"
@@ -141,6 +148,7 @@
                     android:src="@drawable/list_detail_icn_cmt_dis"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
+
                 <TextView
                     android:textColor="@color/whaite_text"
                     android:textSize="12sp"
@@ -157,12 +165,14 @@
                 android:orientation="vertical"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
+
                 <ImageView
                     android:layout_gravity="center"
                     android:id="@+id/playlist_share_view"
                     android:src="@drawable/list_detail_icn_share"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
+
                 <TextView
                     android:textColor="@color/whaite_text"
                     android:textSize="12sp"
@@ -180,12 +190,14 @@
                 android:orientation="vertical"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
+
                 <ImageView
                     android:layout_gravity="center"
                     android:layout_weight="1"
                     android:src="@drawable/list_detail_icn_dld"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
+
                 <TextView
                     android:textColor="@color/whaite_text"
                     android:textSize="12sp"

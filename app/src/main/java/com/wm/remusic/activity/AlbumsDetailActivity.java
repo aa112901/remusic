@@ -1,7 +1,6 @@
 package com.wm.remusic.activity;
 
 import android.app.Activity;
-import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.TransitionDrawable;
@@ -11,7 +10,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -27,19 +25,13 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.facebook.binaryresource.BinaryResource;
-import com.facebook.binaryresource.FileBinaryResource;
-import com.facebook.cache.common.CacheKey;
 import com.facebook.common.executors.CallerThreadExecutor;
 import com.facebook.common.references.CloseableReference;
 import com.facebook.datasource.DataSource;
 import com.facebook.drawee.backends.pipeline.Fresco;
 import com.facebook.drawee.view.SimpleDraweeView;
-import com.facebook.imagepipeline.cache.DefaultCacheKeyFactory;
 import com.facebook.imagepipeline.core.ImagePipeline;
-import com.facebook.imagepipeline.core.ImagePipelineFactory;
 import com.facebook.imagepipeline.datasource.BaseBitmapDataSubscriber;
 import com.facebook.imagepipeline.image.CloseableImage;
 import com.facebook.imagepipeline.request.ImageRequest;
@@ -53,7 +45,6 @@ import com.nineoldandroids.view.ViewHelper;
 import com.wm.remusic.MainApplication;
 import com.wm.remusic.R;
 import com.wm.remusic.dialog.LoadAllDownInfos;
-import com.wm.remusic.downmusic.Down;
 import com.wm.remusic.fragment.MoreFragment;
 import com.wm.remusic.fragment.NetMoreFragment;
 import com.wm.remusic.handler.HandlerUtil;
@@ -72,7 +63,6 @@ import com.wm.remusic.uitl.IConstants;
 import com.wm.remusic.uitl.ImageUtils;
 import com.wm.remusic.widget.DividerItemDecoration;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -171,7 +161,7 @@ public class AlbumsDetailActivity extends BaseActivity implements ObservableScro
         downAll.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                new LoadAllDownInfos((Activity)AlbumsDetailActivity.this,mList).execute();
+                new LoadAllDownInfos((Activity) AlbumsDetailActivity.this, mList).execute();
 //                new AlertDialog.Builder(AlbumsDetailActivity.this).setTitle("要下载音乐吗").
 //                        setPositiveButton(AlbumsDetailActivity.this.getString(R.string.sure), new DialogInterface.OnClickListener() {
 //

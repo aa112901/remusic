@@ -7,7 +7,7 @@
     <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="android:windowTranslucentStatus">true</item>
         <item name="android:windowAnimationStyle">@style/NoAnimation</item>
-        <item  name="android:actionOverflowButtonStyle">@style/MyOverflowStyle</item>
+        <item name="android:actionOverflowButtonStyle">@style/MyOverflowStyle</item>
     </style>
 
     <style name="NoAnimation">
@@ -28,7 +28,7 @@
     </style>
 
     <style name="MyOverflowStyle" parent="@android:style/Widget.ActionButton.Overflow">
-    <item name="android:src">@drawable/actionbar_more</item>
-</style>
+        <item name="android:src">@drawable/actionbar_more</item>
+    </style>
 
 </resources>

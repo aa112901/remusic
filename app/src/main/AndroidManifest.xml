@@ -9,8 +9,8 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.BROADCAST_STICKY" />
     <uses-permission android:name="android.permission.WRITE_SETTINGS" />
-    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <application
         android:name=".MainApplication"
@@ -32,14 +32,15 @@
         <activity
             android:name=".activity.LoadingActivity"
             android:screenOrientation="portrait" />
-        <activity android:name=".activity.NetSearchWordsActivity"
-            android:screenOrientation="portrait"/>
+        <activity
+            android:name=".activity.NetSearchWordsActivity"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".activity.PlayingActivity"
             android:launchMode="singleTask"
-            android:screenOrientation="portrait" >
-            <intent-filter >
-                <action android:name="com.wm.remusic.LAUNCH_NOW_PLAYING_ACTION"/>
+            android:screenOrientation="portrait">
+            <intent-filter>
+                <action android:name="com.wm.remusic.LAUNCH_NOW_PLAYING_ACTION" />
             </intent-filter>
         </activity>
         <activity
@@ -47,37 +48,37 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".activity.SelectActivity"
-            android:screenOrientation="portrait"
-             />
+            android:screenOrientation="portrait" />
         <activity
             android:name=".activity.PlaylistSelectActivity"
-            android:screenOrientation="portrait"
-            />
+            android:screenOrientation="portrait" />
         <activity
             android:name=".activity.PlaylistManagerActivity"
-            android:screenOrientation="portrait"
-            />
-        <activity android:name=".activity.AlbumsDetailActivity"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".activity.TabActivity"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".activity.PlaylistDetailActivity"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".activity.DownActivity"/>
-        <activity android:name=".activity.PlaylistActivity"/>
-        <activity android:name=".activity.RecentActivity"/>
-        <activity android:name=".activity.NetItemChangeActivity"/>
-        <activity android:name=".activity.NetAlbumsDetailActivity"/>
-        <activity android:name=".activity.NetArtistDetailActivity"/>
-        <activity android:name=".activity.NetRadioDetailActivity"/>
-        <activity android:name=".activity.ArtistDetailActivity"/>
-        <activity android:name=".activity.RadioDetailActivity"/>
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.AlbumsDetailActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.TabActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.PlaylistDetailActivity"
+            android:screenOrientation="portrait" />
+        <activity android:name=".activity.DownActivity" />
+        <activity android:name=".activity.PlaylistActivity" />
+        <activity android:name=".activity.RecentActivity" />
+        <activity android:name=".activity.NetItemChangeActivity" />
+        <activity android:name=".activity.NetAlbumsDetailActivity" />
+        <activity android:name=".activity.NetArtistDetailActivity" />
+        <activity android:name=".activity.NetRadioDetailActivity" />
+        <activity android:name=".activity.ArtistDetailActivity" />
+        <activity android:name=".activity.RadioDetailActivity" />
 
         <service
             android:name=".service.MediaService"
             android:process=":main"
 
-             />
+            />
 
         <receiver android:name=".receiver.MediaButtonIntentReceiver">
             <intent-filter>

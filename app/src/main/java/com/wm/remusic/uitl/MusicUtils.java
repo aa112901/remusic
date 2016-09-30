@@ -146,7 +146,7 @@ public class MusicUtils implements IConstants {
 
 
     public static ArrayList<MusicInfo> queryMusic(Context context,
-                                             String selections, String selection, int from) {
+                                                  String selections, String selection, int from) {
 
         Uri uri = Media.EXTERNAL_CONTENT_URI;
         ContentResolver cr = context.getContentResolver();

@@ -9,12 +9,10 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.TransitionDrawable;
-import android.media.MediaRecorder;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
-import android.os.Handler;
 import android.os.ParcelFileDescriptor;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -30,7 +28,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.Interpolator;
 import android.view.animation.LinearInterpolator;
-import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -167,13 +164,13 @@ public class PlayingActivity extends BaseActivity implements IConstants {
         // setViewPager();
     }
 
-    private void initLrcView(){
+    private void initLrcView() {
         mLrcView.setOnSeekToListener(onSeekToListener);
         mLrcView.setOnLrcClickListener(onLrcClickListener);
         mViewPager.setOnSingleTouchListener(new AlbumViewPager.OnSingleTouchListener() {
             @Override
             public void onSingleTouch(View v) {
-                if(albumLayout.getVisibility() == View.VISIBLE){
+                if (albumLayout.getVisibility() == View.VISIBLE) {
                     albumLayout.setVisibility(View.INVISIBLE);
                     lrcViewContainer.setVisibility(View.VISIBLE);
                     musicTool.setVisibility(View.INVISIBLE);
@@ -183,7 +180,7 @@ public class PlayingActivity extends BaseActivity implements IConstants {
         lrcViewContainer.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(lrcViewContainer.getVisibility() == View.VISIBLE){
+                if (lrcViewContainer.getVisibility() == View.VISIBLE) {
                     lrcViewContainer.setVisibility(View.INVISIBLE);
                     albumLayout.setVisibility(View.VISIBLE);
                     musicTool.setVisibility(View.VISIBLE);
@@ -206,7 +203,7 @@ public class PlayingActivity extends BaseActivity implements IConstants {
         @Override
         public void onClick() {
 
-            if(lrcViewContainer.getVisibility() == View.VISIBLE){
+            if (lrcViewContainer.getVisibility() == View.VISIBLE) {
                 lrcViewContainer.setVisibility(View.INVISIBLE);
                 albumLayout.setVisibility(View.VISIBLE);
                 musicTool.setVisibility(View.VISIBLE);
@@ -217,34 +214,34 @@ public class PlayingActivity extends BaseActivity implements IConstants {
 
         @Override
         public void onSeekTo(int progress) {
-           MusicPlayer.seek(progress);
+            MusicPlayer.seek(progress);
 
         }
     };
 
 
-    private List<LrcRow> getLrcRows(){
+    private List<LrcRow> getLrcRows() {
 
         List<LrcRow> rows = null;
         InputStream is = null;
         try {
             is = new FileInputStream(Environment.getExternalStorageDirectory().getAbsolutePath() +
-            "/remusic/lrc/" + MusicPlayer.getCurrentAudioId());
+                    "/remusic/lrc/" + MusicPlayer.getCurrentAudioId());
         } catch (FileNotFoundException e) {
             e.printStackTrace();
-        }finally {
-            if(is == null){
+        } finally {
+            if (is == null) {
                 return null;
             }
         }
         BufferedReader br = new BufferedReader(new InputStreamReader(is));
-        String line ;
+        String line;
         StringBuilder sb = new StringBuilder();
         try {
-            while((line = br.readLine()) != null){
-                sb.append(line+"\n");
+            while ((line = br.readLine()) != null) {
+                sb.append(line + "\n");
             }
-           // System.out.println(sb.toString());
+            // System.out.println(sb.toString());
             rows = DefaultLrcParser.getIstance().getLrcRows(sb.toString());
         } catch (IOException e) {
             e.printStackTrace();
@@ -521,12 +518,12 @@ public class PlayingActivity extends BaseActivity implements IConstants {
             fav.setImageResource(R.drawable.play_rdi_icn_love);
         }
     }
-    private void updateLrc(){
-        if(getLrcRows() != null && getLrcRows().size() > 0){
+
+    private void updateLrc() {
+        if (getLrcRows() != null && getLrcRows().size() > 0) {
             tryGetLrc.setVisibility(View.INVISIBLE);
             mLrcView.setLrcRows(getLrcRows());
-        }
-        else{
+        } else {
             tryGetLrc.setVisibility(View.VISIBLE);
             mLrcView.reset();
         }
@@ -657,7 +654,7 @@ public class PlayingActivity extends BaseActivity implements IConstants {
                 @Override
                 public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
                     i = (int) (i * MusicPlayer.duration() / 100);
-                    mLrcView.seekTo(i, true,b);
+                    mLrcView.seekTo(i, true, b);
                     if (b) {
                         MusicPlayer.seek((long) i);
                         timePlayed.setText(MusicUtils.makeShortTimeString(PlayingActivity.this.getApplication(), i / 1000));
@@ -781,9 +778,9 @@ public class PlayingActivity extends BaseActivity implements IConstants {
                 newOpts.inSampleSize = 6;
                 newOpts.inPreferredConfig = Bitmap.Config.RGB_565;
             }
-            Log.e("albumuri","start");
+            Log.e("albumuri", "start");
             if (!MusicPlayer.isTrackLocal()) {
-                Log.e("albumuri","bitmaplocal");
+                Log.e("albumuri", "bitmaplocal");
                 if (getAlbumPath() == null) {
                     mBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.placeholder_disk_210);
                     drawable = ImageUtils.createBlurredImageFromBitmap(mBitmap, PlayingActivity.this.getApplication(), 3);
@@ -826,7 +823,7 @@ public class PlayingActivity extends BaseActivity implements IConstants {
                 try {
                     mBitmap = null;
                     Bitmap bitmap = null;
-                    Log.e("albumuri","bitmap");
+                    Log.e("albumuri", "bitmap");
                     Uri art = Uri.parse(getAlbumPath());
                     L.D(print, TAG, "albumuri ");
                     if (art != null) {
@@ -838,7 +835,7 @@ public class PlayingActivity extends BaseActivity implements IConstants {
                         }
                         if (fd != null) {
                             bitmap = BitmapFactory.decodeFileDescriptor(fd.getFileDescriptor(), null, newOpts);
-                        }else {
+                        } else {
                             bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.placeholder_disk_210, newOpts);
                         }
                     } else {

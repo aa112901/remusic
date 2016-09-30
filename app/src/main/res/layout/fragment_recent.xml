@@ -21,12 +21,12 @@
         android:layout_above="@+id/bottom_container"
         android:id="@+id/recyclerview"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content" />
 
     <FrameLayout
         android:layout_alignParentBottom="true"
         android:id="@+id/bottom_container"
         android:layout_width="match_parent"
-        android:layout_height="50dp"/>
+        android:layout_height="50dp" />
 
 </RelativeLayout>

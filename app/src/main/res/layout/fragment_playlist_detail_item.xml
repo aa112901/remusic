@@ -2,8 +2,7 @@
     android:layout_width="fill_parent"
     android:layout_height="55dp"
     android:background="?attr/selectableItemBackground"
-    android:orientation="vertical"
-   >
+    android:orientation="vertical">
 
     <TextView
         android:layout_marginLeft="10dp"

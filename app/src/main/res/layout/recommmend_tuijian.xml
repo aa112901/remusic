@@ -70,6 +70,7 @@
             android:layout_height="110dp"
             android:orientation="horizontal"
             android:padding="2dp">
+
             <ImageView
                 android:layout_width="150dp"
                 android:layout_height="match_parent"
@@ -78,6 +79,7 @@
                 android:layout_weight="1"
 
                 />
+
             <ImageView
                 android:layout_width="150dp"
                 android:layout_height="match_parent"
@@ -88,6 +90,7 @@
                 />
 
         </LinearLayout>
+
         <LinearLayout
             android:id="@+id/tuijian_2"
             android:layout_width="match_parent"
@@ -96,6 +99,7 @@
             android:layout_height="110dp"
             android:orientation="horizontal"
             android:padding="2dp">
+
             <ImageView
                 android:layout_width="150dp"
                 android:layout_height="match_parent"
@@ -104,6 +108,7 @@
                 android:layout_weight="1"
 
                 />
+
             <ImageView
                 android:layout_width="150dp"
                 android:layout_height="match_parent"

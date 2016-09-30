@@ -14,11 +14,11 @@
         app:contentInsetStart="0.0dp"
         app:layout_scrollFlags="enterAlways|scroll"
         app:theme="@style/ToolbarStyle">
+
         <RelativeLayout
             android:gravity="center"
             android:layout_width="match_parent"
-            android:layout_height="?actionBarSize"
-            >
+            android:layout_height="?actionBarSize">
 
             <ImageView
                 android:id="@+id/bar_net"
@@ -54,26 +54,27 @@
                 android:background="@drawable/actionbar_search" />
         </RelativeLayout>
     </android.support.v7.widget.Toolbar>
+
     <com.wm.remusic.widget.CustomViewPager
         android:layout_below="@+id/toolbar"
         android:layout_above="@+id/nav_play"
         android:id="@+id/main_viewpager"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent" />
     <!--<FrameLayout-->
-        <!--android:orientation="vertical"-->
-        <!--android:id="@+id/fragment_container"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="match_parent"-->
-        <!--android:layout_below="@+id/toolbar"-->
-        <!--android:layout_above="@+id/nav_play">-->
+    <!--android:orientation="vertical"-->
+    <!--android:id="@+id/fragment_container"-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="match_parent"-->
+    <!--android:layout_below="@+id/toolbar"-->
+    <!--android:layout_above="@+id/nav_play">-->
     <!--</FrameLayout>-->
     <FrameLayout
         android:layout_alignParentBottom="true"
         android:id="@+id/bottom_container"
         android:layout_width="match_parent"
-        android:layout_height="50dp"/>
-  <!--<include layout="@layout/bottom_nav"/>-->
+        android:layout_height="50dp" />
+    <!--<include layout="@layout/bottom_nav"/>-->
 
 
 </RelativeLayout>

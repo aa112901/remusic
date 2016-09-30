@@ -24,7 +24,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-//import com.readystatesoftware.systembartint.SystemBarTintManager;
 import com.wm.remusic.R;
 import com.wm.remusic.dialog.AddPlaylistDialog;
 import com.wm.remusic.info.MusicInfo;
@@ -36,6 +35,8 @@ import com.wm.remusic.widget.DividerItemDecoration;
 import com.wm.remusic.widget.DragSortRecycler;
 
 import java.util.ArrayList;
+
+//import com.readystatesoftware.systembartint.SystemBarTintManager;
 
 /**
  * Created by wm on 2016/3/12.

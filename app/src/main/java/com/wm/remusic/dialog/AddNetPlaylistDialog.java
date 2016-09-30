@@ -17,16 +17,13 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.facebook.drawee.view.SimpleDraweeView;
-import com.facebook.imageutils.BitmapUtil;
 import com.wm.remusic.MainApplication;
 import com.wm.remusic.R;
 import com.wm.remusic.info.MusicInfo;
 import com.wm.remusic.info.Playlist;
 import com.wm.remusic.provider.PlaylistInfo;
 import com.wm.remusic.provider.PlaylistsManager;
-import com.wm.remusic.service.MusicTrack;
 import com.wm.remusic.uitl.IConstants;
-import com.wm.remusic.uitl.ImageUtils;
 import com.wm.remusic.uitl.MusicUtils;
 import com.wm.remusic.widget.DividerItemDecoration;
 
@@ -42,18 +39,19 @@ public class AddNetPlaylistDialog extends DialogFragment {
     private ArrayList<MusicInfo> musics;
     private String author;
 
-    public static AddNetPlaylistDialog newInstance(ArrayList<MusicInfo> list ,String author) {
+    public static AddNetPlaylistDialog newInstance(ArrayList<MusicInfo> list, String author) {
         AddNetPlaylistDialog dialog = new AddNetPlaylistDialog();
         Bundle bundle = new Bundle();
-        bundle.putString("author",author);
+        bundle.putString("author", author);
         bundle.putParcelableArrayList("songs", list);
         dialog.setArguments(bundle);
         return dialog;
     }
+
     public static AddNetPlaylistDialog newInstance(ArrayList<MusicInfo> list) {
         AddNetPlaylistDialog dialog = new AddNetPlaylistDialog();
         Bundle bundle = new Bundle();
-        bundle.putString("author","local");
+        bundle.putString("author", "local");
         bundle.putParcelableArrayList("songs", list);
         dialog.setArguments(bundle);
         return dialog;
@@ -109,18 +107,18 @@ public class AddNetPlaylistDialog extends DialogFragment {
                                 String albumart = null;
                                 for (MusicInfo info : musics) {
                                     albumart = info.albumData;
-                                    if(info.islocal ){
-                                       if(albumart == MusicUtils.getalbumdata(MainApplication.context, info.songId))
-                                      break;
-                                    }else if (!albumart.isEmpty()) {
-                                       break;
+                                    if (info.islocal) {
+                                        if (albumart == MusicUtils.getalbumdata(MainApplication.context, info.songId))
+                                            break;
+                                    } else if (!albumart.isEmpty()) {
+                                        break;
                                     }
                                 }
                                 //String albumart = MusicUtils.getMusicInfo(getContext(), musicId[0]).albumData;
                                 long playlistid = editText.getText().hashCode();
                                 playlistInfo.addPlaylist(playlistid, editText.getText().toString(),
-                                        musics.size(), albumart,author);
-                                playlistsManager.insertLists(getContext(),playlistid,musics);
+                                        musics.size(), albumart, author);
+                                playlistsManager.insertLists(getContext(), playlistid, musics);
                                 Intent intent = new Intent(IConstants.PLAYLIST_COUNT_CHANGED);
                                 MainApplication.context.sendBroadcast(intent);
 
@@ -206,13 +204,13 @@ public class AddNetPlaylistDialog extends DialogFragment {
 
             @Override
             public void onClick(View v) {
-               final Playlist playlist = playlists.get(getAdapterPosition());
+                final Playlist playlist = playlists.get(getAdapterPosition());
                 //playlistInfo.updatePlaylist(playlist.id, musicId.length);
                 //ArrayList<MusicTrack> musicTracks = playlistsManager.getPlaylist(playlist.id);
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
-                        playlistsManager.insertLists(getContext(),playlist.id,musics);
+                        playlistsManager.insertLists(getContext(), playlist.id, musics);
                         Intent intent = new Intent(IConstants.PLAYLIST_COUNT_CHANGED);
                         getActivity().sendBroadcast(intent);
                         dismiss();

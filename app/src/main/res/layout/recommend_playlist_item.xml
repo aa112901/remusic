@@ -6,12 +6,13 @@
     android:layout_height="150dp"
     android:layout_marginLeft="7dp"
     android:layout_marginTop="6dp">
+
     <FrameLayout
         android:layout_alignParentTop="true"
         android:layout_width="match_parent"
         android:layout_height="110dp"
-        android:id="@+id/fra"
-       >
+        android:id="@+id/fra">
+
         <com.facebook.drawee.view.SimpleDraweeView
             android:layout_width="match_parent"
             android:layout_height="110dp"
@@ -22,32 +23,33 @@
             fresco:progressBarImage="@mipmap/loading_big"
             fresco:progressBarImageScaleType="centerInside"
             fresco:placeholderImage="@mipmap/placeholder_disk_300"
-            fresco:placeholderImageScaleType="centerCrop"
-            />
-      <LinearLayout
-          android:layout_width="match_parent"
-          android:layout_height="wrap_content"
-          android:background="#1e000000"
-          android:orientation="horizontal">
-          <!--<ImageView-->
-              <!--android:layout_gravity="center"-->
-              <!--android:gravity="right"-->
-              <!--android:src="@mipmap/index_icn_earphone"-->
-              <!--android:layout_width="wrap_content"-->
-              <!--android:layout_height="wrap_content"-->
-              <!--/>-->
-          <TextView
-              android:layout_width="match_parent"
-              android:layout_height="wrap_content"
-              android:text="30"
-              android:gravity="right"
-              android:layout_marginRight="3dp"
-              android:textColor="@color/whaite_text"
-              android:textSize="12sp"
-              android:id="@+id/playlist_listen_count"/>
-      </LinearLayout>
+            fresco:placeholderImageScaleType="centerCrop" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#1e000000"
+            android:orientation="horizontal">
+            <!--<ImageView-->
+            <!--android:layout_gravity="center"-->
+            <!--android:gravity="right"-->
+            <!--android:src="@mipmap/index_icn_earphone"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--/>-->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="30"
+                android:gravity="right"
+                android:layout_marginRight="3dp"
+                android:textColor="@color/whaite_text"
+                android:textSize="12sp"
+                android:id="@+id/playlist_listen_count" />
+        </LinearLayout>
 
     </FrameLayout>
+
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -56,6 +58,6 @@
         android:textSize="12sp"
         android:lines="2"
         android:ellipsize="end"
-        android:text="3000000"/>
+        android:text="3000000" />
 
 </LinearLayout>

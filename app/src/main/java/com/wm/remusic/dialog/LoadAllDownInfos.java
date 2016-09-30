@@ -32,21 +32,23 @@ import com.wm.remusic.uitl.PreferencesUtility;
 import java.io.File;
 import java.util.ArrayList;
 
-public class LoadAllDownInfos extends AsyncTask<Void,Void,Void> {
+public class LoadAllDownInfos extends AsyncTask<Void, Void, Void> {
     Activity mContext;
     private ArrayList<GeDanGeInfo> mList = new ArrayList<GeDanGeInfo>();
-    public LoadAllDownInfos(Activity context ,ArrayList<GeDanGeInfo> list){
+
+    public LoadAllDownInfos(Activity context, ArrayList<GeDanGeInfo> list) {
         mContext = context;
         mList = list;
     }
 
     PopupWindow popupWindow;
+
     @Override
     protected void onPreExecute() {
         super.onPreExecute();
         View view;
-        RotateAnimation animation = new RotateAnimation(0f,360f, Animation.RELATIVE_TO_SELF, 0.5f,
-                Animation.RELATIVE_TO_SELF,0.5f);
+        RotateAnimation animation = new RotateAnimation(0f, 360f, Animation.RELATIVE_TO_SELF, 0.5f,
+                Animation.RELATIVE_TO_SELF, 0.5f);
         animation.setDuration(5000);
         animation.setRepeatCount(Animation.INFINITE);
         animation.setInterpolator(new LinearInterpolator());
@@ -65,7 +67,7 @@ public class LoadAllDownInfos extends AsyncTask<Void,Void,Void> {
         // 这个是为了点击“返回Back”也能使其消失，并且并不会影响你的背景
         popupWindow.setBackgroundDrawable(new BitmapDrawable());
 
-        popupWindow.showAtLocation(mContext.getWindow().getDecorView(), Gravity.CENTER,0,0);
+        popupWindow.showAtLocation(mContext.getWindow().getDecorView(), Gravity.CENTER, 0, 0);
         popupWindow.setOnDismissListener(new PopupWindow.OnDismissListener() {
             @Override
             public void onDismiss() {
@@ -82,7 +84,7 @@ public class LoadAllDownInfos extends AsyncTask<Void,Void,Void> {
     @Override
     protected Void doInBackground(Void... params) {
         int le = mList.size();
-        for(int j = 0; j< le ; j++){
+        for (int j = 0; j < le; j++) {
             try {
                 JsonArray jsonArray = HttpUtil.getResposeJsonObject(BMA.Song.songInfo(mList.get(j).getSong_id())).get("songurl")
                         .getAsJsonObject().get("url").getAsJsonArray();
@@ -98,7 +100,7 @@ public class LoadAllDownInfos extends AsyncTask<Void,Void,Void> {
                         musicFileDownInfo = MainApplication.gsonInstance().fromJson(jsonArray.get(i), MusicFileDownInfo.class);
                     }
                 }
-                if(musicFileDownInfo != null){
+                if (musicFileDownInfo != null) {
                     urlList.add(musicFileDownInfo.getShow_link());
                     size += musicFileDownInfo.getFile_size();
                 }
@@ -117,14 +119,14 @@ public class LoadAllDownInfos extends AsyncTask<Void,Void,Void> {
     @Override
     protected void onPostExecute(Void aVoid) {
         super.onPostExecute(aVoid);
-        Log.e("size",size + "");
+        Log.e("size", size + "");
 
         String result = null;
-        size = size /(1024 * 1024);
-        Log.e("size",size + "");
-        if(size > 1024){
-            result = (float)Math.round((float) size/(1024 *10))/10 + "G";
-        }else {
+        size = size / (1024 * 1024);
+        Log.e("size", size + "");
+        if (size > 1024) {
+            result = (float) Math.round((float) size / (1024 * 10)) / 10 + "G";
+        } else {
             result = size + "M";
 
         }
@@ -140,7 +142,7 @@ public class LoadAllDownInfos extends AsyncTask<Void,Void,Void> {
                                 file.mkdir();
                             }
                             int len = mList.size();
-                            for(int i = 0; i<len; i++){
+                            for (int i = 0; i < len; i++) {
                                 DownloadTask task = new DownloadTask.Builder(mContext, urlList.get(i))
                                         .setFileName(mList.get(i).getTitle()).setSaveDirPath(Environment.getExternalStorageDirectory().getAbsolutePath() + "/remusic/").build();
                                 DownloadManager.getInstance(mContext).addDownloadTask(task);
@@ -148,7 +150,7 @@ public class LoadAllDownInfos extends AsyncTask<Void,Void,Void> {
 
 
                         } else {
-                            Toast.makeText(mContext,"没有储存卡",Toast.LENGTH_SHORT).show();
+                            Toast.makeText(mContext, "没有储存卡", Toast.LENGTH_SHORT).show();
                             return;
                         }
 

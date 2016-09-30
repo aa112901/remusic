@@ -6,7 +6,7 @@
         android:icon="@drawable/actionbar_more"
         android:orderInCategory="100"
         android:title="  "
-        app:showAsAction="always" >
+        app:showAsAction="always">
         <menu>
             <item
 

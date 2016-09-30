@@ -16,6 +16,7 @@
         android:theme="@style/Theme.AppCompat"
         app:layout_scrollFlags="enterAlways"
         app:popupTheme="@style/ThemeOverlay.AppCompat.Dark" />
+
     <android.support.v7.widget.RecyclerView
         android:layout_below="@+id/toolbar"
         android:id="@+id/recyclerview"

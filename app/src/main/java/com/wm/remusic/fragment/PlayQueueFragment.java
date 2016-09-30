@@ -21,7 +21,6 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.wm.remusic.R;
 import com.wm.remusic.dialog.AddNetPlaylistDialog;
-import com.wm.remusic.dialog.AddPlaylistDialog;
 import com.wm.remusic.info.MusicInfo;
 import com.wm.remusic.provider.MusicPlaybackState;
 import com.wm.remusic.recent.QueueLoader;
@@ -90,7 +89,7 @@ public class PlayQueueFragment extends DialogFragment {
 //                    list[i] = playlist.get(i).songId;
 //                }
 //                AddPlaylistDialog.newInstance(list).show(getFragmentManager(), "add");
-                AddNetPlaylistDialog.newInstance(playlist).show(getFragmentManager(),"add");
+                AddNetPlaylistDialog.newInstance(playlist).show(getFragmentManager(), "add");
             }
         });
 

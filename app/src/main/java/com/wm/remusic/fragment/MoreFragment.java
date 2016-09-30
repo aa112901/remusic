@@ -36,7 +36,6 @@ import com.wm.remusic.adapter.MusicFlowAdapter;
 import com.wm.remusic.adapter.OverFlowAdapter;
 import com.wm.remusic.adapter.OverFlowItem;
 import com.wm.remusic.dialog.AddNetPlaylistDialog;
-import com.wm.remusic.dialog.AddPlaylistDialog;
 import com.wm.remusic.handler.HandlerUtil;
 import com.wm.remusic.info.MusicInfo;
 import com.wm.remusic.json.SearchAlbumInfo;
@@ -391,10 +390,10 @@ public class MoreFragment extends DialogFragment {
                             dismiss();
                             break;
                         case 6:
-                            if(playlistId != -1){
-                                PlaylistsManager.getInstance(mContext).deleteMusicInfo(mContext,playlistId,adapterMusicInfo.songId);
+                            if (playlistId != -1) {
+                                PlaylistsManager.getInstance(mContext).deleteMusicInfo(mContext, playlistId, adapterMusicInfo.songId);
 
-                            }else {
+                            } else {
                                 new AlertDialog.Builder(mContext).setTitle(getResources().getString(R.string.sure_to_set_ringtone)).
                                         setPositiveButton(getResources().getString(R.string.sure), new DialogInterface.OnClickListener() {
                                             @Override

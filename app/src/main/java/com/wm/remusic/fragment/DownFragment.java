@@ -8,7 +8,6 @@ import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -176,40 +175,40 @@ public class DownFragment extends Fragment {
 //                ((ItemViewHolder) holder).downloaded.setVisibility(View.VISIBLE);
 //
 //            } else {
-                ((ItemViewHolder) holder).count.setText((float) (Math.round((float) task.getCompletedSize() / (1024 * 1024) * 10)) / 10 + "M/" +
-                        (float) (Math.round((float) task.getTotalSize() / (1024 * 1024) * 10)) / 10 + "M");
-                ;
-                if (isCurrent) {
-                    ((ItemViewHolder) holder).progressBar.setVisibility(View.VISIBLE);
-                    ((ItemViewHolder) holder).progressBar.setProgress((int) task.getPercent());
+            ((ItemViewHolder) holder).count.setText((float) (Math.round((float) task.getCompletedSize() / (1024 * 1024) * 10)) / 10 + "M/" +
+                    (float) (Math.round((float) task.getTotalSize() / (1024 * 1024) * 10)) / 10 + "M");
+            ;
+            if (isCurrent) {
+                ((ItemViewHolder) holder).progressBar.setVisibility(View.VISIBLE);
+                ((ItemViewHolder) holder).progressBar.setProgress((int) task.getPercent());
 
-                } else {
-                    ((ItemViewHolder) holder).progressBar.removeCallbacks(mUpdateProgress);
-                    ((ItemViewHolder) holder).progressBar.setVisibility(View.GONE);
-                    ((ItemViewHolder) holder).count.setText("已经暂停，点击继续下载");
-                }
+            } else {
+                ((ItemViewHolder) holder).progressBar.removeCallbacks(mUpdateProgress);
+                ((ItemViewHolder) holder).progressBar.setVisibility(View.GONE);
+                ((ItemViewHolder) holder).count.setText("已经暂停，点击继续下载");
+            }
 
 
-                ((ItemViewHolder) holder).itemView.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        if (!isCurrent) {
-                            downloadManager.resume(task.getId());
-                            return;
-                        }
-                        if (task.getDownloadStatus() != DownloadStatus.DOWNLOAD_STATUS_COMPLETED) {
-
-                            if (task.getDownloadStatus() == DownloadStatus.DOWNLOAD_STATUS_DOWNLOADING) {
-                                downloadManager.pause(downloadManager.getTaskById(task.getId()));
-
-                            } else {
-                                downloadManager.resume(task.getId());
-                            }
-                        }
-
+            ((ItemViewHolder) holder).itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (!isCurrent) {
+                        downloadManager.resume(task.getId());
+                        return;
                     }
-                });
-      //      }
+                    if (task.getDownloadStatus() != DownloadStatus.DOWNLOAD_STATUS_COMPLETED) {
+
+                        if (task.getDownloadStatus() == DownloadStatus.DOWNLOAD_STATUS_DOWNLOADING) {
+                            downloadManager.pause(downloadManager.getTaskById(task.getId()));
+
+                        } else {
+                            downloadManager.resume(task.getId());
+                        }
+                    }
+
+                }
+            });
+            //      }
 
             ((ItemViewHolder) holder).clear.setOnClickListener(new View.OnClickListener() {
                 @Override

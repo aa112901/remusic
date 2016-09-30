@@ -69,7 +69,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_centerInParent="true"
-                    android:layout_gravity="center_horizontal"/>
+                    android:layout_gravity="center_horizontal" />
 
                 <ImageView
                     android:id="@+id/needle"
@@ -88,6 +88,7 @@
             </android.support.percent.PercentRelativeLayout>
 
         </FrameLayout>
+
         <RelativeLayout
             android:id="@+id/lrcviewContainer"
             android:layout_marginTop="?attr/actionBarSize"
@@ -95,25 +96,28 @@
             app:layout_heightPercent="70%"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
-                <TextView
-                    android:focusable="false"
-                    android:layout_alignParentBottom="true"
-                    android:layout_centerHorizontal="true"
-                    android:id="@+id/tragetlrc"
-                    android:textAlignment="center"
-                    android:padding="5dp"
-                    android:gravity="center"
-                    android:text="获取封面和歌词"
-                    android:layout_gravity="bottom|center_horizontal"
-                    android:background="#70d7d7d7"
-                    android:layout_marginBottom="10dp"
-                    android:layout_width="100dp"
-                    android:layout_height="30dp" />
+
+            <TextView
+                android:focusable="false"
+                android:layout_alignParentBottom="true"
+                android:layout_centerHorizontal="true"
+                android:id="@+id/tragetlrc"
+                android:textAlignment="center"
+                android:padding="5dp"
+                android:gravity="center"
+                android:text="获取封面和歌词"
+                android:layout_gravity="bottom|center_horizontal"
+                android:background="#70d7d7d7"
+                android:layout_marginBottom="10dp"
+                android:layout_width="100dp"
+                android:layout_height="30dp" />
+
             <com.wm.remusic.lrc.LrcView
                 android:id="@+id/lrcview"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent" />
         </RelativeLayout>
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"

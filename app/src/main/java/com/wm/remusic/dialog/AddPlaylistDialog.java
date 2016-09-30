@@ -96,7 +96,7 @@ public class AddPlaylistDialog extends DialogFragment {
                                 }
                                 //String albumart = MusicUtils.getMusicInfo(getContext(), musicId[0]).albumData;
                                 playlistInfo.addPlaylist(editText.getText().hashCode(), editText.getText().toString(),
-                                        musicId.length, "file://" + albumart,"local");
+                                        musicId.length, "file://" + albumart, "local");
                                 for (int i = 0; i < musicId.length; i++) {
                                     playlistsManager.Insert(MainApplication.context, editText.getText().hashCode(), musicId[i], i);
                                 }

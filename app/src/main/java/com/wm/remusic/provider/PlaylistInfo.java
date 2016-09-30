@@ -33,7 +33,7 @@ public class PlaylistInfo {
     public void onCreate(final SQLiteDatabase db) {
         db.execSQL("CREATE TABLE IF NOT EXISTS " + PlaylistInfoColumns.NAME + " ("
                 + PlaylistInfoColumns.PLAYLIST_ID + " LONG NOT NULL," + PlaylistInfoColumns.PLAYLIST_NAME + " CHAR NOT NULL,"
-                 + PlaylistInfoColumns.SONG_COUNT + " INT NOT NULL, " + PlaylistInfoColumns.ALBUM_ART + " CHAR, "
+                + PlaylistInfoColumns.SONG_COUNT + " INT NOT NULL, " + PlaylistInfoColumns.ALBUM_ART + " CHAR, "
                 + PlaylistInfoColumns.AUTHOR + " CHAR );");
     }
 
@@ -46,7 +46,7 @@ public class PlaylistInfo {
     }
 
 
-    public void addPlaylist(long playlistid, String name, int count, String albumart,String author) {
+    public void addPlaylist(long playlistid, String name, int count, String albumart, String author) {
         final SQLiteDatabase database = mMusicDatabase.getWritableDatabase();
         database.beginTransaction();
         try {
@@ -55,7 +55,7 @@ public class PlaylistInfo {
             values.put(PlaylistInfoColumns.PLAYLIST_NAME, name);
             values.put(PlaylistInfoColumns.SONG_COUNT, count);
             values.put(PlaylistInfoColumns.ALBUM_ART, albumart);
-            values.put(PlaylistInfoColumns.AUTHOR,author);
+            values.put(PlaylistInfoColumns.AUTHOR, author);
 
             database.insert(PlaylistInfoColumns.NAME, null, values);
             database.setTransactionSuccessful();
@@ -75,7 +75,7 @@ public class PlaylistInfo {
                 values.put(PlaylistInfoColumns.PLAYLIST_NAME, playlists.get(i).name);
                 values.put(PlaylistInfoColumns.SONG_COUNT, playlists.get(i).songCount);
                 values.put(PlaylistInfoColumns.ALBUM_ART, playlists.get(i).albumArt);
-                values.put(PlaylistInfoColumns.AUTHOR,playlists.get(i).author);
+                values.put(PlaylistInfoColumns.AUTHOR, playlists.get(i).author);
 
                 database.insert(PlaylistInfoColumns.NAME, null, values);
             }
@@ -179,7 +179,7 @@ public class PlaylistInfo {
         Cursor cursor = null;
         try {
             cursor = mMusicDatabase.getReadableDatabase().query(PlaylistInfoColumns.NAME, null,
-                    PlaylistInfoColumns.PLAYLIST_ID + " = ?",  new String[]
+                    PlaylistInfoColumns.PLAYLIST_ID + " = ?", new String[]
                             {String.valueOf(PlaylistId)}, null, null, null);
 
             if (cursor != null && cursor.moveToFirst()) {
@@ -230,9 +230,9 @@ public class PlaylistInfo {
                 results.ensureCapacity(cursor.getCount());
 
                 do {
-                    if(cursor.getString(4).equals("local"))
-                    results.add(new Playlist(cursor.getLong(0), cursor.getString(1), cursor.getInt(2),
-                            cursor.getString(3),cursor.getString(4)));
+                    if (cursor.getString(4).equals("local"))
+                        results.add(new Playlist(cursor.getLong(0), cursor.getString(1), cursor.getInt(2),
+                                cursor.getString(3), cursor.getString(4)));
                 } while (cursor.moveToNext());
             }
 
@@ -257,8 +257,8 @@ public class PlaylistInfo {
                 results.ensureCapacity(cursor.getCount());
 
                 do {
-                    if(!cursor.getString(4).equals("local"))
-                        results.add(new Playlist(cursor.getLong(0), cursor.getString(1), cursor.getInt(2), cursor.getString(3),cursor.getString(4)));
+                    if (!cursor.getString(4).equals("local"))
+                        results.add(new Playlist(cursor.getLong(0), cursor.getString(1), cursor.getInt(2), cursor.getString(3), cursor.getString(4)));
                 } while (cursor.moveToNext());
             }
 
@@ -285,7 +285,7 @@ public class PlaylistInfo {
 
         String ALBUM_ART = "album_art";
 
-        String AUTHOR ="author";
+        String AUTHOR = "author";
     }
 
 }

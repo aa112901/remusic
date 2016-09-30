@@ -178,8 +178,8 @@ public class RadioDetailActivity extends BaseActivity implements ObservableScrol
                             public void onClick(DialogInterface dialog, int which) {
 
                                 int len = mList.size();
-                                for(int i = 0; i < len ; i++){
-                                    Down.downMusic(MainApplication.context, mList.get(i).getSong_id(),mList.get(i).getSong_name());
+                                for (int i = 0; i < len; i++) {
+                                    Down.downMusic(MainApplication.context, mList.get(i).getSong_id(), mList.get(i).getSong_name());
                                 }
                                 mHandler.post(new Runnable() {
                                     @Override

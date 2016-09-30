@@ -175,11 +175,11 @@ public class ImageUtils {
                     return false;
                 }
 
-                Log.e("album","is true");
+                Log.e("album", "is true");
                 return true;
             } catch (FileNotFoundException e) {
             } finally {
-                if(fd == null){
+                if (fd == null) {
                     return false;
                 }
                 try {
@@ -192,6 +192,7 @@ public class ImageUtils {
         return false;
 
     }
+
     public static Bitmap getArtworkQuick(Context context, Uri uri, int w,
                                          int h) {
         // NOTE: There is in fact a 1 pixel border on the right side in the

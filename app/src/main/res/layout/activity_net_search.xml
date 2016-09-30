@@ -14,10 +14,11 @@
         android:minHeight="?attr/actionBarSize"
         android:theme="@style/Theme.AppCompat"
         app:popupTheme="@style/ThemeOverlay.AppCompat.Dark" />
-   <FrameLayout
-    android:id="@+id/search_frame"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"/>
+
+    <FrameLayout
+        android:id="@+id/search_frame"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
 
     <android.support.v7.widget.RecyclerView xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"

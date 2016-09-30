@@ -26,7 +26,6 @@ import com.facebook.drawee.view.SimpleDraweeView;
 import com.facebook.imagepipeline.common.ResizeOptions;
 import com.facebook.imagepipeline.request.ImageRequest;
 import com.facebook.imagepipeline.request.ImageRequestBuilder;
-import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.wm.remusic.MainApplication;
@@ -35,8 +34,6 @@ import com.wm.remusic.activity.AlbumsDetailActivity;
 import com.wm.remusic.activity.NetItemChangeActivity;
 import com.wm.remusic.activity.PlaylistActivity;
 import com.wm.remusic.activity.RadioDetailActivity;
-import com.wm.remusic.json.GedanHotInfo;
-import com.wm.remusic.json.RadioNetInfo;
 import com.wm.remusic.json.RecommendListNewAlbumInfo;
 import com.wm.remusic.json.RecommendListRadioInfo;
 import com.wm.remusic.json.RecommendListRecommendInfo;
@@ -210,7 +207,7 @@ public class RecommendFragment extends Fragment {
         }.execute();
     }
 
-    class LoadRecommend extends AsyncTask<Integer,Void,Integer>{
+    class LoadRecommend extends AsyncTask<Integer, Void, Integer> {
         @Override
         protected Integer doInBackground(Integer... params) {
 
@@ -243,13 +240,13 @@ public class RecommendFragment extends Fragment {
 
         @Override
         protected void onPostExecute(Integer tryCount) {
-            if(mRecomendList.size() != 6 && mNewAlbumsList.size() != 6 && mRadioList.size() != 6){
-                if(tryCount < 5){
+            if (mRecomendList.size() != 6 && mNewAlbumsList.size() != 6 && mRadioList.size() != 6) {
+                if (tryCount < 5) {
                     tryCount++;
                     new LoadRecommend().execute(tryCount);
-                }else {
-                    Toast.makeText(getContext(),"网络连接失败",Toast.LENGTH_SHORT).show();
-                    View tryAgain = LayoutInflater.from(getContext()).inflate(R.layout.try_again,linearLayout,false);
+                } else {
+                    Toast.makeText(getContext(), "网络连接失败", Toast.LENGTH_SHORT).show();
+                    View tryAgain = LayoutInflater.from(getContext()).inflate(R.layout.try_again, linearLayout, false);
                     tryAgain.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {

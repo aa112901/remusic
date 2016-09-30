@@ -1,92 +1,91 @@
 <?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:fresco="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/nav_play"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_alignParentBottom="true"
+    android:background="@color/bottomSheetNormalBackground"
+    android:orientation="vertical">
+
     <LinearLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:fresco="http://schemas.android.com/apk/res-auto"
-        android:id="@+id/nav_play"
+        android:id="@+id/linear"
+        android:background="?attr/selectableItemBackgroundBorderless"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_alignParentBottom="true"
-        android:background="@color/bottomSheetNormalBackground"
-        android:orientation="vertical">
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="-3dp"
+        android:orientation="horizontal">
+
+        <com.facebook.drawee.view.SimpleDraweeView
+            android:id="@+id/playbar_img"
+            android:layout_width="43dp"
+            android:layout_height="43dp"
+            android:layout_marginLeft="6dp"
+            android:layout_marginTop="3dp"
+            fresco:placeholderImage="@drawable/placeholder_disk_210"
+            fresco:placeholderImageScaleType="fitXY"
+            android:layout_weight="0" />
 
         <LinearLayout
-            android:id="@+id/linear"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="-3dp"
-            android:orientation="horizontal">
+            android:layout_width="165dp"
+            android:layout_height="43dp"
+            android:layout_marginLeft="6dp"
+            android:layout_marginTop="6dp"
+            android:layout_weight="1"
+            android:orientation="vertical">
 
-            <com.facebook.drawee.view.SimpleDraweeView
-                android:id="@+id/playbar_img"
-                android:layout_width="43dp"
-                android:layout_height="43dp"
-                android:layout_marginLeft="6dp"
-                android:layout_marginTop="3dp"
-                fresco:placeholderImage="@drawable/placeholder_disk_210"
-                fresco:placeholderImageScaleType="fitXY"
-                android:layout_weight="0" />
+            <TextView
+                android:id="@+id/playbar_info"
+                android:layout_width="wrap_content"
+                android:layout_height="23dp"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:textSize="17dp" />
 
-            <LinearLayout
-                android:layout_width="165dp"
-                android:layout_height="43dp"
-                android:layout_marginLeft="6dp"
-                android:layout_marginTop="6dp"
-                android:layout_weight="1"
-                android:orientation="vertical">
-
-                <TextView
-                    android:id="@+id/playbar_info"
-                    android:layout_width="wrap_content"
-                    android:layout_height="23dp"
-                    android:ellipsize="end"
-                    android:maxLines="1"
-                    android:textSize="17dp" />
-
-                <TextView
-                    android:id="@+id/playbar_singer"
-                    android:layout_width="wrap_content"
-                    android:layout_height="16dp"
-                    android:ellipsize="end"
-                    android:maxLength="20"
-                    android:maxLines="1"
-                    android:textSize="10dp" />
-            </LinearLayout>
-
-
-            <ImageView
-                android:id="@+id/play_list"
-                android:layout_width="43dp"
-                android:layout_height="43dp"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:onClick="click_last"
-                android:src="@drawable/playbar_btn_playlist" />
-
-            <ImageView
-                android:id="@+id/control"
-                android:layout_width="41dp"
-                android:layout_height="46dp"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:src="@drawable/playbar_btn_play" />
-
-            <ImageView
-                android:id="@+id/play_next"
-                android:layout_width="43dp"
-                android:layout_height="43dp"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:onClick="click_next"
-                android:src="@drawable/playbar_btn_next" />
+            <TextView
+                android:id="@+id/playbar_singer"
+                android:layout_width="wrap_content"
+                android:layout_height="16dp"
+                android:ellipsize="end"
+                android:maxLength="20"
+                android:maxLines="1"
+                android:textSize="10dp" />
         </LinearLayout>
 
-            <ProgressBar
-                android:layout_marginTop="2dp"
-                android:layout_gravity="bottom"
-                android:id="@+id/song_progress_normal"
-                style="@style/Widget.AppCompat.ProgressBar.Horizontal"
-                android:layout_width="match_parent"
-                android:layout_height="2dp"
-                android:maxHeight="3dp"
-                android:progress="30"
-                android:progressDrawable="@drawable/progressbar_color"
-                android:tag="tint_accent_color" />
+
+        <ImageView
+            android:id="@+id/play_list"
+            android:layout_width="43dp"
+            android:layout_height="43dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:onClick="click_last"
+            android:src="@drawable/playbar_btn_playlist" />
+
+        <ImageView
+            android:id="@+id/control"
+            android:layout_width="41dp"
+            android:layout_height="46dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:src="@drawable/playbar_btn_play" />
+
+        <ImageView
+            android:id="@+id/play_next"
+            android:layout_width="43dp"
+            android:layout_height="43dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:onClick="click_next"
+            android:src="@drawable/playbar_btn_next" />
     </LinearLayout>
+
+    <ProgressBar
+        android:layout_marginTop="2dp"
+        android:layout_gravity="bottom"
+        android:id="@+id/song_progress_normal"
+        style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:maxHeight="3dp"
+        android:progress="30"
+        android:progressDrawable="@drawable/progressbar_color"
+        android:tag="tint_accent_color" />
+</LinearLayout>

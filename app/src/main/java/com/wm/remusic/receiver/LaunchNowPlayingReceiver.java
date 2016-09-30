@@ -32,7 +32,7 @@ public class LaunchNowPlayingReceiver extends BroadcastReceiver {
         activityIntent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT | Intent.FLAG_ACTIVITY_NEW_TASK);
         context.getApplicationContext().startActivity(activityIntent);
         Intent intent1 = new Intent();
-        intent1.setComponent(new ComponentName("com.wm.remusic","com.wm.remusic.activity.PlayingActivity.class"));
+        intent1.setComponent(new ComponentName("com.wm.remusic", "com.wm.remusic.activity.PlayingActivity.class"));
         context.sendBroadcast(intent1);
 //        }
 

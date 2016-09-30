@@ -6,19 +6,13 @@ import android.util.Log;
 import com.squareup.okhttp.OkHttpClient;
 import com.wm.remusic.provider.DownFileStore;
 
-import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Queue;
-import java.util.Stack;
-import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
-
-import bolts.Task;
 
 /**
  * Created by dzc on 15/11/21.
@@ -62,6 +56,7 @@ public class DownloadManager {
         }
         return downloadManager;
     }
+
     public void addDownloadTask(DownloadTask task, DownloadTaskListener listener) {
         if (null != currentTaskList.get(task.getId()) && task.getDownloadStatus() != DownloadStatus.DOWNLOAD_STATUS_INIT) {
             Log.d(TAG, "task already exist");
@@ -206,13 +201,13 @@ public class DownloadManager {
         return downloadTaskList;
     }
 
-    public List<DownloadTask> loadDownloadingTaskFromDB(){
+    public List<DownloadTask> loadDownloadingTaskFromDB() {
         List<DownloadDBEntity> list = loadAllDownloadEntityFromDB();
         List<DownloadTask> downloadTaskList = null;
         if (list != null && !list.isEmpty()) {
             downloadTaskList = new ArrayList<>();
             for (DownloadDBEntity entity : list) {
-                if(entity.getCompletedSize().equals(entity.getTotalSize())){
+                if (entity.getCompletedSize().equals(entity.getTotalSize())) {
                     continue;
                 }
 
@@ -222,14 +217,14 @@ public class DownloadManager {
         return downloadTaskList;
     }
 
-    public List<DownloadTask> loadDownloadCompletedTaskFromDB(){
+    public List<DownloadTask> loadDownloadCompletedTaskFromDB() {
         List<DownloadDBEntity> list = loadAllDownloadEntityFromDB();
         List<DownloadTask> downloadTaskList = null;
         if (list != null && !list.isEmpty()) {
             downloadTaskList = new ArrayList<>();
             for (DownloadDBEntity entity : list) {
-                if(entity.getCompletedSize().equals(entity.getTotalSize()))
-                downloadTaskList.add(DownloadTask.parse(entity, context));
+                if (entity.getCompletedSize().equals(entity.getTotalSize()))
+                    downloadTaskList.add(DownloadTask.parse(entity, context));
             }
         }
         return downloadTaskList;

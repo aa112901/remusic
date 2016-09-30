@@ -218,7 +218,7 @@ public class DownloadTask implements Runnable {
             Response response = client.newCall(request).execute();
             ResponseBody responseBody = response.body();
             if (responseBody != null) {
-                  downloadStatus = DownloadStatus.DOWNLOAD_STATUS_DOWNLOADING;
+                downloadStatus = DownloadStatus.DOWNLOAD_STATUS_DOWNLOADING;
                 if (totalSize <= 0)
                     totalSize = responseBody.contentLength();
 
@@ -328,7 +328,7 @@ public class DownloadTask implements Runnable {
 
 
     public float getPercent() {
-        if(totalSize == 0){
+        if (totalSize == 0) {
             return 0;
         }
         return completedSize * 100 / totalSize;

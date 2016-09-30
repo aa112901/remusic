@@ -6,7 +6,7 @@
         <item
             android:icon="@mipmap/topmenu_icn_cloud"
             android:id="@+id/down_bit"
-            android:title="下载歌曲品质"/>
+            android:title="下载歌曲品质" />
 
         <item
             android:id="@+id/timing_play"

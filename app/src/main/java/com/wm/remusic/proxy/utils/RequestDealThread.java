@@ -103,7 +103,7 @@ public class RequestDealThread extends Thread {
                 return;
             }
             // TODO 这里可能需要网络判断
-			/*
+            /*
 			 * 请求Range起始值和本地缓存比对。如果有缓存，得到缓存内容，修改Range。 如果没有缓存，则Range不变。
 			 */
             if (fileUtils.isEnable() && originRangeStart < fileUtils.getLength()) {

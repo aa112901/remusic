@@ -3,7 +3,6 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:toolbar="http://schemas.android.com/tools"
     android:fitsSystemWindows="true">
 
     <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -11,15 +10,13 @@
         android:id="@+id/recyclerview_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
-   >
+        android:orientation="vertical">
 
         <com.github.ksoichiro.android.observablescrollview.ObservableRecyclerView xmlns:android="http://schemas.android.com/apk/res/android"
             android:id="@+id/recyclerview"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_above="@+id/empty"
- />
+            android:layout_above="@+id/empty" />
 
         <ImageView
             android:id="@+id/empty"
@@ -27,7 +24,9 @@
             android:layout_height="50dp"
             android:layout_alignParentBottom="true" />
     </RelativeLayout>
-    <include layout="@layout/recycler_header"/>
+
+    <include layout="@layout/recycler_header" />
+
     <android.support.v7.widget.Toolbar
         android:theme="@style/Theme.AppCompat"
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
@@ -40,7 +39,8 @@
         android:id="@+id/state_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="350dp" >
+        android:layout_marginTop="350dp">
+
         <TextView
             android:id="@+id/try_again"
             android:layout_marginTop="50dp"

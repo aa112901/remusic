@@ -26,7 +26,6 @@ import com.wm.remusic.R;
 import com.wm.remusic.adapter.MusicFlowAdapter;
 import com.wm.remusic.adapter.OverFlowItem;
 import com.wm.remusic.dialog.AddNetPlaylistDialog;
-import com.wm.remusic.dialog.AddPlaylistDialog;
 import com.wm.remusic.handler.HandlerUtil;
 import com.wm.remusic.info.MusicInfo;
 import com.wm.remusic.provider.PlaylistsManager;
@@ -121,7 +120,7 @@ public class SimpleMoreFragment extends DialogFragment {
                 public void onItemClick(View view, String data) {
                     switch (Integer.parseInt(data)) {
                         case 0:
-                            if(adapterMusicInfo.islocal){
+                            if (adapterMusicInfo.islocal) {
                                 new Handler().postDelayed(new Runnable() {
                                     @Override
                                     public void run() {
@@ -151,7 +150,7 @@ public class SimpleMoreFragment extends DialogFragment {
                             dismiss();
                             break;
                         case 3:
-                            if(adapterMusicInfo.islocal){
+                            if (adapterMusicInfo.islocal) {
                                 new AlertDialog.Builder(mContext).setTitle(getResources().getString(R.string.sure_to_delete_music)).
                                         setPositiveButton(getResources().getString(R.string.sure), new DialogInterface.OnClickListener() {
                                             @Override
@@ -198,7 +197,7 @@ public class SimpleMoreFragment extends DialogFragment {
                             dismiss();
                             break;
                         case 4:
-                            if(adapterMusicInfo.islocal){
+                            if (adapterMusicInfo.islocal) {
                                 new AlertDialog.Builder(mContext).setTitle(getResources().getString(R.string.sure_to_set_ringtone)).
                                         setPositiveButton(getResources().getString(R.string.sure), new DialogInterface.OnClickListener() {
                                             @Override

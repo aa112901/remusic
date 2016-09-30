@@ -17,7 +17,6 @@ import com.wm.remusic.permissions.Nammu;
 import com.wm.remusic.provider.PlaylistInfo;
 import com.wm.remusic.uitl.IConstants;
 import com.wm.remusic.uitl.PreferencesUtility;
-import com.wm.remusic.widget.SplashScreen;
 
 /**
  * Created by wm on 2016/2/23.
@@ -150,7 +149,7 @@ public class MainApplication extends Application {
 
         if (!PreferencesUtility.getInstance(this).getFavriateMusicPlaylist()) {
             PlaylistInfo.getInstance(this).addPlaylist(favPlaylist, getResources().getString(R.string.my_fav_playlist),
-                    0, "res:/" + R.mipmap.lay_protype_default ,"local");
+                    0, "res:/" + R.mipmap.lay_protype_default, "local");
             PreferencesUtility.getInstance(this).setFavriateMusicPlaylist(true);
         }
     }

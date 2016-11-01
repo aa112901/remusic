@@ -3,6 +3,7 @@
 
 #screenshot
 ![](https://github.com/aa112901/remusic/blob/master/screenshot/1%20(2).png)
+![](https://github.com/aa112901/remusic/blob/master/screenshot/device-2016-11-01-103226.png)
 ![](https://github.com/aa112901/remusic/blob/master/screenshot/1%20(3).png)
 ![](https://github.com/aa112901/remusic/blob/master/screenshot/device-2016-08-18-213206.png)
 ![](https://github.com/aa112901/remusic/blob/master/screenshot/device-2016-08-18-213321.png)
@@ -29,12 +30,18 @@
 - [ImitateNetEasyCloud](https://github.com/GiitSmile/ImitateNetEasyCloud)
 - [okhttp](https://github.com/square/okhttp)
 - [CustomLrcView](https://github.com/android-lili/CustomLrcView-master)
+- [MagicaSakura](https://github.com/Bilibili/MagicaSakura "MagicaSakura")
 
 # Change Log
+## 11.1
+- 增加主题换肤
+- 其他
+
 ## 8.19 
 - 增加歌词浏览，歌词调节歌曲播放进度
 - 增加保存网络歌单到主页
 - 其他
+ 
 ##7.27
 - 改动底部控制栏为fragment，设置activity跳转无动画，使底部控制栏看起来全局固定在底部
 - 歌单列表使用Android-Observescrollview取代CollapsingToolbarLayout

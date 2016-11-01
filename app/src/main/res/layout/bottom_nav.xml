@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:fresco="http://schemas.android.com/apk/res-auto"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/nav_play"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -28,7 +29,7 @@
 
         <LinearLayout
             android:layout_width="165dp"
-            android:layout_height="43dp"
+            android:layout_height="41dp"
             android:layout_marginLeft="6dp"
             android:layout_marginTop="6dp"
             android:layout_weight="1"
@@ -53,39 +54,37 @@
         </LinearLayout>
 
 
-        <ImageView
+        <com.bilibili.magicasakura.widgets.TintImageView
             android:id="@+id/play_list"
             android:layout_width="43dp"
             android:layout_height="43dp"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:onClick="click_last"
+            app:imageTint="@color/theme_color_primary"
             android:src="@drawable/playbar_btn_playlist" />
 
-        <ImageView
+        <com.bilibili.magicasakura.widgets.TintImageView
             android:id="@+id/control"
             android:layout_width="41dp"
             android:layout_height="46dp"
             android:background="?attr/selectableItemBackgroundBorderless"
+            app:imageTint="@color/theme_color_primary"
             android:src="@drawable/playbar_btn_play" />
 
-        <ImageView
+        <com.bilibili.magicasakura.widgets.TintImageView
             android:id="@+id/play_next"
             android:layout_width="43dp"
             android:layout_height="43dp"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:onClick="click_next"
+            app:imageTint="@color/theme_color_primary"
             android:src="@drawable/playbar_btn_next" />
     </LinearLayout>
-
-    <ProgressBar
-        android:layout_marginTop="2dp"
-        android:layout_gravity="bottom"
+    <com.bilibili.magicasakura.widgets.TintProgressBar
         android:id="@+id/song_progress_normal"
         style="@style/Widget.AppCompat.ProgressBar.Horizontal"
         android:layout_width="match_parent"
-        android:layout_height="2dp"
-        android:maxHeight="3dp"
+        android:layout_height="10dp"
         android:progress="30"
-        android:progressDrawable="@drawable/progressbar_color"
-        android:tag="tint_accent_color" />
+        app:progressTint="@color/theme_color_primary" />
 </LinearLayout>

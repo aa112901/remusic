@@ -1,6 +1,9 @@
 package com.wm.remusic.activity;
 
+import android.app.Activity;
+import android.app.ActivityManager;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -9,6 +12,7 @@ import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -19,21 +23,25 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.bilibili.magicasakura.utils.ThemeUtils;
 import com.wm.remusic.R;
 import com.wm.remusic.adapter.MenuItemAdapter;
 import com.wm.remusic.fragment.BitSetFragment;
+import com.wm.remusic.dialog.CardPickerDialog;
 import com.wm.remusic.fragment.MainFragment;
 import com.wm.remusic.fragment.TimingFragment;
 import com.wm.remusic.fragmentnet.TabNetPagerFragment;
 import com.wm.remusic.handler.HandlerUtil;
 import com.wm.remusic.service.MusicPlayer;
+import com.wm.remusic.uitl.IConstants;
+import com.wm.remusic.uitl.ThemeHelper;
 import com.wm.remusic.widget.CustomViewPager;
 import com.wm.remusic.widget.SplashScreen;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends BaseActivity {
+public class MainActivity extends BaseActivity implements CardPickerDialog.ClickListener {
     private ActionBar ab;
     private ImageView barnet, barmusic, barfriends, search;
     private ArrayList<ImageView> tabs = new ArrayList<>();
@@ -68,7 +76,6 @@ public class MainActivity extends BaseActivity {
 
         setViewPager();
         setUpDrawer();
-
 
 //        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawerLayout, null, R.string.app_name, R.string.search);
 //        drawerLayout.setDrawerListener(toggle);
@@ -181,23 +188,32 @@ public class MainActivity extends BaseActivity {
                         drawerLayout.closeDrawers();
                         break;
                     case 2:
+                        CardPickerDialog dialog = new CardPickerDialog();
+                        dialog.setClickListener(MainActivity.this);
+                        dialog.show(getSupportFragmentManager(), "theme");
+                        drawerLayout.closeDrawers();
+
+                        break;
+                    case 3:
                         TimingFragment fragment3 = new TimingFragment();
                         fragment3.show(getSupportFragmentManager(), "timing");
                         drawerLayout.closeDrawers();
+
                         break;
-                    case 3:
+                    case 4:
                         BitSetFragment bfragment = new BitSetFragment();
                         bfragment.show(getSupportFragmentManager(), "bitset");
                         drawerLayout.closeDrawers();
+
                         break;
-                    case 4:
+                    case 5:
                         if (MusicPlayer.isPlaying()) {
                             MusicPlayer.playOrPause();
                         }
                         unbindService();
                         finish();
                         drawerLayout.closeDrawers();
-                        break;
+
                 }
             }
         });
@@ -212,6 +228,34 @@ public class MainActivity extends BaseActivity {
                 tabs.get(i).setSelected(false);
             }
         }
+    }
+
+    @Override
+    public void onConfirm(int currentTheme) {
+        Log.e("theme", "onconfirm");
+        if (ThemeHelper.getTheme(MainActivity.this) != currentTheme) {
+            Log.e("theme", "onconfirm end");
+            ThemeHelper.setTheme(MainActivity.this, currentTheme);
+            ThemeUtils.refreshUI(MainActivity.this, new ThemeUtils.ExtraRefreshable() {
+                        @Override
+                        public void refreshGlobal(Activity activity) {
+                            //for global setting, just do once
+                            if (Build.VERSION.SDK_INT >= 21) {
+                                final MainActivity context = MainActivity.this;
+                                ActivityManager.TaskDescription taskDescription = new ActivityManager.TaskDescription(null, null, ThemeUtils.getThemeAttrColor(context, android.R.attr.colorPrimary));
+                                setTaskDescription(taskDescription);
+                                getWindow().setStatusBarColor(ThemeUtils.getColorById(context, R.color.theme_color_primary_dark));
+                            }
+                        }
+
+                        @Override
+                        public void refreshSpecificView(View view) {
+                            //TODO: will do this for each traversal
+                        }
+                    }
+            );
+        }
+        sendBroadcast(new Intent(IConstants.CHANGE_THEME));
     }
 
     static class CustomViewPagerAdapter extends FragmentPagerAdapter {

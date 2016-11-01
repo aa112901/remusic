@@ -1,19 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <animation-list xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:oneshot="false">
     <item
+        app:drawableTint="@color/theme_color_primary"
         android:drawable="@drawable/loading1"
         android:duration="50" />
 
     <item
+        app:drawableTint="@color/theme_color_primary"
         android:drawable="@drawable/loading2"
         android:duration="50" />
 
     <item
+        app:drawableTint="@color/theme_color_primary"
         android:drawable="@drawable/loading3"
         android:duration="50" />
 
     <item
+        app:drawableTint="@color/theme_color_primary"
         android:drawable="@drawable/loading4"
         android:duration="50" />
 </animation-list>

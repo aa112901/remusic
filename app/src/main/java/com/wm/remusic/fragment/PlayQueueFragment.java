@@ -17,6 +17,7 @@ import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bilibili.magicasakura.widgets.TintImageView;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.wm.remusic.R;
@@ -220,6 +221,7 @@ public class PlayQueueFragment extends DialogFragment {
                 Log.e("current", MusicPlayer.getCurrentAudioId() + "" + "   " + musicInfo.songId);
                 ((ItemViewHolder) holder).playstate.setVisibility(View.VISIBLE);
                 ((ItemViewHolder) holder).playstate.setImageResource(R.drawable.song_play_icon);
+                ((ItemViewHolder) holder).playstate.setImageTintList(R.color.theme_color_primary);
                 currentlyPlayingPosition = position;
             } else {
                 ((ItemViewHolder) holder).playstate.setVisibility(View.GONE);
@@ -234,12 +236,13 @@ public class PlayQueueFragment extends DialogFragment {
 
 
         class ItemViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-            ImageView playstate, delete;
+            ImageView delete;
             TextView MusicName, Artist;
+            TintImageView playstate;
 
             public ItemViewHolder(View itemView) {
                 super(itemView);
-                this.playstate = (ImageView) itemView.findViewById(R.id.play_state);
+                this.playstate = (TintImageView) itemView.findViewById(R.id.play_state);
                 this.delete = (ImageView) itemView.findViewById(R.id.play_list_delete);
                 this.MusicName = (TextView) itemView.findViewById(R.id.play_list_musicname);
                 this.Artist = (TextView) itemView.findViewById(R.id.play_list_artist);

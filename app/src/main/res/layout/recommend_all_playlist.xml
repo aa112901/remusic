@@ -12,11 +12,11 @@
         android:layout_marginTop="10dp"
         android:orientation="horizontal">
 
-        <TextView
+        <com.bilibili.magicasakura.widgets.TintTextView
             android:layout_width="2dp"
             android:layout_height="match_parent"
             android:layout_marginLeft="10dp"
-            android:background="@color/themeColor" />
+            android:background="@color/theme_color_primary" />
 
         <TextView
             android:layout_width="wrap_content"

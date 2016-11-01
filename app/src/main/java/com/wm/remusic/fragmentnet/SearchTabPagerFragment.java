@@ -13,6 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
+import com.bilibili.magicasakura.utils.ThemeUtils;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -110,7 +111,8 @@ public class SearchTabPagerFragment extends Fragment {
                 TabLayout tabLayout = (TabLayout) contentView.findViewById(R.id.tabs);
                 tabLayout.setupWithViewPager(viewPager);
                 viewPager.setCurrentItem(page);
-
+                tabLayout.setTabTextColors(R.color.text_color, ThemeUtils.getThemeColorStateList(getActivity(), R.color.theme_color_primary).getDefaultColor());
+                tabLayout.setSelectedTabIndicatorColor(ThemeUtils.getThemeColorStateList(getActivity(), R.color.theme_color_primary).getDefaultColor());
                 frameLayout.removeAllViews();
                 frameLayout.addView(contentView);
 

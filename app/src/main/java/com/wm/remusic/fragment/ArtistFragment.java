@@ -13,9 +13,9 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bilibili.magicasakura.widgets.TintImageView;
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.wm.remusic.R;
 import com.wm.remusic.info.ArtistInfo;
@@ -180,6 +180,7 @@ public class ArtistFragment extends BaseFragment {
             //根据播放中歌曲的歌手名判断当前歌手专辑条目是否有播放的歌曲
             if (MusicPlayer.getCurrentArtistId() == (model.artist_id)) {
                 ((ListItemViewHolder) holder).moreOverflow.setImageResource(R.drawable.song_play_icon);
+                ((ListItemViewHolder) holder).moreOverflow.setImageTintList(R.color.theme_color_primary);
             } else {
                 ((ListItemViewHolder) holder).moreOverflow.setImageResource(R.drawable.abc_ic_menu_moreoverflow_mtrl_alpha);
             }
@@ -213,14 +214,14 @@ public class ArtistFragment extends BaseFragment {
             //ViewHolder
             SimpleDraweeView draweeView;
             TextView mainTitle, title;
-            ImageView moreOverflow;
+            TintImageView moreOverflow;
 
             ListItemViewHolder(View view) {
                 super(view);
                 this.mainTitle = (TextView) view.findViewById(R.id.viewpager_list_toptext);
                 this.title = (TextView) view.findViewById(R.id.viewpager_list_bottom_text);
                 this.draweeView = (SimpleDraweeView) view.findViewById(R.id.viewpager_list_img);
-                this.moreOverflow = (ImageView) view.findViewById(R.id.viewpager_list_button);
+                this.moreOverflow = (TintImageView) view.findViewById(R.id.viewpager_list_button);
 
                 //弹出frament菜单
                 this.moreOverflow.setOnClickListener(new View.OnClickListener() {

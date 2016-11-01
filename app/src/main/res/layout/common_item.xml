@@ -2,10 +2,11 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="46dp"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="?android:attr/selectableItemBackground"
     android:orientation="horizontal">
 
-    <ImageView
+    <com.bilibili.magicasakura.widgets.TintImageView
         android:id="@+id/play_all"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -14,6 +15,7 @@
         android:layout_gravity="center_vertical"
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"
+        app:imageTint="@color/theme_color_primary"
         android:src="@drawable/list_icn_play" />
 
     <TextView

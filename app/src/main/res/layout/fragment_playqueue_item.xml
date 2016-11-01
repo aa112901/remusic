@@ -9,7 +9,7 @@
         android:layout_height="match_parent"
         android:background="?android:attr/selectableItemBackground">
 
-        <ImageView
+        <com.bilibili.magicasakura.widgets.TintImageView
             android:id="@+id/play_state"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"

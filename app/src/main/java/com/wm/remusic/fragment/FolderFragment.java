@@ -18,6 +18,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bilibili.magicasakura.widgets.TintImageView;
 import com.wm.remusic.R;
 import com.wm.remusic.info.FolderInfo;
 import com.wm.remusic.service.MediaService;
@@ -204,6 +205,7 @@ public class FolderFragment extends BaseFragment {
             }
             if (folder_path != null && folder_path.equals(model.folder_path)) {
                 holder.moreOverflow.setImageResource(R.drawable.song_play_icon);
+                holder.moreOverflow.setImageTintList(R.color.theme_color_primary);
             } else {
                 holder.moreOverflow.setImageResource(R.drawable.abc_ic_menu_moreoverflow_mtrl_alpha);
             }
@@ -217,14 +219,15 @@ public class FolderFragment extends BaseFragment {
 
         public class ListItemViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
             //ViewHolder
-            ImageView imageView, moreOverflow;
+            ImageView imageView;
+            TintImageView moreOverflow;
             TextView Maintitle, title;
 
             ListItemViewHolder(View view) {
                 super(view);
                 this.Maintitle = (TextView) view.findViewById(R.id.viewpager_list_toptext);
                 this.title = (TextView) view.findViewById(R.id.viewpager_list_bottom_text);
-                this.moreOverflow = (ImageView) view.findViewById(R.id.viewpager_list_button);
+                this.moreOverflow = (TintImageView) view.findViewById(R.id.viewpager_list_button);
                 this.imageView = (ImageView) view.findViewById(R.id.viewpager_list_img);
                 moreOverflow.setOnClickListener(new View.OnClickListener() {
                     @Override

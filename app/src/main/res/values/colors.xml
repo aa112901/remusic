@@ -6,7 +6,7 @@
     <!-- notification text -->
     <color name="bottom_text">#c1c0c0</color>
 
-
+    <color name="theme_color_primary_dark">#b85671</color>
     <color name="primary_material_light_1">#3f51b5</color>
     <color name="background_material_light_1">#fafafa</color>
     <color name="background_material_light_2">#ed02fafa</color>
@@ -26,6 +26,7 @@
     <color name="avatar_background">#444444</color>
     <color name="accent_material_light">#d20000</color>
     <color name="primary_material_light">#f5f5f5</color>
+    <color name="theme_color_primary">#d20000</color>
 
     <color name="toolabar_color">#d20000</color>
 
@@ -49,7 +50,6 @@
     <color name="background_floating_material_light">@android:color/white</color>
     <color name="background_material_dark">@color/material_grey_850</color>
     <color name="background_material_light">@color/material_grey_50</color>
-    <color name="blue">#ff0000ff</color>
     <color name="bottomSheetNormalBackground">#f9ffffff</color>
     <color name="bottomSheetNormalBackgroundNight">#f9222326</color>
     <color name="bottomSheetNormalBackgroundPress">#ffe5e5e5</color>
@@ -314,6 +314,42 @@
     <color name="videoWindowBgPrs">#e5000000</color>
     <color name="white">#ffffff</color>
     <color name="smallRed">#cda2a6</color>
+
+
+
+
+    <!-- theme color -->
+    <color name="pink">#fb7299</color>
+    <color name="pink_dark">#b85671</color>
+    <color name="pink_trans">#99f0486c</color>
+
+    <color name="blue">#2196F3</color>
+    <color name="blue_dark">#1565C0</color>
+    <color name="blue_trans">#B41A78C3</color>
+
+    <color name="purple">#673AB7</color>
+    <color name="purple_dark">#311B92</color>
+    <color name="purple_trans">#99673AB7</color>
+
+    <color name="green">#4CAF50</color>
+    <color name="green_dark">#2E7D32</color>
+    <color name="green_trans">#994CAF50</color>
+
+    <color name="green_light">#8BC34A</color>
+    <color name="green_light_dark">#558B2F</color>
+    <color name="green_light_trans">#998BC34A</color>
+
+    <color name="yellow">#FDD835</color>
+    <color name="yellow_dark">#FBC02D</color>
+    <color name="yellow_trans">#99FDD835</color>
+
+    <color name="orange">#FF9800</color>
+    <color name="orange_dark">#EF6C00</color>
+    <color name="orange_trans">#99FF9800</color>
+
+    <color name="red">#F44336</color>
+    <color name="red_dark">#C62828</color>
+    <color name="red_trans">#99F44336</color>
 
 
 </resources>

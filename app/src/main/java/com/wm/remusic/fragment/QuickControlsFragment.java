@@ -12,10 +12,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bilibili.magicasakura.utils.ThemeUtils;
+import com.bilibili.magicasakura.widgets.TintImageView;
+import com.bilibili.magicasakura.widgets.TintProgressBar;
 import com.facebook.common.logging.FLog;
 import com.facebook.drawee.backends.pipeline.Fresco;
 import com.facebook.drawee.controller.BaseControllerListener;
@@ -35,7 +37,7 @@ import com.wm.remusic.service.MusicPlayer;
 public class QuickControlsFragment extends BaseFragment {
 
 
-    private ProgressBar mProgress;
+    private TintProgressBar mProgress;
     public Runnable mUpdateProgress = new Runnable() {
 
         @Override
@@ -51,7 +53,7 @@ public class QuickControlsFragment extends BaseFragment {
 
         }
     };
-    private ImageView mPlayPause;
+    private TintImageView mPlayPause;
     private TextView mTitle;
     private TextView mArtist;
     private SimpleDraweeView mAlbumArt;
@@ -71,8 +73,8 @@ public class QuickControlsFragment extends BaseFragment {
         View rootView = inflater.inflate(R.layout.bottom_nav, container, false);
         this.rootView = rootView;
 
-        mPlayPause = (ImageView) rootView.findViewById(R.id.control);
-        mProgress = (ProgressBar) rootView.findViewById(R.id.song_progress_normal);
+        mPlayPause = (TintImageView) rootView.findViewById(R.id.control);
+        mProgress = (TintProgressBar) rootView.findViewById(R.id.song_progress_normal);
         mTitle = (TextView) rootView.findViewById(R.id.playbar_info);
         mArtist = (TextView) rootView.findViewById(R.id.playbar_singer);
         mAlbumArt = (SimpleDraweeView) rootView.findViewById(R.id.playbar_img);
@@ -81,7 +83,7 @@ public class QuickControlsFragment extends BaseFragment {
 
         mProgress.setMax((int) MusicPlayer.duration());
         mProgress.setProgress((int) MusicPlayer.position());
-
+        mProgress.setProgressTintList(ThemeUtils.getThemeColorStateList(getContext(), R.color.theme_color_primary));
 
 //        LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams) mProgress.getLayoutParams();
 //        mProgress.measure(0, 0);
@@ -94,6 +96,7 @@ public class QuickControlsFragment extends BaseFragment {
 
                 mPlayPause.setImageResource(MusicPlayer.isPlaying() ? R.drawable.playbar_btn_pause
                         : R.drawable.playbar_btn_play);
+                mPlayPause.setImageTintList(R.color.theme_color_primary);
 
                 if (MusicPlayer.getQueueSize() == 0) {
                     Toast.makeText(MainApplication.context, getResources().getString(R.string.queue_is_empty),
@@ -224,9 +227,10 @@ public class QuickControlsFragment extends BaseFragment {
     public void updateState() {
         if (MusicPlayer.isPlaying()) {
             mPlayPause.setImageResource(R.drawable.playbar_btn_pause);
-
+            mPlayPause.setImageTintList(R.color.theme_color_primary);
         } else {
             mPlayPause.setImageResource(R.drawable.playbar_btn_play);
+            mPlayPause.setImageTintList(R.color.theme_color_primary);
         }
     }
 
@@ -239,6 +243,12 @@ public class QuickControlsFragment extends BaseFragment {
     @Override
     public void updateTime() {
         mProgress.setMax((int) MusicPlayer.duration());
+    }
+
+    @Override
+    public void changeTheme() {
+        super.changeTheme();
+        mProgress.setProgressTintList(ThemeUtils.getThemeColorStateList(getContext(), R.color.theme_color_primary));
     }
 
 

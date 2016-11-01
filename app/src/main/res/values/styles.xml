@@ -177,5 +177,10 @@
         <item name="android:textColor">@color/menu_item_white</item>
     </style>
 
+    <style name="AppTheme.AppCompat.Dialog.Alert" parent="Theme.AppCompat.Light.Dialog.Alert">
+        <item name="android:windowMinWidthMinor">90%</item>
+        <item name="android:windowMinWidthMajor">90%</item>
+        <item name="android:maxWidth">1080px</item>
+    </style>
 
 </resources>

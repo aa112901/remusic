@@ -2,6 +2,7 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:contentDescription="@string/app_name"
     android:scrollbarSize="10dp"
     android:scrollbarStyle="insideInset"
@@ -44,7 +45,7 @@
                             android:layout_height="wrap_content"
                             android:orientation="vertical">
 
-                            <ImageButton
+                            <com.bilibili.magicasakura.widgets.TintButton
                                 android:layout_width="55dp"
                                 android:layout_height="55dp"
                                 android:id="@+id/private_fm"
@@ -76,19 +77,19 @@
                                 android:layout_width="55dp"
                                 android:layout_height="55dp">
 
-                                <ImageButton
+                                <com.bilibili.magicasakura.widgets.TintButton
                                     android:id="@+id/daily_btn"
                                     android:layout_width="55dp"
                                     android:layout_height="55dp"
                                     android:background="@drawable/recommend_daily" />
 
-                                <TextView
+                                <com.bilibili.magicasakura.widgets.TintTextView
                                     android:id="@+id/daily_text"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:layout_gravity="center"
                                     android:text="15"
-                                    android:textColor="@color/themeColor"
+                                    android:textColor="@color/theme_color_primary"
                                     android:textSize="25sp" />
                             </FrameLayout>
 
@@ -116,7 +117,7 @@
                             android:layout_height="wrap_content"
                             android:orientation="vertical">
 
-                            <ImageButton
+                            <com.bilibili.magicasakura.widgets.TintButton
                                 android:layout_width="55dp"
                                 android:layout_height="55dp"
                                 android:layout_gravity="center"
@@ -180,7 +181,8 @@
                 android:textColor="#7D7D7D"
                 android:textSize="10sp" />
 
-            <LinearLayout
+            <com.bilibili.magicasakura.widgets.TintLinearLayout
+                app:imageTint="@color/theme_color_primary"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
@@ -190,15 +192,15 @@
                 android:clickable="true"
                 android:background="@drawable/btn_background">
 
-                <TextView
+                <com.bilibili.magicasakura.widgets.TintTextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="调整栏目顺序"
                     android:id="@+id/change_item_position"
-                    android:textColor="@color/themeColor"
+                    android:textColor="@color/theme_color_primary"
                     android:clickable="true"
                     android:textSize="12sp" />
-            </LinearLayout>
+            </com.bilibili.magicasakura.widgets.TintLinearLayout>
         </LinearLayout>
 
     </LinearLayout>

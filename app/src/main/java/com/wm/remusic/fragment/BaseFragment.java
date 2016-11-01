@@ -28,6 +28,8 @@ public class BaseFragment extends Fragment {
                 reloadAdapter();
             } else if (action.equals(MediaService.TRACK_PREPARED)) {
                 updateTime();
+            } else if (action.equals(IConstants.CHANGE_THEME)){
+                changeTheme();
             }
         }
     };
@@ -40,6 +42,7 @@ public class BaseFragment extends Fragment {
         f.addAction(IConstants.MUSIC_COUNT_CHANGED);
         f.addAction(IConstants.PLAYLIST_COUNT_CHANGED);
         f.addAction(MediaService.TRACK_PREPARED);
+        f.addAction(IConstants.CHANGE_THEME);
         getActivity().registerReceiver(mStatusListener, f);
     }
 
@@ -57,6 +60,10 @@ public class BaseFragment extends Fragment {
     }
 
     public void updateTime() {
+
+    }
+
+    public void changeTheme(){
 
     }
 

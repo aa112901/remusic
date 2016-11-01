@@ -13,10 +13,9 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
-import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bilibili.magicasakura.widgets.TintImageView;
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.wm.remusic.R;
 import com.wm.remusic.info.AlbumInfo;
@@ -198,6 +197,7 @@ public class AlbumFragment extends BaseFragment {
             //根据播放中歌曲的专辑名判断当前专辑条目是否有播放的歌曲
             if (MusicPlayer.getArtistName() != null && MusicPlayer.getAlbumName().equals(model.album_name)) {
                 ((ListItemViewHolder) holder).moreOverflow.setImageResource(R.drawable.song_play_icon);
+                ((ListItemViewHolder) holder).moreOverflow.setImageTintList(R.color.theme_color_primary);
             } else {
                 ((ListItemViewHolder) holder).moreOverflow.setImageResource(R.drawable.abc_ic_menu_moreoverflow_mtrl_alpha);
             }
@@ -212,7 +212,7 @@ public class AlbumFragment extends BaseFragment {
 
         //ViewHolder
         public class ListItemViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-            ImageView moreOverflow;
+            TintImageView moreOverflow;
             SimpleDraweeView draweeView;
             TextView title, title2;
 
@@ -221,7 +221,7 @@ public class AlbumFragment extends BaseFragment {
                 this.title = (TextView) view.findViewById(R.id.viewpager_list_toptext);
                 this.title2 = (TextView) view.findViewById(R.id.viewpager_list_bottom_text);
                 this.draweeView = (SimpleDraweeView) view.findViewById(R.id.viewpager_list_img);
-                this.moreOverflow = (ImageView) view.findViewById(R.id.viewpager_list_button);
+                this.moreOverflow = (TintImageView) view.findViewById(R.id.viewpager_list_button);
                 moreOverflow.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -245,52 +245,4 @@ public class AlbumFragment extends BaseFragment {
         }
     }
 
-
-    private class MyAdapter extends BaseAdapter {
-
-        @Override
-        public int getCount() {
-            return mAlbumList.size();
-        }
-
-        @Override
-        public AlbumInfo getItem(int position) {
-            return mAlbumList.get(position);
-        }
-
-        @Override
-        public long getItemId(int position) {
-            return position;
-        }
-
-        @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
-
-            AlbumInfo album = getItem(position);
-
-            ViewHolder viewHolder;
-            if (convertView == null) {
-                viewHolder = new ViewHolder();
-                convertView = getActivity().getLayoutInflater().inflate(
-                        R.layout.recyclerview_common_item, null);
-                viewHolder.albumNameTv = (TextView) convertView
-                        .findViewById(R.id.viewpager_list_toptext);
-                viewHolder.numberTv = (TextView) convertView
-                        .findViewById(R.id.viewpager_list_bottom_text);
-                convertView.setTag(viewHolder);
-            } else {
-                viewHolder = (ViewHolder) convertView.getTag();
-            }
-
-            viewHolder.albumNameTv.setText(album.album_name);
-            viewHolder.numberTv.setText(album.number_of_songs + "首歌");
-
-            return convertView;
-        }
-
-        private class ViewHolder {
-            TextView albumNameTv, numberTv;
-        }
-
-    }
 }

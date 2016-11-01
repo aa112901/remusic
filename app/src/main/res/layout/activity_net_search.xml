@@ -6,11 +6,11 @@
     android:background="@color/normalBackground"
     android:orientation="vertical">
 
-    <android.support.v7.widget.Toolbar
+    <com.bilibili.magicasakura.widgets.TintToolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/toolabar_color"
+        android:background="@color/theme_color_primary"
         android:minHeight="?attr/actionBarSize"
         android:theme="@style/Theme.AppCompat"
         app:popupTheme="@style/ThemeOverlay.AppCompat.Dark" />

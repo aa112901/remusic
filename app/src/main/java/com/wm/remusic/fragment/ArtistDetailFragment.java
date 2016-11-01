@@ -15,6 +15,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bilibili.magicasakura.widgets.TintImageView;
 import com.wm.remusic.R;
 import com.wm.remusic.activity.SelectActivity;
 import com.wm.remusic.info.ArtistInfo;
@@ -171,6 +172,7 @@ public class ArtistDetailFragment extends BaseFragment {
                 if (MusicPlayer.getCurrentAudioId() == musicInfo.songId) {
                     ((ListItemViewHolder) holder).playState.setVisibility(View.VISIBLE);
                     ((ListItemViewHolder) holder).playState.setImageResource(R.drawable.song_play_icon);
+                    ((ListItemViewHolder) holder).playState.setImageTintList(R.color.theme_color_primary);
                 } else {
                     ((ListItemViewHolder) holder).playState.setVisibility(View.GONE);
                 }
@@ -222,14 +224,15 @@ public class ArtistDetailFragment extends BaseFragment {
 
         public class ListItemViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
             //ViewHolder
-            ImageView moreOverflow, playState;
+            ImageView moreOverflow;
             TextView mainTitle, title;
+            TintImageView playState;
 
             ListItemViewHolder(View view) {
                 super(view);
                 this.mainTitle = (TextView) view.findViewById(R.id.viewpager_list_toptext);
                 this.title = (TextView) view.findViewById(R.id.viewpager_list_bottom_text);
-                this.playState = (ImageView) view.findViewById(R.id.play_state);
+                this.playState = (TintImageView) view.findViewById(R.id.play_state);
                 this.moreOverflow = (ImageView) view.findViewById(R.id.viewpager_list_button);
                 view.setOnClickListener(this);
                 //设置弹出菜单

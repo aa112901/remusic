@@ -16,6 +16,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
+import com.bilibili.magicasakura.utils.ThemeUtils;
 import com.wm.remusic.R;
 import com.wm.remusic.activity.LocalSearchActivity;
 import com.wm.remusic.uitl.CommonUtils;
@@ -96,8 +97,24 @@ public class TabPagerFragment extends Fragment {
             viewPager.setOffscreenPageLimit(2);
         }
 
-        TabLayout tabLayout = (TabLayout) rootView.findViewById(R.id.tabs);
+        final TabLayout tabLayout = (TabLayout) rootView.findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(viewPager);
+        tabLayout.setTabTextColors(R.color.text_color, ThemeUtils.getThemeColorStateList(getActivity(), R.color.theme_color_primary).getDefaultColor());
+//        tabLayout.setTabTextColors(ThemeUtils.getThemeColorStateList(getActivity(),R.color.theme_color_primary));
+//                try {
+//            Field mField = TableLayout.class.getDeclaredField("mTabTextColors");
+//            mField.setAccessible(true);
+//            mField.set(tabLayout,ThemeUtils.getThemeColorStateList(getActivity(),R.color.theme_color_primary));
+//        } catch (NoSuchFieldException e) {
+//            e.printStackTrace();
+//        } catch (IllegalArgumentException e) {
+//            e.printStackTrace();
+//        } catch (IllegalAccessException e) {
+//            e.printStackTrace();
+//        }
+
+        tabLayout.setSelectedTabIndicatorColor(ThemeUtils.getThemeColorStateList(getActivity(), R.color.theme_color_primary).getDefaultColor());
+
 
         return rootView;
 

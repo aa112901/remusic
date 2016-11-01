@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.bilibili.magicasakura.utils.ThemeUtils;
 import com.wm.remusic.R;
 
 import java.util.ArrayList;
@@ -60,7 +61,8 @@ public class TabNetPagerFragment extends Fragment implements ChangeView {
         }
 
         final TabLayout tabLayout = (TabLayout) rootView.findViewById(R.id.tabs);
-
+        tabLayout.setTabTextColors(R.color.text_color, ThemeUtils.getThemeColorStateList(getActivity(), R.color.theme_color_primary).getDefaultColor());
+        tabLayout.setSelectedTabIndicatorColor(ThemeUtils.getThemeColorStateList(getActivity(), R.color.theme_color_primary).getDefaultColor());
         new Thread(new Runnable() {
             @Override
             public void run() {

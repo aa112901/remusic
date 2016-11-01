@@ -15,7 +15,6 @@ import android.text.style.ImageSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -79,7 +78,7 @@ public class RecommendFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.recommend, container, false);
 
-        ImageButton privateFm = (ImageButton) view.findViewById(R.id.private_fm);
+//        ImageButton privateFm = (ImageButton) view.findViewById(R.id.private_fm);
 
         layoutInflater = LayoutInflater.from(getContext());
         TextView dailyText = (TextView) view.findViewById(R.id.daily_text);
@@ -161,6 +160,7 @@ public class RecommendFragment extends Fragment {
             protected void onPostExecute(Void v) {
 
                 v1 = layoutInflater.inflate(R.layout.recommend_playlist, linearLayout, false);
+
                 recyclerView1 = (RecyclerView) v1.findViewById(R.id.recommend_playlist_recyclerview);
                 gridLayoutManager = new GridLayoutManager(getActivity(), 3);
                 recyclerView1.setLayoutManager(gridLayoutManager);

@@ -10,6 +10,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 
+import com.bilibili.magicasakura.utils.ThemeUtils;
 import com.wm.remusic.R;
 import com.wm.remusic.fragment.DownFragment;
 import com.wm.remusic.fragment.DownMusicFragment;
@@ -57,6 +58,8 @@ public class DownActivity extends BaseActivity {
         }
 
         final TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
+        tabLayout.setTabTextColors(R.color.text_color, ThemeUtils.getThemeColorStateList(this, R.color.theme_color_primary).getDefaultColor());
+        tabLayout.setSelectedTabIndicatorColor(ThemeUtils.getThemeColorStateList(this, R.color.theme_color_primary).getDefaultColor());
 
         new Thread(new Runnable() {
             @Override

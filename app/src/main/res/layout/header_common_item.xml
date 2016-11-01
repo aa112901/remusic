@@ -2,6 +2,7 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="325dp"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="?android:attr/selectableItemBackground"
     android:orientation="horizontal">
 
@@ -13,7 +14,8 @@
         android:layout_width="match_parent"
         android:layout_height="55dp">
 
-        <ImageView
+        <com.bilibili.magicasakura.widgets.TintImageView
+            app:imageTint="@color/theme_color_primary"
             android:id="@+id/play_all"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

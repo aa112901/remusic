@@ -49,5 +49,12 @@
     <string name="sort_order_entry_artist">按歌手排序</string>
     <string name="sort_order_entry_number_of_songs">按歌曲数量排序</string>
 
+    <string name="confirm">ok</string>
+    <string name="textview_title_unlock">Unlock it</string>
+    <string name="textview_title_lock">Lock it</string>
+    <string name="textview_click_before">Unlock it to open the door of the new world !</string>
+    <string name="textview_click_after">Go to : https://github.com/Bilibili/MagicaSakura</string>
+
+
 
 </resources>

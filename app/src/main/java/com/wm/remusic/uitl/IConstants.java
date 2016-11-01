@@ -17,7 +17,7 @@
 package com.wm.remusic.uitl;
 
 /**
- * <p>
+ * <p/>
  * 常量接口
  */
 public interface IConstants {
@@ -25,6 +25,7 @@ public interface IConstants {
     String MUSIC_COUNT_CHANGED = "com.wm.remusic.musiccountchanged";
     String PLAYLIST_ITEM_MOVED = "com.wm.remusic.mmoved";
     String PLAYLIST_COUNT_CHANGED = "com.wm.remusic.playlistcountchanged";
+    String CHANGE_THEME = "com.wm.remusic.themechange";
     int MUSICOVERFLOW = 0;
     int ARTISTOVERFLOW = 1;
     int ALBUMOVERFLOW = 2;

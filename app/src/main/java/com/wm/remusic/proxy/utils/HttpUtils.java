@@ -43,7 +43,7 @@ public class HttpUtils {
 //		request.setRequestProperty(Constants.USER_AGENT, "TrafficRadio_BedPotato_Exclusive_UA");
         // TODO Others Header
         /*
-		 * 发送请求
+         * 发送请求
 		 */
         HttpURLConnection httpURLConnection = (HttpURLConnection) request;
         httpURLConnection.setConnectTimeout(20000);

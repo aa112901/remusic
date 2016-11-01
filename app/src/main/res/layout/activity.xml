@@ -4,16 +4,16 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <android.support.v7.widget.Toolbar
+    <com.bilibili.magicasakura.widgets.TintToolbar
         android:id="@+id/toolbar"
         android:fitsSystemWindows="true"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/toolabar_color"
+        android:background="@color/theme_color_primary"
         android:minHeight="?attr/actionBarSize"
         app:contentInsetStart="0.0dp"
         app:layout_scrollFlags="enterAlways|scroll"
-        app:theme="@style/ToolbarStyle">
+        >
 
         <RelativeLayout
             android:gravity="center"
@@ -53,7 +53,7 @@
                 android:layout_centerVertical="true"
                 android:background="@drawable/actionbar_search" />
         </RelativeLayout>
-    </android.support.v7.widget.Toolbar>
+    </com.bilibili.magicasakura.widgets.TintToolbar>
 
     <com.wm.remusic.widget.CustomViewPager
         android:layout_below="@+id/toolbar"

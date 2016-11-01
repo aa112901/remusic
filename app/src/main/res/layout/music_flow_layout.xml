@@ -7,7 +7,7 @@
     android:background="?android:attr/selectableItemBackground"
     android:orientation="horizontal">
 
-    <ImageView
+    <com.bilibili.magicasakura.widgets.TintImageView
         android:id="@+id/pop_list_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

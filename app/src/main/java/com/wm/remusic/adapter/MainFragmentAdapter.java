@@ -18,6 +18,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bilibili.magicasakura.widgets.TintImageView;
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.wm.remusic.R;
 import com.wm.remusic.activity.DownActivity;
@@ -95,6 +96,7 @@ public class MainFragmentAdapter extends RecyclerView.Adapter<MainFragmentAdapte
                 itemHolder.itemtitle.setText(item.title);
                 itemHolder.count.setText("(" + item.count + ")");
                 itemHolder.image.setImageResource(item.avatar);
+                itemHolder.image.setImageTintList(R.color.theme_color_primary);
                 setOnListener(itemHolder, i);
                 break;
             case 1:
@@ -304,12 +306,13 @@ public class MainFragmentAdapter extends RecyclerView.Adapter<MainFragmentAdapte
 
     public class ItemHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         protected TextView itemtitle, title, count, songcount, sectionItem;
-        protected ImageView image, menu, sectionImg, sectionMenu;
+        protected ImageView menu, sectionImg, sectionMenu;
         SimpleDraweeView albumArt;
+        protected TintImageView image;
 
         public ItemHolder(View view) {
             super(view);
-            this.image = (ImageView) view.findViewById(R.id.fragment_main_item_img);
+            this.image = (TintImageView) view.findViewById(R.id.fragment_main_item_img);
             this.itemtitle = (TextView) view.findViewById(R.id.fragment_main_item_title);
             this.count = (TextView) view.findViewById(R.id.fragment_main_item_count);
 

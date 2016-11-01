@@ -51,7 +51,7 @@
     </LinearLayout>
 
 
-    <ImageView
+    <com.bilibili.magicasakura.widgets.TintImageView
         android:id="@+id/viewpager_list_button"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
@@ -60,6 +60,7 @@
         android:background="?attr/selectableItemBackgroundBorderless"
         android:focusable="false"
         android:padding="15dp"
+        android:scaleType="centerInside"
         android:src="@drawable/list_icn_more" />
 
 </RelativeLayout>

@@ -5,9 +5,9 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bilibili.magicasakura.widgets.TintImageView;
 import com.wm.remusic.R;
 import com.wm.remusic.info.MusicInfo;
 
@@ -53,6 +53,7 @@ public class MusicFlowAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         OverFlowItem minfo = mList.get(position);
         ((ListItemViewHolder) holder).icon.setImageResource(minfo.getAvatar());
+        ((ListItemViewHolder) holder).icon.setImageTintList(R.color.theme_color_primary);
         ((ListItemViewHolder) holder).title.setText(minfo.getTitle());
         //设置tag
         ((ListItemViewHolder) holder).itemView.setTag(position + "");
@@ -70,12 +71,12 @@ public class MusicFlowAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     }
 
     public class ListItemViewHolder extends RecyclerView.ViewHolder {
-        ImageView icon;
+        TintImageView icon;
         TextView title;
 
         ListItemViewHolder(View view) {
             super(view);
-            this.icon = (ImageView) view.findViewById(R.id.pop_list_view);
+            this.icon = (TintImageView) view.findViewById(R.id.pop_list_view);
             this.title = (TextView) view.findViewById(R.id.pop_list_item);
 
         }

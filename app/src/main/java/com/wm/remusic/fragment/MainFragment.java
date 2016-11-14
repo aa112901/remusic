@@ -47,8 +47,6 @@ public class MainFragment extends BaseFragment {
     private PlaylistInfo playlistInfo; //playlist 管理类
     private SwipeRefreshLayout swipeRefresh; //下拉刷新layout
     private Context mContext;
-    private SideBar sideBar;
-    private TextView dialogText;
 
 
     /**
@@ -86,38 +84,11 @@ public class MainFragment extends BaseFragment {
 
             }
         });
-        sideBar = (SideBar) view.findViewById(R.id.sidebar);
-        dialogText = (TextView) view.findViewById(R.id.dialog_text);
         //先给adapter设置空数据，异步加载好后更新数据，防止Recyclerview no attach
         mAdapter = new MainFragmentAdapter(mContext, null, null);
         recyclerView.setAdapter(mAdapter);
         recyclerView.addItemDecoration(new DividerItemDecoration(mContext, DividerItemDecoration.VERTICAL_LIST));
         reloadAdapter();
-
-        sideBar.setOnTouchingLetterChangedListener(new SideBar.OnTouchingLetterChangedListener() {
-            @Override
-            public void onTouchingLetterChanged(String s) {
-                dialogText.setText(s);
-                sideBar.setView(dialogText);
-            }
-        });
-        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
-            @Override
-            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
-                super.onScrollStateChanged(recyclerView, newState);
-                if(newState == RecyclerView.SCROLL_STATE_DRAGGING){
-                    sideBar.setVisibility(View.VISIBLE);
-                }else if(newState == RecyclerView.SCROLL_STATE_IDLE){
-                    sideBar.postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            sideBar.setVisibility(View.INVISIBLE);
-                        }
-                    },2000);
-                }
-            }
-        });
-
 
         getActivity().getWindow().setBackgroundDrawableResource(R.color.background_material_light_1);
         return view;
@@ -132,7 +103,6 @@ public class MainFragment extends BaseFragment {
             reloadAdapter();
         }
     }
-
 
 
     //为info设置数据，并放入mlistInfo

@@ -20,7 +20,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bilibili.magicasakura.widgets.TintImageView;
-import com.github.promeg.pinyinhelper.Pinyin;
 import com.wm.remusic.R;
 import com.wm.remusic.activity.SelectActivity;
 import com.wm.remusic.info.MusicInfo;
@@ -60,8 +59,6 @@ public class MusicFragment extends BaseFragment {
         if (isVisibleToUser) {
             if (view == null) {
                 view = LayoutInflater.from(getActivity()).inflate(R.layout.recylerview, frameLayout, false);
-                sideBar = (SideBar) view.findViewById(R.id.sidebar);
-                dialogText = (TextView) view.findViewById(R.id.dialog_text);
                 recyclerView = (RecyclerView) view.findViewById(R.id.recyclerview);
                 layoutManager = new LinearLayoutManager(getActivity());
                 recyclerView.setLayoutManager(layoutManager);
@@ -77,22 +74,6 @@ public class MusicFragment extends BaseFragment {
                     public void onTouchingLetterChanged(String s) {
                         dialogText.setText(s);
                         sideBar.setView(dialogText);
-                    }
-                });
-                recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
-                    @Override
-                    public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
-                        super.onScrollStateChanged(recyclerView, newState);
-                        if(newState == RecyclerView.SCROLL_STATE_DRAGGING){
-                            sideBar.setVisibility(View.VISIBLE);
-                        }else if(newState == RecyclerView.SCROLL_STATE_IDLE){
-//                            sideBar.postDelayed(new Runnable() {
-//                                @Override
-//                                public void run() {
-//                                    sideBar.setVisibility(View.INVISIBLE);
-//                                }
-//                            },2000);
-                        }
                     }
                 });
                 // new loadSongs().execute("");

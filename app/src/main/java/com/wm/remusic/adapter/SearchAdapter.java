@@ -28,8 +28,10 @@ import com.wm.remusic.R;
 import com.wm.remusic.fragment.SimpleMoreFragment;
 import com.wm.remusic.info.MusicInfo;
 import com.wm.remusic.service.MusicPlayer;
+import com.wm.remusic.uitl.MusicUtils;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ItemHolder> {
@@ -101,15 +103,21 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ItemHolder
 
         @Override
         public void onClick(View v) {
-            final Handler handler = new Handler();
-            handler.postDelayed(new Runnable() {
+            new Thread(new Runnable() {
                 @Override
                 public void run() {
-                    long[] ret = new long[1];
-                    ret[0] = ((MusicInfo) searchResults.get(getAdapterPosition())).songId;
-                    MusicPlayer.playAll(null, ret, 0, false);
+                    long[] list = new long[searchResults.size()];
+                    HashMap<Long, MusicInfo> infos = new HashMap();
+                    for (int i = 0; i < searchResults.size(); i++) {
+                        MusicInfo info = searchResults.get(i);
+                        list[i] = info.songId;
+                        info.islocal = true;
+                        info.albumData = MusicUtils.getAlbumArtUri(info.albumId) + "";
+                        infos.put(list[i], searchResults.get(i));
+                    }
+                    MusicPlayer.playAll(infos, list, getAdapterPosition(), false);
                 }
-            }, 100);
+            }).start();
 
         }
 

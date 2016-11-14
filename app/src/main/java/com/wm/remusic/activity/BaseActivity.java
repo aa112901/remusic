@@ -33,6 +33,7 @@ public class BaseActivity extends AppCompatActivity implements ServiceConnection
     private MusicPlayer.ServiceToken mToken;
     private PlaybackStatus mPlaybackStatus; //receiver 接受播放状态变化等
     private QuickControlsFragment fragment; //底部播放控制栏
+    private String TAG = "BaseActivity";
 
 
     /**
@@ -84,7 +85,7 @@ public class BaseActivity extends AppCompatActivity implements ServiceConnection
      * @param show 显示或关闭底部播放控制栏
      */
     protected void showQuickControl(boolean show) {
-        Log.e("showorhide", MusicPlayer.getQueue().length + "");
+        Log.d(TAG, MusicPlayer.getQueue().length + "");
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         if (show) {
             if (fragment == null) {
@@ -112,26 +113,11 @@ public class BaseActivity extends AppCompatActivity implements ServiceConnection
         f.addAction(IConstants.MUSIC_COUNT_CHANGED);
         f.addAction(MediaService.TRACK_PREPARED);
         f.addAction(MediaService.BUFFER_UP);
-        f.addAction("com.wm.remusic.emptyplaylist");
+        f.addAction(IConstants.EMPTY_LIST);
         registerReceiver(mPlaybackStatus, new IntentFilter(f));
         showQuickControl(true);
     }
 
-    @Override
-    protected void onStart() {
-        super.onStart();
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-
-    }
 
     @Override
     public void onServiceConnected(final ComponentName name, final IBinder service) {
@@ -187,7 +173,7 @@ public class BaseActivity extends AppCompatActivity implements ServiceConnection
                     baseActivity.updateTime();
                 } else if (action.equals(MediaService.BUFFER_UP)) {
                     baseActivity.updateBuffer(intent.getIntExtra("progress", 0));
-                } else if (action.equals("com.wm.remusic.emptyplaylist")) {
+                } else if (action.equals(IConstants.EMPTY_LIST)) {
 
                 } else if (action.equals(MediaService.REFRESH)) {
 

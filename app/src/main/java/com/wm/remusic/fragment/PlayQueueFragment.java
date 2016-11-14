@@ -26,6 +26,7 @@ import com.wm.remusic.info.MusicInfo;
 import com.wm.remusic.provider.MusicPlaybackState;
 import com.wm.remusic.recent.QueueLoader;
 import com.wm.remusic.service.MusicPlayer;
+import com.wm.remusic.uitl.IConstants;
 import com.wm.remusic.widget.DividerItemDecoration;
 
 import java.io.BufferedReader;
@@ -85,11 +86,6 @@ public class PlayQueueFragment extends DialogFragment {
         addToPlaylist.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                long[] list = new long[playlist.size()];
-//                for (int i = 0; i < playlist.size(); i++) {
-//                    list[i] = playlist.get(i).songId;
-//                }
-//                AddPlaylistDialog.newInstance(list).show(getFragmentManager(), "add");
                 AddNetPlaylistDialog.newInstance(playlist).show(getFragmentManager(), "add");
             }
         });
@@ -100,7 +96,7 @@ public class PlayQueueFragment extends DialogFragment {
             public void onClick(View v) {
                 MusicPlayer.clearQueue();
                 MusicPlayer.stop();
-                Intent intent = new Intent("com.wm.remusic.emptyplaylist");
+                Intent intent = new Intent(IConstants.EMPTY_LIST);
                 intent.putExtra("showorhide", "hide");
                 getActivity().sendBroadcast(intent);
                 adapter.notifyDataSetChanged();

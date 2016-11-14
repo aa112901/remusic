@@ -26,6 +26,7 @@ public interface IConstants {
     String PLAYLIST_ITEM_MOVED = "com.wm.remusic.mmoved";
     String PLAYLIST_COUNT_CHANGED = "com.wm.remusic.playlistcountchanged";
     String CHANGE_THEME = "com.wm.remusic.themechange";
+    String EMPTY_LIST = "com.wm.remusic.emptyplaylist";
     int MUSICOVERFLOW = 0;
     int ARTISTOVERFLOW = 1;
     int ALBUMOVERFLOW = 2;

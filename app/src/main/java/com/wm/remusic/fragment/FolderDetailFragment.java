@@ -265,6 +265,7 @@ public class FolderDetailFragment extends BaseFragment {
                             info.albumData = MusicUtils.getAlbumArtUri(info.albumId) + "";
                             infos.put(list[i], mList.get(i));
                         }
+                        if(getAdapterPosition() > 0)
                         MusicPlayer.playAll(infos, list, getAdapterPosition() - 1, false);
                     }
                 }).start();

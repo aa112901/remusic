@@ -14,7 +14,9 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
+import com.bilibili.magicasakura.utils.ThemeUtils;
 import com.wm.remusic.R;
 import com.wm.remusic.adapter.MainFragmentAdapter;
 import com.wm.remusic.adapter.MainFragmentItem;
@@ -26,6 +28,7 @@ import com.wm.remusic.recent.TopTracksLoader;
 import com.wm.remusic.uitl.IConstants;
 import com.wm.remusic.uitl.MusicUtils;
 import com.wm.remusic.widget.DividerItemDecoration;
+import com.wm.remusic.widget.SideBar;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,6 +47,8 @@ public class MainFragment extends BaseFragment {
     private PlaylistInfo playlistInfo; //playlist 管理类
     private SwipeRefreshLayout swipeRefresh; //下拉刷新layout
     private Context mContext;
+    private SideBar sideBar;
+    private TextView dialogText;
 
 
     /**
@@ -52,7 +57,6 @@ public class MainFragment extends BaseFragment {
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-
         if (requestCode == 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
             loadCount();
         }
@@ -73,7 +77,8 @@ public class MainFragment extends BaseFragment {
         recyclerView = (RecyclerView) view.findViewById(R.id.recyclerview);
         layoutManager = new LinearLayoutManager(mContext);
         recyclerView.setLayoutManager(layoutManager);
-        swipeRefresh.setColorSchemeResources(R.color.theme_color_PrimaryAccent);
+        //swipeRefresh.setColorSchemeResources(R.color.theme_color_PrimaryAccent);
+        swipeRefresh.setColorSchemeColors(ThemeUtils.getColorById(mContext,R.color.theme_color_primary));
         swipeRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
@@ -81,12 +86,38 @@ public class MainFragment extends BaseFragment {
 
             }
         });
-
+        sideBar = (SideBar) view.findViewById(R.id.sidebar);
+        dialogText = (TextView) view.findViewById(R.id.dialog_text);
         //先给adapter设置空数据，异步加载好后更新数据，防止Recyclerview no attach
         mAdapter = new MainFragmentAdapter(mContext, null, null);
         recyclerView.setAdapter(mAdapter);
         recyclerView.addItemDecoration(new DividerItemDecoration(mContext, DividerItemDecoration.VERTICAL_LIST));
         reloadAdapter();
+
+        sideBar.setOnTouchingLetterChangedListener(new SideBar.OnTouchingLetterChangedListener() {
+            @Override
+            public void onTouchingLetterChanged(String s) {
+                dialogText.setText(s);
+                sideBar.setView(dialogText);
+            }
+        });
+        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+                if(newState == RecyclerView.SCROLL_STATE_DRAGGING){
+                    sideBar.setVisibility(View.VISIBLE);
+                }else if(newState == RecyclerView.SCROLL_STATE_IDLE){
+                    sideBar.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            sideBar.setVisibility(View.INVISIBLE);
+                        }
+                    },2000);
+                }
+            }
+        });
+
 
         getActivity().getWindow().setBackgroundDrawableResource(R.color.background_material_light_1);
         return view;
@@ -102,14 +133,10 @@ public class MainFragment extends BaseFragment {
         }
     }
 
-    @Override
-    public void onPause() {
-        super.onPause();
-    }
 
 
     //为info设置数据，并放入mlistInfo
-    public void setInfo(String title, int count, int id, int i) {
+    private void setInfo(String title, int count, int id, int i) {
         MainFragmentItem information = new MainFragmentItem();
         information.title = title;
         information.count = count;
@@ -122,7 +149,7 @@ public class MainFragment extends BaseFragment {
 
     //设置音乐overflow条目
     private void setMusicInfo() {
-        TopTracksLoader recentloader = new TopTracksLoader(mContext.getApplicationContext(), TopTracksLoader.QueryType.RecentSongs);
+
         if (ContextCompat.checkSelfPermission(mContext, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
             requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 0);
         } else {
@@ -132,7 +159,7 @@ public class MainFragment extends BaseFragment {
 
     private void loadCount() {
         int localMusicCount = MusicUtils.queryMusic(mContext, IConstants.START_FROM_LOCAL).size();
-        int recentMusicCount = SongLoader.getSongsForCursor(TopTracksLoader.getCursor()).size();
+        int recentMusicCount = TopTracksLoader.getCursor(mContext,TopTracksLoader.QueryType.RecentSongs).getCount();
         int downLoadCount = DownFileStore.getInstance(mContext).getDownLoadedListAll().size();
         int artistsCount = MusicUtils.queryArtist(mContext).size();
         setInfo(mContext.getResources().getString(R.string.local_music), localMusicCount, R.drawable.music_icn_local, 0);
@@ -172,5 +199,9 @@ public class MainFragment extends BaseFragment {
         }.execute();
     }
 
-
+    @Override
+    public void changeTheme() {
+        super.changeTheme();
+        swipeRefresh.setColorSchemeColors(ThemeUtils.getColorById(mContext,R.color.theme_color_primary));
+    }
 }

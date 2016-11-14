@@ -90,6 +90,7 @@ import com.wm.remusic.proxy.utils.MediaPlayerProxy;
 import com.wm.remusic.receiver.MediaButtonIntentReceiver;
 import com.wm.remusic.recent.SongPlayCount;
 import com.wm.remusic.uitl.CommonUtils;
+import com.wm.remusic.uitl.IConstants;
 import com.wm.remusic.uitl.ImageUtils;
 import com.wm.remusic.uitl.PreferencesUtility;
 
@@ -1311,7 +1312,7 @@ public class MediaService extends Service {
             mSongPlayCount.bumpSongCount(getAudioId());
 
         } else if (what.equals(QUEUE_CHANGED)) {
-            Intent intent1 = new Intent("com.wm.remusic.emptyplaylist");
+            Intent intent1 = new Intent(IConstants.EMPTY_LIST);
             intent.putExtra("showorhide", "show");
             sendBroadcast(intent1);
             saveQueue(true);
@@ -2882,7 +2883,7 @@ public class MediaService extends Service {
 
 
         public long duration() {
-            if (mIsTrackPrepared) {
+            if (mIsTrackPrepared && mCurrentMediaPlayer.isPlaying()) {
                 return mCurrentMediaPlayer.getDuration();
             }
             return -1;

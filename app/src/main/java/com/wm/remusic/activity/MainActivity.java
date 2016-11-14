@@ -47,6 +47,7 @@ public class MainActivity extends BaseActivity implements CardPickerDialog.Click
     private ArrayList<ImageView> tabs = new ArrayList<>();
     private DrawerLayout drawerLayout;
     private ListView mLvLeftMenu;
+    private long time = 0;
 
     public void onCreate(Bundle savedInstanceState) {
         final SplashScreen splashScreen = new SplashScreen(this);
@@ -63,8 +64,6 @@ public class MainActivity extends BaseActivity implements CardPickerDialog.Click
 
         getWindow().setBackgroundDrawableResource(R.color.background_material_light_1);
 
-        setToolBar();
-
         barnet = (ImageView) findViewById(R.id.bar_net);
         barmusic = (ImageView) findViewById(R.id.bar_music);
         barfriends = (ImageView) findViewById(R.id.bar_friends);
@@ -74,40 +73,9 @@ public class MainActivity extends BaseActivity implements CardPickerDialog.Click
         drawerLayout = (DrawerLayout) findViewById(R.id.fd);
         mLvLeftMenu = (ListView) findViewById(R.id.id_lv_left_menu);
 
+        setToolBar();
         setViewPager();
         setUpDrawer();
-
-//        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawerLayout, null, R.string.app_name, R.string.search);
-//        drawerLayout.setDrawerListener(toggle);
-//        toggle.syncState();
-//
-//        final NavigationView navigationview = (NavigationView) findViewById(R.id.nav);
-//        navigationview.setClickable(true);
-//      //  navigationview.setNavigationItemSelectedListener(this);
-//        getWindow().setBackgroundDrawableResource(R.color.background_material_light_1);
-//        View headerView = navigationview.getHeaderView(2);
-//        RelativeLayout relativeLayout = (RelativeLayout) findViewById(R.id.navigation_view);
-//        relativeLayout.setSelected(true);
-//        LinearLayout timePlay = (LinearLayout) findViewById(R.id.timing_play);
-//        LinearLayout downBit = (LinearLayout) findViewById(R.id.down_bit);
-//        TextView exit = (TextView) findViewById(R.id.action_exit);
-//
-//        timePlay.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                TimingFragment fragment = new TimingFragment();
-//                fragment.show(getSupportFragmentManager(), "timing");
-//                drawerLayout.closeDrawers();
-//            }
-//        });
-//
-//        downBit.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//
-//            }
-//        });
-
 
     }
 
@@ -153,9 +121,7 @@ public class MainActivity extends BaseActivity implements CardPickerDialog.Click
         barnet.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (customViewPager != null) {
                     customViewPager.setCurrentItem(0);
-                }
             }
         });
         barmusic.setOnClickListener(new View.OnClickListener() {
@@ -232,9 +198,7 @@ public class MainActivity extends BaseActivity implements CardPickerDialog.Click
 
     @Override
     public void onConfirm(int currentTheme) {
-        Log.e("theme", "onconfirm");
         if (ThemeHelper.getTheme(MainActivity.this) != currentTheme) {
-            Log.e("theme", "onconfirm end");
             ThemeHelper.setTheme(MainActivity.this, currentTheme);
             ThemeUtils.refreshUI(MainActivity.this, new ThemeUtils.ExtraRefreshable() {
                         @Override
@@ -244,7 +208,7 @@ public class MainActivity extends BaseActivity implements CardPickerDialog.Click
                                 final MainActivity context = MainActivity.this;
                                 ActivityManager.TaskDescription taskDescription = new ActivityManager.TaskDescription(null, null, ThemeUtils.getThemeAttrColor(context, android.R.attr.colorPrimary));
                                 setTaskDescription(taskDescription);
-                                getWindow().setStatusBarColor(ThemeUtils.getColorById(context, R.color.theme_color_primary_dark));
+                                getWindow().setStatusBarColor(ThemeUtils.getColorById(context, R.color.theme_color_primary));
                             }
                         }
 
@@ -281,36 +245,6 @@ public class MainActivity extends BaseActivity implements CardPickerDialog.Click
 
     }
 
-
-//    @Override
-//    public boolean onNavigationItemSelected(MenuItem item) {
-//        // Handle navigation view item clicks here.
-//        switch (item.getItemId()) {
-//
-//            case R.id.timing_play:
-//                TimingFragment fragment = new TimingFragment();
-//                fragment.show(getSupportFragmentManager(), "timing");
-//                break;
-//            case R.id.action_exit:// 退出
-//
-//                if (MusicPlayer.isPlaying()) {
-//                    MusicPlayer.playOrPause();
-//                }
-//                unbindService();
-//                finish();
-//
-//            case R.id.down_bit:
-//                BitSetFragment bfragment = new BitSetFragment();
-//                bfragment.show(getSupportFragmentManager(), "bitset");
-//
-//                break;
-//
-//        }
-//
-//        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.fd);
-//        drawer.closeDrawer(GravityCompat.START);
-//        return true;
-//    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -351,7 +285,7 @@ public class MainActivity extends BaseActivity implements CardPickerDialog.Click
 //    }
 
 
-    long time = 0;
+
 
     /**
      * 双击返回桌面

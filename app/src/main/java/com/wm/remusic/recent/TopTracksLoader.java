@@ -27,12 +27,18 @@ import java.util.ArrayList;
 public class TopTracksLoader extends SongLoader {
 
     public static final int NUMBER_OF_SONGS = 99;
-    protected static QueryType mQueryType;
+    public static QueryType mQueryType;
     private static Context mContext;
 
     public TopTracksLoader(final Context context, QueryType type) {
         mContext = context;
         mQueryType = type;
+    }
+
+    public static Cursor getCursor(Context context,QueryType queryType) {
+        mQueryType = queryType;
+        mContext = context;
+        return getCursor();
     }
 
     public static Cursor getCursor() {

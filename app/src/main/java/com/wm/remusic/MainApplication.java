@@ -226,10 +226,6 @@ public class MainApplication extends Application implements ThemeUtils.switchCol
         switch (color) {
             case 0xd20000:
                 return context.getResources().getIdentifier(theme, "color", getPackageName());
-            case 0xffb85671:
-                return context.getResources().getIdentifier(theme + "_dark", "color", getPackageName());
-            case 0x99f0486c:
-                return context.getResources().getIdentifier(theme + "_trans", "color", getPackageName());
         }
         return -1;
     }

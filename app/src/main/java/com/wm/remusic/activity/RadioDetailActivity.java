@@ -663,6 +663,7 @@ public class RadioDetailActivity extends BaseActivity implements ObservableScrol
 //                                musicInfo.albumData = sparseArray.get(i).getPic_radio();
 //                                infos.put(list[i] , musicInfo);
 //                            }
+                        if(getAdapterPosition() > 0)
                         MusicPlayer.playAll(infos, list, getAdapterPosition() - 1, false);
                     }
                 }).start();

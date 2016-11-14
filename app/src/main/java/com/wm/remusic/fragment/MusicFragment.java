@@ -2,6 +2,7 @@ package com.wm.remusic.fragment;
 
 
 import android.content.Intent;
+import android.database.Cursor;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -19,6 +20,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bilibili.magicasakura.widgets.TintImageView;
+import com.github.promeg.pinyinhelper.Pinyin;
 import com.wm.remusic.R;
 import com.wm.remusic.activity.SelectActivity;
 import com.wm.remusic.info.MusicInfo;
@@ -28,6 +30,9 @@ import com.wm.remusic.uitl.MusicUtils;
 import com.wm.remusic.uitl.PreferencesUtility;
 import com.wm.remusic.uitl.SortOrder;
 import com.wm.remusic.widget.DividerItemDecoration;
+import com.wm.remusic.widget.SideBar;
+
+import net.sourceforge.pinyin4j.PinyinHelper;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -46,6 +51,8 @@ public class MusicFragment extends BaseFragment {
     private FrameLayout frameLayout;
     private View view;
     private boolean isFirstLoad = true;
+    private SideBar sideBar;
+    private TextView dialogText;
 
     @Override
     public void setUserVisibleHint(boolean isVisibleToUser) {
@@ -53,6 +60,8 @@ public class MusicFragment extends BaseFragment {
         if (isVisibleToUser) {
             if (view == null) {
                 view = LayoutInflater.from(getActivity()).inflate(R.layout.recylerview, frameLayout, false);
+                sideBar = (SideBar) view.findViewById(R.id.sidebar);
+                dialogText = (TextView) view.findViewById(R.id.dialog_text);
                 recyclerView = (RecyclerView) view.findViewById(R.id.recyclerview);
                 layoutManager = new LinearLayoutManager(getActivity());
                 recyclerView.setLayoutManager(layoutManager);
@@ -63,11 +72,48 @@ public class MusicFragment extends BaseFragment {
 
                 reloadAdapter();
 
-
+                sideBar.setOnTouchingLetterChangedListener(new SideBar.OnTouchingLetterChangedListener() {
+                    @Override
+                    public void onTouchingLetterChanged(String s) {
+                        dialogText.setText(s);
+                        sideBar.setView(dialogText);
+                    }
+                });
+                recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+                    @Override
+                    public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                        super.onScrollStateChanged(recyclerView, newState);
+                        if(newState == RecyclerView.SCROLL_STATE_DRAGGING){
+                            sideBar.setVisibility(View.VISIBLE);
+                        }else if(newState == RecyclerView.SCROLL_STATE_IDLE){
+//                            sideBar.postDelayed(new Runnable() {
+//                                @Override
+//                                public void run() {
+//                                    sideBar.setVisibility(View.INVISIBLE);
+//                                }
+//                            },2000);
+                        }
+                    }
+                });
                 // new loadSongs().execute("");
             }
         }
     }
+//    private String getSortBarCharacterFromRecyclerViewPosition(int position) {
+//        if(mRecyclerAdapter.mCursor!=null&&mRecyclerAdapter.mCursor.getCount()>position){
+//            mRecyclerAdapter.mCursor.moveToPosition(position);
+//            Pinyin.toPinyin(mAdapter.mList.get(0).musicName.charAt(0)).charAt(0);
+//            Character c = mRecyclerAdapter.mCursor.getString(
+//                    你的拼音字段的index).charAt(0);
+//            if (c.equals('[')) {
+//                return "#";
+//            }
+//
+//            return c + "";
+//        }else{
+//            return null;
+//        }
+//    }
 
     @Override
     public void onCreate(final Bundle savedInstanceState) {
@@ -356,6 +402,8 @@ public class MusicFragment extends BaseFragment {
                             info.albumData = MusicUtils.getAlbumArtUri(info.albumId) + "";
                             infos.put(list[i], mList.get(i));
                         }
+                        Log.e("musicf",getAdapterPosition() - 1 + "");
+                        if(getAdapterPosition() > 0)
                         MusicPlayer.playAll(infos, list, getAdapterPosition() - 1, false);
                     }
                 }).start();

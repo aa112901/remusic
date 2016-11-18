@@ -48,7 +48,7 @@ public class Down {
                         if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
                             File file = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/remusic/");
                             if (!file.exists()) {
-                                file.mkdir();
+                                boolean r = file.mkdirs();
                             }
                             DownloadTask task = new DownloadTask.Builder(context, musicFileDownInfo.getShow_link())
                                     .setFileName(names[j])
@@ -103,7 +103,7 @@ public class Down {
                 if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
                     File file = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/remusic/");
                     if (!file.exists()) {
-                        file.mkdir();
+                        file.mkdirs();
                     }
                     DownloadTask task = new DownloadTask.Builder(context, musicFileDownInfo.getShow_link())
                             .setFileName(name)

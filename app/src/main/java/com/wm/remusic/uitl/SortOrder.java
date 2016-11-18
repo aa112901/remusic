@@ -168,7 +168,8 @@ public final class SortOrder {
     }
 
     public interface FolderSortOrder {
-        //  String FOLDER_A_Z = MediaS
+        String FOLDER_A_Z = "foler_az";
+        String FOLDER_NUMBER = "foler_number";
     }
 
 }

@@ -33,6 +33,9 @@
 - [MagicaSakura](https://github.com/Bilibili/MagicaSakura "MagicaSakura")
 
 # Change Log
+## 11.17
+- 增加本地歌曲侧边导航栏
+- 修复播放的一些问题
 ## 11.1
 - 增加主题换肤
 - 其他

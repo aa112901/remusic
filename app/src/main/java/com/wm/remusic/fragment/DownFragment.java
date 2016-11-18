@@ -51,6 +51,7 @@ public class DownFragment extends Fragment {
         setListener();
 
         recyclerView = (RecyclerView) view.findViewById(R.id.recyclerview);
+        recyclerView.setHasFixedSize(true);
         layoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(layoutManager);
         adapter = new DownLoadAdapter(null, null);

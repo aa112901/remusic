@@ -50,6 +50,7 @@ public class SearchArtistFragment extends Fragment {
         recyclerView.setLayoutManager(layoutManager);
         mAdapter = new ArtistAdapter(null);
         recyclerView.setAdapter(mAdapter);
+        recyclerView.setHasFixedSize(true);
         setItemDecoration();
         loadArtists();
 

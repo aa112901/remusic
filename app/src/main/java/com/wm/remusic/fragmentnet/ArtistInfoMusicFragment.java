@@ -35,6 +35,7 @@ import com.github.ksoichiro.android.observablescrollview.ScrollUtils;
 import com.wm.remusic.R;
 import com.wm.remusic.fragment.BaseFragment;
 import com.wm.remusic.fragment.MoreFragment;
+import com.wm.remusic.handler.HandlerUtil;
 import com.wm.remusic.info.MusicInfo;
 import com.wm.remusic.service.MusicPlayer;
 import com.wm.remusic.uitl.IConstants;
@@ -67,7 +68,7 @@ public class ArtistInfoMusicFragment extends BaseFragment {
         Activity parentActivity = getActivity();
         recyclerView = (ObservableRecyclerView) view.findViewById(R.id.scroll);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        recyclerView.setHasFixedSize(false);
+        recyclerView.setHasFixedSize(true);
         PlaylistDetailAdapter adapter = new PlaylistDetailAdapter(getActivity(), mList);
         recyclerView.setAdapter(adapter);
 
@@ -232,7 +233,7 @@ public class ArtistInfoMusicFragment extends BaseFragment {
 
             @Override
             public void onClick(View v) {
-                new Thread(new Runnable() {
+                HandlerUtil.getInstance(getContext()).postDelayed(new Runnable() {
                     @Override
                     public void run() {
                         HashMap<Long, MusicInfo> infos = new HashMap<Long, MusicInfo>();
@@ -244,10 +245,9 @@ public class ArtistInfoMusicFragment extends BaseFragment {
                             infos.put(list[i], info);
                         }
                         if(getAdapterPosition() > 0)
-                        MusicPlayer.playAll(infos, list, getAdapterPosition() - 1, false);
+                            MusicPlayer.playAll(infos, list, getAdapterPosition() - 1, false);
                     }
-                }).start();
-
+                },70);
             }
 
         }

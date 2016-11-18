@@ -40,11 +40,13 @@ public class SideBar extends View {
 
     public SideBar(Context context, AttributeSet attrs) {
         super(context, attrs);
+        setBackgroundResource(R.drawable.search_indexbar_bg_prs);
     }
 
 
     public SideBar(Context context) {
         super(context);
+
     }
 
 
@@ -53,6 +55,8 @@ public class SideBar extends View {
      */
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
+
+        this.removeCallbacks(runnable);
 // 获取焦点改变背景颜色.
         int height = getHeight();// 获取对应高度
         int width = getWidth(); // 获取对应宽度
@@ -60,14 +64,14 @@ public class SideBar extends View {
 
 
         for (int i = 0; i < b.length; i++) {
-            paint.setColor(Color.argb(66, 0, 0, 0));
-// paint.setColor(Color.WHITE);
+            //paint.setColor(Color.argb(66, 0, 0, 0));
+            paint.setColor(Color.WHITE);
             paint.setTypeface(Typeface.SANS_SERIF);
             paint.setAntiAlias(true);
             paint.setTextSize(30);
 // 选中的状态
             if (i == choose) {
-                paint.setColor(Color.argb(230, 0, 0, 0));
+                paint.setColor(Color.WHITE);
                 paint.setFakeBoldText(true);
             }
 // x坐标等于中间-字符串宽度的一半.
@@ -76,7 +80,7 @@ public class SideBar extends View {
             canvas.drawText(b[i], xPos, yPos, paint);
             paint.reset();// 重置画笔
         }
-
+       this.postDelayed(runnable,2000);
 
     }
     private Runnable runnable = new Runnable() {
@@ -97,13 +101,13 @@ public class SideBar extends View {
 
         switch (action) {
             case MotionEvent.ACTION_UP:
-                setBackgroundResource(R.color.blue_trans);
+
                 choose = -1;//
                 invalidate();
                 if (mTextDialog != null) {
                     mTextDialog.setVisibility(View.INVISIBLE);
                 }
-                this.postDelayed(runnable,2000);
+              //  this.postDelayed(runnable,2000);
                 break;
             case MotionEvent.ACTION_DOWN:
                 this.removeCallbacks(runnable);

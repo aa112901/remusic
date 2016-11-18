@@ -60,16 +60,10 @@
         <activity
             android:name=".activity.TabActivity"
             android:screenOrientation="portrait" />
-        <activity
-            android:name=".activity.PlaylistDetailActivity"
-            android:screenOrientation="portrait" />
         <activity android:name=".activity.DownActivity" />
         <activity android:name=".activity.PlaylistActivity" />
         <activity android:name=".activity.RecentActivity" />
         <activity android:name=".activity.NetItemChangeActivity" />
-        <activity android:name=".activity.NetAlbumsDetailActivity" />
-        <activity android:name=".activity.NetArtistDetailActivity" />
-        <activity android:name=".activity.NetRadioDetailActivity" />
         <activity android:name=".activity.ArtistDetailActivity" />
         <activity android:name=".activity.RadioDetailActivity" />
 

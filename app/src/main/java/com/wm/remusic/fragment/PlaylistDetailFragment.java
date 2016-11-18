@@ -133,7 +133,7 @@ public class PlaylistDetailFragment extends Fragment {
         appBarLayout = (AppBarLayout) rootView.findViewById(R.id.app_bar);
         //recyclerView.setEnabled(false);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-
+        recyclerView.setHasFixedSize(true);
         setUpEverything();
 
         return rootView;

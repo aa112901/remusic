@@ -66,6 +66,7 @@ public class RankingFragment extends Fragment {
                 recyclerView.setLayoutManager(linearLayoutManager);
                 rankingAdapter = new RankingAdapter();
                 recyclerView.setAdapter(rankingAdapter);
+                recyclerView.setHasFixedSize(true);
                 loadData();
             }
         }

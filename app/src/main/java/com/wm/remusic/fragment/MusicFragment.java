@@ -2,10 +2,8 @@ package com.wm.remusic.fragment;
 
 
 import android.content.Intent;
-import android.database.Cursor;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -22,19 +20,19 @@ import android.widget.TextView;
 import com.bilibili.magicasakura.widgets.TintImageView;
 import com.wm.remusic.R;
 import com.wm.remusic.activity.SelectActivity;
+import com.wm.remusic.handler.HandlerUtil;
 import com.wm.remusic.info.MusicInfo;
 import com.wm.remusic.service.MusicPlayer;
 import com.wm.remusic.uitl.IConstants;
 import com.wm.remusic.uitl.MusicUtils;
+import com.wm.remusic.uitl.MusicComparator;
 import com.wm.remusic.uitl.PreferencesUtility;
 import com.wm.remusic.uitl.SortOrder;
 import com.wm.remusic.widget.DividerItemDecoration;
 import com.wm.remusic.widget.SideBar;
 
-import net.sourceforge.pinyin4j.PinyinHelper;
-
-import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 
 /**
@@ -52,6 +50,8 @@ public class MusicFragment extends BaseFragment {
     private boolean isFirstLoad = true;
     private SideBar sideBar;
     private TextView dialogText;
+    private HashMap<String,Integer> positionMap = new HashMap<>();
+    private boolean isAZSort = true;
 
     @Override
     public void setUserVisibleHint(boolean isVisibleToUser) {
@@ -59,42 +59,47 @@ public class MusicFragment extends BaseFragment {
         if (isVisibleToUser) {
             if (view == null) {
                 view = LayoutInflater.from(getActivity()).inflate(R.layout.recylerview, frameLayout, false);
+
+                dialogText = (TextView) view.findViewById(R.id.dialog_text);
                 recyclerView = (RecyclerView) view.findViewById(R.id.recyclerview);
                 layoutManager = new LinearLayoutManager(getActivity());
                 recyclerView.setLayoutManager(layoutManager);
                 mAdapter = new Adapter(null);
                 recyclerView.setAdapter(mAdapter);
+                recyclerView.setHasFixedSize(true);
                 //fastScroller = (FastScroller) view.findViewById(R.id.fastscroller);
                 recyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL_LIST));
 
-                reloadAdapter();
-
+                sideBar = (SideBar) view.findViewById(R.id.sidebar);
                 sideBar.setOnTouchingLetterChangedListener(new SideBar.OnTouchingLetterChangedListener() {
                     @Override
                     public void onTouchingLetterChanged(String s) {
                         dialogText.setText(s);
                         sideBar.setView(dialogText);
+                        Log.e("scrol","  " + s);
+                        Log.e("scrol" , positionMap.toString());
+                        if(positionMap.get(s) != null){
+                            int i = positionMap.get(s);
+                            Log.e("scrolget","  " + i);
+                            ((LinearLayoutManager)recyclerView.getLayoutManager()).scrollToPositionWithOffset(i+1,0);
+                        }
+
                     }
                 });
-                // new loadSongs().execute("");
+                reloadAdapter();
             }
         }
     }
-//    private String getSortBarCharacterFromRecyclerViewPosition(int position) {
-//        if(mRecyclerAdapter.mCursor!=null&&mRecyclerAdapter.mCursor.getCount()>position){
-//            mRecyclerAdapter.mCursor.moveToPosition(position);
-//            Pinyin.toPinyin(mAdapter.mList.get(0).musicName.charAt(0)).charAt(0);
-//            Character c = mRecyclerAdapter.mCursor.getString(
-//                    你的拼音字段的index).charAt(0);
-//            if (c.equals('[')) {
-//                return "#";
-//            }
-//
-//            return c + "";
-//        }else{
-//            return null;
-//        }
-//    }
+
+    private RecyclerView.OnScrollListener scrollListener = new RecyclerView.OnScrollListener() {
+        @Override
+        public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+            super.onScrollStateChanged(recyclerView, newState);
+            if(newState == RecyclerView.SCROLL_STATE_DRAGGING){
+                sideBar.setVisibility(View.VISIBLE);
+            }
+        }
+    };
 
     @Override
     public void onCreate(final Bundle savedInstanceState) {
@@ -109,25 +114,9 @@ public class MusicFragment extends BaseFragment {
         View loadView = LayoutInflater.from(getActivity()).inflate(R.layout.loading, frameLayout, false);
         frameLayout.addView(loadView);
         isFirstLoad = true;
+        isAZSort = mPreferences.getSongSortOrder().equals(SortOrder.SongSortOrder.SONG_A_Z);
 
         return view;
-    }
-
-
-    //去除界面重叠
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        try {
-            //参数是固定写法
-            Field childFragmentManager = Fragment.class.getDeclaredField("mChildFragmentManager");
-            childFragmentManager.setAccessible(true);
-            childFragmentManager.set(this, null);
-        } catch (NoSuchFieldException e) {
-            throw new RuntimeException(e);
-        } catch (IllegalAccessException e) {
-            throw new RuntimeException(e);
-        }
     }
 
 
@@ -140,16 +129,29 @@ public class MusicFragment extends BaseFragment {
         new AsyncTask<Void, Void, Void>() {
             @Override
             protected Void doInBackground(final Void... unused) {
-
+                isAZSort = mPreferences.getSongSortOrder().equals(SortOrder.SongSortOrder.SONG_A_Z);
                 ArrayList<MusicInfo> songList = (ArrayList) MusicUtils.queryMusic(getActivity(), IConstants.START_FROM_LOCAL);
+                // 名称排序时，重新排序并加入位置信息
+                if(isAZSort){
+                    Collections.sort(songList,new MusicComparator());
+                    for(int i = 0; i < songList.size() ; i++){
+                        if(positionMap.get(songList.get(i).sort) == null)
+                            positionMap.put(songList.get(i).sort,i);
+                    }
+                }
                 mAdapter.updateDataSet(songList);
-
                 return null;
             }
 
             @Override
             protected void onPostExecute(Void aVoid) {
                 mAdapter.notifyDataSetChanged();
+                if(isAZSort){
+                    recyclerView.addOnScrollListener(scrollListener);
+                }else {
+                    sideBar.setVisibility(View.INVISIBLE);
+                    recyclerView.removeOnScrollListener(scrollListener);
+                }
 
                 if (isFirstLoad) {
                     frameLayout.removeAllViews();
@@ -210,6 +212,7 @@ public class MusicFragment extends BaseFragment {
         protected String doInBackground(String... params) {
             if (getActivity() != null) {
                 musicInfos = (ArrayList<MusicInfo>) MusicUtils.queryMusic(getActivity(), IConstants.START_FROM_LOCAL);
+                
                 if (musicInfos != null)
                     mAdapter = new Adapter(musicInfos);
             }
@@ -371,7 +374,7 @@ public class MusicFragment extends BaseFragment {
 
             @Override
             public void onClick(View v) {
-                new Thread(new Runnable() {
+                HandlerUtil.getInstance(getContext()).postDelayed(new Runnable() {
                     @Override
                     public void run() {
                         long[] list = new long[mList.size()];
@@ -385,9 +388,9 @@ public class MusicFragment extends BaseFragment {
                         }
                         Log.e("musicf",getAdapterPosition() - 1 + "");
                         if(getAdapterPosition() > 0)
-                        MusicPlayer.playAll(infos, list, getAdapterPosition() - 1, false);
+                            MusicPlayer.playAll(infos, list, getAdapterPosition() - 1, false);
                     }
-                }).start();
+                },60);
             }
 
         }

@@ -68,11 +68,6 @@ public class PlaylistManagerActivity extends AppCompatActivity implements View.O
 
         playlistInfo = PlaylistInfo.getInstance(this);
 
-//        SystemBarTintManager tintManager = new SystemBarTintManager(this);
-//        // enable status bar tint
-//        tintManager.setStatusBarTintEnabled(true);
-//        // enable navigation bar tint
-//        tintManager.setNavigationBarTintEnabled(true);
 
         LinearLayout delete = (LinearLayout) findViewById(R.id.select_del);
         delete.setOnClickListener(this);
@@ -80,7 +75,7 @@ public class PlaylistManagerActivity extends AppCompatActivity implements View.O
         recyclerView = (RecyclerView) findViewById(R.id.recyclerview);
         layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
-
+        recyclerView.setHasFixedSize(true);
 
         new loadSongs().execute("");
 

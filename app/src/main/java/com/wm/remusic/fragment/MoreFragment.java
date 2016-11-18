@@ -144,6 +144,7 @@ public class MoreFragment extends DialogFragment {
         layoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(layoutManager);
+        recyclerView.setHasFixedSize(true);
         getList();
         setClick();
         setItemDecoration();

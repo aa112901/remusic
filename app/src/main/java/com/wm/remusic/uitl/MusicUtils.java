@@ -12,7 +12,9 @@ import android.provider.MediaStore;
 import android.provider.MediaStore.Audio.Albums;
 import android.provider.MediaStore.Audio.Media;
 import android.provider.MediaStore.Files.FileColumns;
+import android.util.Log;
 
+import com.github.promeg.pinyinhelper.Pinyin;
 import com.wm.remusic.R;
 import com.wm.remusic.info.AlbumInfo;
 import com.wm.remusic.info.ArtistInfo;
@@ -70,7 +72,7 @@ public class MusicUtils implements IConstants {
         mSelection.append(") group by ( " + FileColumns.PARENT);
 
         List<FolderInfo> list = getFolderList(cr.query(uri, proj_folder, mSelection.toString(), null,
-                PreferencesUtility.getInstance(context).getFoloerSortOrder()));
+                null));
 
         return list;
 
@@ -284,11 +286,11 @@ public class MusicUtils implements IConstants {
             String filePath = cursor.getString(cursor
                     .getColumnIndex(Media.DATA));
             music.data = filePath;
-            String folderPath = filePath.substring(0, filePath.lastIndexOf(File.separator));
-            music.folder = folderPath;
+            music.folder = filePath.substring(0, filePath.lastIndexOf(File.separator));
             music.size = cursor.getInt(cursor
                     .getColumnIndex(Media.SIZE));
             music.islocal = true;
+            music.sort = Pinyin.toPinyin(music.musicName.charAt(0)).substring(0,1).toUpperCase();
             musicList.add(music);
         }
         cursor.close();
@@ -306,6 +308,7 @@ public class MusicUtils implements IConstants {
                     .getColumnIndex(Albums.NUMBER_OF_SONGS));
             info.album_art = getAlbumArtUri(info.album_id) + "";
             info.album_artist = cursor.getString(cursor.getColumnIndex(Albums.ARTIST));
+            info.album_sort = Pinyin.toPinyin(info.album_name.charAt(0)).substring(0,1).toUpperCase();
             list.add(info);
         }
         cursor.close();
@@ -321,6 +324,7 @@ public class MusicUtils implements IConstants {
             info.number_of_tracks = cursor.getInt(cursor
                     .getColumnIndex(MediaStore.Audio.Artists.NUMBER_OF_TRACKS));
             info.artist_id = cursor.getLong(cursor.getColumnIndex(MediaStore.Audio.Artists._ID));
+            info.artist_sort = Pinyin.toPinyin(info.artist_name.charAt(0)).substring(0,1).toUpperCase();
             list.add(info);
         }
         cursor.close();
@@ -336,6 +340,7 @@ public class MusicUtils implements IConstants {
             info.folder_path = filePath.substring(0, filePath.lastIndexOf(File.separator));
             info.folder_name = info.folder_path.substring(info.folder_path
                     .lastIndexOf(File.separator) + 1);
+            info.folder_sort = Pinyin.toPinyin(info.folder_name.charAt(0)).substring(0,1).toUpperCase();
             list.add(info);
         }
         cursor.close();
@@ -362,7 +367,6 @@ public class MusicUtils implements IConstants {
         Cursor cursor = cr.query(Media.EXTERNAL_CONTENT_URI, proj_music, "_id =" + String.valueOf(musicId), null, null);
         long id = -3;
         if (cursor == null) {
-            cursor.close();
             return null;
         }
         if (cursor.moveToFirst()) {
@@ -404,7 +408,6 @@ public class MusicUtils implements IConstants {
         ContentResolver cr = context.getContentResolver();
         Cursor cursor = cr.query(MediaStore.Audio.Artists.EXTERNAL_CONTENT_URI, proj_artist, "_id =" + String.valueOf(id), null, null);
         if (cursor == null) {
-            cursor.close();
             return null;
         }
         ArtistInfo artistInfo = new ArtistInfo();
@@ -421,7 +424,6 @@ public class MusicUtils implements IConstants {
         ContentResolver cr = context.getContentResolver();
         Cursor cursor = cr.query(Albums.EXTERNAL_CONTENT_URI, proj_album, "_id =" + String.valueOf(albumId), null, null);
         if (cursor == null) {
-            cursor.close();
             return null;
         }
         AlbumInfo albumInfo = new AlbumInfo();
@@ -439,7 +441,6 @@ public class MusicUtils implements IConstants {
         ContentResolver cr = context.getContentResolver();
         Cursor cursor = cr.query(Media.EXTERNAL_CONTENT_URI, proj_music, "_id = " + String.valueOf(id), null, null);
         if (cursor == null) {
-            cursor.close();
             return null;
         }
         MusicInfo music = new MusicInfo();
@@ -465,13 +466,14 @@ public class MusicUtils implements IConstants {
             String folderPath = filePath.substring(0,
                     filePath.lastIndexOf(File.separator));
             music.folder = folderPath;
+            music.sort = Pinyin.toPinyin(music.musicName.charAt(0)).substring(0,1).toUpperCase();
         }
         cursor.close();
         return music;
     }
 
 
-    public static final String makeShortTimeString(final Context context, long secs) {
+    public static String makeShortTimeString(final Context context, long secs) {
         long hours, mins;
 
         hours = secs / 3600;

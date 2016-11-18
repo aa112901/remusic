@@ -103,6 +103,7 @@ public class NetItemChangeActivity extends AppCompatActivity {
         recyclerView.addItemDecoration(dragSortRecycler);
         recyclerView.addOnItemTouchListener(dragSortRecycler);
         recyclerView.addOnScrollListener(dragSortRecycler.getScrollListener());
+        recyclerView.setHasFixedSize(true);
     }
 
 

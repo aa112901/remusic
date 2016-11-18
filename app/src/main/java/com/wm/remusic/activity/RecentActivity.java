@@ -17,6 +17,7 @@ import android.widget.TextView;
 
 import com.wm.remusic.R;
 import com.wm.remusic.fragment.MoreFragment;
+import com.wm.remusic.handler.HandlerUtil;
 import com.wm.remusic.info.MusicInfo;
 import com.wm.remusic.provider.RecentStore;
 import com.wm.remusic.recent.Song;
@@ -73,6 +74,7 @@ public class RecentActivity extends BaseActivity {
         recyclerView = (RecyclerView) findViewById(R.id.recyclerview);
         layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
+        recyclerView.setHasFixedSize(true);
 
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setPadding(0, CommonUtils.getStatusHeight(RecentActivity.this), 0, 0);
@@ -268,7 +270,7 @@ public class RecentActivity extends BaseActivity {
 
             @Override
             public void onClick(View v) {
-                new Thread(new Runnable() {
+                HandlerUtil.getInstance(RecentActivity.this).postDelayed(new Runnable() {
                     @Override
                     public void run() {
                         long[] list = new long[mList.size()];
@@ -281,9 +283,9 @@ public class RecentActivity extends BaseActivity {
                             infos.put(list[i], info);
                         }
                         if(getAdapterPosition() > 0)
-                        MusicPlayer.playAll(infos, list, getAdapterPosition() - 1, false);
+                            MusicPlayer.playAll(infos, list, getAdapterPosition() - 1, false);
                     }
-                }).start();
+                },70);
 
             }
         }

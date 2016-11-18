@@ -691,22 +691,21 @@ public class PlaylistActivity extends BaseActivity implements ObservableScrollVi
 
             @Override
             public void onClick(View v) {
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        HashMap<Long, MusicInfo> infos = new HashMap<Long, MusicInfo>();
-                        int len = arraylist.size();
-                        long[] list = new long[len];
-                        for (int i = 0; i < len; i++) {
-                            MusicInfo info = arraylist.get(i);
-                            list[i] = info.songId;
-                            infos.put(list[i], info);
-                        }
-                        if(getAdapterPosition() > 0)
-                        MusicPlayer.playAll(infos, list, getAdapterPosition() - 1, false);
-                    }
-                }).start();
-
+              HandlerUtil.getInstance(mContext).postDelayed(new Runnable() {
+                  @Override
+                  public void run() {
+                      HashMap<Long, MusicInfo> infos = new HashMap<Long, MusicInfo>();
+                      int len = arraylist.size();
+                      long[] list = new long[len];
+                      for (int i = 0; i < len; i++) {
+                          MusicInfo info = arraylist.get(i);
+                          list[i] = info.songId;
+                          infos.put(list[i], info);
+                      }
+                      if(getAdapterPosition() > 0)
+                          MusicPlayer.playAll(infos, list, getAdapterPosition() - 1, false);
+                  }
+              },70);
             }
 
         }

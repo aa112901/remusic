@@ -90,7 +90,6 @@ import com.wm.remusic.proxy.utils.MediaPlayerProxy;
 import com.wm.remusic.receiver.MediaButtonIntentReceiver;
 import com.wm.remusic.recent.SongPlayCount;
 import com.wm.remusic.uitl.CommonUtils;
-import com.wm.remusic.uitl.IConstants;
 import com.wm.remusic.uitl.ImageUtils;
 import com.wm.remusic.uitl.PreferencesUtility;
 
@@ -266,10 +265,8 @@ public class MediaService extends Service {
     private ExecutorService executor = Executors.newSingleThreadExecutor();
     private ExecutorService lrcExecutor = Executors.newSingleThreadExecutor();
     private ExecutorService nextExecutor = Executors.newSingleThreadExecutor();
-    private boolean isMiui;
-    private boolean isFlyme;
     MediaPlayerProxy proxy;
-    public static final String LRC_PATH = "/remusic/lrc";
+    public static final String LRC_PATH = "/remusic/lrc/";
 
 
     @Override
@@ -386,9 +383,6 @@ public class MediaService extends Service {
         reloadQueueAfterPermissionCheck();
         notifyChange(QUEUE_CHANGED);
         notifyChange(META_CHANGED);
-
-        isMiui = CommonUtils.isMIUI();
-        isFlyme = CommonUtils.isFlyme();
     }
 
     private void setUpMediaSession() {
@@ -892,7 +886,7 @@ public class MediaService extends Service {
                     PreferencesUtility.getInstance(MediaService.this).setPlayLink(id, url);
                 }
             }
-            Log.e("current_url", url);
+            Log.e(TAG, url);
             startProxy();
             // String urlEn = HttpUtil.urlEncode(url);
             String urlEn = url;
@@ -932,12 +926,12 @@ public class MediaService extends Service {
                 JsonObject jsonObject = HttpUtil.getResposeJsonObject(BMA.Search.searchLrcPic(musicInfo.musicName, musicInfo.artist));
                 JsonArray array = jsonObject.get("songinfo").getAsJsonArray();
                 int len = array.size();
-                Log.e("getLrc", "" + len);
+                Log.e(TAG, "  " + len);
                 url = null;
                 for (int i = 0; i < len; i++) {
                     url = array.get(i).getAsJsonObject().get("lrclink").getAsString();
                     if (url != null) {
-                        Log.e("getLrc", url);
+                        Log.e(TAG, url);
                         break;
                     }
                 }
@@ -945,11 +939,13 @@ public class MediaService extends Service {
                 e.printStackTrace();
             }
 
-            File file = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/remusic/lrc/" + musicInfo.songId);
+            File file = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + LRC_PATH + musicInfo.songId);
             String lrc = null;
             try {
                 lrc = HttpUtil.getResposeString(url);
                 if (lrc != null && !lrc.isEmpty()) {
+                    if(!file.exists())
+                        file.createNewFile();
                     writeToFile(file, lrc);
                 }
             } catch (Exception e) {
@@ -985,20 +981,20 @@ public class MediaService extends Service {
             final long id = mPlaylist.get(mPlayPos).mId;
             updateCursor(id);
             String lrc = Environment.getExternalStorageDirectory().getAbsolutePath() + LRC_PATH;
+            Log.e(TAG,lrc);
             File file = new File(lrc);
+            Log.e(TAG,"file exists = " + file.exists());
+            if(!file.exists()){
+                //不存在就建立此目录
+                boolean r = file.mkdirs();
+                Log.e(TAG,"file created = " + r);
+
+            }
+            file = new File(lrc + id);
             if (!file.exists()) {
-                try {
-                    file.createNewFile();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            } else {
-                file = new File(lrc + id);
-                if (!file.exists()) {
                     //new Thread(new GetLrc(mPlaylistInfo.get(id))).start();
                     lrcExecutor.submit(new GetLrc(mPlaylistInfo.get(id)));
                 }
-            }
 
             if (!mPlaylistInfo.get(id).islocal) {
                 executor.shutdownNow();
@@ -1312,7 +1308,7 @@ public class MediaService extends Service {
             mSongPlayCount.bumpSongCount(getAudioId());
 
         } else if (what.equals(QUEUE_CHANGED)) {
-            Intent intent1 = new Intent(IConstants.EMPTY_LIST);
+            Intent intent1 = new Intent("com.wm.remusic.emptyplaylist");
             intent.putExtra("showorhide", "show");
             sendBroadcast(intent1);
             saveQueue(true);
@@ -2883,7 +2879,7 @@ public class MediaService extends Service {
 
 
         public long duration() {
-            if (mIsTrackPrepared && mCurrentMediaPlayer.isPlaying()) {
+            if (mIsTrackPrepared) {
                 return mCurrentMediaPlayer.getDuration();
             }
             return -1;

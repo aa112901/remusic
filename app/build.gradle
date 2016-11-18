@@ -36,4 +36,5 @@ dependencies {
 //    compile 'com.readystatesoftware.systembartint:systembartint:1.0.3'
     compile 'com.github.ksoichiro:android-observablescrollview:1.6.0'
     compile 'com.bilibili:magicasakura:0.1.1@arr'
+    compile 'com.github.promeg:tinypinyin:1.0.0'
 }

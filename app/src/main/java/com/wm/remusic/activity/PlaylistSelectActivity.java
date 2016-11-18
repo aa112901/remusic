@@ -74,12 +74,6 @@ public class PlaylistSelectActivity extends AppCompatActivity implements View.On
 
         pManager = PlaylistsManager.getInstance(this);
 
-//        SystemBarTintManager tintManager = new SystemBarTintManager(this);
-//        // enable status bar tint
-//        tintManager.setStatusBarTintEnabled(true);
-//        // enable navigation bar tint
-//        tintManager.setNavigationBarTintEnabled(true);
-
         nextPlay = (LinearLayout) findViewById(R.id.select_next);
         addtoPlaylist = (LinearLayout) findViewById(R.id.select_addtoplaylist);
         delete = (LinearLayout) findViewById(R.id.select_del);
@@ -90,7 +84,7 @@ public class PlaylistSelectActivity extends AppCompatActivity implements View.On
         recyclerView = (RecyclerView) findViewById(R.id.recyclerview);
         layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
-
+        recyclerView.setHasFixedSize(true);
 
         new loadSongs().execute("");
 

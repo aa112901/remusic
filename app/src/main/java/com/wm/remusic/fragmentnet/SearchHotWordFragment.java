@@ -96,6 +96,7 @@ public class SearchHotWordFragment extends Fragment implements View.OnClickListe
                 View view = LayoutInflater.from(getActivity()).inflate(R.layout.fragment_search_hot_words, frameLayout, false);
                 recyclerView = (RecyclerView) view.findViewById(R.id.recyclerview);
                 recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+                recyclerView.setHasFixedSize(true);
                 adapter = new RecentSearchAdapter(getActivity());
                 adapter.setListenter(SearchHotWordFragment.this);
                 recyclerView.setAdapter(adapter);

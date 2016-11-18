@@ -12,10 +12,13 @@ public class ArtistInfo implements Parcelable {
     public static final String KEY_ARTIST_NAME = "artist_name";
     public static final String KEY_NUMBER_OF_TRACKS = "number_of_tracks";
     public static final String KEY_ARTIST_ID = "artist_id";
+    public static final String KEY_ARTIST_SORT = "artist_sort";
+
 
     public String artist_name;
     public int number_of_tracks;
     public long artist_id;
+    public String artist_sort;
     public static final Creator<ArtistInfo> CREATOR = new Creator<ArtistInfo>() {
 
         @Override
@@ -25,6 +28,7 @@ public class ArtistInfo implements Parcelable {
             info.artist_name = bundle.getString(KEY_ARTIST_NAME);
             info.number_of_tracks = bundle.getInt(KEY_NUMBER_OF_TRACKS);
             info.artist_id = bundle.getLong(KEY_ARTIST_ID);
+            info.artist_sort = bundle.getString(KEY_ARTIST_SORT);
             return info;
         }
 
@@ -45,6 +49,7 @@ public class ArtistInfo implements Parcelable {
         bundle.putString(KEY_ARTIST_NAME, artist_name);
         bundle.putInt(KEY_NUMBER_OF_TRACKS, number_of_tracks);
         bundle.putLong(KEY_ARTIST_ID, artist_id);
+        bundle.putString(KEY_ARTIST_SORT,artist_sort);
         dest.writeBundle(bundle);
     }
 

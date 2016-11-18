@@ -610,7 +610,7 @@ public class AlbumsDetailActivity extends BaseActivity implements ObservableScro
 
             @Override
             public void onClick(View v) {
-                new Thread(new Runnable() {
+                HandlerUtil.getInstance(mContext).postDelayed(new Runnable() {
                     @Override
                     public void run() {
                         HashMap<Long, MusicInfo> infos = new HashMap<Long, MusicInfo>();
@@ -622,27 +622,10 @@ public class AlbumsDetailActivity extends BaseActivity implements ObservableScro
                             infos.put(list[i], info);
                         }
 
-//                            long[] list = new long[arraylist.size()];
-//                            HashMap<Long,MusicInfo> infos = new HashMap<Long,MusicInfo>();
-//                            for (int i = 0; i < arraylist.size(); i++) {
-//                                list[i] = Long.parseLong(arraylist.get(i).getSong_id());
-//                                MusicInfo musicInfo = new MusicInfo();
-//                                musicInfo.songId = Integer.parseInt(arraylist.get(i).getSong_id());
-//                                musicInfo.musicName = arraylist.get(i).getTitle();
-//                                musicInfo.artist = sparseArray.get(i).getArtist_name();
-//                                musicInfo.islocal = false;
-//                                musicInfo.albumName = sparseArray.get(i).getAlbum_title();
-//                                musicInfo.albumId = Integer.parseInt(arraylist.get(i).getAlbum_id());
-//                                musicInfo.artistId = Integer.parseInt(sparseArray.get(i).getArtist_id());
-//                                musicInfo.lrc = sparseArray.get(i).getLrclink();
-//                                musicInfo.albumData = sparseArray.get(i).getPic_radio();
-//                                infos.put(list[i] , musicInfo);
-//                            }
                         if(getAdapterPosition() > 0)
-                        MusicPlayer.playAll(infos, list, getAdapterPosition() - 1, false);
+                            MusicPlayer.playAll(infos, list, getAdapterPosition() - 1, false);
                     }
-                }).start();
-
+                },70);
             }
 
         }

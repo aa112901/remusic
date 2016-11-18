@@ -72,6 +72,7 @@ public class LocalSearchActivity extends AppCompatActivity implements SearchView
 
         recyclerView = (RecyclerView) findViewById(R.id.recyclerview);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        recyclerView.setHasFixedSize(true);
         adapter = new SearchAdapter(this);
         recyclerView.setAdapter(adapter);
     }

@@ -51,6 +51,7 @@ public class SearchAlbumFragment extends Fragment {
         recyclerView.setLayoutManager(layoutManager);
         mAdapter = new AlbumAdapter(null);
         recyclerView.setAdapter(mAdapter);
+        recyclerView.setHasFixedSize(true);
         setItemDecoration();
         loadAlbums();
         return view;

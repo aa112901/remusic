@@ -106,7 +106,7 @@ public class PlayQueueFragment extends DialogFragment {
         recyclerView = (RecyclerView) view.findViewById(R.id.play_list);
         layoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(layoutManager);
-
+        recyclerView.setHasFixedSize(true);
         new loadSongs().execute();
         return view;
     }

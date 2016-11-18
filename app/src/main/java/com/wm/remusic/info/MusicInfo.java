@@ -23,6 +23,7 @@ public class MusicInfo implements Parcelable {
     public static final String KEY_FAVORITE = "favorite";
     public static final String KEY_LRC = "lrc";
     public static final String KEY_ISLOCAL = "islocal";
+    public static final String KEY_SORT = "sort";
 
     /**
      * 数据库中的_id
@@ -39,6 +40,7 @@ public class MusicInfo implements Parcelable {
     public String folder;
     public String lrc;
     public boolean islocal;
+    public String sort;
 
 
     public int size;
@@ -66,6 +68,7 @@ public class MusicInfo implements Parcelable {
             music.size = bundle.getInt(KEY_SIZE);
             music.lrc = bundle.getString(KEY_LRC);
             music.islocal = bundle.getBoolean(KEY_ISLOCAL);
+            music.sort = bundle.getString(KEY_SORT);
             return music;
         }
 
@@ -96,6 +99,7 @@ public class MusicInfo implements Parcelable {
         bundle.putInt(KEY_SIZE, size);
         bundle.putString(KEY_LRC, lrc);
         bundle.putBoolean(KEY_ISLOCAL, islocal);
+        bundle.putString(KEY_SORT,sort);
         dest.writeBundle(bundle);
     }
 

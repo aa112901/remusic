@@ -210,7 +210,7 @@ public final class PreferencesUtility {
     }
 
     public final String getFoloerSortOrder() {
-        return mPreferences.getString(FOLDER_SONG_SORT_ORDER, "");
+        return mPreferences.getString(FOLDER_SONG_SORT_ORDER, SortOrder.FolderSortOrder.FOLDER_A_Z);
     }
 
     public void setArtistSongSortOrder(final String value) {

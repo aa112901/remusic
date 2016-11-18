@@ -18,6 +18,7 @@ import android.widget.TextView;
 import com.bilibili.magicasakura.widgets.TintImageView;
 import com.wm.remusic.R;
 import com.wm.remusic.activity.SelectActivity;
+import com.wm.remusic.handler.HandlerUtil;
 import com.wm.remusic.info.ArtistInfo;
 import com.wm.remusic.info.MusicInfo;
 import com.wm.remusic.service.MusicPlayer;
@@ -68,6 +69,7 @@ public class ArtistDetailFragment extends BaseFragment {
         recyclerView.setLayoutManager(layoutManager);
         artDetailAdapter = new ArtDetailAdapter(null);
         recyclerView.setAdapter(artDetailAdapter);
+        recyclerView.setHasFixedSize(true);
         setItemDecoration();
         reloadAdapter();
 
@@ -249,8 +251,7 @@ public class ArtistDetailFragment extends BaseFragment {
             //播放歌曲
             @Override
             public void onClick(View v) {
-                //// TODO: 2016/1/19
-                new Thread(new Runnable() {
+                HandlerUtil.getInstance(getContext()).postDelayed(new Runnable() {
                     @Override
                     public void run() {
                         long[] list = new long[mList.size()];
@@ -263,9 +264,9 @@ public class ArtistDetailFragment extends BaseFragment {
                             infos.put(list[i], mList.get(i));
                         }
                         if(getAdapterPosition() > 0)
-                        MusicPlayer.playAll(infos, list, getAdapterPosition() - 1, false);
+                            MusicPlayer.playAll(infos, list, getAdapterPosition() - 1, false);
                     }
-                }).start();
+                },60);
             }
 
         }

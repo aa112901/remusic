@@ -165,6 +165,7 @@ public class RecommendFragment extends Fragment {
                 gridLayoutManager = new GridLayoutManager(getActivity(), 3);
                 recyclerView1.setLayoutManager(gridLayoutManager);
                 recyclerView1.setAdapter(recomendAdapter);
+                recyclerView1.setHasFixedSize(true);
                 TextView more = (TextView) v1.findViewById(R.id.more);
                 more.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -179,13 +180,14 @@ public class RecommendFragment extends Fragment {
                 gridLayoutManager2 = new GridLayoutManager(getActivity(), 3);
                 recyclerView2.setLayoutManager(gridLayoutManager2);
                 recyclerView2.setAdapter(newAlbumsAdapter);
+                recyclerView2.setHasFixedSize(true);
 
                 v3 = layoutInflater.inflate(R.layout.recommend_radio, linearLayout, false);
                 recyclerView3 = (RecyclerView) v3.findViewById(R.id.recommend_radio_recyclerview);
                 gridLayoutManager3 = new GridLayoutManager(getActivity(), 3);
                 recyclerView3.setLayoutManager(gridLayoutManager3);
                 recyclerView3.setAdapter(radioAdapter);
-
+                recyclerView3.setHasFixedSize(true);
 
                 recomendAdapter.update(mRecomendList);
                 newAlbumsAdapter.update(mNewAlbumsList);

@@ -20,6 +20,7 @@ import com.wm.remusic.json.SearchSongInfo;
 import com.wm.remusic.net.BMA;
 import com.wm.remusic.net.HttpUtil;
 import com.wm.remusic.net.NetworkUtils;
+import com.wm.remusic.widget.WidgetController;
 
 import java.util.ArrayList;
 import java.util.Collections;

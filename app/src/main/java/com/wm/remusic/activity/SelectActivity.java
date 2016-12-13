@@ -32,9 +32,11 @@ import com.wm.remusic.provider.PlaylistsManager;
 import com.wm.remusic.service.MediaService;
 import com.wm.remusic.service.MusicPlayer;
 import com.wm.remusic.uitl.IConstants;
+import com.wm.remusic.uitl.MusicUtils;
 import com.wm.remusic.widget.DividerItemDecoration;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * Created by wm on 2016/3/9.
@@ -129,11 +131,17 @@ public class SelectActivity extends AppCompatActivity implements View.OnClickLis
                         }
 
                         final long[] list = new long[select.size()];
+                        HashMap<Long, MusicInfo> infos = new HashMap();
                         for (int i = 0; i < select.size(); i++) {
                             list[i] = select.get(i).songId;
+                            MusicInfo info = select.get(i);
+                            list[i] = info.songId;
+                            info.islocal = true;
+                            info.albumData = MusicUtils.getAlbumArtUri(info.albumId) + "";
+                            infos.put(list[i], select.get(i));
                         }
 
-                        MusicPlayer.playNext(SelectActivity.this, list, -1);
+                        MusicPlayer.playNext(SelectActivity.this, infos,list);
 
                     }
                 }, 100);

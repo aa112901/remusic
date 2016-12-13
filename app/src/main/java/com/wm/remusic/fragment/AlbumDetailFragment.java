@@ -108,7 +108,7 @@ public class AlbumDetailFragment extends BaseFragment {
         new AsyncTask<Void, Void, Void>() {
             @Override
             protected Void doInBackground(final Void... unused) {
-                List<MusicInfo> albumList = MusicUtils.queryMusic(getActivity(), null, albumID + "", IConstants.START_FROM_ALBUM);
+                List<MusicInfo> albumList = MusicUtils.queryMusic(getActivity(),albumID + "", IConstants.START_FROM_ALBUM);
                 mAdapter.updateDataSet((ArrayList) albumList);
                 return null;
             }
@@ -182,8 +182,6 @@ public class AlbumDetailFragment extends BaseFragment {
         public int getItemCount() {
             return (null != mList ? mList.size() + 1 : 0);
         }
-
-        ;
 
 
         class CommonItemViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {

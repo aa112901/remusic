@@ -1,7 +1,6 @@
 package com.wm.remusic.fragment;
 
 
-import android.content.IntentFilter;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -23,11 +22,9 @@ import com.bilibili.magicasakura.widgets.TintImageView;
 import com.wm.remusic.R;
 import com.wm.remusic.info.FolderInfo;
 import com.wm.remusic.info.MusicInfo;
-import com.wm.remusic.service.MediaService;
 import com.wm.remusic.service.MusicPlayer;
-import com.wm.remusic.uitl.ArtistComparator;
-import com.wm.remusic.uitl.FolderComparator;
-import com.wm.remusic.uitl.FolderCountComparator;
+import com.wm.remusic.uitl.Comparator.FolderComparator;
+import com.wm.remusic.uitl.Comparator.FolderCountComparator;
 import com.wm.remusic.uitl.IConstants;
 import com.wm.remusic.uitl.MusicUtils;
 import com.wm.remusic.uitl.PreferencesUtility;
@@ -37,7 +34,6 @@ import com.wm.remusic.widget.SideBar;
 
 import java.io.File;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 
@@ -161,7 +157,7 @@ public class FolderFragment extends BaseFragment {
                 Log.e("sort" , "foler" + isAZSort);
                 List<FolderInfo> folderList = MusicUtils.queryFolder(getContext());
                 for(int i = 0; i< folderList.size() ; i++){
-                    List<MusicInfo> albumList = MusicUtils.queryMusic(getActivity(), null, folderList.get(i).folder_path, IConstants.START_FROM_FOLDER);
+                    List<MusicInfo> albumList = MusicUtils.queryMusic(getActivity(), folderList.get(i).folder_path, IConstants.START_FROM_FOLDER);
                     folderList.get(i).folder_count = albumList.size();
                 }
                 if(isAZSort){

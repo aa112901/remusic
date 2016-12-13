@@ -22,7 +22,7 @@ public class DownloadManager {
     private Context context;
     private static DownloadManager downloadManager;
     private static DownFileStore downFileStore;
-    private int mPoolSize = 5;
+    private int mPoolSize = 1;
     private ExecutorService executorService;
     private Map<String, Future> futureMap;
     private OkHttpClient client;

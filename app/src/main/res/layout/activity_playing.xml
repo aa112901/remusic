@@ -54,16 +54,6 @@
                     android:src="@drawable/play_disc_halo"
                     app:layout_heightPercent="77%"
                     app:layout_widthPercent="76%" />
-
-                <!--<com.wm.remusic.widget.RoundImageView xmlns:app="http://schemas.android.com/apk/res-auto"-->
-                <!--android:layout_width="match_parent"-->
-                <!--android:layout_height="match_parent"-->
-                <!--android:layout_centerInParent="true"-->
-                <!--android:layout_gravity="center_horizontal"-->
-                <!--android:scaleType="centerCrop"-->
-                <!--android:layout_margin="45dp"-->
-                <!--android:id="@+id/circle_view"-->
-                <!--/>-->
                 <com.wm.remusic.widget.AlbumViewPager
                     android:id="@+id/view_pager"
                     android:layout_width="match_parent"
@@ -192,7 +182,7 @@
                     style="@style/Widget.AppCompat.ProgressBar.Horizontal"
                     android:id="@+id/play_seek"
                     android:layout_width="0dp"
-                    android:secondaryProgress="10"
+                    android:secondaryProgress="0"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
                     android:layout_weight="22" />

@@ -89,7 +89,7 @@ public class AddPlaylistDialog extends DialogFragment {
                                 String albumart = null;
 
                                 for (long id : musicId) {
-                                    albumart = MusicUtils.getalbumdata(MainApplication.context, id);
+                                    albumart = MusicUtils.getAlbumdata(MainApplication.context, id);
                                     if (albumart != null) {
                                         break;
                                     }

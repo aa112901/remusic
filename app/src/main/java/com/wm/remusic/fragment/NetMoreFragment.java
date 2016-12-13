@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.DialogFragment;
@@ -31,6 +32,7 @@ import com.wm.remusic.activity.ArtistDetailActivity;
 import com.wm.remusic.adapter.MusicFlowAdapter;
 import com.wm.remusic.adapter.OverFlowAdapter;
 import com.wm.remusic.adapter.OverFlowItem;
+import com.wm.remusic.dialog.AddNetPlaylistDialog;
 import com.wm.remusic.downmusic.Down;
 import com.wm.remusic.handler.HandlerUtil;
 import com.wm.remusic.info.MusicInfo;
@@ -38,9 +40,11 @@ import com.wm.remusic.json.SearchAlbumInfo;
 import com.wm.remusic.json.SearchArtistInfo;
 import com.wm.remusic.net.BMA;
 import com.wm.remusic.net.HttpUtil;
+import com.wm.remusic.service.MusicPlayer;
 import com.wm.remusic.widget.DividerItemDecoration;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -154,11 +158,25 @@ public class NetMoreFragment extends DialogFragment {
             public void onItemClick(View view, String data) {
                 switch (Integer.parseInt(data)) {
                     case 0:
-                        Toast.makeText(mContext, "网络歌曲暂时不支持加入下一首", Toast.LENGTH_SHORT).show();
+                        mHandler.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                if (adapterMusicInfo.songId == MusicPlayer.getCurrentAudioId())
+                                    return;
+
+                                long[] ids = new long[1];
+                                ids[0] = adapterMusicInfo.songId;
+                                HashMap<Long,MusicInfo> map = new HashMap<Long, MusicInfo>();
+                                map.put(ids[0],adapterMusicInfo);
+                                MusicPlayer.playNext(mContext, map,ids);
+                            }
+                        }, 100);
                         dismiss();
                         break;
                     case 1:
-                        Toast.makeText(mContext, "网络歌曲暂时不支持收藏", Toast.LENGTH_SHORT).show();
+                        ArrayList<MusicInfo> musicList = new ArrayList<MusicInfo>();
+                        musicList.add(adapterMusicInfo);
+                        AddNetPlaylistDialog.newInstance(musicList).show(getFragmentManager(), "add");
                         dismiss();
                         break;
                     case 2:
@@ -197,9 +215,10 @@ public class NetMoreFragment extends DialogFragment {
                     case 4:
 
                         if (adapterMusicInfo.islocal) {
-                            new Thread(new Runnable() {
+                            new AsyncTask<Void,Void,Void>(){
+
                                 @Override
-                                public void run() {
+                                protected Void doInBackground(Void... params) {
                                     ArrayList<SearchArtistInfo> artistResults = new ArrayList<>();
                                     try {
 
@@ -234,8 +253,9 @@ public class NetMoreFragment extends DialogFragment {
 //                                        intent.putExtra("albumdetail",info.getAlbum_desc());
                                         mContext.startActivity(intent);
                                     }
+                                    return null;
                                 }
-                            }).start();
+                            }.execute();
                         } else {
 
                             Intent intent = new Intent(mContext, ArtistDetailActivity.class);
@@ -248,9 +268,10 @@ public class NetMoreFragment extends DialogFragment {
                     case 5:
 
                         if (adapterMusicInfo.islocal) {
-                            new Thread(new Runnable() {
+                            new AsyncTask<Void,Void,Void>(){
+
                                 @Override
-                                public void run() {
+                                protected Void doInBackground(Void... params) {
                                     ArrayList<SearchAlbumInfo> albumResults = new ArrayList<SearchAlbumInfo>();
                                     try {
 
@@ -290,9 +311,10 @@ public class NetMoreFragment extends DialogFragment {
                                         intent.putExtra("albumdetail", info.getAlbum_desc());
                                         mContext.startActivity(intent);
                                     }
-
+                                    return null;
                                 }
-                            }).start();
+                            }.execute();
+
                         } else {
 
                             Intent intent = new Intent(getActivity(), AlbumsDetailActivity.class);

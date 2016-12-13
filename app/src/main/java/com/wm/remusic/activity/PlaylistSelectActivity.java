@@ -31,10 +31,12 @@ import com.wm.remusic.provider.PlaylistsManager;
 import com.wm.remusic.service.MediaService;
 import com.wm.remusic.service.MusicPlayer;
 import com.wm.remusic.uitl.IConstants;
+import com.wm.remusic.uitl.MusicUtils;
 import com.wm.remusic.widget.DividerItemDecoration;
 import com.wm.remusic.widget.DragSortRecycler;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 //import com.readystatesoftware.systembartint.SystemBarTintManager;
 
@@ -98,10 +100,15 @@ public class PlaylistSelectActivity extends AppCompatActivity implements View.On
 
             case R.id.select_next:
                 long[] list = new long[selectList.size()];
+                HashMap<Long, MusicInfo> infos = new HashMap();
                 for (int i = 0; i < mAdapter.getSelectedItem().size(); i++) {
+                    MusicInfo info = selectList.get(i);
                     list[i] = selectList.get(i).songId;
+                    info.islocal = true;
+                    info.albumData = MusicUtils.getAlbumArtUri(info.albumId) + "";
+                    infos.put(list[i], selectList.get(i));
                 }
-                MusicPlayer.playNext(this, list, -1);
+                MusicPlayer.playNext(this, infos,list);
                 break;
             case R.id.select_addtoplaylist:
                 long[] list1 = new long[selectList.size()];

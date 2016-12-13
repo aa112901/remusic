@@ -18,6 +18,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bilibili.magicasakura.widgets.TintImageView;
+import com.github.promeg.pinyinhelper.Pinyin;
 import com.wm.remusic.R;
 import com.wm.remusic.activity.SelectActivity;
 import com.wm.remusic.handler.HandlerUtil;
@@ -25,7 +26,7 @@ import com.wm.remusic.info.MusicInfo;
 import com.wm.remusic.service.MusicPlayer;
 import com.wm.remusic.uitl.IConstants;
 import com.wm.remusic.uitl.MusicUtils;
-import com.wm.remusic.uitl.MusicComparator;
+import com.wm.remusic.uitl.Comparator.MusicComparator;
 import com.wm.remusic.uitl.PreferencesUtility;
 import com.wm.remusic.uitl.SortOrder;
 import com.wm.remusic.widget.DividerItemDecoration;
@@ -212,7 +213,10 @@ public class MusicFragment extends BaseFragment {
         protected String doInBackground(String... params) {
             if (getActivity() != null) {
                 musicInfos = (ArrayList<MusicInfo>) MusicUtils.queryMusic(getActivity(), IConstants.START_FROM_LOCAL);
-                
+
+                for(int i = 0; i< musicInfos.size(); i++){
+                   char c = Pinyin.toPinyin(musicInfos.get(i).musicName.charAt(0)).charAt(0);
+                }
                 if (musicInfos != null)
                     mAdapter = new Adapter(musicInfos);
             }
@@ -386,7 +390,6 @@ public class MusicFragment extends BaseFragment {
                             info.albumData = MusicUtils.getAlbumArtUri(info.albumId) + "";
                             infos.put(list[i], mList.get(i));
                         }
-                        Log.e("musicf",getAdapterPosition() - 1 + "");
                         if(getAdapterPosition() > 0)
                             MusicPlayer.playAll(infos, list, getAdapterPosition() - 1, false);
                     }

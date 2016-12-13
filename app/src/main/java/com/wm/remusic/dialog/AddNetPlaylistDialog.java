@@ -108,7 +108,7 @@ public class AddNetPlaylistDialog extends DialogFragment {
                                 for (MusicInfo info : musics) {
                                     albumart = info.albumData;
                                     if (info.islocal) {
-                                        if (albumart == MusicUtils.getalbumdata(MainApplication.context, info.songId))
+                                        if (albumart == MusicUtils.getAlbumdata(MainApplication.context, info.songId))
                                             break;
                                     } else if (!albumart.isEmpty()) {
                                         break;

@@ -182,12 +182,20 @@ public class MediaPlayerProxy implements Runnable {
             String value = requestParts[i].substring(separatorLocation + 1).trim();
             // 不添加Host Header，因为URL的Host为127.0.0.1
             if (!name.equals(Constants.HOST)) {
-                request.setRequestProperty(name, value);
+                try {
+                    request.setRequestProperty(name, value);
+                } catch (NullPointerException e) {
+                    e.printStackTrace();
+                }
             }
         }
         // 如果没有Range，统一添加默认Range,方便后续处理
 
-        request.setRequestProperty(Constants.RANGE, Constants.RANGE_PARAMS_0);
+        try {
+            request.setRequestProperty(Constants.RANGE, Constants.RANGE_PARAMS_0);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
         return request;
     }

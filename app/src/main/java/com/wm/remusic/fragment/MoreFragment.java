@@ -175,17 +175,17 @@ public class MoreFragment extends DialogFragment {
             switch (type) {
                 case IConstants.ARTISTOVERFLOW:
                     String artist = args;
-                    list = MusicUtils.queryMusic(mContext, null, artist, IConstants.START_FROM_ARTIST);
+                    list = MusicUtils.queryMusic(mContext,artist, IConstants.START_FROM_ARTIST);
                     topTitle.setText("歌曲：" + " " + list.get(0).artist);
                     break;
                 case IConstants.ALBUMOVERFLOW:
                     String albumId = args;
-                    list = MusicUtils.queryMusic(mContext, null, albumId, IConstants.START_FROM_ALBUM);
+                    list = MusicUtils.queryMusic(mContext,albumId, IConstants.START_FROM_ALBUM);
                     topTitle.setText("专辑：" + " " + list.get(0).albumName);
                     break;
                 case IConstants.FOLDEROVERFLOW:
                     String folder = args;
-                    list = MusicUtils.queryMusic(mContext, null, folder, IConstants.START_FROM_FOLDER);
+                    list = MusicUtils.queryMusic(mContext, folder, IConstants.START_FROM_FOLDER);
                     topTitle.setText("文件夹：" + " " + folder);
                     break;
             }
@@ -196,7 +196,6 @@ public class MoreFragment extends DialogFragment {
         }
 
     }
-
     private void setClick() {
         if (muaicflowAdapter != null) {
             muaicflowAdapter.setOnItemClickListener(new MusicFlowAdapter.OnRecyclerViewItemClickListener() {
@@ -212,15 +211,15 @@ public class MoreFragment extends DialogFragment {
 
                                     long[] ids = new long[1];
                                     ids[0] = adapterMusicInfo.songId;
-                                    MusicPlayer.playNext(mContext, ids, -1);
+                                    HashMap<Long,MusicInfo> map = new HashMap<Long, MusicInfo>();
+                                    map.put(ids[0],adapterMusicInfo);
+                                    MusicPlayer.playNext(mContext, map,ids);
                                 }
                             }, 100);
 
                             dismiss();
                             break;
                         case 1:
-//                            long[] list = new long[1];
-//                            list[0] = adapterMusicInfo.songId;
                             ArrayList<MusicInfo> musicList = new ArrayList<MusicInfo>();
                             musicList.add(adapterMusicInfo);
                             AddNetPlaylistDialog.newInstance(musicList).show(getFragmentManager(), "add");
@@ -283,9 +282,10 @@ public class MoreFragment extends DialogFragment {
                         case 4:
 
                             if (adapterMusicInfo.islocal) {
-                                new Thread(new Runnable() {
+                                new AsyncTask<Void,Void,Void>(){
+
                                     @Override
-                                    public void run() {
+                                    protected Void doInBackground(Void... params) {
                                         ArrayList<SearchArtistInfo> artistResults = new ArrayList<>();
                                         try {
 
@@ -314,14 +314,11 @@ public class MoreFragment extends DialogFragment {
                                             Intent intent = new Intent(mContext, ArtistDetailActivity.class);
                                             intent.putExtra("artistid", info.getArtist_id());
                                             intent.putExtra("artistname", info.getAuthor());
-//                                        intent.putExtra("albumid", info.getAlbum_id());
-//                                        intent.putExtra("albumart", info.getPic_small());
-//                                        intent.putExtra("albumname", info.getTitle());
-//                                        intent.putExtra("albumdetail",info.getAlbum_desc());
                                             mContext.startActivity(intent);
                                         }
+                                        return null;
                                     }
-                                }).start();
+                                }.execute();
                             } else {
 
                                 Intent intent = new Intent(mContext, ArtistDetailActivity.class);
@@ -334,20 +331,14 @@ public class MoreFragment extends DialogFragment {
                         case 5:
 
                             if (adapterMusicInfo.islocal) {
-                                new Thread(new Runnable() {
+                                new AsyncTask<Void,Void,Void>(){
+
                                     @Override
-                                    public void run() {
+                                    protected Void doInBackground(Void... params) {
                                         ArrayList<SearchAlbumInfo> albumResults = new ArrayList<SearchAlbumInfo>();
                                         try {
 
                                             JsonObject jsonObject = HttpUtil.getResposeJsonObject(BMA.Search.searchMerge(adapterMusicInfo.albumName, 1, 10)).get("result").getAsJsonObject();
-//                                        JsonObject artistObject =  jsonObject.get("artist_info").getAsJsonObject();
-//                                        JsonArray artistArray = artistObject.get("artist_list").getAsJsonArray();
-//                                        for (JsonElement o : artistArray) {
-//                                            SearchArtistInfo artistInfo =  MainApplication.gsonInstance().fromJson(o, SearchArtistInfo.class);
-//                                            artistResults.add(artistInfo);
-//                                        }
-                                            Log.e("search", jsonObject.toString());
                                             JsonObject albumObject = jsonObject.get("album_info").getAsJsonObject();
                                             JsonArray albumArray = albumObject.get("album_list").getAsJsonArray();
                                             for (JsonElement o : albumArray) {
@@ -368,7 +359,6 @@ public class MoreFragment extends DialogFragment {
 
                                         } else {
                                             SearchAlbumInfo info = albumResults.get(0);
-                                            Log.e("search", info.getAlbum_id() + "  " + info.getTitle());
                                             Intent intent = new Intent(mContext, AlbumsDetailActivity.class);
                                             intent.putExtra("albumid", info.getAlbum_id());
                                             intent.putExtra("albumart", info.getPic_small());
@@ -376,9 +366,9 @@ public class MoreFragment extends DialogFragment {
                                             intent.putExtra("albumdetail", info.getAlbum_desc());
                                             mContext.startActivity(intent);
                                         }
-
+                                        return null;
                                     }
-                                }).start();
+                                };
                             } else {
 
                                 Intent intent = new Intent(getActivity(), AlbumsDetailActivity.class);
@@ -387,7 +377,6 @@ public class MoreFragment extends DialogFragment {
                                 intent.putExtra("albumname", adapterMusicInfo.albumName);
                                 mContext.startActivity(intent);
                             }
-
                             dismiss();
                             break;
                         case 6:
@@ -435,7 +424,7 @@ public class MoreFragment extends DialogFragment {
             public void onItemClick(View view, String data) {
                 switch (Integer.parseInt(data)) {
                     case 0:
-                        new Thread(new Runnable() {
+                        mHandler.postDelayed(new Runnable() {
                             @Override
                             public void run() {
                                 HashMap<Long, MusicInfo> infos = new HashMap<Long, MusicInfo>();
@@ -449,15 +438,10 @@ public class MoreFragment extends DialogFragment {
 
                                 MusicPlayer.playAll(infos, listid, 0, false);
                             }
-                        }).start();
+                        },60);
                         dismiss();
                         break;
                     case 1:
-//                        long[] queuelist = new long[list.size()];
-//                        for (int i = 0; i < list.size(); i++) {
-//                            queuelist[i] = list.get(i).songId;
-//                        }
-//                        AddPlaylistDialog.newInstance(queuelist).show(getFragmentManager(), "add");
                         AddNetPlaylistDialog.newInstance(list).show(getFragmentManager(), "add");
 
                         dismiss();

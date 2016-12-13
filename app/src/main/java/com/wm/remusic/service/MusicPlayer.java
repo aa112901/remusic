@@ -35,6 +35,7 @@ import android.widget.Toast;
 import com.wm.remusic.MediaAidlInterface;
 import com.wm.remusic.R;
 import com.wm.remusic.info.MusicInfo;
+import com.wm.remusic.uitl.L;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -386,6 +387,17 @@ public class MusicPlayer {
         return sEmptyList;
     }
 
+    public static final HashMap<Long,MusicInfo> getPlayinfos() {
+        try {
+            if (mService != null) {
+                return (HashMap<Long,MusicInfo>) mService.getPlayinfos();
+            } else {
+            }
+        } catch (final RemoteException ignored) {
+        }
+        return null;
+    }
+
     public static final long getQueueItemAtPosition(int position) {
         try {
             if (mService != null) {
@@ -524,7 +536,7 @@ public class MusicPlayer {
         }
     }
 
-    public static void playNext(Context context, final long[] list, final long sourceIde) {
+    public static void playNext(Context context, final HashMap<Long,MusicInfo> map ,final long[] list) {
         if (mService == null) {
             return;
         }
@@ -553,7 +565,7 @@ public class MusicPlayer {
 //                }
 //            }
 
-            mService.enqueue(list, MediaService.NEXT);
+            mService.enqueue(list,map, MediaService.NEXT);
 
             Toast.makeText(context, R.string.next_play, Toast.LENGTH_SHORT).show();
         } catch (final RemoteException ignored) {
@@ -692,7 +704,7 @@ public class MusicPlayer {
             return;
         }
         try {
-            mService.enqueue(list, MediaService.LAST);
+            mService.enqueue(list,null, MediaService.LAST);
             //final String message = makeLabel(context, R.plurals.NNNtrackstoqueue, list.length);
             //Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
         } catch (final RemoteException ignored) {

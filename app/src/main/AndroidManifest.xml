@@ -70,7 +70,6 @@
         <service
             android:name=".service.MediaService"
             android:process=":main"
-
             />
 
         <receiver android:name=".receiver.MediaButtonIntentReceiver">

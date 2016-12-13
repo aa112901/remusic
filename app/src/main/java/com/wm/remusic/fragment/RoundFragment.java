@@ -97,7 +97,7 @@ public class RoundFragment extends Fragment {
         //设置Hierarchy
         sdv.setHierarchy(hierarchy);
         //Log.e("music id",musicId + "");
-//        String uri = MusicUtils.getalbumdata(getContext().getApplicationContext(), musicId);
+//        String uri = MusicUtils.getAlbumdata(getContext().getApplicationContext(), musicId);
 //
 //        if (musicId != -1 && uri != null) {
 //            //circleImageView.setImageBitmap(bitmap);

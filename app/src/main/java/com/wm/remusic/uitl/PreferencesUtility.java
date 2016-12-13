@@ -260,4 +260,20 @@ public final class PreferencesUtility {
         editor.putBoolean(NOW_PLAYNG_THEME_VALUE, value);
         editor.apply();
     }
+    public void setFilterSize(int size){
+        final SharedPreferences.Editor editor = mPreferences.edit();
+        editor.putInt("filtersize", size);
+        editor.apply();
+    }
+    public void setFilterTime(int time){
+        final SharedPreferences.Editor editor = mPreferences.edit();
+        editor.putInt("filtertime", time);
+        editor.apply();
+    }
+    public int getFilterSize(){
+        return mPreferences.getInt("filtersize", 1024 * 1024);
+    }
+    public int getFilterTime(){
+        return mPreferences.getInt("filtertime", 60 * 1000);
+    }
 }

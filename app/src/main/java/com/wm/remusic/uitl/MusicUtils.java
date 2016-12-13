@@ -12,6 +12,7 @@ import android.provider.MediaStore;
 import android.provider.MediaStore.Audio.Albums;
 import android.provider.MediaStore.Audio.Media;
 import android.provider.MediaStore.Files.FileColumns;
+import android.text.TextUtils;
 import android.util.Log;
 
 import com.github.promeg.pinyinhelper.Pinyin;
@@ -63,12 +64,8 @@ public class MusicUtils implements IConstants {
                 + FileColumns.DATA + " like'%.mp3' or " + Media.DATA
                 + " like'%.wma')");
         // 查询语句：检索出.mp3为后缀名，时长大于1分钟，文件大小大于1MB的媒体文件
-//		if(sp.getFilterSize()) {
-//			mSelection.append(" and " + Media.SIZE + " > " + FILTER_SIZE);
-//		}
-//		if(sp.getFilterTime()) {
-//			mSelection.append(" and " + Media.DURATION + " > " + FILTER_DURATION);
-//		}
+        mSelection.append(" and " + Media.SIZE + " > " + FILTER_SIZE);
+        mSelection.append(" and " + Media.DURATION + " > " + FILTER_DURATION);
         mSelection.append(") group by ( " + FileColumns.PARENT);
 
         List<FolderInfo> list = getFolderList(cr.query(uri, proj_folder, mSelection.toString(), null,
@@ -88,9 +85,16 @@ public class MusicUtils implements IConstants {
 
         Uri uri = MediaStore.Audio.Artists.EXTERNAL_CONTENT_URI;
         ContentResolver cr = context.getContentResolver();
+        StringBuilder where = new StringBuilder(MediaStore.Audio.Artists._ID
+                + " in (select distinct " + Media.ARTIST_ID
+                + " from audio_meta where (1=1 )");
+        where.append(" and " + Media.SIZE + " > " + FILTER_SIZE);
+        where.append(" and " + Media.DURATION + " > " + FILTER_DURATION);
+
+        where.append(")");
 
         List<ArtistInfo> list = getArtistList(cr.query(uri, proj_artist,
-                null, null, PreferencesUtility.getInstance(context).getArtistSortOrder()));
+                where.toString(), null, PreferencesUtility.getInstance(context).getArtistSortOrder()));
 
         return list;
 
@@ -107,33 +111,17 @@ public class MusicUtils implements IConstants {
         ContentResolver cr = context.getContentResolver();
         StringBuilder where = new StringBuilder(Albums._ID
                 + " in (select distinct " + Media.ALBUM_ID
-                + " from audio_meta where (1=1 ");
+                + " from audio_meta where (1=1)");
+        where.append(" and " + Media.SIZE + " > " + FILTER_SIZE);
+        where.append(" and " + Media.DURATION + " > " + FILTER_DURATION);
 
-//		if(sp.getFilterSize()) {
-//			where.append(" and " + Media.SIZE + " > " + FILTER_SIZE);
-//		}
-//		if(sp.getFilterTime()) {
-//			where.append(" and " + Media.DURATION + " > " + FILTER_DURATION);
-//		}
-        where.append("))");
-
-//		if (mAlbumInfoDao.hasData()) {
-//			return mAlbumInfoDao.getAlbumInfo();
-//		} else
+        where.append(" )");
 
         // Media.ALBUM_KEY 按专辑名称排序
         List<AlbumInfo> list = getAlbumList(cr.query(Albums.EXTERNAL_CONTENT_URI, proj_album,
                 where.toString(), null, PreferencesUtility.getInstance(context).getAlbumSortOrder()));
-        //mAlbumInfoDao.saveAlbumInfo(list);
         return list;
 
-    }
-
-    public static List<MusicInfo> getAlbumsongs(Context context, String selection, String order) {
-        ContentResolver cr = context.getContentResolver();
-        return getMusicListCursor(cr.query(Media.EXTERNAL_CONTENT_URI, proj_music,
-                "album_id = ?", new String[]{selection},
-                order));
     }
 
 
@@ -143,28 +131,20 @@ public class MusicUtils implements IConstants {
      * @return
      */
     public static List<MusicInfo> queryMusic(Context context, int from) {
-        return queryMusic(context, null, null, from);
+        return queryMusic(context, null, from);
     }
 
 
-    public static ArrayList<MusicInfo> queryMusic(Context context,
-                                                  String selections, String selection, int from) {
+    public static ArrayList<MusicInfo> queryMusic(Context context, String id, int from) {
 
         Uri uri = Media.EXTERNAL_CONTENT_URI;
         ContentResolver cr = context.getContentResolver();
 
-        StringBuffer select = new StringBuffer(" 1=1 ");
+        StringBuilder select = new StringBuilder(" 1=1 and title != ''");
         // 查询语句：检索出.mp3为后缀名，时长大于1分钟，文件大小大于1MB的媒体文件
-//		if(sp.getFilterSize()) {
-//			select.append(" and " + Media.SIZE + " > " + FILTER_SIZE);
-//		}
-//		if(sp.getFilterTime()) {
-//			select.append(" and " + Media.DURATION + " > " + FILTER_DURATION);
-//		}
-//
-//		if (!TextUtils.isEmpty(selections)) {
-//			select.append(selections);
-//		}
+        select.append(" and " + Media.SIZE + " > " + FILTER_SIZE);
+        select.append(" and " + Media.DURATION + " > " + FILTER_DURATION);
+
         String selectionStatement = "is_music=1 AND title != ''";
         final String songSortOrder = PreferencesUtility.getInstance(context).getSongSortOrder();
 
@@ -172,24 +152,25 @@ public class MusicUtils implements IConstants {
         switch (from) {
             case START_FROM_LOCAL:
                 ArrayList<MusicInfo> list3 = getMusicListCursor(cr.query(uri, proj_music,
-                        selectionStatement, null,
+                        select.toString(), null,
                         songSortOrder));
                 return list3;
             case START_FROM_ARTIST:
-                return getMusicListCursor(cr.query(uri, proj_music, Media.ARTIST_ID + " = ?", new String[]{selection},
+                select.append( " and " + Media.ARTIST_ID + " = " + id);
+                return getMusicListCursor(cr.query(uri, proj_music, select.toString(), null,
                         PreferencesUtility.getInstance(context).getArtistSongSortOrder()));
             case START_FROM_ALBUM:
-
+                select.append( " and " + Media.ALBUM_ID + " = " + id);
                 return getMusicListCursor(cr.query(uri, proj_music,
-                        "album_id = ?", new String[]{selection},
+                        select.toString(), null,
                         PreferencesUtility.getInstance(context).getAlbumSongSortOrder()));
             case START_FROM_FOLDER:
                 ArrayList<MusicInfo> list1 = new ArrayList<>();
                 ArrayList<MusicInfo> list = getMusicListCursor(cr.query(Media.EXTERNAL_CONTENT_URI, proj_music,
-                        null, null,
+                        select.toString(), null,
                         null));
                 for (MusicInfo music : list) {
-                    if (music.data.substring(0, music.data.lastIndexOf(File.separator)).equals(selection)) {
+                    if (music.data.substring(0, music.data.lastIndexOf(File.separator)).equals(id)) {
                         list1.add(music);
                     }
                 }
@@ -229,6 +210,9 @@ public class MusicUtils implements IConstants {
         Cursor cursor = (context.getContentResolver().query(Media.EXTERNAL_CONTENT_URI, proj_music,
                 selection.toString(),
                 null, null));
+        if(cursor == null){
+            return null;
+        }
         ArrayList<MusicInfo> musicList = new ArrayList<>();
         musicList.ensureCapacity(id.length);
         for (int i = 0; i < id.length; i++) {
@@ -377,7 +361,7 @@ public class MusicUtils implements IConstants {
         return getAlbumArtUri(id);
     }
 
-    public static String getalbumdata(Context context, long musicid) {
+    public static String getAlbumdata(Context context, long musicid) {
         ContentResolver cr = context.getContentResolver();
         Cursor cursor = cr.query(Media.EXTERNAL_CONTENT_URI, proj_music, "_id = " + String.valueOf(musicid), null, null);
         if (cursor == null) {

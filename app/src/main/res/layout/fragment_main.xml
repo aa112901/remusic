@@ -16,19 +16,6 @@
             android:layout_height="match_parent" />
 
     </android.support.v4.widget.SwipeRefreshLayout>
-   <TextView
-       android:id="@+id/dialog_text"
-       android:gravity="center"
-       android:textSize="60sp"
-       android:layout_centerInParent="true"
-       android:layout_width="100dp"
-       android:layout_height="100dp" />
-    <com.wm.remusic.widget.SideBar
-        android:visibility="invisible"
-        android:id="@+id/sidebar"
-        android:layout_width="25dp"
-        android:layout_height="match_parent"
-        android:layout_alignParentRight="true" />
 
     <ImageView
         android:id="@+id/empty"

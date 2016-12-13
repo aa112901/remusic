@@ -112,7 +112,7 @@ public class FolderDetailFragment extends BaseFragment {
         new AsyncTask<Void, Void, Void>() {
             @Override
             protected Void doInBackground(final Void... unused) {
-                List<MusicInfo> albumList = MusicUtils.queryMusic(getActivity(), null, folder_path, IConstants.START_FROM_FOLDER);
+                List<MusicInfo> albumList = MusicUtils.queryMusic(getActivity(),folder_path, IConstants.START_FROM_FOLDER);
                 folderDetailAdapter.updateDataSet(albumList);
                 return null;
             }

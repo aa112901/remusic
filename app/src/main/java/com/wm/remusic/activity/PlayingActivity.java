@@ -99,7 +99,7 @@ public class PlayingActivity extends BaseActivity implements IConstants {
     private boolean isFav = false;
     private boolean isNextOrPreSetPage = false; //判断viewpager由手动滑动 还是setcruuentitem换页
     private boolean duetoplaypause = false; //判读是否是播放暂停的通知，不要切换专辑封面
-    Toolbar toolbar;
+    private Toolbar toolbar;
     private FrameLayout albumLayout;
     private RelativeLayout lrcViewContainer;
     private LrcView mLrcView;
@@ -191,7 +191,10 @@ public class PlayingActivity extends BaseActivity implements IConstants {
         tryGetLrc.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(getApplicationContext(), "重试被点击啦", Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent();
+                intent.setAction(MediaService.TRY_GET_TRACKINFO);
+                sendBroadcast(intent);
+                Toast.makeText(getApplicationContext(), "正在获取信息", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -470,7 +473,6 @@ public class PlayingActivity extends BaseActivity implements IConstants {
             playingmode.setImageResource(R.drawable.play_icn_shuffle);
             Toast.makeText(PlayingActivity.this.getApplication(), getResources().getString(R.string.random_play),
                     Toast.LENGTH_SHORT).show();
-            return;
         } else {
             switch (MusicPlayer.getRepeatMode()) {
                 case MediaService.REPEAT_ALL:
@@ -519,10 +521,11 @@ public class PlayingActivity extends BaseActivity implements IConstants {
         }
     }
 
-    private void updateLrc() {
-        if (getLrcRows() != null && getLrcRows().size() > 0) {
+    public void updateLrc() {
+        List<LrcRow> list = getLrcRows();
+        if (list != null && list.size() > 0) {
             tryGetLrc.setVisibility(View.INVISIBLE);
-            mLrcView.setLrcRows(getLrcRows());
+            mLrcView.setLrcRows(list);
         } else {
             tryGetLrc.setVisibility(View.VISIBLE);
             mLrcView.reset();
@@ -530,6 +533,10 @@ public class PlayingActivity extends BaseActivity implements IConstants {
     }
 
     private long bluredId = -1;
+    public void updateTrack(){
+        new setBlurredAlbumArt().execute();
+    }
+
 
     public void updateTrackInfo() {
 
@@ -549,7 +556,7 @@ public class PlayingActivity extends BaseActivity implements IConstants {
             updateLrc();
 
             if (MusicPlayer.getCurrentAudioId() != bluredId) {
-                new setBlurredAlbumArt().execute();
+
             }
             bluredId = MusicPlayer.getCurrentAudioId();
 
@@ -763,7 +770,7 @@ public class PlayingActivity extends BaseActivity implements IConstants {
 
     }
 
-    Bitmap mBitmap;
+    private Bitmap mBitmap;
 
     private class setBlurredAlbumArt extends AsyncTask<Void, Void, Drawable> {
         long albumid = MusicPlayer.getCurrentAlbumId();

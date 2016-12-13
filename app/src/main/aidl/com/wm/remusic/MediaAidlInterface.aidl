@@ -11,7 +11,8 @@ interface MediaAidlInterface
     void play();
     void prev(boolean forcePrevious);
     void next();
-    void enqueue(in long [] list, int action);
+    void enqueue(in long [] list,in Map infos, int action);
+    Map getPlayinfos();
     void setQueuePosition(int index);
     void setShuffleMode(int shufflemode);
     void setRepeatMode(int repeatmode);

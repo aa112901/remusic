@@ -55,6 +55,12 @@ public class BaseActivity extends AppCompatActivity implements ServiceConnection
     public void updateTime() {
 
     }
+    public void updateTrack(){
+
+    }
+    public void updateLrc(){
+
+    }
 
     /**
      * @param p 更新歌曲缓冲进度值，p取值从0~100
@@ -114,6 +120,8 @@ public class BaseActivity extends AppCompatActivity implements ServiceConnection
         f.addAction(MediaService.TRACK_PREPARED);
         f.addAction(MediaService.BUFFER_UP);
         f.addAction(IConstants.EMPTY_LIST);
+        f.addAction(MediaService.MUSIC_CHANGED);
+        f.addAction(MediaService.LRC_UPDATED);
         registerReceiver(mPlaybackStatus, new IntentFilter(f));
         showQuickControl(true);
     }
@@ -187,7 +195,12 @@ public class BaseActivity extends AppCompatActivity implements ServiceConnection
                     final String errorMsg = context.getString(R.string.exit,
                             intent.getStringExtra(MediaService.TrackErrorExtra.TRACK_NAME));
                     Toast.makeText(baseActivity, errorMsg, Toast.LENGTH_SHORT).show();
+                } else if (action.equals(MediaService.MUSIC_CHANGED)){
+                    baseActivity.updateTrack();
+                } else if (action.equals(MediaService.LRC_UPDATED)){
+                    baseActivity.updateLrc();
                 }
+
             }
         }
     }

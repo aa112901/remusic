@@ -35,6 +35,7 @@ import com.wm.remusic.uitl.MusicUtils;
 import com.wm.remusic.widget.DividerItemDecoration;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -129,7 +130,9 @@ public class SimpleMoreFragment extends DialogFragment {
 
                                         long[] ids = new long[1];
                                         ids[0] = adapterMusicInfo.songId;
-                                        MusicPlayer.playNext(mContext, ids, -1);
+                                        HashMap<Long,MusicInfo> map = new HashMap<Long, MusicInfo>();
+                                        map.put(ids[0],adapterMusicInfo);
+                                        MusicPlayer.playNext(mContext, map,ids);
                                     }
                                 }, 100);
                             }

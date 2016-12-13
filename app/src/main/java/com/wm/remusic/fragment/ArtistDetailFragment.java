@@ -110,7 +110,7 @@ public class ArtistDetailFragment extends BaseFragment {
         new AsyncTask<Void, Void, Void>() {
             @Override
             protected Void doInBackground(final Void... unused) {
-                ArrayList<MusicInfo> artistList = (ArrayList) MusicUtils.queryMusic(getActivity(), null, artistID + "", IConstants.START_FROM_ARTIST);
+                ArrayList<MusicInfo> artistList = (ArrayList) MusicUtils.queryMusic(getActivity(), artistID + "", IConstants.START_FROM_ARTIST);
                 artDetailAdapter.updateDataSet(artistList);
                 return null;
             }

@@ -58,6 +58,7 @@ import android.provider.MediaStore.Audio.AlbumColumns;
 import android.provider.MediaStore.Audio.AudioColumns;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
+import android.support.v4.media.MediaMetadataCompat;
 import android.text.TextUtils;
 import android.util.Log;
 import android.widget.RemoteViews;
@@ -91,6 +92,7 @@ import com.wm.remusic.receiver.MediaButtonIntentReceiver;
 import com.wm.remusic.recent.SongPlayCount;
 import com.wm.remusic.uitl.CommonUtils;
 import com.wm.remusic.uitl.ImageUtils;
+import com.wm.remusic.uitl.L;
 import com.wm.remusic.uitl.PreferencesUtility;
 
 import java.io.BufferedReader;
@@ -101,7 +103,10 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.RandomAccessFile;
 import java.lang.ref.WeakReference;
+import java.nio.ByteBuffer;
+import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -109,8 +114,6 @@ import java.util.ListIterator;
 import java.util.Map;
 import java.util.Random;
 import java.util.TreeSet;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 @SuppressLint("NewApi")
 public class MediaService extends Service {
@@ -132,10 +135,12 @@ public class MediaService extends Service {
     public static final String PREVIOUS_ACTION = "com.wm.remusic.previous";
     public static final String PREVIOUS_FORCE_ACTION = "com.wm.remusic.previous.force";
     public static final String NEXT_ACTION = "com.wm.remusic.next";
+    public static final String MUSIC_CHANGED = "com.wm.remusi.change_music";
     public static final String REPEAT_ACTION = "com.wm.remusic.repeat";
     public static final String SHUFFLE_ACTION = "com.wm.remusic.shuffle";
     public static final String FROM_MEDIA_BUTTON = "frommediabutton";
     public static final String REFRESH = "com.wm.remusic.refresh";
+    public static final String LRC_UPDATED = "com.wm.remusic.updatelrc";
     public static final String UPDATE_LOCKSCREEN = "com.wm.remusic.updatelockscreen";
     public static final String CMDNAME = "command";
     public static final String CMDTOGGLEPAUSE = "togglepause";
@@ -158,6 +163,8 @@ public class MediaService extends Service {
     private static final String TAG = "MusicPlaybackService";
     private static final boolean D = true;
     private static final String SHUTDOWN = "com.wm.remusic.shutdown";
+    private static final int LRC_DOWNLOADED = -10;
+    public static final String TRY_GET_TRACKINFO = "com.wm.remusic.gettrackinfo";
     private static final int IDCOLIDX = 0;
     private static final int TRACK_ENDED = 1;
     private static final int TRACK_WENT_TO_NEXT = 2;
@@ -255,17 +262,33 @@ public class MediaService extends Service {
         public void onReceive(final Context context, final Intent intent) {
             final String command = intent.getStringExtra(CMDNAME);
 
-
+            Log.d(TAG, "onreceive" + intent.toURI());
             handleCommandIntent(intent);
 
         }
     };
     private ContentObserver mMediaStoreObserver;
 
-    private ExecutorService executor = Executors.newSingleThreadExecutor();
-    private ExecutorService lrcExecutor = Executors.newSingleThreadExecutor();
-    private ExecutorService nextExecutor = Executors.newSingleThreadExecutor();
-    MediaPlayerProxy proxy;
+    private static Handler urlHandler;
+    private Thread getUrlThread = new Thread(new Runnable() {
+        @Override
+        public void run() {
+            Looper.prepare();
+            urlHandler = new Handler();
+            Looper.loop();
+        }
+    });
+
+    private static Handler lrcHandler;
+    private Thread lrcThread = new Thread(new Runnable() {
+        @Override
+        public void run() {
+            Looper.prepare();
+            lrcHandler = new Handler();
+            Looper.loop();
+        }
+    });
+    private MediaPlayerProxy proxy;
     public static final String LRC_PATH = "/remusic/lrc/";
 
 
@@ -306,11 +329,11 @@ public class MediaService extends Service {
     public void onCreate() {
         if (D) Log.d(TAG, "Creating service");
         super.onCreate();
-
+        getUrlThread.start();
+        lrcThread.start();
         proxy = new MediaPlayerProxy(this);
         proxy.init();
         proxy.start();
-
 
         mNotificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
 
@@ -357,6 +380,7 @@ public class MediaService extends Service {
         filter.addAction(PREVIOUS_FORCE_ACTION);
         filter.addAction(REPEAT_ACTION);
         filter.addAction(SHUFFLE_ACTION);
+        filter.addAction(TRY_GET_TRACKINFO);
         // Attach the broadcast listener
         registerReceiver(mIntentReceiver, filter);
 
@@ -478,7 +502,6 @@ public class MediaService extends Service {
     public int onStartCommand(final Intent intent, final int flags, final int startId) {
         if (D) Log.d(TAG, "Got new intent " + intent + ", startId = " + startId);
         mServiceStartId = startId;
-
         if (intent != null) {
             final String action = intent.getAction();
 
@@ -551,6 +574,8 @@ public class MediaService extends Service {
             cycleRepeat();
         } else if (SHUFFLE_ACTION.equals(action)) {
             cycleShuffle();
+        } else if (TRY_GET_TRACKINFO.equals(action)) {
+            getLrc(mPlaylist.get(mPlayPos).mId);
         }
     }
 
@@ -616,7 +641,6 @@ public class MediaService extends Service {
         if (cursor != null && cursor.moveToFirst()) {
             mCardId = cursor.getInt(0);
             cursor.close();
-            cursor = null;
         }
         return mCardId;
     }
@@ -801,7 +825,7 @@ public class MediaService extends Service {
             mCursor = openCursorAndGoToFirst(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
                     PROJECTION, selection, selectionArgs);
         }
-        updateAlbumCursor();
+        //updateAlbumCursor();
     }
 
     private void updateCursor(final Uri uri) {
@@ -809,37 +833,37 @@ public class MediaService extends Service {
             closeCursor();
             mCursor = openCursorAndGoToFirst(uri, PROJECTION, null, null);
         }
-        updateAlbumCursor();
+        //updateAlbumCursor();
     }
 
 
-    private void updateAlbumCursor(String url) {
-        long albumId = getAlbumId();
-        if (albumId >= 0) {
-            mAlbumCursor = openCursorAndGoToFirst(MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI,
-                    ALBUM_PROJECTION, "_id=" + albumId, null);
-
-            if (mAlbumCursor == null || mAlbumCursor.getCount() < 1) {
-            }
-        } else {
-            mAlbumCursor = null;
-        }
-    }
-
-    private void updateAlbumCursor() {
-        long albumId = getAlbumId();
-        if (albumId >= 0) {
-            mAlbumCursor = openCursorAndGoToFirst(MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI,
-                    ALBUM_PROJECTION, "_id=" + albumId, null);
-
-            if (mAlbumCursor == null || mAlbumCursor.getCount() < 1) {
-
-
-            }
-        } else {
-            mAlbumCursor = null;
-        }
-    }
+//    private void updateAlbumCursor(String url) {
+//        long albumId = getAlbumId();
+//        if (albumId >= 0) {
+//            mAlbumCursor = openCursorAndGoToFirst(MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI,
+//                    ALBUM_PROJECTION, "_id=" + albumId, null);
+//
+//            if (mAlbumCursor == null || mAlbumCursor.getCount() < 1) {
+//            }
+//        } else {
+//            mAlbumCursor = null;
+//        }
+//    }
+//
+//    private void updateAlbumCursor() {
+//        long albumId = getAlbumId();
+//        if (albumId >= 0) {
+//            mAlbumCursor = openCursorAndGoToFirst(MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI,
+//                    ALBUM_PROJECTION, "_id=" + albumId, null);
+//
+//            if (mAlbumCursor == null || mAlbumCursor.getCount() < 1) {
+//
+//
+//            }
+//        } else {
+//            mAlbumCursor = null;
+//        }
+//    }
 
     private Cursor openCursorAndGoToFirst(Uri uri, String[] projection,
                                           String selection, String[] selectionArgs) {
@@ -867,34 +891,44 @@ public class MediaService extends Service {
     }
 
     class GetPlayUrl implements Runnable {
-        long id;
-        boolean play;
+        private long id;
+        private boolean play;
+        private boolean stop;
 
         public GetPlayUrl(long id, boolean play) {
             this.id = id;
             this.play = play;
         }
 
+        public void stop() {
+            stop = true;
+        }
+
         @Override
         public void run() {
-
-            String url = PreferencesUtility.getInstance(MediaService.this).getPlayLink(id);
-            if (url == null) {
-                MusicFileDownInfo song = Down.getUrl(MediaService.this, id + "");
-                if (song != null && song.getShow_link() != null) {
-                    url = song.getShow_link();
-                    PreferencesUtility.getInstance(MediaService.this).setPlayLink(id, url);
+            try {
+                String url = PreferencesUtility.getInstance(MediaService.this).getPlayLink(id);
+                if (url == null) {
+                    MusicFileDownInfo song = Down.getUrl(MediaService.this, id + "");
+                    if (song != null && song.getShow_link() != null) {
+                        url = song.getShow_link();
+                        PreferencesUtility.getInstance(MediaService.this).setPlayLink(id, url);
+                    }
                 }
-            }
-            Log.e(TAG, url);
-            startProxy();
-            // String urlEn = HttpUtil.urlEncode(url);
-            String urlEn = url;
-            urlEn = proxy.getProxyURL(urlEn);
-            mPlayer.setDataSource(urlEn);
-            if (play) {
-                play();
+                L.E(D, TAG, "current url = " + url);
+                if (!stop) {
+                    startProxy();
+                    // String urlEn = HttpUtil.urlEncode(url);
+                    String urlEn = url;
+                    urlEn = proxy.getProxyURL(urlEn);
+                    mPlayer.setDataSource(urlEn);
+                }
 
+                if (play && !stop) {
+                    play();
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         }
     }
@@ -909,15 +943,20 @@ public class MediaService extends Service {
 
     class GetLrc implements Runnable {
 
-        MusicInfo musicInfo;
+        private MusicInfo musicInfo;
+        private boolean stop;
 
         GetLrc(MusicInfo info) {
             this.musicInfo = info;
         }
 
+        public void stop() {
+            stop = true;
+        }
+
         @Override
         public void run() {
-
+            L.E(D, TAG, "start to getlrc");
             String url = null;
             if (musicInfo != null && musicInfo.lrc != null) {
                 url = musicInfo.lrc;
@@ -938,19 +977,22 @@ public class MediaService extends Service {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-
-            File file = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + LRC_PATH + musicInfo.songId);
-            String lrc = null;
-            try {
-                lrc = HttpUtil.getResposeString(url);
-                if (lrc != null && !lrc.isEmpty()) {
-                    if(!file.exists())
-                        file.createNewFile();
-                    writeToFile(file, lrc);
+            if (!stop) {
+                File file = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + LRC_PATH + musicInfo.songId);
+                String lrc = null;
+                try {
+                    lrc = HttpUtil.getResposeString(url);
+                    if (lrc != null && !lrc.isEmpty()) {
+                        if (!file.exists())
+                            file.createNewFile();
+                        writeToFile(file, lrc);
+                        mPlayerHandler.sendEmptyMessage(LRC_DOWNLOADED);
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
-            } catch (Exception e) {
-                e.printStackTrace();
             }
+
 
         }
     }
@@ -963,6 +1005,31 @@ public class MediaService extends Service {
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
+        }
+    }
+
+    GetPlayUrl mGetPlayUrl;
+    GetLrc mGetLrc;
+
+    private void getLrc(long id) {
+        String lrc = Environment.getExternalStorageDirectory().getAbsolutePath() + LRC_PATH;
+        Log.e(TAG, lrc);
+        File file = new File(lrc);
+        Log.e(TAG, "file exists = " + file.exists());
+        if (!file.exists()) {
+            //不存在就建立此目录
+            boolean r = file.mkdirs();
+            Log.e(TAG, "file created = " + r);
+
+        }
+        file = new File(lrc + id);
+        if (!file.exists()) {
+            if (mGetLrc != null) {
+                mGetLrc.stop();
+                lrcHandler.removeCallbacks(mGetLrc);
+            }
+            mGetLrc = new GetLrc(mPlaylistInfo.get(id));
+            lrcHandler.postDelayed(mGetLrc, 50);
         }
     }
 
@@ -980,26 +1047,15 @@ public class MediaService extends Service {
 
             final long id = mPlaylist.get(mPlayPos).mId;
             updateCursor(id);
-            String lrc = Environment.getExternalStorageDirectory().getAbsolutePath() + LRC_PATH;
-            Log.e(TAG,lrc);
-            File file = new File(lrc);
-            Log.e(TAG,"file exists = " + file.exists());
-            if(!file.exists()){
-                //不存在就建立此目录
-                boolean r = file.mkdirs();
-                Log.e(TAG,"file created = " + r);
-
-            }
-            file = new File(lrc + id);
-            if (!file.exists()) {
-                    //new Thread(new GetLrc(mPlaylistInfo.get(id))).start();
-                    lrcExecutor.submit(new GetLrc(mPlaylistInfo.get(id)));
-                }
+            getLrc(id);
 
             if (!mPlaylistInfo.get(id).islocal) {
-                executor.shutdownNow();
-                executor = Executors.newSingleThreadExecutor();
-                executor.submit(new GetPlayUrl(id, play));
+                if (mGetPlayUrl != null) {
+                    urlHandler.removeCallbacks(mGetPlayUrl);
+                    mGetPlayUrl.stop();
+                }
+                mGetPlayUrl = new GetPlayUrl(id, play);
+                urlHandler.postDelayed(mGetPlayUrl, 50);
 
             } else {
                 while (true) {
@@ -1302,6 +1358,7 @@ public class MediaService extends Service {
         if (what.equals(TRACK_PREPARED)) {
             return;
         }
+
         if (what.equals(META_CHANGED)) {
 
             mRecentStore.addSongId(getAudioId());
@@ -1509,27 +1566,19 @@ public class MediaService extends Service {
 
         final SharedPreferences.Editor editor = mPreferences.edit();
         if (full) {
-
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    mPlaybackStateStore.saveState(mPlaylist, mShuffleMode != SHUFFLE_NONE ? mHistory : null);
-
-                    synchronized (this) {
-                        if (mPlaylistInfo.size() > 0) {
-                            String c = MainApplication.gsonInstance().toJson(mPlaylistInfo);
-                            try {
-                                FileOutputStream fo = new FileOutputStream(new File(getCacheDir().getAbsolutePath() + "playlist"));
-                                fo.write(c.getBytes());
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
-                        }
-                    }
-                    editor.putInt("cardid", mCardId);
+            mPlaybackStateStore.saveState(mPlaylist, mShuffleMode != SHUFFLE_NONE ? mHistory : null);
+            if (mPlaylistInfo.size() > 0) {
+                String temp = MainApplication.gsonInstance().toJson(mPlaylistInfo);
+                try {
+                    File file = new File(getCacheDir().getAbsolutePath() + "playlist");
+                    RandomAccessFile ra = new RandomAccessFile(file, "rws");
+                    ra.write(temp.getBytes());
+                    ra.close();
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
-            }).start();
-
+            }
+            editor.putInt("cardid", mCardId);
 
         }
         editor.putInt("curpos", mPlayPos);
@@ -1554,7 +1603,7 @@ public class MediaService extends Service {
     private String readTextFromSDcard(InputStream is) throws Exception {
         InputStreamReader reader = new InputStreamReader(is);
         BufferedReader bufferedReader = new BufferedReader(reader);
-        StringBuffer buffer = new StringBuffer("");
+        StringBuffer buffer = new StringBuffer();
         String str;
         while ((str = bufferedReader.readLine()) != null) {
             buffer.append(str);
@@ -1572,10 +1621,9 @@ public class MediaService extends Service {
             mPlaylist = mPlaybackStateStore.getQueue();
 
             try {
-                FileInputStream fo = new FileInputStream(new File(getCacheDir().getAbsolutePath() + "playlist"));
-                String c = readTextFromSDcard(fo);
-                HashMap<Long, MusicInfo> play = MainApplication.gsonInstance().fromJson(c, new TypeToken<HashMap<Long, MusicInfo>>() {
-                }.getType());
+                FileInputStream in = new FileInputStream(new File(getCacheDir().getAbsolutePath() + "playlist"));
+                String c = readTextFromSDcard(in);
+                HashMap<Long, MusicInfo> play = MainApplication.gsonInstance().fromJson(c, new TypeToken<HashMap<Long, MusicInfo>>() {}.getType());
                 if (play != null && play.size() > 0) {
                     mPlaylistInfo = play;
                     Log.e("reload", mPlaylistInfo.keySet().toString());
@@ -1861,6 +1909,7 @@ public class MediaService extends Service {
             openCurrentAndNext();
             play();
             notifyChange(META_CHANGED);
+            notifyChange(MUSIC_CHANGED);
             if (mShuffleMode == SHUFFLE_AUTO) {
                 doAutoShuffleUpdate();
             }
@@ -2112,6 +2161,12 @@ public class MediaService extends Service {
         return -1;
     }
 
+    public HashMap<Long,MusicInfo> getPlayinfos() {
+        synchronized (this) {
+            return mPlaylistInfo;
+        }
+    }
+
     public long[] getQueue() {
         synchronized (this) {
             final int len = mPlaylist.size();
@@ -2236,29 +2291,23 @@ public class MediaService extends Service {
             setNextTrack(mNextPlayPos);
         }
 
-        if (true) {
-            if (mPlayer.isTrackPrepared()) {
-                final long duration = mPlayer.duration();
-                if (mRepeatMode != REPEAT_CURRENT && duration > 2000
-                        && mPlayer.position() >= duration - 2000) {
-                    gotoNext(true);
-                    Log.e("play to go", "");
-                }
+        if (mPlayer.isTrackPrepared()) {
+            final long duration = mPlayer.duration();
+            if (mRepeatMode != REPEAT_CURRENT && duration > 2000
+                    && mPlayer.position() >= duration - 2000) {
+                gotoNext(true);
+                Log.e("play to go", "");
             }
-
-
-            mPlayer.start();
-            mPlayerHandler.removeMessages(FADEDOWN);
-            mPlayerHandler.sendEmptyMessage(FADEUP);
-
-            setIsSupposedToBePlaying(true, true);
-
-            cancelShutdown();
-            updateNotification();
-            notifyChange(META_CHANGED);
-        } else if (mPlaylist.size() <= 0) {
-            setShuffleMode(SHUFFLE_AUTO);
         }
+        mPlayer.start();
+        mPlayerHandler.removeMessages(FADEDOWN);
+        mPlayerHandler.sendEmptyMessage(FADEUP);
+
+        setIsSupposedToBePlaying(true, true);
+
+        cancelShutdown();
+        updateNotification();
+        notifyChange(META_CHANGED);
     }
 
     public void pause() {
@@ -2303,6 +2352,7 @@ public class MediaService extends Service {
             openCurrentAndNext();
             play();
             notifyChange(META_CHANGED);
+            notifyChange(MUSIC_CHANGED);
         }
     }
 
@@ -2340,6 +2390,7 @@ public class MediaService extends Service {
                 openCurrent();
                 play(false);
                 notifyChange(META_CHANGED);
+                notifyChange(MUSIC_CHANGED);
             } else {
                 if (D) Log.d(TAG, "Going to beginning of track");
                 seek(0);
@@ -2408,8 +2459,9 @@ public class MediaService extends Service {
         }
     }
 
-    public void enqueue(final long[] list, final int action) {
+    public void enqueue(final long[] list, final HashMap<Long,MusicInfo> map, final int action) {
         synchronized (this) {
+            mPlaylistInfo.putAll(map);
             if (action == NEXT && mPlayPos + 1 < mPlaylist.size()) {
                 addToPlayList(list, mPlayPos + 1);
                 mNextPlayPos = mPlayPos + 1;
@@ -2536,6 +2588,7 @@ public class MediaService extends Service {
                         service.updateCursor(service.mPlaylist.get(service.mPlayPos).mId);
 
                         service.notifyChange(META_CHANGED);
+                        service.notifyChange(MUSIC_CHANGED);
                         service.updateNotification();
                         break;
                     case TRACK_ENDED:
@@ -2580,6 +2633,8 @@ public class MediaService extends Service {
                             default:
                         }
                         break;
+                    case LRC_DOWNLOADED:
+                        service.notifyChange(LRC_UPDATED);
                     default:
                         break;
                 }
@@ -2795,6 +2850,7 @@ public class MediaService extends Service {
         public void start() {
             if (D) Log.d(TAG, "mIsTrackNet, " + mIsTrackNet);
             if (!mIsTrackNet) {
+                mService.get().sendUpdateBuffer(100);
                 mCurrentMediaPlayer.start();
             } else {
                 handler.postDelayed(startMediaPlayerIfPrepared, 50);
@@ -2851,6 +2907,12 @@ public class MediaService extends Service {
                 if (D) Log.d(TAG, "mIsTrackPrepared, " + mIsTrackPrepared);
                 if (mIsTrackPrepared) {
                     mCurrentMediaPlayer.start();
+                    final long duration = duration();
+                    if (mService.get().mRepeatMode != REPEAT_CURRENT && duration > 2000
+                            && position() >= duration - 2000) {
+                        mService.get().gotoNext(true);
+                        Log.e("play to go", "");
+                    }
                 } else {
                     handler.postDelayed(startMediaPlayerIfPrepared, 100);
                 }
@@ -2963,7 +3025,6 @@ public class MediaService extends Service {
             mService = new WeakReference<MediaService>(service);
         }
 
-
         @Override
         public void openFile(final String path) throws RemoteException {
             mService.get().openFile(path);
@@ -3002,9 +3063,14 @@ public class MediaService extends Service {
         }
 
         @Override
-        public void enqueue(final long[] list, final int action)
+        public void enqueue(final long[] list, final Map infos,final int action)
                 throws RemoteException {
-            mService.get().enqueue(list, action);
+            mService.get().enqueue(list,(HashMap<Long, MusicInfo>) infos, action);
+        }
+
+        @Override
+        public Map getPlayinfos() throws RemoteException {
+            return mService.get().getPlayinfos();
         }
 
         @Override

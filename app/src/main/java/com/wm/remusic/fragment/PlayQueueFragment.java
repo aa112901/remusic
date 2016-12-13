@@ -20,6 +20,7 @@ import android.widget.TextView;
 import com.bilibili.magicasakura.widgets.TintImageView;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.wm.remusic.MainApplication;
 import com.wm.remusic.R;
 import com.wm.remusic.dialog.AddNetPlaylistDialog;
 import com.wm.remusic.info.MusicInfo;
@@ -35,6 +36,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.RandomAccessFile;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -139,26 +141,21 @@ public class PlayQueueFragment extends DialogFragment {
         @Override
         protected Void doInBackground(Void... params) {
             if (getActivity() != null) {
-                // playlist = QueueLoader.getQueueSongs(getActivity());
-
                 try {
-                    Gson gson = new Gson();
-                    FileInputStream fo = new FileInputStream(new File(getContext().getCacheDir().getAbsolutePath() + "playlist"));
-                    String c = readTextFromSDcard(fo);
-                    HashMap<Long, MusicInfo> play = gson.fromJson(c, new TypeToken<HashMap<Long, MusicInfo>>() {
-                    }.getType());
+//                    FileInputStream in = new FileInputStream(new File(getContext().getCacheDir().getAbsolutePath() + "playlist"));
+//                    String c = readTextFromSDcard(in);
+//                    HashMap<Long, MusicInfo> play = MainApplication.gsonInstance().fromJson(c, new TypeToken<HashMap<Long, MusicInfo>>() {
+//                    }.getType());
+                    HashMap<Long,MusicInfo> play = MusicPlayer.getPlayinfos();
                     if (play != null && play.size() > 0) {
                         long[] queue = MusicPlayer.getQueue();
                         int len = queue.length;
                         playlist = new ArrayList<>();
-
                         for (int i = 0; i < len; i++) {
                             playlist.add(play.get(queue[i]));
                         }
                     }
 
-                } catch (FileNotFoundException e) {
-                    e.printStackTrace();
                 } catch (Exception e) {
                     e.printStackTrace();
                 }

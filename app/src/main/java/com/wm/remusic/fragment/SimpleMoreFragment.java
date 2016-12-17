@@ -130,9 +130,9 @@ public class SimpleMoreFragment extends DialogFragment {
 
                                         long[] ids = new long[1];
                                         ids[0] = adapterMusicInfo.songId;
-                                        HashMap<Long,MusicInfo> map = new HashMap<Long, MusicInfo>();
-                                        map.put(ids[0],adapterMusicInfo);
-                                        MusicPlayer.playNext(mContext, map,ids);
+                                        HashMap<Long, MusicInfo> map = new HashMap<Long, MusicInfo>();
+                                        map.put(ids[0], adapterMusicInfo);
+                                        MusicPlayer.playNext(mContext, map, ids);
                                     }
                                 }, 100);
                             }

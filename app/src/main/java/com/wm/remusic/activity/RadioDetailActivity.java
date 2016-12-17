@@ -179,14 +179,8 @@ public class RadioDetailActivity extends BaseActivity implements ObservableScrol
 
                                 int len = mList.size();
                                 for (int i = 0; i < len; i++) {
-                                    Down.downMusic(MainApplication.context, mList.get(i).getSong_id(), mList.get(i).getSong_name());
+                                    Down.downMusic(MainApplication.context, mList.get(i).getSong_id(), mList.get(i).getSong_name(), artistName);
                                 }
-                                mHandler.post(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        Toast.makeText(RadioDetailActivity.this, "已加入到下载", Toast.LENGTH_SHORT).show();
-                                    }
-                                });
                                 dialog.dismiss();
                             }
                         }).
@@ -663,8 +657,8 @@ public class RadioDetailActivity extends BaseActivity implements ObservableScrol
 //                                musicInfo.albumData = sparseArray.get(i).getPic_radio();
 //                                infos.put(list[i] , musicInfo);
 //                            }
-                        if(getAdapterPosition() > 0)
-                        MusicPlayer.playAll(infos, list, getAdapterPosition() - 1, false);
+                        if (getAdapterPosition() > 0)
+                            MusicPlayer.playAll(infos, list, getAdapterPosition() - 1, false);
                     }
                 }).start();
 

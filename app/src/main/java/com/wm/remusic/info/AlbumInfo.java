@@ -63,7 +63,7 @@ public class AlbumInfo implements Parcelable {
         bundle.putInt(KEY_NUMBER_OF_SONGS, number_of_songs);
         bundle.putInt(KEY_ALBUM_ID, album_id);
         bundle.putString(KEY_ALBUM_ARTIST, album_artist);
-        bundle.putString(KEY_ALBUM_SORT,album_sort);
+        bundle.putString(KEY_ALBUM_SORT, album_sort);
         dest.writeBundle(bundle);
     }
 

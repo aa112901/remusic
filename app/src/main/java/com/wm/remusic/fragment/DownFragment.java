@@ -1,6 +1,10 @@
 package com.wm.remusic.fragment;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -8,6 +12,7 @@ import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SimpleItemAnimator;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,26 +23,30 @@ import android.widget.TextView;
 
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.wm.remusic.R;
-import com.wm.remusic.downmusic.DownloadManager;
-import com.wm.remusic.downmusic.DownloadStatus;
-import com.wm.remusic.downmusic.DownloadTask;
-import com.wm.remusic.handler.HandlerUtil;
+import com.wm.remusic.downmusic.DownService;
+import com.wm.remusic.downmusic.DownloadDBEntity;
+import com.wm.remusic.provider.DownFileStore;
+import com.wm.remusic.uitl.L;
 
 import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.Map;
 
 /**
  * Created by wm on 2016/5/17.
  */
 public class DownFragment extends Fragment {
 
-    LinearLayout allStart, allStop, clear;
-    ArrayList mList = new ArrayList();
-    RecyclerView recyclerView;
-    LinearLayoutManager layoutManager;
-    DownloadManager downloadManager;
-    DownLoadAdapter adapter;
+    private LinearLayout allStart, allStop, clear;
+    private ArrayList<DownloadDBEntity> mList = new ArrayList<>();
+    private RecyclerView recyclerView;
+    private LinearLayoutManager layoutManager;
+    private DownLoadAdapter adapter;
+    private DownFileStore downFileStore;
+    private DownStatus downStatus;
+    private Context mContext;
+    private int downPosition = -1;
+    private String TAG = "DownFragment";
+    private boolean d = true;
+
 
     @Nullable
     @Override
@@ -56,7 +65,7 @@ public class DownFragment extends Fragment {
         recyclerView.setLayoutManager(layoutManager);
         adapter = new DownLoadAdapter(null, null);
         recyclerView.setAdapter(adapter);
-        HandlerUtil.getInstance(getActivity()).postDelayed(mUpdateProgress, 100);
+        ((SimpleItemAnimator) recyclerView.getItemAnimator()).setSupportsChangeAnimations(false);
         reload();
 
         return view;
@@ -66,34 +75,41 @@ public class DownFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        mContext = getContext();
 
     }
 
-    public Runnable mUpdateProgress = new Runnable() {
+    @Override
+    public void onStart() {
+        super.onStart();
+        downStatus = new DownStatus();
+        IntentFilter f = new IntentFilter();
+        f.addAction(DownService.TASK_STARTDOWN);
+        f.addAction(DownService.UPDATE_DOWNSTAUS);
+        f.addAction(DownService.TASKS_CHANGED);
+        mContext.registerReceiver(downStatus, new IntentFilter(f));
+    }
 
-        @Override
-        public void run() {
-            reload();
+    @Override
+    public void onStop() {
+        super.onStop();
+        mContext.unregisterReceiver(downStatus);
+    }
 
-            HandlerUtil.getInstance(getActivity()).postDelayed(mUpdateProgress, 1000);
-
-        }
-    };
 
     private void reload() {
         new AsyncTask<Void, Void, Void>() {
             @Override
             protected Void doInBackground(Void... params) {
-                downloadManager = DownloadManager.getInstance(getActivity());
-                mList = (ArrayList) downloadManager.loadDownloadingTaskFromDB();
-
+                downFileStore = DownFileStore.getInstance(getContext());
+                mList = downFileStore.getDownLoadedListAllDowning();
+                L.D(d, TAG, " mlist size = " + mList.size());
                 return null;
             }
 
             @Override
             protected void onPostExecute(Void aVoid) {
-                adapter.update(mList, downloadManager.getCurrentTaskList());
+                adapter.update(mList, DownService.getPrepareTasks());
             }
         }.execute();
     }
@@ -104,36 +120,25 @@ public class DownFragment extends Fragment {
         allStart.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ArrayList<DownloadTask> taskslist = (ArrayList) downloadManager.loadDownloadingTaskFromDB();
-                Iterator iterator = taskslist.iterator();
-                while (iterator.hasNext()) {
-                    DownloadTask task = (DownloadTask) iterator.next();
-                    downloadManager.resume(task.getId());
-                }
+                Intent intent = new Intent(DownService.START_ALL_DOWNTASK);
+                mContext.startService(intent);
+
 
             }
         });
         allStop.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ArrayList<DownloadTask> taskslist = (ArrayList) downloadManager.loadDownloadingTaskFromDB();
-                Iterator iterator = taskslist.iterator();
-                while (iterator.hasNext()) {
-                    DownloadTask task = (DownloadTask) iterator.next();
-                    downloadManager.pause(task);
-                }
+                Intent intent = new Intent(DownService.PAUSE_ALLTASK);
+                mContext.startService(intent);
 
             }
         });
         clear.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ArrayList<DownloadTask> taskslist = (ArrayList) downloadManager.loadDownloadingTaskFromDB();
-                Iterator iterator = taskslist.iterator();
-                while (iterator.hasNext()) {
-                    DownloadTask task = (DownloadTask) iterator.next();
-                    downloadManager.cancel(task);
-                }
+                Intent intent = new Intent(DownService.CANCLE_ALL_DOWNTASK);
+                mContext.startService(intent);
             }
         });
     }
@@ -142,18 +147,31 @@ public class DownFragment extends Fragment {
     class DownLoadAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
         private ArrayList mList;
-        boolean showPro = false;
-        private Map<String, DownloadTask> currentTaskList;
+        private ArrayList<String> currentTaskList;
+        private long completed = 0;
+        private long totalsize = -1;
 
-        public DownLoadAdapter(ArrayList list, Map<String, DownloadTask> currentTaskList) {
+
+        public DownLoadAdapter(ArrayList list, ArrayList<String> currentTaskList) {
             mList = list;
             this.currentTaskList = currentTaskList;
         }
 
-        public void update(ArrayList list, Map<String, DownloadTask> currentTaskList) {
+        public void update(ArrayList list, ArrayList<String> currentTaskList) {
             mList = list;
             this.currentTaskList = currentTaskList;
+            completed = 0;
+            totalsize = -1;
             notifyDataSetChanged();
+        }
+
+        public void notifyItem(long completed, long total) {
+            // L.D(d,TAG," comleted = " + completed + "  total = " + total);
+            this.completed = completed;
+            if (total != -1)
+                this.totalsize = total;
+            notifyItemChanged(downPosition);
+
         }
 
         @Override
@@ -162,54 +180,63 @@ public class DownFragment extends Fragment {
         }
 
         @Override
-        public void onBindViewHolder(final RecyclerView.ViewHolder holder, int position) {
-
-            final DownloadTask task = (DownloadTask) mList.get(position);
+        public void onBindViewHolder(final RecyclerView.ViewHolder holder, final int position) {
+            boolean isCurrent = false;
+            boolean isPreparing = false;
+            final DownloadDBEntity task = (DownloadDBEntity) mList.get(position);
             ((ItemViewHolder) holder).title.setText(task.getFileName());
-            final boolean isCurrent = currentTaskList.containsKey(task.getId());
 
-
-//            if (task.getPercent() == 100) {
-//                ((ItemViewHolder) holder).artist.setText(task.getFileName());
-//                ((ItemViewHolder) holder).count.setText((float) (Math.round((float) task.getCompletedSize() / (1024 * 1024) * 10)) / 10 + "M");
-//                ((ItemViewHolder) holder).progressBar.setVisibility(View.GONE);
-//                ((ItemViewHolder) holder).downloaded.setVisibility(View.VISIBLE);
-//
-//            } else {
-            ((ItemViewHolder) holder).count.setText((float) (Math.round((float) task.getCompletedSize() / (1024 * 1024) * 10)) / 10 + "M/" +
-                    (float) (Math.round((float) task.getTotalSize() / (1024 * 1024) * 10)) / 10 + "M");
-            ;
+            if (currentTaskList.size() > 0) {
+                L.D(d, TAG, "currentlist size = " + currentTaskList.size());
+                isCurrent = currentTaskList.get(0).equals(task.getDownloadId());
+                if (isCurrent) {
+                    downPosition = position;
+                }
+                if (currentTaskList.contains(task.getDownloadId())) {
+                    isPreparing = true;
+                }
+            }
+            // L.D(d,TAG,"isCurrent = " + isCurrent + " isPreparing = " + isPreparing);
             if (isCurrent) {
-                ((ItemViewHolder) holder).progressBar.setVisibility(View.VISIBLE);
-                ((ItemViewHolder) holder).progressBar.setProgress((int) task.getPercent());
-
+                completed = completed > task.getCompletedSize() ? completed : task.getCompletedSize();
+                totalsize = totalsize > task.getTotalSize() ? totalsize : task.getTotalSize();
+                if (completed == 0 || totalsize == -1) {
+                    ((ItemViewHolder) holder).count.setText("正在计算大小文件大小");
+                    ((ItemViewHolder) holder).progressBar.setVisibility(View.GONE);
+                } else {
+                    ((ItemViewHolder) holder).count.setText((float) (Math.round((float) completed / (1024 * 1024) * 10)) / 10 + "M/" +
+                            (float) (Math.round((float) totalsize / (1024 * 1024) * 10)) / 10 + "M");
+                    if (((ItemViewHolder) holder).progressBar.getVisibility() != View.VISIBLE)
+                        ((ItemViewHolder) holder).progressBar.setVisibility(View.VISIBLE);
+                    if (totalsize > 0)
+                        ((ItemViewHolder) holder).progressBar.setProgress((int) (100 * completed / totalsize));
+                }
+            } else if (isPreparing) {
+                ((ItemViewHolder) holder).progressBar.setVisibility(View.GONE);
+                ((ItemViewHolder) holder).count.setText(task.getArtist() + "-" + task.getFileName());
             } else {
-                ((ItemViewHolder) holder).progressBar.removeCallbacks(mUpdateProgress);
                 ((ItemViewHolder) holder).progressBar.setVisibility(View.GONE);
                 ((ItemViewHolder) holder).count.setText("已经暂停，点击继续下载");
             }
 
-
+            final boolean isPreparing1 = isPreparing;
             ((ItemViewHolder) holder).itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if (!isCurrent) {
-                        downloadManager.resume(task.getId());
-                        return;
-                    }
-                    if (task.getDownloadStatus() != DownloadStatus.DOWNLOAD_STATUS_COMPLETED) {
-
-                        if (task.getDownloadStatus() == DownloadStatus.DOWNLOAD_STATUS_DOWNLOADING) {
-                            downloadManager.pause(downloadManager.getTaskById(task.getId()));
-
-                        } else {
-                            downloadManager.resume(task.getId());
-                        }
+                    if (isPreparing1) {
+                        L.D(d, TAG, "isprepaing");
+                        Intent intent = new Intent(DownService.PAUSE_TASK);
+                        intent.putExtra("downloadid", task.getDownloadId());
+                        mContext.startService(intent);
+                    } else {
+                        L.D(d, TAG, "not isprepaing");
+                        Intent intent = new Intent(DownService.RESUME_START_DOWNTASK);
+                        intent.putExtra("downloadid", task.getDownloadId());
+                        mContext.startService(intent);
                     }
 
                 }
             });
-            //      }
 
             ((ItemViewHolder) holder).clear.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -218,7 +245,9 @@ public class DownFragment extends Fragment {
                             .setPositiveButton(getActivity().getString(R.string.sure), new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
-                                    downloadManager.cancel(task.getId());
+                                    Intent intent = new Intent(DownService.CANCLE_DOWNTASK);
+                                    intent.putExtra("downloadid", task.getDownloadId());
+                                    mContext.startService(intent);
                                     dialog.dismiss();
                                 }
                             })
@@ -268,5 +297,25 @@ public class DownFragment extends Fragment {
         }
 
 
+    }
+
+    private class DownStatus extends BroadcastReceiver {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String action = intent.getAction();
+            switch (action) {
+                case DownService.UPDATE_DOWNSTAUS:
+                    adapter.notifyItem(intent.getLongExtra("completesize", 0), intent.getLongExtra("totalsize", -1));
+                    break;
+                case DownService.TASK_STARTDOWN:
+                    adapter.notifyItem(intent.getLongExtra("completesize", 0), intent.getLongExtra("totalsize", -1));
+                    break;
+                case DownService.TASKS_CHANGED:
+                    reload();
+                    break;
+
+            }
+        }
     }
 }

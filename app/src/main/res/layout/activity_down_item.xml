@@ -21,13 +21,14 @@
             fresco:placeholderImage="@mipmap/placeholder_disk_300"
             fresco:actualImageScaleType="centerInside" />
 
+
     </LinearLayout>
 
     <LinearLayout
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginLeft="7dp"
-        android:layout_weight="7"
+        android:layout_weight="6"
         android:orientation="vertical">
 
         <LinearLayout
@@ -50,6 +51,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="3dp"
+            android:layout_marginRight="10dp"
             android:orientation="horizontal">
 
             <ImageView
@@ -79,8 +81,8 @@
                 android:layout_gravity="center_vertical"
                 android:id="@+id/down_progress"
                 style="@style/Widget.AppCompat.ProgressBar.Horizontal"
-                android:layout_weight="22"
-                android:layout_marginRight="10dp"
+                android:layout_weight="20"
+                android:layout_marginRight="20dp"
                 android:secondaryProgress="100"
                 android:secondaryProgressTint="@color/test_color"
                 android:progress="10" />
@@ -93,7 +95,7 @@
                 android:singleLine="true"
                 android:text="00:00"
                 android:textColor="@color/test_color"
-                android:textSize="11sp" />
+                android:textSize="10sp" />
 
         </LinearLayout>
 

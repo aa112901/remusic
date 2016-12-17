@@ -49,7 +49,7 @@ public class FolderInfo implements Parcelable {
         bundle.putString(KEY_FOLDER_NAME, folder_name);
         bundle.putString(KEY_FOLDER_PATH, folder_path);
         bundle.putString(KEY_FOLDER_SORT, folder_sort);
-        bundle.putInt(KEY_FOLDER_FILE_COUNT,folder_count);
+        bundle.putInt(KEY_FOLDER_FILE_COUNT, folder_count);
         dest.writeBundle(bundle);
     }
 

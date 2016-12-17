@@ -5,17 +5,16 @@ import android.Manifest;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SimpleItemAnimator;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import com.bilibili.magicasakura.utils.ThemeUtils;
 import com.wm.remusic.R;
@@ -24,14 +23,11 @@ import com.wm.remusic.adapter.MainFragmentItem;
 import com.wm.remusic.info.Playlist;
 import com.wm.remusic.provider.DownFileStore;
 import com.wm.remusic.provider.PlaylistInfo;
-import com.wm.remusic.recent.SongLoader;
 import com.wm.remusic.recent.TopTracksLoader;
 import com.wm.remusic.uitl.CommonUtils;
 import com.wm.remusic.uitl.IConstants;
 import com.wm.remusic.uitl.MusicUtils;
 import com.wm.remusic.widget.DividerItemDecoration;
-import com.wm.remusic.widget.SideBar;
-
 
 import java.util.ArrayList;
 import java.util.List;
@@ -79,7 +75,7 @@ public class MainFragment extends BaseFragment {
         layoutManager = new LinearLayoutManager(mContext);
         recyclerView.setLayoutManager(layoutManager);
         //swipeRefresh.setColorSchemeResources(R.color.theme_color_PrimaryAccent);
-        swipeRefresh.setColorSchemeColors(ThemeUtils.getColorById(mContext,R.color.theme_color_primary));
+        swipeRefresh.setColorSchemeColors(ThemeUtils.getColorById(mContext, R.color.theme_color_primary));
         swipeRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
@@ -92,6 +88,7 @@ public class MainFragment extends BaseFragment {
         recyclerView.setAdapter(mAdapter);
         recyclerView.setHasFixedSize(true);
         recyclerView.addItemDecoration(new DividerItemDecoration(mContext, DividerItemDecoration.VERTICAL_LIST));
+        ((SimpleItemAnimator) recyclerView.getItemAnimator()).setSupportsChangeAnimations(false);
         reloadAdapter();
 
         getActivity().getWindow().setBackgroundDrawableResource(R.color.background_material_light_1);
@@ -109,7 +106,6 @@ public class MainFragment extends BaseFragment {
     }
 
 
-
     //为info设置数据，并放入mlistInfo
     private void setInfo(String title, int count, int id, int i) {
         MainFragmentItem information = new MainFragmentItem();
@@ -125,7 +121,7 @@ public class MainFragment extends BaseFragment {
     //设置音乐overflow条目
     private void setMusicInfo() {
 
-        if (CommonUtils.isLollipop() &&ContextCompat.checkSelfPermission(mContext, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+        if (CommonUtils.isLollipop() && ContextCompat.checkSelfPermission(mContext, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
             requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 0);
         } else {
             loadCount();
@@ -134,7 +130,7 @@ public class MainFragment extends BaseFragment {
 
     private void loadCount() {
         int localMusicCount = MusicUtils.queryMusic(mContext, IConstants.START_FROM_LOCAL).size();
-        int recentMusicCount = TopTracksLoader.getCursor(mContext,TopTracksLoader.QueryType.RecentSongs).getCount();
+        int recentMusicCount = TopTracksLoader.getCursor(mContext, TopTracksLoader.QueryType.RecentSongs).getCount();
         int downLoadCount = DownFileStore.getInstance(mContext).getDownLoadedListAll().size();
         int artistsCount = MusicUtils.queryArtist(mContext).size();
         setInfo(mContext.getResources().getString(R.string.local_music), localMusicCount, R.drawable.music_icn_local, 0);
@@ -177,6 +173,6 @@ public class MainFragment extends BaseFragment {
     @Override
     public void changeTheme() {
         super.changeTheme();
-        swipeRefresh.setColorSchemeColors(ThemeUtils.getColorById(mContext,R.color.theme_color_primary));
+        swipeRefresh.setColorSchemeColors(ThemeUtils.getColorById(mContext, R.color.theme_color_primary));
     }
 }

@@ -48,7 +48,7 @@ public class FolderFragment extends BaseFragment {
     private Adapter mAdapter;
     private PreferencesUtility mPreferences;
     private boolean isAZSort = true;
-    private HashMap<String,Integer> positionMap = new HashMap<>();
+    private HashMap<String, Integer> positionMap = new HashMap<>();
     private SideBar sideBar;
     private TextView dialogText;
 
@@ -62,7 +62,7 @@ public class FolderFragment extends BaseFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.recylerview, container, false);
 
-       // folderInfos = MusicUtils.queryFolder(getActivity());
+        // folderInfos = MusicUtils.queryFolder(getActivity());
         recyclerView = (RecyclerView) view.findViewById(R.id.recyclerview);
         layoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(layoutManager);
@@ -79,11 +79,11 @@ public class FolderFragment extends BaseFragment {
             public void onTouchingLetterChanged(String s) {
                 dialogText.setText(s);
                 sideBar.setView(dialogText);
-                Log.e("scrol","  " + s);
-                if(positionMap.get(s) != null){
+                Log.e("scrol", "  " + s);
+                if (positionMap.get(s) != null) {
                     int i = positionMap.get(s);
-                    Log.e("scrolget","  " + i);
-                    ((LinearLayoutManager)recyclerView.getLayoutManager()).scrollToPositionWithOffset(i,0);
+                    Log.e("scrolget", "  " + i);
+                    ((LinearLayoutManager) recyclerView.getLayoutManager()).scrollToPositionWithOffset(i, 0);
                 }
 
             }
@@ -99,11 +99,12 @@ public class FolderFragment extends BaseFragment {
         @Override
         public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
             super.onScrollStateChanged(recyclerView, newState);
-            if(newState == RecyclerView.SCROLL_STATE_DRAGGING){
+            if (newState == RecyclerView.SCROLL_STATE_DRAGGING) {
                 sideBar.setVisibility(View.VISIBLE);
             }
         }
     };
+
     @Override
     public void onResume() {
         super.onResume();
@@ -142,7 +143,7 @@ public class FolderFragment extends BaseFragment {
                 return true;
             case R.id.menu_sort_by_number_of_songs:
                 mPreferences.setFolerSortOrder(SortOrder.FolderSortOrder.FOLDER_NUMBER);
-                 reloadAdapter();
+                reloadAdapter();
                 return true;
         }
         return super.onOptionsItemSelected(item);
@@ -154,20 +155,20 @@ public class FolderFragment extends BaseFragment {
             @Override
             protected Void doInBackground(final Void... unused) {
                 isAZSort = mPreferences.getFoloerSortOrder().equals(SortOrder.FolderSortOrder.FOLDER_A_Z);
-                Log.e("sort" , "foler" + isAZSort);
+                Log.e("sort", "foler" + isAZSort);
                 List<FolderInfo> folderList = MusicUtils.queryFolder(getContext());
-                for(int i = 0; i< folderList.size() ; i++){
+                for (int i = 0; i < folderList.size(); i++) {
                     List<MusicInfo> albumList = MusicUtils.queryMusic(getActivity(), folderList.get(i).folder_path, IConstants.START_FROM_FOLDER);
                     folderList.get(i).folder_count = albumList.size();
                 }
-                if(isAZSort){
-                    Collections.sort(folderList,new FolderComparator());
-                    for(int i = 0; i < folderList.size() ; i++){
-                        if(positionMap.get(folderList.get(i).folder_sort) == null)
-                            positionMap.put(folderList.get(i).folder_sort,i);
+                if (isAZSort) {
+                    Collections.sort(folderList, new FolderComparator());
+                    for (int i = 0; i < folderList.size(); i++) {
+                        if (positionMap.get(folderList.get(i).folder_sort) == null)
+                            positionMap.put(folderList.get(i).folder_sort, i);
                     }
-                }else {
-                    Collections.sort(folderList,new FolderCountComparator());
+                } else {
+                    Collections.sort(folderList, new FolderCountComparator());
                 }
                 mAdapter.updateDataSet(folderList);
                 return null;
@@ -175,9 +176,9 @@ public class FolderFragment extends BaseFragment {
 
             @Override
             protected void onPostExecute(Void aVoid) {
-                if(isAZSort){
+                if (isAZSort) {
                     recyclerView.addOnScrollListener(scrollListener);
-                }else {
+                } else {
                     sideBar.setVisibility(View.INVISIBLE);
                     recyclerView.removeOnScrollListener(scrollListener);
                 }

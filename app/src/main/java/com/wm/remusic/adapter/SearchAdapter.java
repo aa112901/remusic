@@ -15,7 +15,6 @@
 package com.wm.remusic.adapter;
 
 import android.app.Activity;
-import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;

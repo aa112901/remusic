@@ -44,7 +44,7 @@ public class SearchHistory {
 
     public void onCreate(final SQLiteDatabase db) {
         db.execSQL("CREATE TABLE IF NOT EXISTS " + SearchHistoryColumns.NAME + " ("
-                + SearchHistoryColumns.SEARCHSTRING + " STRING NOT NULL,"
+                + SearchHistoryColumns.SEARCHSTRING + " TEXT NOT NULL,"
                 + SearchHistoryColumns.TIMESEARCHED + " LONG NOT NULL);");
     }
 

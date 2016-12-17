@@ -7,6 +7,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SimpleItemAnimator;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -49,7 +50,7 @@ public class ArtistFragment extends BaseFragment {
     private PreferencesUtility mPreferences;
     private RecyclerView.ItemDecoration itemDecoration;
     private boolean isAZSort = true;
-    private HashMap<String,Integer> positionMap = new HashMap<>();
+    private HashMap<String, Integer> positionMap = new HashMap<>();
     private SideBar sideBar;
     private TextView dialogText;
 
@@ -65,6 +66,7 @@ public class ArtistFragment extends BaseFragment {
         mAdapter = new ArtistAdapter(null);
         recyclerView.setAdapter(mAdapter);
         recyclerView.setHasFixedSize(true);
+        ((SimpleItemAnimator) recyclerView.getItemAnimator()).setSupportsChangeAnimations(false);
         setItemDecoration();
         isAZSort = mPreferences.getArtistSortOrder().equals(SortOrder.ArtistSortOrder.ARTIST_A_Z);
         dialogText = (TextView) view.findViewById(R.id.dialog_text);
@@ -74,11 +76,11 @@ public class ArtistFragment extends BaseFragment {
             public void onTouchingLetterChanged(String s) {
                 dialogText.setText(s);
                 sideBar.setView(dialogText);
-                Log.e("scrol","  " + s);
-                if(positionMap.get(s) != null){
+                Log.e("scrol", "  " + s);
+                if (positionMap.get(s) != null) {
                     int i = positionMap.get(s);
-                    Log.e("scrolget","  " + i);
-                    ((LinearLayoutManager)recyclerView.getLayoutManager()).scrollToPositionWithOffset(i,0);
+                    Log.e("scrolget", "  " + i);
+                    ((LinearLayoutManager) recyclerView.getLayoutManager()).scrollToPositionWithOffset(i, 0);
                 }
 
             }
@@ -87,11 +89,12 @@ public class ArtistFragment extends BaseFragment {
 
         return view;
     }
+
     private RecyclerView.OnScrollListener scrollListener = new RecyclerView.OnScrollListener() {
         @Override
         public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
             super.onScrollStateChanged(recyclerView, newState);
-            if(newState == RecyclerView.SCROLL_STATE_DRAGGING){
+            if (newState == RecyclerView.SCROLL_STATE_DRAGGING) {
                 sideBar.setVisibility(View.VISIBLE);
             }
         }
@@ -146,11 +149,11 @@ public class ArtistFragment extends BaseFragment {
             protected Void doInBackground(final Void... unused) {
                 isAZSort = mPreferences.getArtistSortOrder().equals(SortOrder.ArtistSortOrder.ARTIST_A_Z);
                 List<ArtistInfo> artList = MusicUtils.queryArtist(getActivity());
-                if(isAZSort){
-                    Collections.sort(artList,new ArtistComparator());
-                    for(int i = 0; i < artList.size() ; i++){
-                        if(positionMap.get(artList.get(i).artist_sort) == null)
-                            positionMap.put(artList.get(i).artist_sort,i);
+                if (isAZSort) {
+                    Collections.sort(artList, new ArtistComparator());
+                    for (int i = 0; i < artList.size(); i++) {
+                        if (positionMap.get(artList.get(i).artist_sort) == null)
+                            positionMap.put(artList.get(i).artist_sort, i);
                     }
                 }
                 if (artList != null)
@@ -160,9 +163,9 @@ public class ArtistFragment extends BaseFragment {
 
             @Override
             protected void onPostExecute(Void aVoid) {
-                if(isAZSort){
+                if (isAZSort) {
                     recyclerView.addOnScrollListener(scrollListener);
-                }else {
+                } else {
                     sideBar.setVisibility(View.INVISIBLE);
                     recyclerView.removeOnScrollListener(scrollListener);
                 }

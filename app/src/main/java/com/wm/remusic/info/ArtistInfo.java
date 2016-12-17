@@ -49,7 +49,7 @@ public class ArtistInfo implements Parcelable {
         bundle.putString(KEY_ARTIST_NAME, artist_name);
         bundle.putInt(KEY_NUMBER_OF_TRACKS, number_of_tracks);
         bundle.putLong(KEY_ARTIST_ID, artist_id);
-        bundle.putString(KEY_ARTIST_SORT,artist_sort);
+        bundle.putString(KEY_ARTIST_SORT, artist_sort);
         dest.writeBundle(bundle);
     }
 

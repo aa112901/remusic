@@ -2,9 +2,9 @@ package com.wm.remusic.dialog;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Environment;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
@@ -14,21 +14,18 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.view.animation.Animation;
 import android.view.animation.RotateAnimation;
-import android.widget.Toast;
 
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.google.gson.JsonArray;
 import com.wm.remusic.MainApplication;
 import com.wm.remusic.R;
-import com.wm.remusic.downmusic.DownloadManager;
-import com.wm.remusic.downmusic.DownloadTask;
+import com.wm.remusic.downmusic.DownService;
 import com.wm.remusic.handler.HandlerUtil;
 import com.wm.remusic.json.MusicFileDownInfo;
 import com.wm.remusic.net.BMA;
 import com.wm.remusic.net.HttpUtil;
 import com.wm.remusic.uitl.PreferencesUtility;
 
-import java.io.File;
 import java.util.ArrayList;
 
 /**
@@ -36,16 +33,17 @@ import java.util.ArrayList;
  */
 public class AddDownTask extends DialogFragment {
 
-    private String[] ids, names;
+    private String[] ids, names, artists;
     private Context mContext;
-    private ArrayList<MusicFileDownInfo> mList = new ArrayList<>();
+    private ArrayList<String> mList = new ArrayList<>();
     private String isLoding;
 
-    public static AddDownTask newIntance(String[] ids, String[] names) {
+    public static AddDownTask newIntance(String[] ids, String[] names, String[] artists) {
         AddDownTask addDownTask = new AddDownTask();
         Bundle bundle = new Bundle();
         bundle.putStringArray("ids", ids);
         bundle.putStringArray("names", names);
+        bundle.putStringArray("artists", artists);
         addDownTask.setArguments(bundle);
         return addDownTask;
     }
@@ -129,7 +127,7 @@ public class AddDownTask extends DialogFragment {
                         }
                     }
                     if (musicFileDownInfo != null) {
-                        mList.add(musicFileDownInfo);
+                        mList.add(musicFileDownInfo.getFile_link());
                         size += musicFileDownInfo.getFile_size();
                     }
 
@@ -164,23 +162,12 @@ public class AddDownTask extends DialogFragment {
 
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
-                                File file = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/remusic/");
-                                if (!file.exists()) {
-                                    file.mkdir();
-                                }
-                                int len = mList.size();
-                                for (int i = 0; i < len; i++) {
-                                    DownloadTask task = new DownloadTask.Builder(mContext, mList.get(i).getShow_link())
-                                            .setFileName(names[i]).setSaveDirPath(Environment.getExternalStorageDirectory().getAbsolutePath() + "/remusic/").build();
-                                    DownloadManager.getInstance(mContext).addDownloadTask(task);
-                                }
-
-
-                            } else {
-                                Toast.makeText(mContext, "没有储存卡", Toast.LENGTH_SHORT).show();
-                                return;
-                            }
+                            Intent intent = new Intent();
+                            intent.putExtra("names", names);
+                            intent.putExtra("artists", artists);
+                            intent.putExtra("urls", mList);
+                            intent.setAction(DownService.ADD_MULTI_DOWNTASK);
+                            mContext.startService(intent);
 
                             dialog.dismiss();
                         }

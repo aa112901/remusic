@@ -89,7 +89,7 @@ public class DownMusicFragment extends BaseFragment {
         new AsyncTask<Void, Void, Void>() {
             @Override
             protected Void doInBackground(final Void... unused) {
-                List<MusicInfo> albumList = MusicUtils.queryMusic(getActivity(),folder_path, IConstants.START_FROM_FOLDER);
+                List<MusicInfo> albumList = MusicUtils.queryMusic(getActivity(), folder_path, IConstants.START_FROM_FOLDER);
                 folderDetailAdapter.updateDataSet(albumList);
                 return null;
             }
@@ -242,10 +242,10 @@ public class DownMusicFragment extends BaseFragment {
                             info.albumData = MusicUtils.getAlbumArtUri(info.albumId) + "";
                             infos.put(list[i], mList.get(i));
                         }
-                        if(getAdapterPosition() > 0)
+                        if (getAdapterPosition() > 0)
                             MusicPlayer.playAll(infos, list, getAdapterPosition() - 1, false);
                     }
-                },60);
+                }, 60);
             }
 
         }

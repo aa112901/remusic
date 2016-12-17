@@ -47,7 +47,7 @@ public class AlbumFragment extends BaseFragment {
     //private FastScroller fastScroller;
     private RecyclerView.ItemDecoration itemDecoration;
     private boolean isAZSort = true;
-    private HashMap<String,Integer> positionMap = new HashMap<>();
+    private HashMap<String, Integer> positionMap = new HashMap<>();
     private SideBar sideBar;
     private TextView dialogText;
 
@@ -84,11 +84,11 @@ public class AlbumFragment extends BaseFragment {
             public void onTouchingLetterChanged(String s) {
                 dialogText.setText(s);
                 sideBar.setView(dialogText);
-                Log.e("scrol","  " + s);
-                if(positionMap.get(s) != null){
+                Log.e("scrol", "  " + s);
+                if (positionMap.get(s) != null) {
                     int i = positionMap.get(s);
-                    Log.e("scrolget","  " + i);
-                    ((LinearLayoutManager)recyclerView.getLayoutManager()).scrollToPositionWithOffset(i,0);
+                    Log.e("scrolget", "  " + i);
+                    ((LinearLayoutManager) recyclerView.getLayoutManager()).scrollToPositionWithOffset(i, 0);
                 }
 
             }
@@ -105,11 +105,12 @@ public class AlbumFragment extends BaseFragment {
         @Override
         public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
             super.onScrollStateChanged(recyclerView, newState);
-            if(newState == RecyclerView.SCROLL_STATE_DRAGGING){
+            if (newState == RecyclerView.SCROLL_STATE_DRAGGING) {
                 sideBar.setVisibility(View.VISIBLE);
             }
         }
     };
+
     @Override
     public void onActivityCreated(final Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
@@ -152,11 +153,11 @@ public class AlbumFragment extends BaseFragment {
                 isAZSort = mPreferences.getAlbumSortOrder().equals(SortOrder.AlbumSortOrder.ALBUM_A_Z);
                 Log.e("sort", isAZSort + "");
                 List<AlbumInfo> albumList = MusicUtils.queryAlbums(getContext());
-                if(isAZSort){
-                    Collections.sort(albumList,new AlbumComparator());
-                    for(int i = 0; i < albumList.size() ; i++){
-                        if(positionMap.get(albumList.get(i).album_sort) == null)
-                            positionMap.put(albumList.get(i).album_sort,i);
+                if (isAZSort) {
+                    Collections.sort(albumList, new AlbumComparator());
+                    for (int i = 0; i < albumList.size(); i++) {
+                        if (positionMap.get(albumList.get(i).album_sort) == null)
+                            positionMap.put(albumList.get(i).album_sort, i);
                     }
                 }
                 mAdapter.updateDataSet(albumList);
@@ -165,9 +166,9 @@ public class AlbumFragment extends BaseFragment {
 
             @Override
             protected void onPostExecute(Void aVoid) {
-                if(isAZSort){
+                if (isAZSort) {
                     recyclerView.addOnScrollListener(scrollListener);
-                }else {
+                } else {
                     sideBar.setVisibility(View.INVISIBLE);
                     recyclerView.removeOnScrollListener(scrollListener);
                 }

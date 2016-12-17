@@ -30,7 +30,6 @@ import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-
 import com.wm.remusic.R;
 
 import java.text.NumberFormat;

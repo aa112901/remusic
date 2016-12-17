@@ -12,8 +12,6 @@ import android.provider.MediaStore;
 import android.provider.MediaStore.Audio.Albums;
 import android.provider.MediaStore.Audio.Media;
 import android.provider.MediaStore.Files.FileColumns;
-import android.text.TextUtils;
-import android.util.Log;
 
 import com.github.promeg.pinyinhelper.Pinyin;
 import com.wm.remusic.R;
@@ -156,11 +154,11 @@ public class MusicUtils implements IConstants {
                         songSortOrder));
                 return list3;
             case START_FROM_ARTIST:
-                select.append( " and " + Media.ARTIST_ID + " = " + id);
+                select.append(" and " + Media.ARTIST_ID + " = " + id);
                 return getMusicListCursor(cr.query(uri, proj_music, select.toString(), null,
                         PreferencesUtility.getInstance(context).getArtistSongSortOrder()));
             case START_FROM_ALBUM:
-                select.append( " and " + Media.ALBUM_ID + " = " + id);
+                select.append(" and " + Media.ALBUM_ID + " = " + id);
                 return getMusicListCursor(cr.query(uri, proj_music,
                         select.toString(), null,
                         PreferencesUtility.getInstance(context).getAlbumSongSortOrder()));
@@ -210,7 +208,7 @@ public class MusicUtils implements IConstants {
         Cursor cursor = (context.getContentResolver().query(Media.EXTERNAL_CONTENT_URI, proj_music,
                 selection.toString(),
                 null, null));
-        if(cursor == null){
+        if (cursor == null) {
             return null;
         }
         ArrayList<MusicInfo> musicList = new ArrayList<>();
@@ -274,7 +272,7 @@ public class MusicUtils implements IConstants {
             music.size = cursor.getInt(cursor
                     .getColumnIndex(Media.SIZE));
             music.islocal = true;
-            music.sort = Pinyin.toPinyin(music.musicName.charAt(0)).substring(0,1).toUpperCase();
+            music.sort = Pinyin.toPinyin(music.musicName.charAt(0)).substring(0, 1).toUpperCase();
             musicList.add(music);
         }
         cursor.close();
@@ -292,7 +290,7 @@ public class MusicUtils implements IConstants {
                     .getColumnIndex(Albums.NUMBER_OF_SONGS));
             info.album_art = getAlbumArtUri(info.album_id) + "";
             info.album_artist = cursor.getString(cursor.getColumnIndex(Albums.ARTIST));
-            info.album_sort = Pinyin.toPinyin(info.album_name.charAt(0)).substring(0,1).toUpperCase();
+            info.album_sort = Pinyin.toPinyin(info.album_name.charAt(0)).substring(0, 1).toUpperCase();
             list.add(info);
         }
         cursor.close();
@@ -308,7 +306,7 @@ public class MusicUtils implements IConstants {
             info.number_of_tracks = cursor.getInt(cursor
                     .getColumnIndex(MediaStore.Audio.Artists.NUMBER_OF_TRACKS));
             info.artist_id = cursor.getLong(cursor.getColumnIndex(MediaStore.Audio.Artists._ID));
-            info.artist_sort = Pinyin.toPinyin(info.artist_name.charAt(0)).substring(0,1).toUpperCase();
+            info.artist_sort = Pinyin.toPinyin(info.artist_name.charAt(0)).substring(0, 1).toUpperCase();
             list.add(info);
         }
         cursor.close();
@@ -324,7 +322,7 @@ public class MusicUtils implements IConstants {
             info.folder_path = filePath.substring(0, filePath.lastIndexOf(File.separator));
             info.folder_name = info.folder_path.substring(info.folder_path
                     .lastIndexOf(File.separator) + 1);
-            info.folder_sort = Pinyin.toPinyin(info.folder_name.charAt(0)).substring(0,1).toUpperCase();
+            info.folder_sort = Pinyin.toPinyin(info.folder_name.charAt(0)).substring(0, 1).toUpperCase();
             list.add(info);
         }
         cursor.close();
@@ -450,7 +448,7 @@ public class MusicUtils implements IConstants {
             String folderPath = filePath.substring(0,
                     filePath.lastIndexOf(File.separator));
             music.folder = folderPath;
-            music.sort = Pinyin.toPinyin(music.musicName.charAt(0)).substring(0,1).toUpperCase();
+            music.sort = Pinyin.toPinyin(music.musicName.charAt(0)).substring(0, 1).toUpperCase();
         }
         cursor.close();
         return music;

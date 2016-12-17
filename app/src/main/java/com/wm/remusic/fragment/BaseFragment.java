@@ -28,7 +28,7 @@ public class BaseFragment extends Fragment {
                 reloadAdapter();
             } else if (action.equals(MediaService.TRACK_PREPARED)) {
                 updateTime();
-            } else if (action.equals(IConstants.CHANGE_THEME)){
+            } else if (action.equals(IConstants.CHANGE_THEME)) {
                 changeTheme();
             }
         }
@@ -63,7 +63,7 @@ public class BaseFragment extends Fragment {
 
     }
 
-    public void changeTheme(){
+    public void changeTheme() {
 
     }
 

@@ -13,6 +13,7 @@ public class DownloadDBEntity {
     private String url;
     private String saveDirPath;
     private String fileName;
+    private String artist;
     private int downloadStatus;
 
     public DownloadDBEntity() {
@@ -22,13 +23,14 @@ public class DownloadDBEntity {
         this.downloadId = downloadId;
     }
 
-    public DownloadDBEntity(String downloadId, Long toolSize, Long completedSize, String url, String saveDirPath, String fileName, Integer downloadStatus) {
+    public DownloadDBEntity(String downloadId, Long toolSize, Long completedSize, String url, String saveDirPath, String fileName, String artist, Integer downloadStatus) {
         this.downloadId = downloadId;
         this.toolSize = toolSize;
         this.completedSize = completedSize;
         this.url = url;
         this.saveDirPath = saveDirPath;
         this.fileName = fileName;
+        this.artist = artist;
         this.downloadStatus = downloadStatus;
     }
 
@@ -78,6 +80,10 @@ public class DownloadDBEntity {
 
     public void setFileName(String fileName) {
         this.fileName = fileName;
+    }
+
+    public String getArtist() {
+        return artist;
     }
 
     public Integer getDownloadStatus() {

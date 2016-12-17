@@ -12,7 +12,6 @@ import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -26,8 +25,8 @@ import android.widget.Toast;
 import com.bilibili.magicasakura.utils.ThemeUtils;
 import com.wm.remusic.R;
 import com.wm.remusic.adapter.MenuItemAdapter;
-import com.wm.remusic.fragment.BitSetFragment;
 import com.wm.remusic.dialog.CardPickerDialog;
+import com.wm.remusic.fragment.BitSetFragment;
 import com.wm.remusic.fragment.MainFragment;
 import com.wm.remusic.fragment.TimingFragment;
 import com.wm.remusic.fragmentnet.TabNetPagerFragment;
@@ -121,7 +120,7 @@ public class MainActivity extends BaseActivity implements CardPickerDialog.Click
         barnet.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                    customViewPager.setCurrentItem(0);
+                customViewPager.setCurrentItem(0);
             }
         });
         barmusic.setOnClickListener(new View.OnClickListener() {
@@ -283,8 +282,6 @@ public class MainActivity extends BaseActivity implements CardPickerDialog.Click
 //        // 字母索引被按下并移动时回调
 //        down(key);
 //    }
-
-
 
 
     /**

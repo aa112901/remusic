@@ -58,7 +58,6 @@ import android.provider.MediaStore.Audio.AlbumColumns;
 import android.provider.MediaStore.Audio.AudioColumns;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
-import android.support.v4.media.MediaMetadataCompat;
 import android.text.TextUtils;
 import android.util.Log;
 import android.widget.RemoteViews;
@@ -105,8 +104,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.RandomAccessFile;
 import java.lang.ref.WeakReference;
-import java.nio.ByteBuffer;
-import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -256,6 +253,7 @@ public class MediaService extends Service {
     private boolean mShowAlbumArtOnLockscreen;
     private SongPlayCount mSongPlayCount;
     private RecentStore mRecentStore;
+    private int notificationId = 1000;
     private final BroadcastReceiver mIntentReceiver = new BroadcastReceiver() {
 
         @Override
@@ -580,40 +578,41 @@ public class MediaService extends Service {
     }
 
     private void updateNotification() {
-        final int newNotifyMode;
-        if (isPlaying()) {
-            newNotifyMode = NOTIFY_MODE_FOREGROUND;
-        } else if (recentlyPlayed()) {
-            newNotifyMode = NOTIFY_MODE_BACKGROUND;
-        } else {
-            newNotifyMode = NOTIFY_MODE_NONE;
-        }
-
-        // int notificationId = hashCode();
-
-        if (mNotifyMode != newNotifyMode) {
-            if (mNotifyMode == NOTIFY_MODE_FOREGROUND) {
-                if (CommonUtils.isLollipop())
-                    stopForeground(newNotifyMode == NOTIFY_MODE_NONE);
-                else
-                    stopForeground(newNotifyMode == NOTIFY_MODE_NONE || newNotifyMode == NOTIFY_MODE_BACKGROUND);
-            } else if (newNotifyMode == NOTIFY_MODE_NONE) {
-                mNotificationManager.cancel(notificationId);
-                mNotificationPostTime = 0;
-            }
-        }
-
-        if (newNotifyMode == NOTIFY_MODE_FOREGROUND) {
-            startForeground(notificationId, getNotification());
-
-        } else if (newNotifyMode == NOTIFY_MODE_BACKGROUND) {
-            mNotificationManager.notify(notificationId, getNotification());
-        }
-
-        mNotifyMode = newNotifyMode;
+//        final int newNotifyMode;
+//        if (isPlaying()) {
+//            newNotifyMode = NOTIFY_MODE_FOREGROUND;
+//        } else if (recentlyPlayed()) {
+//            newNotifyMode = NOTIFY_MODE_BACKGROUND;
+//        } else {
+//            newNotifyMode = NOTIFY_MODE_NONE;
+//        }
+//
+//        // int notificationId = hashCode();
+//
+//        if (mNotifyMode != newNotifyMode) {
+//            if (mNotifyMode == NOTIFY_MODE_FOREGROUND) {
+//                if (CommonUtils.isLollipop())
+//                    stopForeground(newNotifyMode == NOTIFY_MODE_NONE);
+//                else
+//                    stopForeground(newNotifyMode == NOTIFY_MODE_NONE || newNotifyMode == NOTIFY_MODE_BACKGROUND);
+//            } else if (newNotifyMode == NOTIFY_MODE_NONE) {
+//                mNotificationManager.cancel(notificationId);
+//                mNotificationPostTime = 0;
+//            }
+//        }
+//
+//        if (newNotifyMode == NOTIFY_MODE_FOREGROUND) {
+//            startForeground(notificationId, getNotification());
+//
+//        } else if (newNotifyMode == NOTIFY_MODE_BACKGROUND) {
+//            mNotificationManager.notify(notificationId, getNotification());
+//        }
+//
+//        mNotifyMode = newNotifyMode;
+        startForeground(notificationId,getNotification());
     }
 
-    int notificationId = 1000;
+
 
     private void cancelNotification() {
         stopForeground(true);
@@ -1437,6 +1436,7 @@ public class MediaService extends Service {
 
     RemoteViews remoteViews;
     Bitmap noBit;
+    Notification mNotification;
 
     private Notification getNotification() {
         final int PAUSE_FLAG = 0x1;
@@ -1537,17 +1537,26 @@ public class MediaService extends Service {
         if (mNotificationPostTime == 0) {
             mNotificationPostTime = System.currentTimeMillis();
         }
-
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(this).setContent(remoteViews)
-                .setSmallIcon(R.drawable.ic_notification)
-                .setContentIntent(clickIntent)
-                .setWhen(mNotificationPostTime);
-
-        if (CommonUtils.isJellyBeanMR1()) {
-            builder.setShowWhen(false);
+        Log.e(TAG," notificationtime = " + mNotificationPostTime  );
+        if(mNotification == null){
+            NotificationCompat.Builder builder = new NotificationCompat.Builder(this).setContent(remoteViews)
+                    .setSmallIcon(R.drawable.ic_notification)
+                    .setContentIntent(clickIntent)
+                    .setWhen(mNotificationPostTime)
+                    .setOnlyAlertOnce(true)
+                    .setOngoing(false)
+                    .setPriority(Notification.PRIORITY_DEFAULT);
+            mNotification = builder.build();
+        }else {
+            mNotification.contentView = remoteViews;
         }
 
-        return builder.build();
+
+//        if (CommonUtils.isJellyBeanMR1()) {
+//            builder.setShowWhen(false);
+//        }
+
+        return mNotification;
     }
 
 
@@ -1623,7 +1632,8 @@ public class MediaService extends Service {
             try {
                 FileInputStream in = new FileInputStream(new File(getCacheDir().getAbsolutePath() + "playlist"));
                 String c = readTextFromSDcard(in);
-                HashMap<Long, MusicInfo> play = MainApplication.gsonInstance().fromJson(c, new TypeToken<HashMap<Long, MusicInfo>>() {}.getType());
+                HashMap<Long, MusicInfo> play = MainApplication.gsonInstance().fromJson(c, new TypeToken<HashMap<Long, MusicInfo>>() {
+                }.getType());
                 if (play != null && play.size() > 0) {
                     mPlaylistInfo = play;
                     Log.e("reload", mPlaylistInfo.keySet().toString());
@@ -1995,10 +2005,14 @@ public class MediaService extends Service {
 
     public boolean isTrackLocal() {
         synchronized (this) {
+            Log.e("Playing", "getAudioId()" + getAudioId());
             MusicInfo info = mPlaylistInfo.get(getAudioId());
+
             if (info == null) {
+                Log.e("Playing", " no info");
                 return true;
             }
+            Log.e("Playing", " music " + info.islocal);
             return info.islocal;
         }
     }
@@ -2077,7 +2091,7 @@ public class MediaService extends Service {
     }
 
     public synchronized MusicTrack getTrack(int index) {
-        if (index >= 0 && index < mPlaylist.size() && mPlayer.isInitialized()) {
+        if (index >= 0 && index < mPlaylist.size()) {
             return mPlaylist.get(index);
         }
 
@@ -2161,7 +2175,7 @@ public class MediaService extends Service {
         return -1;
     }
 
-    public HashMap<Long,MusicInfo> getPlayinfos() {
+    public HashMap<Long, MusicInfo> getPlayinfos() {
         synchronized (this) {
             return mPlaylistInfo;
         }
@@ -2459,7 +2473,7 @@ public class MediaService extends Service {
         }
     }
 
-    public void enqueue(final long[] list, final HashMap<Long,MusicInfo> map, final int action) {
+    public void enqueue(final long[] list, final HashMap<Long, MusicInfo> map, final int action) {
         synchronized (this) {
             mPlaylistInfo.putAll(map);
             if (action == NEXT && mPlayPos + 1 < mPlaylist.size()) {
@@ -2586,9 +2600,7 @@ public class MediaService extends Service {
                         }
 
                         service.updateCursor(service.mPlaylist.get(service.mPlayPos).mId);
-
                         service.notifyChange(META_CHANGED);
-                        service.notifyChange(MUSIC_CHANGED);
                         service.updateNotification();
                         break;
                     case TRACK_ENDED:
@@ -2855,6 +2867,7 @@ public class MediaService extends Service {
             } else {
                 handler.postDelayed(startMediaPlayerIfPrepared, 50);
             }
+            mService.get().notifyChange(MUSIC_CHANGED);
         }
 
         MediaPlayer.OnPreparedListener preparedListener = new MediaPlayer.OnPreparedListener() {
@@ -3063,9 +3076,9 @@ public class MediaService extends Service {
         }
 
         @Override
-        public void enqueue(final long[] list, final Map infos,final int action)
+        public void enqueue(final long[] list, final Map infos, final int action)
                 throws RemoteException {
-            mService.get().enqueue(list,(HashMap<Long, MusicInfo>) infos, action);
+            mService.get().enqueue(list, (HashMap<Long, MusicInfo>) infos, action);
         }
 
         @Override

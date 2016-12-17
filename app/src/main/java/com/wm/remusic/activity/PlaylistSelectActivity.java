@@ -108,7 +108,7 @@ public class PlaylistSelectActivity extends AppCompatActivity implements View.On
                     info.albumData = MusicUtils.getAlbumArtUri(info.albumId) + "";
                     infos.put(list[i], selectList.get(i));
                 }
-                MusicPlayer.playNext(this, infos,list);
+                MusicPlayer.playNext(this, infos, list);
                 break;
             case R.id.select_addtoplaylist:
                 long[] list1 = new long[selectList.size()];

@@ -99,7 +99,7 @@ public class MusicInfo implements Parcelable {
         bundle.putInt(KEY_SIZE, size);
         bundle.putString(KEY_LRC, lrc);
         bundle.putBoolean(KEY_ISLOCAL, islocal);
-        bundle.putString(KEY_SORT,sort);
+        bundle.putString(KEY_SORT, sort);
         dest.writeBundle(bundle);
     }
 

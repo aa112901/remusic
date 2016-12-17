@@ -166,15 +166,15 @@ public class NetMoreFragment extends DialogFragment {
 
                                 long[] ids = new long[1];
                                 ids[0] = adapterMusicInfo.songId;
-                                HashMap<Long,MusicInfo> map = new HashMap<Long, MusicInfo>();
-                                map.put(ids[0],adapterMusicInfo);
-                                MusicPlayer.playNext(mContext, map,ids);
+                                HashMap<Long, MusicInfo> map = new HashMap<Long, MusicInfo>();
+                                map.put(ids[0], adapterMusicInfo);
+                                MusicPlayer.playNext(mContext, map, ids);
                             }
                         }, 100);
                         dismiss();
                         break;
                     case 1:
-                        ArrayList<MusicInfo> musicList = new ArrayList<MusicInfo>();
+                        final ArrayList<MusicInfo> musicList = new ArrayList<MusicInfo>();
                         musicList.add(adapterMusicInfo);
                         AddNetPlaylistDialog.newInstance(musicList).show(getFragmentManager(), "add");
                         dismiss();
@@ -193,14 +193,7 @@ public class NetMoreFragment extends DialogFragment {
 
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
-
-                                        Down.downMusic(MainApplication.context, adapterMusicInfo.songId + "", adapterMusicInfo.musicName);
-                                        mHandler.post(new Runnable() {
-                                            @Override
-                                            public void run() {
-                                                Toast.makeText(mContext, "已加入到下载", Toast.LENGTH_SHORT).show();
-                                            }
-                                        });
+                                        Down.downMusic(MainApplication.context, adapterMusicInfo.songId + "", adapterMusicInfo.musicName, adapterMusicInfo.artist);
                                         dialog.dismiss();
                                     }
                                 }).
@@ -215,7 +208,7 @@ public class NetMoreFragment extends DialogFragment {
                     case 4:
 
                         if (adapterMusicInfo.islocal) {
-                            new AsyncTask<Void,Void,Void>(){
+                            new AsyncTask<Void, Void, Void>() {
 
                                 @Override
                                 protected Void doInBackground(Void... params) {
@@ -268,7 +261,7 @@ public class NetMoreFragment extends DialogFragment {
                     case 5:
 
                         if (adapterMusicInfo.islocal) {
-                            new AsyncTask<Void,Void,Void>(){
+                            new AsyncTask<Void, Void, Void>() {
 
                                 @Override
                                 protected Void doInBackground(Void... params) {

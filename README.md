@@ -33,6 +33,10 @@
 - [MagicaSakura](https://github.com/Bilibili/MagicaSakura "MagicaSakura")
 
 # Change Log
+## 12.17
+- 取消多任务下载，使用服务下载，增加下载通知
+- 其他
+
 ## 11.17
 - 增加本地歌曲侧边导航栏
 - 修复播放的一些问题

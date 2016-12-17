@@ -15,7 +15,6 @@ import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -175,12 +174,12 @@ public class MoreFragment extends DialogFragment {
             switch (type) {
                 case IConstants.ARTISTOVERFLOW:
                     String artist = args;
-                    list = MusicUtils.queryMusic(mContext,artist, IConstants.START_FROM_ARTIST);
+                    list = MusicUtils.queryMusic(mContext, artist, IConstants.START_FROM_ARTIST);
                     topTitle.setText("歌曲：" + " " + list.get(0).artist);
                     break;
                 case IConstants.ALBUMOVERFLOW:
                     String albumId = args;
-                    list = MusicUtils.queryMusic(mContext,albumId, IConstants.START_FROM_ALBUM);
+                    list = MusicUtils.queryMusic(mContext, albumId, IConstants.START_FROM_ALBUM);
                     topTitle.setText("专辑：" + " " + list.get(0).albumName);
                     break;
                 case IConstants.FOLDEROVERFLOW:
@@ -196,6 +195,7 @@ public class MoreFragment extends DialogFragment {
         }
 
     }
+
     private void setClick() {
         if (muaicflowAdapter != null) {
             muaicflowAdapter.setOnItemClickListener(new MusicFlowAdapter.OnRecyclerViewItemClickListener() {
@@ -211,9 +211,9 @@ public class MoreFragment extends DialogFragment {
 
                                     long[] ids = new long[1];
                                     ids[0] = adapterMusicInfo.songId;
-                                    HashMap<Long,MusicInfo> map = new HashMap<Long, MusicInfo>();
-                                    map.put(ids[0],adapterMusicInfo);
-                                    MusicPlayer.playNext(mContext, map,ids);
+                                    HashMap<Long, MusicInfo> map = new HashMap<Long, MusicInfo>();
+                                    map.put(ids[0], adapterMusicInfo);
+                                    MusicPlayer.playNext(mContext, map, ids);
                                 }
                             }, 100);
 
@@ -282,7 +282,7 @@ public class MoreFragment extends DialogFragment {
                         case 4:
 
                             if (adapterMusicInfo.islocal) {
-                                new AsyncTask<Void,Void,Void>(){
+                                new AsyncTask<Void, Void, Void>() {
 
                                     @Override
                                     protected Void doInBackground(Void... params) {
@@ -331,7 +331,7 @@ public class MoreFragment extends DialogFragment {
                         case 5:
 
                             if (adapterMusicInfo.islocal) {
-                                new AsyncTask<Void,Void,Void>(){
+                                new AsyncTask<Void, Void, Void>() {
 
                                     @Override
                                     protected Void doInBackground(Void... params) {
@@ -438,7 +438,7 @@ public class MoreFragment extends DialogFragment {
 
                                 MusicPlayer.playAll(infos, listid, 0, false);
                             }
-                        },60);
+                        }, 60);
                         dismiss();
                         break;
                     case 1:

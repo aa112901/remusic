@@ -141,7 +141,7 @@ public class SelectActivity extends AppCompatActivity implements View.OnClickLis
                             infos.put(list[i], select.get(i));
                         }
 
-                        MusicPlayer.playNext(SelectActivity.this, infos,list);
+                        MusicPlayer.playNext(SelectActivity.this, infos, list);
 
                     }
                 }, 100);

@@ -1,6 +1,7 @@
 package com.wm.remusic.downmusic;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Environment;
 import android.widget.Toast;
@@ -53,7 +54,7 @@ public class Down {
                             DownloadTask task = new DownloadTask.Builder(context, musicFileDownInfo.getShow_link())
                                     .setFileName(names[j])
                                     .setSaveDirPath(Environment.getExternalStorageDirectory().getAbsolutePath() + "/remusic/").build();
-                            DownloadManager.getInstance(context).addDownloadTask(task);
+                            //DownloadManager.getInstance(context).addDownloadTask(task);
 
                         } else {
                             Toast.makeText(context, "没有储存卡", Toast.LENGTH_SHORT).show();
@@ -71,7 +72,7 @@ public class Down {
         }).start();
     }
 
-    public static void downMusic(final Context context, final String id, final String name) {
+    public static void downMusic(final Context context, final String id, final String name, final String artist) {
 
 
         new AsyncTask<String, String, MusicFileDownInfo>() {
@@ -99,20 +100,14 @@ public class Down {
 
             @Override
             protected void onPostExecute(MusicFileDownInfo musicFileDownInfo) {
-
-                if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
-                    File file = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/remusic/");
-                    if (!file.exists()) {
-                        file.mkdirs();
-                    }
-                    DownloadTask task = new DownloadTask.Builder(context, musicFileDownInfo.getShow_link())
-                            .setFileName(name)
-                            .setSaveDirPath(Environment.getExternalStorageDirectory().getAbsolutePath() + "/remusic/").build();
-                    DownloadManager.getInstance(context).addDownloadTask(task);
-
-                } else {
-                    Toast.makeText(context, "没有储存卡", Toast.LENGTH_SHORT).show();
-                    return;
+                if (musicFileDownInfo != null && musicFileDownInfo.getShow_link() != null) {
+                    Intent i = new Intent(DownService.ADD_DOWNTASK);
+                    i.setAction(DownService.ADD_DOWNTASK);
+                    i.putExtra("id", id);
+                    i.putExtra("name", name);
+                    i.putExtra("artist", artist);
+                    i.putExtra("url", musicFileDownInfo.getShow_link());
+                    context.startService(i);
                 }
             }
         }.execute();

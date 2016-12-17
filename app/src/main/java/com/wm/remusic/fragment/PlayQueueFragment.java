@@ -18,9 +18,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bilibili.magicasakura.widgets.TintImageView;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-import com.wm.remusic.MainApplication;
 import com.wm.remusic.R;
 import com.wm.remusic.dialog.AddNetPlaylistDialog;
 import com.wm.remusic.info.MusicInfo;
@@ -31,12 +28,8 @@ import com.wm.remusic.uitl.IConstants;
 import com.wm.remusic.widget.DividerItemDecoration;
 
 import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.RandomAccessFile;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -146,7 +139,7 @@ public class PlayQueueFragment extends DialogFragment {
 //                    String c = readTextFromSDcard(in);
 //                    HashMap<Long, MusicInfo> play = MainApplication.gsonInstance().fromJson(c, new TypeToken<HashMap<Long, MusicInfo>>() {
 //                    }.getType());
-                    HashMap<Long,MusicInfo> play = MusicPlayer.getPlayinfos();
+                    HashMap<Long, MusicInfo> play = MusicPlayer.getPlayinfos();
                     if (play != null && play.size() > 0) {
                         long[] queue = MusicPlayer.getQueue();
                         int len = queue.length;

@@ -33,7 +33,6 @@ import java.util.List;
 public class DownloadTask implements Runnable {
     private DownloadDBEntity dbEntity;
     private DownFileStore downFileStore;
-    private DownloadManager downloadManager;
     private OkHttpClient client;
     private Context mContext;
 
@@ -48,7 +47,10 @@ public class DownloadTask implements Runnable {
     private int downloadStatus = DownloadStatus.DOWNLOAD_STATUS_INIT;
 
     private String fileName;    // File name when saving
+    private String artist;
     private String temp = ".temp";
+    private boolean isPreparingDown;
+    private String TAG = "DownloadTask";
 
 
     private List<DownloadTaskListener> listeners;
@@ -69,6 +71,7 @@ public class DownloadTask implements Runnable {
     private void init(Builder builder) {
         mContext = builder.context;
         fileName = builder.fileName;
+        artist = builder.art;
         saveDirPath = builder.saveDirPath;
         completedSize = builder.completedSize;
         dbEntity = builder.dbEntity;
@@ -86,11 +89,12 @@ public class DownloadTask implements Runnable {
 
         private String url;
         private String fileName = url;    // File name when saving
+        private String art;
         private String saveDirPath;
         private Context context;
         private DownloadDBEntity dbEntity = null;
 
-        private String id = (saveDirPath + url).hashCode() + "";
+        private String id;
         private long totalSize;
         private long completedSize;         //  Download section has been completed
 
@@ -98,7 +102,7 @@ public class DownloadTask implements Runnable {
 
         private int downloadStatus = DownloadStatus.DOWNLOAD_STATUS_INIT;
 
-        private List<DownloadTaskListener> listeners;
+        private List<DownloadTaskListener> listeners = new ArrayList<>();
 
         public Builder(Context context) {
             this.context = context.getApplicationContext();
@@ -112,6 +116,11 @@ public class DownloadTask implements Runnable {
 
         public Builder setFileName(String fileName) {
             this.fileName = fileName;
+            return this;
+        }
+
+        public Builder setArtName(String art) {
+            this.art = art;
             return this;
         }
 
@@ -147,6 +156,7 @@ public class DownloadTask implements Runnable {
             url = dbEntity.getUrl();
             id = dbEntity.getDownloadId();
             fileName = dbEntity.getFileName();
+            art = dbEntity.getArtist();
             saveDirPath = dbEntity.getSaveDirPath();
             completedSize = dbEntity.getCompletedSize();
             totalSize = dbEntity.getTotalSize();
@@ -167,7 +177,7 @@ public class DownloadTask implements Runnable {
 
 
         public DownloadTask build() {
-            id = (saveDirPath + fileName).hashCode() + "";
+            // id = (saveDirPath + fileName).hashCode() + "";
 
             return new DownloadTask(context, this);
         }
@@ -199,11 +209,15 @@ public class DownloadTask implements Runnable {
             if (fileLength != 0 && totalSize == fileLength) {
                 downloadStatus = DownloadStatus.DOWNLOAD_STATUS_COMPLETED;
                 totalSize = completedSize = fileLength;
-                dbEntity = new DownloadDBEntity(id, totalSize, completedSize, url, saveDirPath, fileName, downloadStatus);
+                dbEntity = new DownloadDBEntity(id, totalSize, completedSize, url, saveDirPath, fileName, artist, downloadStatus);
                 downFileStore.insert(dbEntity);
+                Log.e(TAG, "file is completed , file length = " + fileLength + "  file totalsize = " + totalSize);
                 Toast.makeText(mContext, fileName + "已经下载完成", Toast.LENGTH_SHORT).show();
                 onCompleted();
                 return;
+            } else if (fileLength > totalSize) {
+                completedSize = 0;
+                totalSize = 0;
             }
             downloadStatus = DownloadStatus.DOWNLOAD_STATUS_START;
 
@@ -228,7 +242,7 @@ public class DownloadTask implements Runnable {
                 int length = 0;
                 int buffOffset = 0;
                 if (dbEntity == null) {
-                    dbEntity = new DownloadDBEntity(id, totalSize, 0L, url, saveDirPath, fileName, downloadStatus);
+                    dbEntity = new DownloadDBEntity(id, totalSize, 0L, url, saveDirPath, fileName, artist, downloadStatus);
                     downFileStore.insert(dbEntity);
                 }
                 while ((length = bis.read(buffer)) > 0 && downloadStatus != DownloadStatus.DOWNLOAD_STATUS_CANCEL && downloadStatus != DownloadStatus.DOWNLOAD_STATUS_PAUSE) {
@@ -334,6 +348,13 @@ public class DownloadTask implements Runnable {
         return completedSize * 100 / totalSize;
     }
 
+    public void setPreparingDown(boolean b) {
+        isPreparingDown = b;
+    }
+
+    public boolean getPreparingDown() {
+        return isPreparingDown;
+    }
 
     public long getTotalSize() {
         return totalSize;
@@ -376,6 +397,10 @@ public class DownloadTask implements Runnable {
         this.dbEntity = dbEntity;
     }
 
+    public DownloadDBEntity getDbEntity() {
+        return dbEntity;
+    }
+
     public String getUrl() {
         return url;
     }
@@ -390,6 +415,10 @@ public class DownloadTask implements Runnable {
 
     public String getFileName() {
         return fileName;
+    }
+
+    public String getArtistName() {
+        return artist;
     }
 
     public void setFileName(String fileName) {
@@ -471,7 +500,9 @@ public class DownloadTask implements Runnable {
     }
 
     public void addDownloadListener(DownloadTaskListener listener) {
-        listeners.add(listener);
+        Log.e("downtask", (listeners == null) + "");
+        if (listener != null)
+            listeners.add(listener);
     }
 
     /**
@@ -486,11 +517,6 @@ public class DownloadTask implements Runnable {
             listeners.remove(listener);
         }
     }
-
-    public void setDownloadManager(DownloadManager downloadManager) {
-        this.downloadManager = downloadManager;
-    }
-
 
     @Override
     public boolean equals(Object o) {

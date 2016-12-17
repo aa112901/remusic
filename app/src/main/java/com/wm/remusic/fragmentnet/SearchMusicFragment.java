@@ -157,7 +157,7 @@ public class SearchMusicFragment extends Fragment {
                                 setPositiveButton(getActivity().getString(R.string.sure), new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
-                                        Down.downMusic(MainApplication.context, model.getSong_id() + "", model.getTitle());
+                                        Down.downMusic(MainApplication.context, model.getSong_id() + "", model.getTitle(), model.getAuthor());
                                         dialog.dismiss();
                                     }
                                 }).

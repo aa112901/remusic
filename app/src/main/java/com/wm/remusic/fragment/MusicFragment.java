@@ -24,9 +24,9 @@ import com.wm.remusic.activity.SelectActivity;
 import com.wm.remusic.handler.HandlerUtil;
 import com.wm.remusic.info.MusicInfo;
 import com.wm.remusic.service.MusicPlayer;
+import com.wm.remusic.uitl.Comparator.MusicComparator;
 import com.wm.remusic.uitl.IConstants;
 import com.wm.remusic.uitl.MusicUtils;
-import com.wm.remusic.uitl.Comparator.MusicComparator;
 import com.wm.remusic.uitl.PreferencesUtility;
 import com.wm.remusic.uitl.SortOrder;
 import com.wm.remusic.widget.DividerItemDecoration;
@@ -51,7 +51,7 @@ public class MusicFragment extends BaseFragment {
     private boolean isFirstLoad = true;
     private SideBar sideBar;
     private TextView dialogText;
-    private HashMap<String,Integer> positionMap = new HashMap<>();
+    private HashMap<String, Integer> positionMap = new HashMap<>();
     private boolean isAZSort = true;
 
     @Override
@@ -77,12 +77,12 @@ public class MusicFragment extends BaseFragment {
                     public void onTouchingLetterChanged(String s) {
                         dialogText.setText(s);
                         sideBar.setView(dialogText);
-                        Log.e("scrol","  " + s);
-                        Log.e("scrol" , positionMap.toString());
-                        if(positionMap.get(s) != null){
+                        Log.e("scrol", "  " + s);
+                        Log.e("scrol", positionMap.toString());
+                        if (positionMap.get(s) != null) {
                             int i = positionMap.get(s);
-                            Log.e("scrolget","  " + i);
-                            ((LinearLayoutManager)recyclerView.getLayoutManager()).scrollToPositionWithOffset(i+1,0);
+                            Log.e("scrolget", "  " + i);
+                            ((LinearLayoutManager) recyclerView.getLayoutManager()).scrollToPositionWithOffset(i + 1, 0);
                         }
 
                     }
@@ -96,7 +96,7 @@ public class MusicFragment extends BaseFragment {
         @Override
         public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
             super.onScrollStateChanged(recyclerView, newState);
-            if(newState == RecyclerView.SCROLL_STATE_DRAGGING){
+            if (newState == RecyclerView.SCROLL_STATE_DRAGGING) {
                 sideBar.setVisibility(View.VISIBLE);
             }
         }
@@ -133,11 +133,11 @@ public class MusicFragment extends BaseFragment {
                 isAZSort = mPreferences.getSongSortOrder().equals(SortOrder.SongSortOrder.SONG_A_Z);
                 ArrayList<MusicInfo> songList = (ArrayList) MusicUtils.queryMusic(getActivity(), IConstants.START_FROM_LOCAL);
                 // 名称排序时，重新排序并加入位置信息
-                if(isAZSort){
-                    Collections.sort(songList,new MusicComparator());
-                    for(int i = 0; i < songList.size() ; i++){
-                        if(positionMap.get(songList.get(i).sort) == null)
-                            positionMap.put(songList.get(i).sort,i);
+                if (isAZSort) {
+                    Collections.sort(songList, new MusicComparator());
+                    for (int i = 0; i < songList.size(); i++) {
+                        if (positionMap.get(songList.get(i).sort) == null)
+                            positionMap.put(songList.get(i).sort, i);
                     }
                 }
                 mAdapter.updateDataSet(songList);
@@ -147,9 +147,9 @@ public class MusicFragment extends BaseFragment {
             @Override
             protected void onPostExecute(Void aVoid) {
                 mAdapter.notifyDataSetChanged();
-                if(isAZSort){
+                if (isAZSort) {
                     recyclerView.addOnScrollListener(scrollListener);
-                }else {
+                } else {
                     sideBar.setVisibility(View.INVISIBLE);
                     recyclerView.removeOnScrollListener(scrollListener);
                 }
@@ -214,8 +214,8 @@ public class MusicFragment extends BaseFragment {
             if (getActivity() != null) {
                 musicInfos = (ArrayList<MusicInfo>) MusicUtils.queryMusic(getActivity(), IConstants.START_FROM_LOCAL);
 
-                for(int i = 0; i< musicInfos.size(); i++){
-                   char c = Pinyin.toPinyin(musicInfos.get(i).musicName.charAt(0)).charAt(0);
+                for (int i = 0; i < musicInfos.size(); i++) {
+                    char c = Pinyin.toPinyin(musicInfos.get(i).musicName.charAt(0)).charAt(0);
                 }
                 if (musicInfos != null)
                     mAdapter = new Adapter(musicInfos);
@@ -390,10 +390,10 @@ public class MusicFragment extends BaseFragment {
                             info.albumData = MusicUtils.getAlbumArtUri(info.albumId) + "";
                             infos.put(list[i], mList.get(i));
                         }
-                        if(getAdapterPosition() > 0)
+                        if (getAdapterPosition() > 0)
                             MusicPlayer.playAll(infos, list, getAdapterPosition() - 1, false);
                     }
-                },60);
+                }, 60);
             }
 
         }

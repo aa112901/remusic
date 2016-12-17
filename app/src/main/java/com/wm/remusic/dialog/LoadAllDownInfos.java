@@ -4,9 +4,9 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.AsyncTask;
-import android.os.Environment;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -16,20 +16,17 @@ import android.view.animation.LinearInterpolator;
 import android.view.animation.RotateAnimation;
 import android.widget.ImageView;
 import android.widget.PopupWindow;
-import android.widget.Toast;
 
 import com.google.gson.JsonArray;
 import com.wm.remusic.MainApplication;
 import com.wm.remusic.R;
-import com.wm.remusic.downmusic.DownloadManager;
-import com.wm.remusic.downmusic.DownloadTask;
+import com.wm.remusic.downmusic.DownService;
 import com.wm.remusic.json.GeDanGeInfo;
 import com.wm.remusic.json.MusicFileDownInfo;
 import com.wm.remusic.net.BMA;
 import com.wm.remusic.net.HttpUtil;
 import com.wm.remusic.uitl.PreferencesUtility;
 
-import java.io.File;
 import java.util.ArrayList;
 
 public class LoadAllDownInfos extends AsyncTask<Void, Void, Void> {
@@ -136,23 +133,20 @@ public class LoadAllDownInfos extends AsyncTask<Void, Void, Void> {
 
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
-                            File file = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/remusic/");
-                            if (!file.exists()) {
-                                file.mkdir();
-                            }
-                            int len = mList.size();
-                            for (int i = 0; i < len; i++) {
-                                DownloadTask task = new DownloadTask.Builder(mContext, urlList.get(i))
-                                        .setFileName(mList.get(i).getTitle()).setSaveDirPath(Environment.getExternalStorageDirectory().getAbsolutePath() + "/remusic/").build();
-                                DownloadManager.getInstance(mContext).addDownloadTask(task);
-                            }
-
-
-                        } else {
-                            Toast.makeText(mContext, "没有储存卡", Toast.LENGTH_SHORT).show();
-                            return;
+                        int len = mList.size();
+                        String[] names = new String[len];
+                        String[] artists = new String[len];
+                        for (int i = 0; i < len; i++) {
+                            names[i] = mList.get(i).getTitle();
+                            artists[i] = mList.get(i).getAuthor();
                         }
+                        Intent intent = new Intent();
+                        intent.putExtra("names", names);
+                        intent.putExtra("artists", artists);
+                        intent.putExtra("urls", urlList);
+                        intent.setAction(DownService.ADD_MULTI_DOWNTASK);
+                        mContext.startService(intent);
+
 
                         dialog.dismiss();
                     }

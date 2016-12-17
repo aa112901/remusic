@@ -80,9 +80,10 @@ public class SideBar extends View {
             canvas.drawText(b[i], xPos, yPos, paint);
             paint.reset();// 重置画笔
         }
-       this.postDelayed(runnable,2000);
+        this.postDelayed(runnable, 2000);
 
     }
+
     private Runnable runnable = new Runnable() {
         @Override
         public void run() {
@@ -107,7 +108,7 @@ public class SideBar extends View {
                 if (mTextDialog != null) {
                     mTextDialog.setVisibility(View.INVISIBLE);
                 }
-              //  this.postDelayed(runnable,2000);
+                //  this.postDelayed(runnable,2000);
                 break;
             case MotionEvent.ACTION_DOWN:
                 this.removeCallbacks(runnable);
@@ -156,7 +157,7 @@ public class SideBar extends View {
      * @author coder
      */
     public interface OnTouchingLetterChangedListener {
-         void onTouchingLetterChanged(String s);
+        void onTouchingLetterChanged(String s);
     }
 
 

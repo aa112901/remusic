@@ -123,7 +123,7 @@ public class RequestDealThread extends Thread {
                     : false;
 
 			/*
-			 * 如果缓存足够，且本地有文件长度，则直接发送缓存,不发送请求。。。。。。。。。。。。。。。。。。。
+             * 如果缓存足够，且本地有文件长度，则直接发送缓存,不发送请求。。。。。。。。。。。。。。。。。。。
 			 * 如果缓存足够，本地没有文件长度，则发送请求，使用ResponseHeader，返回缓存,!不接收ResponseContent
 			 * 如果缓存不足，则发送请求，使用ResponseHeader，返回缓存，!返回Response Content
 			 */

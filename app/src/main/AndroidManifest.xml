@@ -66,10 +66,23 @@
         <activity android:name=".activity.NetItemChangeActivity" />
         <activity android:name=".activity.ArtistDetailActivity" />
         <activity android:name=".activity.RadioDetailActivity" />
+        <service android:name=".downmusic.DownService">
+            <intent-filter>
+                <action android:name="com.wm.remusic.downtaskadd"/>
+                <action android:name="com.wm.remusic.resumestarttask"/>
+                <action android:name="com.wm.remusic.startalltask"/>
+                <action android:name="com.wm.remusic.multidowntaskadd"/>
+                <action android:name="com.wm.remusic.pausetask"/>
+                <action android:name="com.wm.remusic.pausealltask"/>
+                <action android:name="com.wm.remusic.cacletask"/>
+                <action android:name="com.wm.remusic.caclealltask"/>
+            </intent-filter>
 
+        </service>
         <service
             android:name=".service.MediaService"
             android:process=":main"
+
             />
 
         <receiver android:name=".receiver.MediaButtonIntentReceiver">

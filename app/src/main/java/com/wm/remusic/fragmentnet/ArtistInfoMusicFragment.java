@@ -244,10 +244,10 @@ public class ArtistInfoMusicFragment extends BaseFragment {
                             list[i] = info.songId;
                             infos.put(list[i], info);
                         }
-                        if(getAdapterPosition() > 0)
+                        if (getAdapterPosition() > 0)
                             MusicPlayer.playAll(infos, list, getAdapterPosition() - 1, false);
                     }
-                },70);
+                }, 70);
             }
 
         }

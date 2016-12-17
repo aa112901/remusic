@@ -156,8 +156,9 @@ public class PlayingActivity extends BaseActivity implements IConstants {
         mViewPager = (AlbumViewPager) findViewById(R.id.view_pager);
         mProgress.setIndeterminate(false);
         mProgress.setProgress(1);
-        //   mProgress.setSecondaryProgress(70);
-        //     HandlerUtil.getInstance(this).postDelayed(runnable,1000);
+        if(MusicPlayer.isTrackLocal()){
+            mProgress.setSecondaryProgress(100);
+        }
         loadOther();
         setViewPager();
         initLrcView();
@@ -514,7 +515,7 @@ public class PlayingActivity extends BaseActivity implements IConstants {
     }
 
     private void updateFav(boolean b) {
-        if (b == true) {
+        if (b) {
             fav.setImageResource(R.drawable.play_icn_loved);
         } else {
             fav.setImageResource(R.drawable.play_rdi_icn_love);
@@ -532,11 +533,10 @@ public class PlayingActivity extends BaseActivity implements IConstants {
         }
     }
 
-    private long bluredId = -1;
-    public void updateTrack(){
+    public void updateTrack() {
+        Log.e("playing", " updatetrack");
         new setBlurredAlbumArt().execute();
     }
-
 
     public void updateTrackInfo() {
 
@@ -554,12 +554,6 @@ public class PlayingActivity extends BaseActivity implements IConstants {
             }
             updateFav(isFav);
             updateLrc();
-
-            if (MusicPlayer.getCurrentAudioId() != bluredId) {
-
-            }
-            bluredId = MusicPlayer.getCurrentAudioId();
-
         }
         duetoplaypause = false;
 
@@ -787,8 +781,9 @@ public class PlayingActivity extends BaseActivity implements IConstants {
             }
             Log.e("albumuri", "start");
             if (!MusicPlayer.isTrackLocal()) {
-                Log.e("albumuri", "bitmaplocal");
+                L.D(print, TAG, "music is net");
                 if (getAlbumPath() == null) {
+                    L.D(print, TAG, "getalbumpath is null");
                     mBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.placeholder_disk_210);
                     drawable = ImageUtils.createBlurredImageFromBitmap(mBitmap, PlayingActivity.this.getApplication(), 3);
                     return drawable;
@@ -809,14 +804,14 @@ public class PlayingActivity extends BaseActivity implements IConstants {
                                              // No need to do any cleanup.
                                              if (bitmap != null) {
                                                  mBitmap = bitmap;
+                                                 L.D(print, TAG, "getalbumpath bitmap success");
                                              }
-                                             ;
-
                                          }
 
                                          @Override
                                          public void onFailureImpl(DataSource dataSource) {
                                              // No cleanup required here.
+                                             L.D(print, TAG, "getalbumpath bitmap failed");
                                              mBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.placeholder_disk_210);
 
                                          }
@@ -830,9 +825,8 @@ public class PlayingActivity extends BaseActivity implements IConstants {
                 try {
                     mBitmap = null;
                     Bitmap bitmap = null;
-                    Log.e("albumuri", "bitmap");
                     Uri art = Uri.parse(getAlbumPath());
-                    L.D(print, TAG, "albumuri ");
+                    L.D(print, TAG, "album is local ");
                     if (art != null) {
                         ParcelFileDescriptor fd = null;
                         try {

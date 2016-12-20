@@ -151,7 +151,7 @@ public class MainApplication extends Application implements ThemeUtils.switchCol
 
 //        refWatcher = LeakCanary.install(this);
 
-        // initCatchException();
+         initCatchException();
 
         if (!PreferencesUtility.getInstance(this).getFavriateMusicPlaylist()) {
             PlaylistInfo.getInstance(this).addPlaylist(favPlaylist, getResources().getString(R.string.my_fav_playlist),

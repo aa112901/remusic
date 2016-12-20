@@ -595,7 +595,7 @@ public class RadioDetailActivity extends BaseActivity implements ObservableScrol
 
             public void onClick(View v) {
                 //// TODO: 2016/1/20
-                new Thread(new Runnable() {
+                HandlerUtil.getInstance(mContext).postDelayed(new Runnable() {
                     @Override
                     public void run() {
                         HashMap<Long, MusicInfo> infos = new HashMap<Long, MusicInfo>();
@@ -608,7 +608,7 @@ public class RadioDetailActivity extends BaseActivity implements ObservableScrol
                         }
                         MusicPlayer.playAll(infos, list, 0, false);
                     }
-                }).start();
+                },70);
 
             }
 
@@ -629,7 +629,7 @@ public class RadioDetailActivity extends BaseActivity implements ObservableScrol
 
             @Override
             public void onClick(View v) {
-                new Thread(new Runnable() {
+                HandlerUtil.getInstance(mContext).postDelayed(new Runnable() {
                     @Override
                     public void run() {
                         HashMap<Long, MusicInfo> infos = new HashMap<Long, MusicInfo>();
@@ -660,7 +660,7 @@ public class RadioDetailActivity extends BaseActivity implements ObservableScrol
                         if (getAdapterPosition() > 0)
                             MusicPlayer.playAll(infos, list, getAdapterPosition() - 1, false);
                     }
-                }).start();
+                },70);
 
             }
 

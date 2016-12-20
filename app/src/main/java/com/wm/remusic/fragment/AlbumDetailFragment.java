@@ -198,7 +198,7 @@ public class AlbumDetailFragment extends BaseFragment {
             //播放专辑
             @Override
             public void onClick(View v) {
-                new Thread(new Runnable() {
+                HandlerUtil.getInstance(getContext()).postDelayed(new Runnable() {
                     @Override
                     public void run() {
                         long[] list = new long[mList.size()];
@@ -212,7 +212,7 @@ public class AlbumDetailFragment extends BaseFragment {
                         }
                         MusicPlayer.playAll(infos, list, 0, false);
                     }
-                }).start();
+                },70);
             }
 
 

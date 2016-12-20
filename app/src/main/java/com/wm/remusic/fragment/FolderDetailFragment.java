@@ -205,7 +205,7 @@ public class FolderDetailFragment extends BaseFragment {
             //播放文件夹
             @Override
             public void onClick(View v) {
-                new Thread(new Runnable() {
+                HandlerUtil.getInstance(getContext()).postDelayed(new Runnable() {
                     @Override
                     public void run() {
                         long[] list = new long[mList.size()];
@@ -219,7 +219,7 @@ public class FolderDetailFragment extends BaseFragment {
                         }
                         MusicPlayer.playAll(infos, list, 0, false);
                     }
-                }).start();
+                },70);
             }
 
 

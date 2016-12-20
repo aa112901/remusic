@@ -604,7 +604,6 @@ public class PlayingActivity extends BaseActivity implements IConstants {
             }
         }
 
-
         isNextOrPreSetPage = false;
         if (MusicPlayer.getQueuePosition() + 1 != mViewPager.getCurrentItem()) {
             mViewPager.setCurrentItem(MusicPlayer.getQueuePosition() + 1);

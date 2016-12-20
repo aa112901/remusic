@@ -52,8 +52,6 @@ public class RankingFragment extends Fragment {
     LinearLayoutManager linearLayoutManager;
     RankingAdapter rankingAdapter;
     ArrayList<BillboardInfo> items = new ArrayList<>();
-    private static ExecutorService exec = Executors.newFixedThreadPool(6);
-
 
     @Override
     public void setUserVisibleHint(boolean isVisibleToUser) {

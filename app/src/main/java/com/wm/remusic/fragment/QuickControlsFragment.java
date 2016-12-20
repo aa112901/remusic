@@ -186,9 +186,14 @@ public class QuickControlsFragment extends BaseFragment {
                     mAlbumArt.setImageURI(Uri.parse("res:/" + R.drawable.placeholder_disk_210));
                 }
             };
-            if (MusicPlayer.getAlbumPath() != null) {
-                Log.e("albumpath", MusicPlayer.getAlbumPath());
-                ImageRequest request = ImageRequestBuilder.newBuilderWithSource(Uri.parse(MusicPlayer.getAlbumPath())).build();
+            Uri uri = null;
+            try{
+                uri = Uri.parse(MusicPlayer.getAlbumPath());
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+            if (uri != null) {
+                ImageRequest request = ImageRequestBuilder.newBuilderWithSource(uri).build();
 
                 DraweeController controller = Fresco.newDraweeControllerBuilder()
                         .setOldController(mAlbumArt.getController())

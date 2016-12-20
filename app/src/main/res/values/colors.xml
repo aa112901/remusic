@@ -5,7 +5,7 @@
 
     <!-- notification text -->
     <color name="bottom_text">#c1c0c0</color>
-
+    <color name="notification_bak">#47fafafa</color>
     <color name="theme_color_primary_dark">#b85671</color>
     <color name="primary_material_light_1">#3f51b5</color>
     <color name="background_material_light_1">#fafafa</color>

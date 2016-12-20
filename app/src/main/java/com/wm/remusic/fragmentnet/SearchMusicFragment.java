@@ -1,6 +1,7 @@
 package com.wm.remusic.fragmentnet;
 
 import android.content.DialogInterface;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -173,9 +174,10 @@ public class SearchMusicFragment extends Fragment {
                     @Override
                     public void onClick(View v) {
                         final SearchSongInfo model = mList.get(getAdapterPosition());
-                        new Thread(new Runnable() {
+                        new AsyncTask<Void,Void,Void>(){
+
                             @Override
-                            public void run() {
+                            protected Void doInBackground(Void... params) {
                                 MusicInfo musicInfo = new MusicInfo();
                                 try {
                                     MusicDetailInfo info = null;
@@ -202,8 +204,9 @@ public class SearchMusicFragment extends Fragment {
                                 list[0] = musicInfo.songId;
                                 infos.put(list[0], musicInfo);
                                 MusicPlayer.playAll(infos, list, 0, false);
+                                return null;
                             }
-                        }).start();
+                        }.execute();
                     }
                 });
 

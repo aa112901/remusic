@@ -225,7 +225,7 @@ public class RecentActivity extends BaseActivity {
 
             public void onClick(View v) {
                 //// TODO: 2016/1/20
-                new Thread(new Runnable() {
+                HandlerUtil.getInstance(RecentActivity.this).postDelayed(new Runnable() {
                     @Override
                     public void run() {
                         long[] list = new long[mList.size()];
@@ -239,7 +239,7 @@ public class RecentActivity extends BaseActivity {
                         }
                         MusicPlayer.playAll(infos, list, 0, false);
                     }
-                }).start();
+                },70);
 
             }
 

@@ -578,38 +578,53 @@ public class MediaService extends Service {
     }
 
     private void updateNotification() {
-//        final int newNotifyMode;
-//        if (isPlaying()) {
-//            newNotifyMode = NOTIFY_MODE_FOREGROUND;
-//        } else if (recentlyPlayed()) {
-//            newNotifyMode = NOTIFY_MODE_BACKGROUND;
-//        } else {
-//            newNotifyMode = NOTIFY_MODE_NONE;
+        final int newNotifyMode;
+        if (isPlaying()) {
+            newNotifyMode = NOTIFY_MODE_FOREGROUND;
+        } else if (recentlyPlayed()) {
+            newNotifyMode = NOTIFY_MODE_BACKGROUND;
+        } else {
+            newNotifyMode = NOTIFY_MODE_NONE;
+        }
+
+        // int notificationId = hashCode();
+
+        if (mNotifyMode != newNotifyMode) {
+            if (mNotifyMode == NOTIFY_MODE_FOREGROUND) {
+                if (CommonUtils.isLollipop())
+                    stopForeground(newNotifyMode == NOTIFY_MODE_NONE);
+                else
+                    stopForeground(newNotifyMode == NOTIFY_MODE_NONE || newNotifyMode == NOTIFY_MODE_BACKGROUND);
+            } else if (newNotifyMode == NOTIFY_MODE_NONE) {
+                mNotificationManager.cancel(notificationId);
+                mNotificationPostTime = 0;
+            }
+        }
+
+        if (newNotifyMode == NOTIFY_MODE_FOREGROUND) {
+            startForeground(notificationId, getNotification());
+
+        } else if (newNotifyMode == NOTIFY_MODE_BACKGROUND) {
+            mNotificationManager.notify(notificationId, getNotification());
+        }
+
+        mNotifyMode = newNotifyMode;
+//        Log.e("playing","updatenotification 0");
+//        if(mNotifyMode == NOTIFY_MODE_NONE){
+//            Log.e("playing","updatenotification 1");
+//            Notification notification = getNotification();
+//            Log.e("playing","updatenotification 2");
+//            startForeground(notificationId,notification);
+//            Log.e("playing","updatenotification 3.0");
+//            mNotifyMode = NOTIFY_MODE_FOREGROUND;
+//        }else {
+//            Log.e("playing","updatenotification 3");
+//            Notification notification = getNotification();
+//            Log.e("playing","updatenotification 3.1");
+//            mNotificationManager.notify(notificationId,notification);
+//            Log.e("playing","updatenotification 3.001");
 //        }
-//
-//        // int notificationId = hashCode();
-//
-//        if (mNotifyMode != newNotifyMode) {
-//            if (mNotifyMode == NOTIFY_MODE_FOREGROUND) {
-//                if (CommonUtils.isLollipop())
-//                    stopForeground(newNotifyMode == NOTIFY_MODE_NONE);
-//                else
-//                    stopForeground(newNotifyMode == NOTIFY_MODE_NONE || newNotifyMode == NOTIFY_MODE_BACKGROUND);
-//            } else if (newNotifyMode == NOTIFY_MODE_NONE) {
-//                mNotificationManager.cancel(notificationId);
-//                mNotificationPostTime = 0;
-//            }
-//        }
-//
-//        if (newNotifyMode == NOTIFY_MODE_FOREGROUND) {
-//            startForeground(notificationId, getNotification());
-//
-//        } else if (newNotifyMode == NOTIFY_MODE_BACKGROUND) {
-//            mNotificationManager.notify(notificationId, getNotification());
-//        }
-//
-//        mNotifyMode = newNotifyMode;
-        startForeground(notificationId,getNotification());
+
     }
 
 
@@ -702,13 +717,13 @@ public class MediaService extends Service {
         }
         mFileToPlay = null;
         closeCursor();
-        if (goToIdle) {
-            setIsSupposedToBePlaying(false, false);
-        } else {
-            if (CommonUtils.isLollipop())
-                stopForeground(false);
-            else stopForeground(true);
-        }
+//        if (goToIdle) {
+//            setIsSupposedToBePlaying(false, false);
+//        } else {
+//            if (CommonUtils.isLollipop())
+//                stopForeground(false);
+//            else stopForeground(true);
+//        }
     }
 
     private int removeTracksInternal(int first, int last) {
@@ -914,7 +929,12 @@ public class MediaService extends Service {
                         PreferencesUtility.getInstance(MediaService.this).setPlayLink(id, url);
                     }
                 }
-                L.E(D, TAG, "current url = " + url);
+                if(url != null){
+                    L.E(D, TAG, "current url = " + url);
+                }else{
+                    gotoNext(true);
+                }
+
                 if (!stop) {
                     startProxy();
                     // String urlEn = HttpUtil.urlEncode(url);
@@ -1439,6 +1459,7 @@ public class MediaService extends Service {
     Notification mNotification;
 
     private Notification getNotification() {
+        Log.e("playing","get notification start");
         final int PAUSE_FLAG = 0x1;
         final int NEXT_FLAG = 0x2;
         final int STOP_FLAG = 0x3;
@@ -1447,72 +1468,8 @@ public class MediaService extends Service {
         final boolean isPlaying = isPlaying();
 
         remoteViews = new RemoteViews(this.getPackageName(), R.layout.notification);
-
+        Log.e("playing","get notification start 3.1");
         String text = TextUtils.isEmpty(albumName) ? artistName : artistName + " - " + albumName;
-
-        PendingIntent pendingIntent = PendingIntent.getActivity(this.getApplicationContext(), 0,
-                new Intent(this.getApplicationContext(), PlayingActivity.class), PendingIntent.FLAG_UPDATE_CURRENT);
-
-
-        final Intent nowPlayingIntent = new Intent();
-        nowPlayingIntent.setAction("com.wm.remusic.LAUNCH_NOW_PLAYING_ACTION");
-        // nowPlayingIntent.setComponent(new ComponentName("com.wm.remusic","com.wm.remusic.activity.PlayingActivity"));
-
-        PendingIntent clickIntent = PendingIntent.getBroadcast(this, 0, nowPlayingIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-
-        Intent intent = new Intent(getApplicationContext(),
-                PlayingActivity.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        PendingIntent pi = PendingIntent.getActivity(getApplicationContext(),
-                0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-
-        final Bitmap bitmap = ImageUtils.getArtworkQuick(this, getAlbumId(), 160, 160);
-
-        if (bitmap != null) {
-            remoteViews.setImageViewBitmap(R.id.image, bitmap);
-            // remoteViews.setImageViewUri(R.id.image, MusicUtils.getAlbumUri(this, getAudioId()));
-            noBit = null;
-
-        } else if (!isTrackLocal()) {
-            if (noBit != null) {
-                remoteViews.setImageViewBitmap(R.id.image, noBit);
-                noBit = null;
-
-            } else {
-                ImageRequest imageRequest = ImageRequestBuilder
-                        .newBuilderWithSource(Uri.parse(getAlbumPath()))
-                        .setProgressiveRenderingEnabled(true)
-                        .build();
-                ImagePipeline imagePipeline = Fresco.getImagePipeline();
-                DataSource<CloseableReference<CloseableImage>>
-                        dataSource = imagePipeline.fetchDecodedImage(imageRequest, MediaService.this);
-
-                dataSource.subscribe(new BaseBitmapDataSubscriber() {
-
-                                         @Override
-                                         public void onNewResultImpl(@Nullable Bitmap bitmap) {
-                                             // You can use the bitmap in only limited ways
-                                             // No need to do any cleanup.
-                                             if (bitmap != null) {
-                                                 noBit = bitmap;
-                                             }
-                                             ;
-                                             updateNotification();
-                                         }
-
-                                         @Override
-                                         public void onFailureImpl(DataSource dataSource) {
-                                             // No cleanup required here.
-                                             noBit = BitmapFactory.decodeResource(getResources(), R.drawable.placeholder_disk_210);
-                                             updateNotification();
-                                         }
-                                     },
-                        CallerThreadExecutor.getInstance());
-            }
-        } else {
-            remoteViews.setImageViewResource(R.id.image, R.drawable.placeholder_disk_210);
-        }
-
         remoteViews.setTextViewText(R.id.title, getTrackName());
         remoteViews.setTextViewText(R.id.text, text);
 
@@ -1522,6 +1479,7 @@ public class MediaService extends Service {
         PendingIntent pausePIntent = PendingIntent.getBroadcast(this, 0, pauseIntent, 0);
         remoteViews.setImageViewResource(R.id.iv_pause, isPlaying ? R.drawable.note_btn_pause : R.drawable.note_btn_play);
         remoteViews.setOnClickPendingIntent(R.id.iv_pause, pausePIntent);
+        //remoteView.setInt(R.id.iv_pause, "setBackgroundResource", R.color.your_color);
 
         Intent nextIntent = new Intent(NEXT_ACTION);
         nextIntent.putExtra("FLAG", NEXT_FLAG);
@@ -1533,28 +1491,94 @@ public class MediaService extends Service {
         PendingIntent prePIntent = PendingIntent.getBroadcast(this, 0, preIntent, 0);
         remoteViews.setOnClickPendingIntent(R.id.iv_stop, prePIntent);
 
+//        PendingIntent pendingIntent = PendingIntent.getActivity(this.getApplicationContext(), 0,
+//                new Intent(this.getApplicationContext(), PlayingActivity.class), PendingIntent.FLAG_UPDATE_CURRENT);
+        final Intent nowPlayingIntent = new Intent();
+        nowPlayingIntent.setAction("com.wm.remusic.LAUNCH_NOW_PLAYING_ACTION");
+        // nowPlayingIntent.setComponent(new ComponentName("com.wm.remusic","com.wm.remusic.activity.PlayingActivity"));
+        PendingIntent clickIntent = PendingIntent.getBroadcast(this, 0, nowPlayingIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+//
+//        Intent intent = new Intent(getApplicationContext(),
+//                PlayingActivity.class);
+//        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+//        PendingIntent pi = PendingIntent.getActivity(getApplicationContext(),
+//                0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        final Bitmap bitmap = ImageUtils.getArtworkQuick(this, getAlbumId(), 160, 160);
+        if (bitmap != null) {
+            remoteViews.setImageViewBitmap(R.id.image, bitmap);
+            // remoteViews.setImageViewUri(R.id.image, MusicUtils.getAlbumUri(this, getAudioId()));
+            noBit = null;
+
+        } else if (!isTrackLocal()) {
+            if (noBit != null) {
+                remoteViews.setImageViewBitmap(R.id.image, noBit);
+                noBit = null;
+
+            } else {
+                Uri uri = null;
+                if(getAlbumPath() != null){
+                    try {
+                        uri = Uri.parse(getAlbumPath());
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+                if(getAlbumPath() == null || uri == null){
+                    noBit = BitmapFactory.decodeResource(getResources(), R.drawable.placeholder_disk_210);
+                    updateNotification();
+                }else {
+                    ImageRequest imageRequest = ImageRequestBuilder
+                            .newBuilderWithSource(uri)
+                            .setProgressiveRenderingEnabled(true)
+                            .build();
+                    ImagePipeline imagePipeline = Fresco.getImagePipeline();
+                    DataSource<CloseableReference<CloseableImage>>
+                            dataSource = imagePipeline.fetchDecodedImage(imageRequest, MediaService.this);
+
+                    dataSource.subscribe(new BaseBitmapDataSubscriber() {
+
+                                             @Override
+                                             public void onNewResultImpl(@Nullable Bitmap bitmap) {
+                                                 // You can use the bitmap in only limited ways
+                                                 // No need to do any cleanup.
+                                                 if (bitmap != null) {
+                                                     noBit = bitmap;
+                                                 }
+                                                 updateNotification();
+                                             }
+
+                                             @Override
+                                             public void onFailureImpl(DataSource dataSource) {
+                                                 // No cleanup required here.
+                                                 noBit = BitmapFactory.decodeResource(getResources(), R.drawable.placeholder_disk_210);
+                                                 updateNotification();
+                                             }
+                                         },
+                            CallerThreadExecutor.getInstance());
+                }
+                }
+
+        } else {
+            remoteViews.setImageViewResource(R.id.image, R.drawable.placeholder_disk_210);
+        }
+
 
         if (mNotificationPostTime == 0) {
             mNotificationPostTime = System.currentTimeMillis();
         }
-        Log.e(TAG," notificationtime = " + mNotificationPostTime  );
         if(mNotification == null){
             NotificationCompat.Builder builder = new NotificationCompat.Builder(this).setContent(remoteViews)
                     .setSmallIcon(R.drawable.ic_notification)
                     .setContentIntent(clickIntent)
-                    .setWhen(mNotificationPostTime)
-                    .setOnlyAlertOnce(true)
-                    .setOngoing(false)
-                    .setPriority(Notification.PRIORITY_DEFAULT);
+                    .setWhen(mNotificationPostTime);
+            if (CommonUtils.isJellyBeanMR1()) {
+                builder.setShowWhen(false);
+            }
             mNotification = builder.build();
         }else {
             mNotification.contentView = remoteViews;
         }
-
-
-//        if (CommonUtils.isJellyBeanMR1()) {
-//            builder.setShowWhen(false);
-//        }
 
         return mNotification;
     }
@@ -1919,7 +1943,6 @@ public class MediaService extends Service {
             openCurrentAndNext();
             play();
             notifyChange(META_CHANGED);
-            notifyChange(MUSIC_CHANGED);
             if (mShuffleMode == SHUFFLE_AUTO) {
                 doAutoShuffleUpdate();
             }
@@ -2012,7 +2035,7 @@ public class MediaService extends Service {
                 Log.e("Playing", " no info");
                 return true;
             }
-            Log.e("Playing", " music " + info.islocal);
+            Log.e("Playing", " music is local = " + info.islocal);
             return info.islocal;
         }
     }
@@ -2298,27 +2321,22 @@ public class MediaService extends Service {
                 MediaButtonIntentReceiver.class.getName()));
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
             mSession.setActive(true);
-
         if (createNewNextTrack) {
             setNextTrack();
         } else {
             setNextTrack(mNextPlayPos);
         }
-
         if (mPlayer.isTrackPrepared()) {
             final long duration = mPlayer.duration();
             if (mRepeatMode != REPEAT_CURRENT && duration > 2000
                     && mPlayer.position() >= duration - 2000) {
                 gotoNext(true);
-                Log.e("play to go", "");
             }
         }
         mPlayer.start();
         mPlayerHandler.removeMessages(FADEDOWN);
         mPlayerHandler.sendEmptyMessage(FADEUP);
-
         setIsSupposedToBePlaying(true, true);
-
         cancelShutdown();
         updateNotification();
         notifyChange(META_CHANGED);
@@ -2343,6 +2361,7 @@ public class MediaService extends Service {
     }
 
     public void gotoNext(final boolean force) {
+        Log.e("playing", "gotonext");
         if (D) Log.d(TAG, "Going to next track");
         synchronized (this) {
             if (mPlaylist.size() <= 0) {
@@ -2601,6 +2620,7 @@ public class MediaService extends Service {
 
                         service.updateCursor(service.mPlaylist.get(service.mPlayPos).mId);
                         service.notifyChange(META_CHANGED);
+                        service.notifyChange(MUSIC_CHANGED);
                         service.updateNotification();
                         break;
                     case TRACK_ENDED:

@@ -498,7 +498,7 @@ public class MusicPlayer {
         }
     }
 
-    public static void playAll(final HashMap<Long, MusicInfo> infos, final long[] list, int position, final boolean forceShuffle) {
+    public static synchronized void playAll(final HashMap<Long, MusicInfo> infos, final long[] list, int position, final boolean forceShuffle) {
         if (list == null || list.length == 0 || mService == null) {
             return;
         }

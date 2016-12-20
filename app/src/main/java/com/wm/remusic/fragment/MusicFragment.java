@@ -4,6 +4,7 @@ package com.wm.remusic.fragment;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -20,6 +21,7 @@ import android.widget.TextView;
 import com.bilibili.magicasakura.widgets.TintImageView;
 import com.github.promeg.pinyinhelper.Pinyin;
 import com.wm.remusic.R;
+import com.wm.remusic.activity.AlbumsDetailActivity;
 import com.wm.remusic.activity.SelectActivity;
 import com.wm.remusic.handler.HandlerUtil;
 import com.wm.remusic.info.MusicInfo;
@@ -243,11 +245,14 @@ public class MusicFragment extends BaseFragment {
         final static int FIRST_ITEM = 0;
         final static int ITEM = 1;
         private ArrayList<MusicInfo> mList;
+        PlayMusic playMusic;
+        Handler handler;
 
         public Adapter(ArrayList<MusicInfo> list) {
 //            if (list == null) {
 //                throw new IllegalArgumentException("model Data must not be null");
 //            }
+            handler = HandlerUtil.getInstance(getContext());
             mList = list;
 
         }
@@ -331,21 +336,27 @@ public class MusicFragment extends BaseFragment {
 
             public void onClick(View v) {
                 //// TODO: 2016/1/20
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        long[] list = new long[mList.size()];
-                        HashMap<Long, MusicInfo> infos = new HashMap();
-                        for (int i = 0; i < mList.size(); i++) {
-                            MusicInfo info = mList.get(i);
-                            list[i] = info.songId;
-                            info.islocal = true;
-                            info.albumData = MusicUtils.getAlbumArtUri(info.albumId) + "";
-                            infos.put(list[i], mList.get(i));
-                        }
-                        MusicPlayer.playAll(infos, list, 0, false);
-                    }
-                }).start();
+                if(playMusic != null)
+                    handler.removeCallbacks(playMusic);
+                if(getAdapterPosition() > 0){
+                    playMusic = new PlayMusic(0);
+                    handler.postDelayed(playMusic,70);
+                }
+//                HandlerUtil.getInstance(getContext()).postDelayed(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        long[] list = new long[mList.size()];
+//                        HashMap<Long, MusicInfo> infos = new HashMap();
+//                        for (int i = 0; i < mList.size(); i++) {
+//                            MusicInfo info = mList.get(i);
+//                            list[i] = info.songId;
+//                            info.islocal = true;
+//                            info.albumData = MusicUtils.getAlbumArtUri(info.albumId) + "";
+//                            infos.put(list[i], mList.get(i));
+//                        }
+//                        MusicPlayer.playAll(infos, list, 0, false);
+//                    }
+//                },70);
 
             }
 
@@ -358,12 +369,14 @@ public class MusicFragment extends BaseFragment {
             TextView mainTitle, title;
             TintImageView playState;
 
+
             ListItemViewHolder(View view) {
                 super(view);
                 this.mainTitle = (TextView) view.findViewById(R.id.viewpager_list_toptext);
                 this.title = (TextView) view.findViewById(R.id.viewpager_list_bottom_text);
                 this.playState = (TintImageView) view.findViewById(R.id.play_state);
                 this.moreOverflow = (ImageView) view.findViewById(R.id.viewpager_list_button);
+
 
                 moreOverflow.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -378,25 +391,54 @@ public class MusicFragment extends BaseFragment {
 
             @Override
             public void onClick(View v) {
-                HandlerUtil.getInstance(getContext()).postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        long[] list = new long[mList.size()];
-                        HashMap<Long, MusicInfo> infos = new HashMap();
-                        for (int i = 0; i < mList.size(); i++) {
-                            MusicInfo info = mList.get(i);
-                            list[i] = info.songId;
-                            info.islocal = true;
-                            info.albumData = MusicUtils.getAlbumArtUri(info.albumId) + "";
-                            infos.put(list[i], mList.get(i));
-                        }
-                        if (getAdapterPosition() > 0)
-                            MusicPlayer.playAll(infos, list, getAdapterPosition() - 1, false);
-                    }
-                }, 60);
+                if(playMusic != null)
+                    handler.removeCallbacks(playMusic);
+                if(getAdapterPosition() > 0){
+                    playMusic = new PlayMusic(getAdapterPosition() - 1);
+                    handler.postDelayed(playMusic,70);
+                }
+//                HandlerUtil.getInstance(getContext()).postDelayed(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        long[] list = new long[mList.size()];
+//                        HashMap<Long, MusicInfo> infos = new HashMap();
+//                        for (int i = 0; i < mList.size(); i++) {
+//                            MusicInfo info = mList.get(i);
+//                            list[i] = info.songId;
+//                            info.islocal = true;
+//                            info.albumData = MusicUtils.getAlbumArtUri(info.albumId) + "";
+//                            infos.put(list[i], mList.get(i));
+//                        }
+//                        if (getAdapterPosition() > 0)
+//                            MusicPlayer.playAll(infos, list, getAdapterPosition() - 1, false);
+//                    }
+//                }, 60);
             }
 
         }
+
+        class PlayMusic implements Runnable{
+            int position;
+            public PlayMusic(int position){
+                this.position = position;
+            }
+
+            @Override
+            public void run() {
+                long[] list = new long[mList.size()];
+                HashMap<Long, MusicInfo> infos = new HashMap();
+                for (int i = 0; i < mList.size(); i++) {
+                    MusicInfo info = mList.get(i);
+                    list[i] = info.songId;
+                    info.islocal = true;
+                    info.albumData = MusicUtils.getAlbumArtUri(info.albumId) + "";
+                    infos.put(list[i], mList.get(i));
+                }
+                if (position > 0)
+                    MusicPlayer.playAll(infos, list, position, false);
+            }
+        }
     }
+
 
 }

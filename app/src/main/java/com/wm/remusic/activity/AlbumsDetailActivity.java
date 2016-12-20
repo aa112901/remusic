@@ -61,6 +61,7 @@ import com.wm.remusic.service.MusicPlayer;
 import com.wm.remusic.uitl.CommonUtils;
 import com.wm.remusic.uitl.IConstants;
 import com.wm.remusic.uitl.ImageUtils;
+import com.wm.remusic.uitl.L;
 import com.wm.remusic.widget.DividerItemDecoration;
 
 import java.util.ArrayList;
@@ -96,6 +97,8 @@ public class AlbumsDetailActivity extends BaseActivity implements ObservableScro
     private int mStatusSize;
     private FrameLayout headerViewContent;
     private RelativeLayout headerDetail;
+    private String TAG = "AlbumsDetailActivity";
+    private boolean d = true;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -162,31 +165,6 @@ public class AlbumsDetailActivity extends BaseActivity implements ObservableScro
             @Override
             public void onClick(View v) {
                 new LoadAllDownInfos((Activity) AlbumsDetailActivity.this, mList).execute();
-//                new AlertDialog.Builder(AlbumsDetailActivity.this).setTitle("要下载音乐吗").
-//                        setPositiveButton(AlbumsDetailActivity.this.getString(R.string.sure), new DialogInterface.OnClickListener() {
-//
-//                            @Override
-//                            public void onClick(DialogInterface dialog, int which) {
-//
-//                                int len = mList.size();
-//                                for(int i = 0; i < len ; i++){
-//                                    Down.downMusic(MainApplication.context, mList.get(i).getSong_id(),mList.get(i).getTitle());
-//                                }
-//                                mHandler.post(new Runnable() {
-//                                    @Override
-//                                    public void run() {
-//                                        Toast.makeText(AlbumsDetailActivity.this, "已加入到下载", Toast.LENGTH_SHORT).show();
-//                                    }
-//                                });
-//                                dialog.dismiss();
-//                            }
-//                        }).
-//                        setNegativeButton(AlbumsDetailActivity.this.getString(R.string.cancel), new DialogInterface.OnClickListener() {
-//                            @Override
-//                            public void onClick(DialogInterface dialog, int which) {
-//                                dialog.dismiss();
-//                            }
-//                        }).show();
             }
         });
         headerDetail.setVisibility(View.GONE);
@@ -517,22 +495,7 @@ public class AlbumsDetailActivity extends BaseActivity implements ObservableScro
                                     IConstants.MUSICOVERFLOW);
                             morefragment.show(((AppCompatActivity) mContext).getSupportFragmentManager(), "music");
                         }
-//                        new AlertDialog.Builder(mContext).setTitle("要下载音乐吗").
-//                                setPositiveButton(mContext.getString(R.string.sure), new DialogInterface.OnClickListener() {
-//
-//                                    @Override
-//                                    public void onClick(DialogInterface dialog, int which) {
-//
-//                                        Down.downMusic(MainApplication.context, localItem.songId + "", localItem.musicName);
-//                                        dialog.dismiss();
-//                                    }
-//                                }).
-//                                setNegativeButton(mContext.getString(R.string.cancel), new DialogInterface.OnClickListener() {
-//                                    @Override
-//                                    public void onClick(DialogInterface dialog, int which) {
-//                                        dialog.dismiss();
-//                                    }
-//                                }).show();
+
                     }
                 });
 
@@ -576,7 +539,7 @@ public class AlbumsDetailActivity extends BaseActivity implements ObservableScro
 
             public void onClick(View v) {
                 //// TODO: 2016/1/20
-                new Thread(new Runnable() {
+                HandlerUtil.getInstance(mContext).postDelayed(new Runnable() {
                     @Override
                     public void run() {
                         HashMap<Long, MusicInfo> infos = new HashMap<Long, MusicInfo>();
@@ -587,9 +550,11 @@ public class AlbumsDetailActivity extends BaseActivity implements ObservableScro
                             list[i] = info.songId;
                             infos.put(list[i], info);
                         }
-                        MusicPlayer.playAll(infos, list, 0, false);
+
+                        if (getAdapterPosition() > 0)
+                            MusicPlayer.playAll(infos, list, 0, false);
                     }
-                }).start();
+                }, 70);
 
             }
 
@@ -628,6 +593,40 @@ public class AlbumsDetailActivity extends BaseActivity implements ObservableScro
                 }, 70);
             }
 
+        }
+    }
+    PlayMusic playMusic;
+    public class PlayMusic extends Thread {
+        private volatile boolean isInterrupted = false;
+        private ArrayList<MusicInfo> arrayList;
+        public PlayMusic(ArrayList<MusicInfo> arrayList){
+            this.arrayList = arrayList;
+        }
+        public void interrupt(){
+            isInterrupted = true;
+            super.interrupt();
+        }
+
+        public void run(){
+            L.D(d,TAG, " start");
+            while(!isInterrupted){
+                HashMap<Long, MusicInfo> infos = new HashMap<Long, MusicInfo>();
+                int len = arrayList.size();
+                long[] list = new long[len];
+                for (int i = 0; i < len; i++) {
+                    MusicInfo info = arrayList.get(i);
+                    list[i] = info.songId;
+                    infos.put(list[i], info);
+                }
+                MusicPlayer.playAll(infos, list, 0, false);
+//                try{
+//
+//                }catch(InterruptedException e){
+//                    L.D(d,TAG, " 从阻塞中退出...");
+//                    L.D(d,TAG, "this.isInterrupted()="+this.isInterrupted());
+//                }
+            }
+            L.D(d,TAG, "已经终止!");
         }
     }
 }

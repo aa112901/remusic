@@ -113,6 +113,9 @@ public class PlaylistActivity extends BaseActivity implements ObservableScrollVi
     private TextView collectText;
     private ImageView collectView;
     private LinearLayout share;
+    private String TAG = "PlaylistActivity";
+    private boolean d = true;
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -219,9 +222,9 @@ public class PlaylistActivity extends BaseActivity implements ObservableScrollVi
                 //  PlaylistsManager.getInstance(mContext).Insert(mContext,,adapterList);
                 if (!mCollected) {
                     collectText.setText("已收藏");
-                    new Thread(new Runnable() {
+                    new AsyncTask<Void,Void,Void>(){
                         @Override
-                        public void run() {
+                        protected Void doInBackground(Void... params) {
                             String albumart = null;
                             boolean isLocal = false;
                             for (MusicInfo info : adapterList) {
@@ -231,8 +234,6 @@ public class PlaylistActivity extends BaseActivity implements ObservableScrollVi
                                     break;
                                 }
                             }
-                            //String albumart = MusicUtils.getMusicInfo(getContext(), musicId[0]).albumData;
-
                             PlaylistInfo.getInstance(mContext).addPlaylist(Long.parseLong(playlsitId), playlistName,
                                     adapterList.size(), albumart, "net");
                             PlaylistsManager.getInstance(mContext).insertLists(mContext, Long.parseLong(playlsitId), adapterList);
@@ -240,8 +241,9 @@ public class PlaylistActivity extends BaseActivity implements ObservableScrollVi
                             MainApplication.context.sendBroadcast(intent);
 
                             mCollected = true;
+                            return null;
                         }
-                    }).start();
+                    }.execute();
 
                 } else {
                     collectText.setText("收藏");
@@ -271,7 +273,7 @@ public class PlaylistActivity extends BaseActivity implements ObservableScrollVi
         ObservableRecyclerView recyclerView = (ObservableRecyclerView) findViewById(R.id.recyclerview);
         recyclerView.setScrollViewCallbacks(PlaylistActivity.this);
         recyclerView.setLayoutManager(new LinearLayoutManager(PlaylistActivity.this));
-        recyclerView.setHasFixedSize(false);
+        recyclerView.setHasFixedSize(true);
         mAdapter = new PlaylistDetailAdapter(PlaylistActivity.this, adapterList);
         recyclerView.setAdapter(mAdapter);
         recyclerView.addItemDecoration(new DividerItemDecoration(PlaylistActivity.this, DividerItemDecoration.VERTICAL_LIST));
@@ -657,20 +659,21 @@ public class PlaylistActivity extends BaseActivity implements ObservableScrollVi
 
             public void onClick(View v) {
                 //// TODO: 2016/1/20
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        HashMap<Long, MusicInfo> infos = new HashMap<Long, MusicInfo>();
-                        int len = arraylist.size();
-                        long[] list = new long[len];
-                        for (int i = 0; i < len; i++) {
-                            MusicInfo info = arraylist.get(i);
-                            list[i] = info.songId;
-                            infos.put(list[i], info);
-                        }
-                        MusicPlayer.playAll(infos, list, 0, false);
-                    }
-                }).start();
+             HandlerUtil.getInstance(mContext).postDelayed(new Runnable() {
+                 @Override
+                 public void run() {
+                     HashMap<Long, MusicInfo> infos = new HashMap<Long, MusicInfo>();
+                     int len = arraylist.size();
+                     long[] list = new long[len];
+                     for (int i = 0; i < len; i++) {
+                         MusicInfo info = arraylist.get(i);
+                         list[i] = info.songId;
+                         infos.put(list[i], info);
+                     }
+                     if (getAdapterPosition() > 0)
+                         MusicPlayer.playAll(infos, list, 0, false);
+                 }
+             },70);
 
             }
 
@@ -708,6 +711,39 @@ public class PlaylistActivity extends BaseActivity implements ObservableScrollVi
                 }, 70);
             }
 
+        }
+    }
+    private PlayMusic mPlay;
+    private volatile boolean tryPlaying = false;
+    public class PlayMusic extends Thread {
+        private volatile boolean isInterrupted = false;
+        private ArrayList<MusicInfo> arrayList;
+        private int position;
+        public PlayMusic(ArrayList<MusicInfo> arrayList , int position){
+            this.arrayList = arrayList;
+            this.position = position;
+        }
+        public void interrupt(){
+            isInterrupted = true;
+            super.interrupt();
+        }
+
+        public void run(){
+            L.D(d,TAG, " start");
+            tryPlaying = true;
+            while(!isInterrupted){
+                HashMap<Long, MusicInfo> infos = new HashMap<Long, MusicInfo>();
+                int len = arrayList.size();
+                long[] list = new long[len];
+                for (int i = 0; i < len; i++) {
+                    MusicInfo info = arrayList.get(i);
+                    list[i] = info.songId;
+                    infos.put(list[i], info);
+                }
+                MusicPlayer.playAll(infos, list, position, false);
+            }
+            tryPlaying = false;
+            L.D(d,TAG, "已经终止!");
         }
     }
 }

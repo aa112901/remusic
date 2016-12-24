@@ -56,7 +56,7 @@ import com.wm.remusic.net.BMA;
 import com.wm.remusic.net.HttpUtil;
 import com.wm.remusic.net.MusicDetailInfoGet;
 import com.wm.remusic.net.NetworkUtils;
-import com.wm.remusic.net.PlaylistPlayInfoGet;
+import com.wm.remusic.net.RequestThreadPool;
 import com.wm.remusic.service.MusicPlayer;
 import com.wm.remusic.uitl.CommonUtils;
 import com.wm.remusic.uitl.IConstants;
@@ -89,7 +89,6 @@ public class AlbumsDetailActivity extends BaseActivity implements ObservableScro
     private FrameLayout loadFrameLayout;
     private int musicCount;
     private Handler mHandler;
-    private int tryCount;
     private View loadView;
     private int mFlexibleSpaceImageHeight;
     private ActionBar actionBar;
@@ -167,7 +166,13 @@ public class AlbumsDetailActivity extends BaseActivity implements ObservableScro
                 new LoadAllDownInfos((Activity) AlbumsDetailActivity.this, mList).execute();
             }
         });
-        headerDetail.setVisibility(View.GONE);
+
+        tryAgain.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                loadAllLists();
+            }
+        });
     }
 
 
@@ -218,92 +223,82 @@ public class AlbumsDetailActivity extends BaseActivity implements ObservableScro
 
         } else {
             tryAgain.setVisibility(View.VISIBLE);
-            tryAgain.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    loadAllLists();
-                }
-            });
+
         }
 
     }
 
+    AlbumInfo albumInfo;
+    class LoadNetPlaylistInfo extends AsyncTask<Void, Void, Boolean> {
 
-    class LoadNetPlaylistInfo extends AsyncTask<Void, Void, Void> {
-        AlbumInfo albumInfo;
 
         @Override
-        protected Void doInBackground(final Void... unused) {
+        protected Boolean doInBackground(final Void... unused) {
             try {
                 JsonObject jsonObject = HttpUtil.getResposeJsonObject(BMA.Album.albumInfo(albumId + ""));
-                // albumInfo = MainApplication.gsonInstance().fromJson(jsonObject.get("albuminfo").getAsJsonObject(),AlbumInfo.class);
-
-                // GeDanSrcInfo geDanSrcInfo = MainApplication.gsonInstance().fromJson(jsonObject.toString(), GeDanSrcInfo.class);
                 JsonArray pArray = jsonObject.get("songlist").getAsJsonArray();
+                mHandler.post(showInfo);
                 musicCount = pArray.size();
 
                 for (int i = 0; i < musicCount; i++) {
                     GeDanGeInfo geDanGeInfo = MainApplication.gsonInstance().fromJson(pArray.get(i), GeDanGeInfo.class);
                     mList.add(geDanGeInfo);
-                    PlaylistPlayInfoGet.get(new MusicDetailInfoGet(geDanGeInfo.getSong_id(), i, sparseArray));
+                    RequestThreadPool.post(new MusicDetailInfoGet(geDanGeInfo.getSong_id(), i, sparseArray));
+                }
+
+                int tryCount = 0;
+                while (sparseArray.size() != musicCount && tryCount < 1000){
+                    tryCount++;
+                    try {
+                        Thread.sleep(30);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+
+                if(sparseArray.size() == musicCount){
+                    for (int i = 0; i < mList.size(); i++) {
+                        MusicInfo musicInfo = new MusicInfo();
+                        musicInfo.songId = Integer.parseInt(mList.get(i).getSong_id());
+                        musicInfo.musicName = mList.get(i).getTitle();
+                        musicInfo.artist = sparseArray.get(i).getArtist_name();
+                        musicInfo.islocal = false;
+                        musicInfo.albumName = sparseArray.get(i).getAlbum_title();
+                        musicInfo.albumId = Integer.parseInt(mList.get(i).getAlbum_id());
+                        musicInfo.artistId = Integer.parseInt(sparseArray.get(i).getArtist_id());
+                        musicInfo.lrc = sparseArray.get(i).getLrclink();
+                        musicInfo.albumData = sparseArray.get(i).getPic_radio();
+                        adapterList.add(musicInfo);
+                    }
+                    return true;
                 }
             } catch (NullPointerException e) {
                 e.printStackTrace();
             }
 
-            return null;
+            return false;
         }
 
         @Override
-        protected void onPostExecute(Void aVoid) {
-            if (albumInfo != null) {
-                if (albumDes == null) {
-                    albumDes = albumInfo.getInfo();
-                    toolbar.setSubtitle(albumDes);
-                }
-            }
+        protected void onPostExecute(Boolean complete) {
 
-            mHandler.postDelayed(showPlaylistView, 100);
+            if (!complete) {
+                loadFrameLayout.removeAllViews();
+                tryAgain.setVisibility(View.VISIBLE);
+            } else {
+                Log.e("mlist", mList.toString());
+                loadFrameLayout.removeAllViews();
+                mAdapter.updateDataSet(adapterList);
+
+            }
 
         }
     }
 
-
-    Runnable showPlaylistView = new Runnable() {
+    Runnable showInfo = new Runnable() {
         @Override
         public void run() {
-            if (sparseArray.size() != musicCount && tryCount < 36) {
-                mHandler.postDelayed(showPlaylistView, 200);
-                tryCount++;
-            } else {
-                new AsyncTask<Void, Void, Void>() {
-                    @Override
-                    protected Void doInBackground(Void... params) {
-                        for (int i = 0; i < mList.size(); i++) {
-                            MusicInfo musicInfo = new MusicInfo();
-                            musicInfo.songId = Integer.parseInt(mList.get(i).getSong_id());
-                            musicInfo.musicName = mList.get(i).getTitle();
-                            musicInfo.artist = sparseArray.get(i).getArtist_name();
-                            musicInfo.islocal = false;
-                            musicInfo.albumName = sparseArray.get(i).getAlbum_title();
-                            musicInfo.albumId = Integer.parseInt(mList.get(i).getAlbum_id());
-                            musicInfo.artistId = Integer.parseInt(sparseArray.get(i).getArtist_id());
-                            musicInfo.lrc = sparseArray.get(i).getLrclink();
-                            musicInfo.albumData = sparseArray.get(i).getPic_radio();
-                            adapterList.add(musicInfo);
-                        }
-                        return null;
-                    }
-
-                    @Override
-                    protected void onPostExecute(Void aVoid) {
-                        Log.e("mlist", mList.toString());
-                        loadFrameLayout.removeAllViews();
-                        mAdapter.updateDataSet(adapterList);
-                        headerDetail.setVisibility(View.VISIBLE);
-                    }
-                }.execute();
-            }
+            headerDetail.setVisibility(View.VISIBLE);
         }
     };
 
@@ -539,7 +534,7 @@ public class AlbumsDetailActivity extends BaseActivity implements ObservableScro
 
             public void onClick(View v) {
                 //// TODO: 2016/1/20
-                HandlerUtil.getInstance(mContext).postDelayed(new Runnable() {
+                mHandler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
                         HashMap<Long, MusicInfo> infos = new HashMap<Long, MusicInfo>();
@@ -575,7 +570,7 @@ public class AlbumsDetailActivity extends BaseActivity implements ObservableScro
 
             @Override
             public void onClick(View v) {
-                HandlerUtil.getInstance(mContext).postDelayed(new Runnable() {
+                mHandler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
                         HashMap<Long, MusicInfo> infos = new HashMap<Long, MusicInfo>();

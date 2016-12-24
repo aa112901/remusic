@@ -222,7 +222,7 @@ public class PlaylistSelectActivity extends AppCompatActivity implements View.On
                         public void run() {
                             pManager.delete(playlistId);
                             for (int i = 0; i < mAdapter.mList.size(); i++) {
-                                pManager.Insert(PlaylistSelectActivity.this, playlistId, mAdapter.mList.get(i).songId, i);
+                                pManager.insert(PlaylistSelectActivity.this, playlistId, mAdapter.mList.get(i).songId, i);
 
                             }
 

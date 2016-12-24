@@ -218,7 +218,8 @@ public class MainActivity extends BaseActivity implements CardPickerDialog.Click
                     }
             );
         }
-        sendBroadcast(new Intent(IConstants.CHANGE_THEME));
+       // sendBroadcast(new Intent(IConstants.CHANGE_THEME));
+        changeTheme();
     }
 
     static class CustomViewPagerAdapter extends FragmentPagerAdapter {

@@ -31,6 +31,7 @@ public class MusicDetailInfoGet implements Runnable {
             }
         } catch (Exception e) {
             e.printStackTrace();
+
         }
     }
 }

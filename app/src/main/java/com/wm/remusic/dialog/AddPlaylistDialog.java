@@ -98,7 +98,7 @@ public class AddPlaylistDialog extends DialogFragment {
                                 playlistInfo.addPlaylist(editText.getText().hashCode(), editText.getText().toString(),
                                         musicId.length, "file://" + albumart, "local");
                                 for (int i = 0; i < musicId.length; i++) {
-                                    playlistsManager.Insert(MainApplication.context, editText.getText().hashCode(), musicId[i], i);
+                                    playlistsManager.insert(MainApplication.context, editText.getText().hashCode(), musicId[i], i);
                                 }
                                 Intent intent = new Intent(IConstants.PLAYLIST_COUNT_CHANGED);
                                 MainApplication.context.sendBroadcast(intent);
@@ -191,7 +191,7 @@ public class AddPlaylistDialog extends DialogFragment {
 
                 if (getAdapterPosition() == 0 && musicTracks.size() == 0) {
                     for (int i = 0; i < musicId.length; i++) {
-                        playlistsManager.Insert(getContext(), playlist.id, musicId[i], 0);
+                        playlistsManager.insert(getContext(), playlist.id, musicId[i], 0);
                     }
                 }
 
@@ -199,7 +199,7 @@ public class AddPlaylistDialog extends DialogFragment {
 
                     for (int j = 0; j < musicTracks.size(); j++) {
                         if (musicId[i] != musicTracks.get(j).mId) {
-                            playlistsManager.Insert(getContext(), playlist.id, musicId[i], 0);
+                            playlistsManager.insert(getContext(), playlist.id, musicId[i], 0);
                         }
                     }
 

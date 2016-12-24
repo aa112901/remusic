@@ -90,11 +90,9 @@ public class RadioDetailActivity extends BaseActivity implements ObservableScrol
 
     private PlaylistDetailAdapter mAdapter;
     private Toolbar toolbar;
-    private SparseArray<MusicDetailInfo> sparseArray = new SparseArray<MusicDetailInfo>();
     private FrameLayout loadFrameLayout;
     private int musicCount;
     private Handler mHandler;
-    private int tryCount;
     private View loadView;
     private int mFlexibleSpaceImageHeight;
     private ActionBar actionBar;
@@ -130,7 +128,6 @@ public class RadioDetailActivity extends BaseActivity implements ObservableScrol
         mActionBarSize = CommonUtils.getActionBarHeight(this);
         mStatusSize = CommonUtils.getStatusHeight(this);
 
-
         tryAgain = (TextView) findViewById(R.id.try_again);
 
         setUpEverything();
@@ -159,7 +156,6 @@ public class RadioDetailActivity extends BaseActivity implements ObservableScrol
             }
         });
         toolbar.setSubtitle(albumDes);
-
     }
 
     private void setHeaderView() {
@@ -192,7 +188,6 @@ public class RadioDetailActivity extends BaseActivity implements ObservableScrol
                         }).show();
             }
         });
-        headerDetail.setVisibility(View.GONE);
 
     }
 
@@ -256,8 +251,6 @@ public class RadioDetailActivity extends BaseActivity implements ObservableScrol
 
 
     class LoadNetPlaylistInfo extends AsyncTask<Void, Void, Void> {
-        AlbumInfo albumInfo;
-
         @Override
         protected Void doInBackground(final Void... unused) {
             try {
@@ -269,7 +262,16 @@ public class RadioDetailActivity extends BaseActivity implements ObservableScrol
                 for (int i = 0; i < musicCount; i++) {
                     RadioInfo geDanGeInfo = MainApplication.gsonInstance().fromJson(jsonArray.get(i), RadioInfo.class);
                     mList.add(geDanGeInfo);
-                    // PlaylistPlayInfoGet.get(new MusicDetailInfoGet(geDanGeInfo.getSong_id(), i, sparseArray));
+                }
+
+                for (int i = 0; i < mList.size(); i++) {
+                    MusicInfo musicInfo = new MusicInfo();
+                    musicInfo.songId = Integer.parseInt(mList.get(i).getSong_id());
+                    musicInfo.musicName = mList.get(i).getSong_name();
+                    musicInfo.islocal = false;
+                    musicInfo.albumId = Integer.parseInt(mList.get(i).getSong_duration());
+                    musicInfo.albumData = albumPath;
+                    adapterList.add(musicInfo);
                 }
             } catch (NullPointerException e) {
                 e.printStackTrace();
@@ -280,73 +282,10 @@ public class RadioDetailActivity extends BaseActivity implements ObservableScrol
 
         @Override
         protected void onPostExecute(Void aVoid) {
-            if (albumInfo != null) {
-                if (albumDes == null) {
-                    albumDes = albumInfo.getInfo();
-                    toolbar.setSubtitle(albumDes);
-                }
-            }
-
-            new AsyncTask<Void, Void, Void>() {
-                @Override
-                protected Void doInBackground(Void... params) {
-                    for (int i = 0; i < mList.size(); i++) {
-                        MusicInfo musicInfo = new MusicInfo();
-                        musicInfo.songId = Integer.parseInt(mList.get(i).getSong_id());
-                        musicInfo.musicName = mList.get(i).getSong_name();
-                        musicInfo.islocal = false;
-                        musicInfo.albumId = Integer.parseInt(mList.get(i).getSong_duration());
-                        musicInfo.albumData = albumPath;
-                        adapterList.add(musicInfo);
-                    }
-                    return null;
-                }
-
-                @Override
-                protected void onPostExecute(Void aVoid) {
-                    Log.e("mlist", mList.toString());
-                    loadFrameLayout.removeAllViews();
-                    mAdapter.updateDataSet(adapterList);
-                    headerDetail.setVisibility(View.VISIBLE);
-                }
-            }.execute();
-
+            loadFrameLayout.removeAllViews();
+            mAdapter.updateDataSet(adapterList);
         }
     }
-
-
-//    Runnable showPlaylistView = new Runnable() {
-//        @Override
-//        public void run() {
-//            if (sparseArray.size() != musicCount && tryCount < 36) {
-//                mHandler.postDelayed(showPlaylistView, 200);
-//                tryCount++;
-//            } else {
-//                new AsyncTask<Void, Void, Void>() {
-//                    @Override
-//                    protected Void doInBackground(Void... params) {
-//                        for (int i = 0; i < mList.size(); i++) {
-//                            MusicInfo musicInfo = new MusicInfo();
-//                            musicInfo.songId = Integer.parseInt(mList.get(i).getSong_id());
-//                            musicInfo.musicName = mList.get(i).getSong_name();
-//                            musicInfo.islocal = false;
-//                            musicInfo.albumId = Integer.parseInt(mList.get(i).getSong_duration());
-//                            musicInfo.albumData = albumPath;
-//                            adapterList.add(musicInfo);
-//                        }
-//                        return null;
-//                    }
-//
-//                    @Override
-//                    protected void onPostExecute(Void aVoid) {
-//                        Log.e("mlist", mList.toString());
-//                        loadFrameLayout.removeAllViews();
-//                        mAdapter.updateDataSet(adapterList);
-//                    }
-//                }.execute();
-//            }
-//        }
-//    };
 
 
     @Override
@@ -524,7 +463,6 @@ public class RadioDetailActivity extends BaseActivity implements ObservableScrol
                     @Override
                     public void onClick(View v) {
 
-                        Log.e("re", "get");
                         HttpUtil.getResposeJsonObject("http://tingapi.ting.baidu.com/v1/restserver/ting?from=android&version=5.8.1.0&channel=ppzs&operator=3&method=baidu.ting.artist.item&format=json&tinguid=1035&artistid=14");
 
                         if (localItem.islocal) {
@@ -536,22 +474,6 @@ public class RadioDetailActivity extends BaseActivity implements ObservableScrol
                                     IConstants.MUSICOVERFLOW);
                             morefragment.show(((AppCompatActivity) mContext).getSupportFragmentManager(), "music");
                         }
-//                        new AlertDialog.Builder(mContext).setTitle("要下载音乐吗").
-//                                setPositiveButton(mContext.getString(R.string.sure), new DialogInterface.OnClickListener() {
-//
-//                                    @Override
-//                                    public void onClick(DialogInterface dialog, int which) {
-//
-//                                        Down.downMusic(MainApplication.context, localItem.songId + "", localItem.musicName);
-//                                        dialog.dismiss();
-//                                    }
-//                                }).
-//                                setNegativeButton(mContext.getString(R.string.cancel), new DialogInterface.OnClickListener() {
-//                                    @Override
-//                                    public void onClick(DialogInterface dialog, int which) {
-//                                        dialog.dismiss();
-//                                    }
-//                                }).show();
                     }
                 });
 
@@ -595,7 +517,7 @@ public class RadioDetailActivity extends BaseActivity implements ObservableScrol
 
             public void onClick(View v) {
                 //// TODO: 2016/1/20
-                HandlerUtil.getInstance(mContext).postDelayed(new Runnable() {
+                mHandler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
                         HashMap<Long, MusicInfo> infos = new HashMap<Long, MusicInfo>();
@@ -629,7 +551,7 @@ public class RadioDetailActivity extends BaseActivity implements ObservableScrol
 
             @Override
             public void onClick(View v) {
-                HandlerUtil.getInstance(mContext).postDelayed(new Runnable() {
+                mHandler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
                         HashMap<Long, MusicInfo> infos = new HashMap<Long, MusicInfo>();
@@ -640,23 +562,6 @@ public class RadioDetailActivity extends BaseActivity implements ObservableScrol
                             list[i] = info.songId;
                             infos.put(list[i], info);
                         }
-
-//                            long[] list = new long[arraylist.size()];
-//                            HashMap<Long,MusicInfo> infos = new HashMap<Long,MusicInfo>();
-//                            for (int i = 0; i < arraylist.size(); i++) {
-//                                list[i] = Long.parseLong(arraylist.get(i).getSong_id());
-//                                MusicInfo musicInfo = new MusicInfo();
-//                                musicInfo.songId = Integer.parseInt(arraylist.get(i).getSong_id());
-//                                musicInfo.musicName = arraylist.get(i).getTitle();
-//                                musicInfo.artist = sparseArray.get(i).getArtist_name();
-//                                musicInfo.islocal = false;
-//                                musicInfo.albumName = sparseArray.get(i).getAlbum_title();
-//                                musicInfo.albumId = Integer.parseInt(arraylist.get(i).getAlbum_id());
-//                                musicInfo.artistId = Integer.parseInt(sparseArray.get(i).getArtist_id());
-//                                musicInfo.lrc = sparseArray.get(i).getLrclink();
-//                                musicInfo.albumData = sparseArray.get(i).getPic_radio();
-//                                infos.put(list[i] , musicInfo);
-//                            }
                         if (getAdapterPosition() > 0)
                             MusicPlayer.playAll(infos, list, getAdapterPosition() - 1, false);
                     }

@@ -63,6 +63,22 @@
                     android:scaleType="centerCrop"
                     fresco:placeholderImage="@drawable/placeholder_disk_210"
                     fresco:placeholderImageScaleType="centerCrop" />
+                <FrameLayout
+                    android:visibility="invisible"
+                    android:id="@+id/playlist_fav"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="#aa000000" />
+                    <ImageView
+                        android:src="@drawable/play_icn_love"
+                        android:layout_gravity="center"
+                        android:scaleType="centerCrop"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent" />
+                </FrameLayout>
 
                 <LinearLayout
                     android:layout_width="match_parent"

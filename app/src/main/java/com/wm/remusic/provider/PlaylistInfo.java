@@ -114,6 +114,21 @@ public class PlaylistInfo {
         }
     }
 
+    public synchronized void update(long playlistid, int count ,String album) {
+        final SQLiteDatabase database = mMusicDatabase.getWritableDatabase();
+        database.beginTransaction();
+        try {
+            ContentValues values = new ContentValues(3);
+            values.put(PlaylistInfoColumns.PLAYLIST_ID, playlistid);
+            values.put(PlaylistInfoColumns.SONG_COUNT, count);
+            values.put(PlaylistInfoColumns.ALBUM_ART,album);
+            database.update(PlaylistInfoColumns.NAME, values, PlaylistInfoColumns.PLAYLIST_ID + " = " + playlistid, null);
+            database.setTransactionSuccessful();
+        } finally {
+            database.endTransaction();
+        }
+    }
+
     //删除本地文件时更新播放列表歌曲数量信息
     public void updatePlaylistMusicCount(long[] PlaylistId) {
 

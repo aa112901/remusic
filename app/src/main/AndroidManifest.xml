@@ -11,6 +11,7 @@
     <uses-permission android:name="android.permission.WRITE_SETTINGS" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name = "android.permission.DISABLE_KEYGUARD"/>
 
     <application
         android:name=".MainApplication"
@@ -60,12 +61,21 @@
         <activity
             android:name=".activity.TabActivity"
             android:screenOrientation="portrait" />
-        <activity android:name=".activity.DownActivity" />
-        <activity android:name=".activity.PlaylistActivity" />
-        <activity android:name=".activity.RecentActivity" />
-        <activity android:name=".activity.NetItemChangeActivity" />
-        <activity android:name=".activity.ArtistDetailActivity" />
-        <activity android:name=".activity.RadioDetailActivity" />
+        <activity android:name=".activity.DownActivity" android:screenOrientation="portrait"/>
+        <activity android:name=".activity.PlaylistActivity" android:screenOrientation="portrait"/>
+        <activity android:name=".activity.RecentActivity" android:screenOrientation="portrait"/>
+        <activity android:name=".activity.NetItemChangeActivity" android:screenOrientation="portrait"/>
+        <activity android:name=".activity.ArtistDetailActivity" android:screenOrientation="portrait"/>
+        <activity android:name=".activity.RadioDetailActivity" android:screenOrientation="portrait"/>
+        <activity android:name=".activity.LockActivity"
+            android:excludeFromRecents="true"
+            android:exported="false"
+            android:launchMode="singleInstance"
+            android:screenOrientation="portrait"
+            android:noHistory="true"
+            android:taskAffinity="com.package.name.lockscreen"
+            android:theme="@style/LockScreenTheme"/>
+
         <service android:name=".downmusic.DownService">
             <intent-filter>
                 <action android:name="com.wm.remusic.downtaskadd"/>

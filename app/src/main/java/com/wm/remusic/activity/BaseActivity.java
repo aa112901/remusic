@@ -21,6 +21,7 @@ import com.wm.remusic.service.MusicPlayer;
 import com.wm.remusic.uitl.IConstants;
 
 import java.lang.ref.WeakReference;
+import java.util.ArrayList;
 
 import static com.wm.remusic.service.MusicPlayer.mService;
 
@@ -34,7 +35,7 @@ public class BaseActivity extends AppCompatActivity implements ServiceConnection
     private PlaybackStatus mPlaybackStatus; //receiver 接受播放状态变化等
     private QuickControlsFragment fragment; //底部播放控制栏
     private String TAG = "BaseActivity";
-
+    private ArrayList<MusicStateListener> mMusicListener = new ArrayList<>();
 
     /**
      * 更新播放队列
@@ -47,17 +48,36 @@ public class BaseActivity extends AppCompatActivity implements ServiceConnection
      * 更新歌曲状态信息
      */
     public void updateTrackInfo() {
+        for (final MusicStateListener listener : mMusicListener) {
+            if (listener != null) {
+                listener.updateTrackInfo();
+            }
+        }
     }
 
     public void refreshUI() {
+        for (final MusicStateListener listener : mMusicListener) {
+            if (listener != null) {
+                listener.reloadAdapter();
+            }
+        }
+
     }
 
     public void updateTime() {
-
+        for (final MusicStateListener listener : mMusicListener) {
+            if (listener != null) {
+                listener.updateTime();
+            }
+        }
     }
 
     public void updateTrack() {
-
+        for (final MusicStateListener listener : mMusicListener) {
+            if (listener != null) {
+                listener.updateTrackInfo();
+            }
+        }
     }
 
     public void updateLrc() {
@@ -69,6 +89,14 @@ public class BaseActivity extends AppCompatActivity implements ServiceConnection
      */
     public void updateBuffer(int p) {
 
+    }
+
+    public void changeTheme() {
+        for (final MusicStateListener listener : mMusicListener) {
+            if (listener != null) {
+                listener.changeTheme();
+            }
+        }
     }
 
 
@@ -124,6 +152,7 @@ public class BaseActivity extends AppCompatActivity implements ServiceConnection
         f.addAction(IConstants.EMPTY_LIST);
         f.addAction(MediaService.MUSIC_CHANGED);
         f.addAction(MediaService.LRC_UPDATED);
+        f.addAction(IConstants.PLAYLIST_COUNT_CHANGED);
         registerReceiver(mPlaybackStatus, new IntentFilter(f));
         showQuickControl(true);
     }
@@ -148,6 +177,7 @@ public class BaseActivity extends AppCompatActivity implements ServiceConnection
             unregisterReceiver(mPlaybackStatus);
         } catch (final Throwable e) {
         }
+        mMusicListener.clear();
 
     }
 
@@ -155,6 +185,22 @@ public class BaseActivity extends AppCompatActivity implements ServiceConnection
         if (mToken != null) {
             MusicPlayer.unbindFromService(mToken);
             mToken = null;
+        }
+    }
+
+    public void setMusicStateListenerListener(final MusicStateListener status) {
+        if (status == this) {
+            throw new UnsupportedOperationException("Override the method, don't add a listener");
+        }
+
+        if (status != null) {
+            mMusicListener.add(status);
+        }
+    }
+
+    public void removeMusicStateListenerListener(final MusicStateListener status) {
+        if (status != null) {
+            mMusicListener.remove(status);
         }
     }
 
@@ -175,6 +221,7 @@ public class BaseActivity extends AppCompatActivity implements ServiceConnection
             BaseActivity baseActivity = mReference.get();
             if (baseActivity != null) {
                 if (action.equals(MediaService.META_CHANGED)) {
+                    baseActivity.refreshUI();
                     baseActivity.updateTrackInfo();
 
                 } else if (action.equals(MediaService.PLAYSTATE_CHANGED)) {
@@ -189,8 +236,8 @@ public class BaseActivity extends AppCompatActivity implements ServiceConnection
 
                 } else if (action.equals(IConstants.MUSIC_COUNT_CHANGED)) {
                     baseActivity.refreshUI();
-                } else if (action.equals(MediaService.PLAYLIST_CHANGED)) {
-
+                } else if (action.equals(IConstants.PLAYLIST_COUNT_CHANGED)) {
+                    baseActivity.refreshUI();
                 } else if (action.equals(MediaService.QUEUE_CHANGED)) {
                     baseActivity.updateQueue();
                 } else if (action.equals(MediaService.TRACK_ERROR)) {

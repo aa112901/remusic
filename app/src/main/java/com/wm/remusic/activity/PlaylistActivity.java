@@ -60,7 +60,7 @@ import com.wm.remusic.net.BMA;
 import com.wm.remusic.net.HttpUtil;
 import com.wm.remusic.net.MusicDetailInfoGet;
 import com.wm.remusic.net.NetworkUtils;
-import com.wm.remusic.net.PlaylistPlayInfoGet;
+import com.wm.remusic.net.RequestThreadPool;
 import com.wm.remusic.provider.PlaylistInfo;
 import com.wm.remusic.provider.PlaylistsManager;
 import com.wm.remusic.service.MusicPlayer;
@@ -97,7 +97,6 @@ public class PlaylistActivity extends BaseActivity implements ObservableScrollVi
     private FrameLayout loadFrameLayout;
     private int musicCount;
     private Handler mHandler;
-    private int tryCount;
     private View loadView;
     private int mFlexibleSpaceImageHeight;
     private ActionBar actionBar;
@@ -112,6 +111,7 @@ public class PlaylistActivity extends BaseActivity implements ObservableScrollVi
     private boolean mCollected;
     private TextView collectText;
     private ImageView collectView;
+    private FrameLayout favLayout;
     private LinearLayout share;
     private String TAG = "PlaylistActivity";
     private boolean d = true;
@@ -137,6 +137,7 @@ public class PlaylistActivity extends BaseActivity implements ObservableScrollVi
 
         headerViewContent = (FrameLayout) findViewById(R.id.headerview);
         headerDetail = (RelativeLayout) findViewById(R.id.headerdetail);
+        favLayout = (FrameLayout) findViewById(R.id.playlist_fav);
 
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         mHandler = HandlerUtil.getInstance(this);
@@ -218,8 +219,6 @@ public class PlaylistActivity extends BaseActivity implements ObservableScrollVi
         addToplaylist.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //AddNetPlaylistDialog.newInstance(adapterList ,"net").show(getSupportFragmentManager(),"");
-                //  PlaylistsManager.getInstance(mContext).Insert(mContext,,adapterList);
                 if (!mCollected) {
                     collectText.setText("已收藏");
                     new AsyncTask<Void,Void,Void>(){
@@ -267,6 +266,18 @@ public class PlaylistActivity extends BaseActivity implements ObservableScrollVi
 
         if (!isLocalPlaylist)
             headerDetail.setVisibility(View.GONE);
+
+
+        tryAgain.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                loadAllLists();
+            }
+        });
+
+        if(Integer.parseInt(playlsitId) == IConstants.FAV_PLAYLIST){
+            favLayout.setVisibility(View.VISIBLE);
+        }
     }
 
     private void setList() {
@@ -305,7 +316,6 @@ public class PlaylistActivity extends BaseActivity implements ObservableScrollVi
 
     private void loadAllLists() {
 
-
         if (isLocalPlaylist) {
             loadView = LayoutInflater.from(this).inflate(R.layout.loading, loadFrameLayout, false);
             loadFrameLayout.addView(loadView);
@@ -321,12 +331,7 @@ public class PlaylistActivity extends BaseActivity implements ObservableScrollVi
 
         } else {
             tryAgain.setVisibility(View.VISIBLE);
-            tryAgain.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    loadAllLists();
-                }
-            });
+
         }
 
     }
@@ -345,84 +350,87 @@ public class PlaylistActivity extends BaseActivity implements ObservableScrollVi
         }
     }
 
-    class LoadNetPlaylistInfo extends AsyncTask<Void, Void, Void> {
+    class LoadNetPlaylistInfo extends AsyncTask<Void, Void, Boolean> {
 
         @Override
-        protected Void doInBackground(final Void... unused) {
+        protected Boolean doInBackground(final Void... unused) {
             try {
                 JsonObject jsonObject = HttpUtil.getResposeJsonObject(BMA.GeDan.geDanInfo(playlsitId + ""));
-                // GeDanSrcInfo geDanSrcInfo = MainApplication.gsonInstance().fromJson(jsonObject.toString(), GeDanSrcInfo.class);
                 JsonArray pArray = jsonObject.get("content").getAsJsonArray();
-                musicCount = pArray.size();
 
+                mCollected = PlaylistInfo.getInstance(mContext).hasPlaylist(Long.parseLong(playlsitId));
+                playlistDetail = jsonObject.get("desc").getAsString();
+                mHandler.post(showInfo);
+
+                musicCount = pArray.size();
                 for (int i = 0; i < musicCount; i++) {
                     GeDanGeInfo geDanGeInfo = MainApplication.gsonInstance().fromJson(pArray.get(i), GeDanGeInfo.class);
                     mList.add(geDanGeInfo);
-                    PlaylistPlayInfoGet.get(new MusicDetailInfoGet(geDanGeInfo.getSong_id(), i, sparseArray));
+                    RequestThreadPool.post(new MusicDetailInfoGet(geDanGeInfo.getSong_id(), i, sparseArray));
                 }
-                mCollected = PlaylistInfo.getInstance(mContext).hasPlaylist(Long.parseLong(playlsitId));
-                playlistDetail = jsonObject.get("desc").getAsString();
+                int tryCount = 0;
+                while (sparseArray.size() != musicCount && tryCount < 1000){
+                    tryCount++;
+                    try {
+                        Thread.sleep(30);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+
+                if(sparseArray.size() == musicCount){
+                    for (int i = 0; i < mList.size(); i++) {
+                        try {
+                            MusicInfo musicInfo = new MusicInfo();
+                            musicInfo.songId = Integer.parseInt(mList.get(i).getSong_id());
+                            musicInfo.musicName = mList.get(i).getTitle();
+                            musicInfo.artist = sparseArray.get(i).getArtist_name();
+                            musicInfo.islocal = false;
+                            musicInfo.albumName = sparseArray.get(i).getAlbum_title();
+                            musicInfo.albumId = Integer.parseInt(mList.get(i).getAlbum_id());
+                            musicInfo.artistId = Integer.parseInt(sparseArray.get(i).getArtist_id());
+                            musicInfo.lrc = sparseArray.get(i).getLrclink();
+                            musicInfo.albumData = sparseArray.get(i).getPic_radio();
+                            adapterList.add(musicInfo);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                    return true;
+                }
 
             } catch (NullPointerException e) {
                 e.printStackTrace();
             }
 
-            return null;
+            return false;
         }
 
         @Override
-        protected void onPostExecute(Void aVoid) {
-            mHandler.postDelayed(showPlaylistView, 100);
-            playlistDetailView.setText(playlistDetail);
+        protected void onPostExecute(Boolean complete) {
+            if (!complete) {
+                loadFrameLayout.removeAllViews();
+                tryAgain.setVisibility(View.VISIBLE);
+            } else {
+                loadFrameLayout.removeAllViews();
+                mAdapter.updateDataSet(adapterList);
+
+            }
         }
     }
 
-    Runnable showPlaylistView = new Runnable() {
+
+    Runnable showInfo = new Runnable() {
         @Override
         public void run() {
-            if (sparseArray.size() != musicCount && tryCount < 36) {
-                mHandler.postDelayed(showPlaylistView, 200);
-                tryCount++;
-            } else {
-                new AsyncTask<Void, Void, Void>() {
-                    @Override
-                    protected Void doInBackground(Void... params) {
-                        for (int i = 0; i < mList.size(); i++) {
-                            try {
-                                MusicInfo musicInfo = new MusicInfo();
-                                musicInfo.songId = Integer.parseInt(mList.get(i).getSong_id());
-                                musicInfo.musicName = mList.get(i).getTitle();
-                                musicInfo.artist = sparseArray.get(i).getArtist_name();
-                                musicInfo.islocal = false;
-                                musicInfo.albumName = sparseArray.get(i).getAlbum_title();
-                                musicInfo.albumId = Integer.parseInt(mList.get(i).getAlbum_id());
-                                musicInfo.artistId = Integer.parseInt(sparseArray.get(i).getArtist_id());
-                                musicInfo.lrc = sparseArray.get(i).getLrclink();
-                                musicInfo.albumData = sparseArray.get(i).getPic_radio();
-                                adapterList.add(musicInfo);
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
-                        }
-                        return null;
-                    }
-
-                    @Override
-                    protected void onPostExecute(Void aVoid) {
-                        L.D(true, "mlist", mList.toString());
-                        loadFrameLayout.removeAllViews();
-                        mAdapter.updateDataSet(adapterList);
-                        headerDetail.setVisibility(View.VISIBLE);
-                        if (mCollected) {
-                            L.D(true, "collect", "collected");
-                            collectText.setText("已收藏");
-                        }
-                    }
-                }.execute();
+            playlistDetailView.setText(playlistDetail);
+            headerDetail.setVisibility(View.VISIBLE);
+            if (mCollected) {
+                L.D(d, TAG, "collected");
+                collectText.setText("已收藏");
             }
         }
     };
-
 
     @Override
     public void onResume() {
@@ -442,7 +450,7 @@ public class PlaylistActivity extends BaseActivity implements ObservableScrollVi
 
             if (isLocalPlaylist && !URLUtil.isNetworkUrl(albumPath)) {
                 new setBlurredAlbumArt().execute(ImageUtils.getArtworkQuick(PlaylistActivity.this, Uri.parse(albumPath), 300, 300));
-                Log.e("isurl", albumPath);
+                L.D(d, TAG, "albumpath = " + albumPath);
             } else {
                 //drawable = Drawable.createFromStream( new URL(albumPath).openStream(),"src");
                 ImageRequest imageRequest = ImageRequest.fromUri(albumPath);
@@ -453,12 +461,10 @@ public class PlaylistActivity extends BaseActivity implements ObservableScrollVi
                 File file = ((FileBinaryResource) resource).getFile();
                 if (file != null)
                     new setBlurredAlbumArt().execute(ImageUtils.getArtworkQuick(file, 300, 300));
-
-
             }
 
         } catch (Exception e) {
-
+              e.printStackTrace();
         }
 
     }
@@ -472,8 +478,6 @@ public class PlaylistActivity extends BaseActivity implements ObservableScrollVi
 
             try {
                 drawable = ImageUtils.createBlurredImageFromBitmap(loadedImage[0], PlaylistActivity.this, 20);
-//                drawable = ImageUtils.createBlurredImageFromBitmap(ImageUtils.getBitmapFromDrawable(Drawable.createFromStream(new URL(albumPath).openStream(), "src")),
-//                        NetPlaylistDetailActivity.this, 30);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -659,7 +663,7 @@ public class PlaylistActivity extends BaseActivity implements ObservableScrollVi
 
             public void onClick(View v) {
                 //// TODO: 2016/1/20
-             HandlerUtil.getInstance(mContext).postDelayed(new Runnable() {
+             mHandler.postDelayed(new Runnable() {
                  @Override
                  public void run() {
                      HashMap<Long, MusicInfo> infos = new HashMap<Long, MusicInfo>();
@@ -694,7 +698,7 @@ public class PlaylistActivity extends BaseActivity implements ObservableScrollVi
 
             @Override
             public void onClick(View v) {
-                HandlerUtil.getInstance(mContext).postDelayed(new Runnable() {
+                mHandler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
                         HashMap<Long, MusicInfo> infos = new HashMap<Long, MusicInfo>();

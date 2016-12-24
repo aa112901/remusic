@@ -44,7 +44,7 @@ import com.wm.remusic.net.BMA;
 import com.wm.remusic.net.HttpUtil;
 import com.wm.remusic.net.MusicDetailInfoGet;
 import com.wm.remusic.net.NetworkUtils;
-import com.wm.remusic.net.PlaylistPlayInfoGet;
+import com.wm.remusic.net.RequestThreadPool;
 import com.wm.remusic.uitl.CommonUtils;
 
 import java.util.ArrayList;
@@ -140,7 +140,12 @@ public class ArtistDetailActivity extends BaseActivity implements ObservableScro
 
 
     private void loadAllLists() {
-
+        tryAgain.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                loadAllLists();
+            }
+        });
 
         if (NetworkUtils.isConnectInternet(this)) {
             tryAgain.setVisibility(View.GONE);
@@ -150,21 +155,16 @@ public class ArtistDetailActivity extends BaseActivity implements ObservableScro
 
         } else {
             tryAgain.setVisibility(View.VISIBLE);
-            tryAgain.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    loadAllLists();
-                }
-            });
+
         }
 
     }
 
 
-    class LoadNetPlaylistInfo extends AsyncTask<Void, Void, Void> {
+    class LoadNetPlaylistInfo extends AsyncTask<Void, Void, Boolean> {
         //artistInfo artistInfo;
         @Override
-        protected Void doInBackground(final Void... unused) {
+        protected Boolean doInBackground(final Void... unused) {
             try {
                 JsonObject jsonObject = HttpUtil.getResposeJsonObject(BMA.Artist.artistSongList("", artistId, 0, 50));
 
@@ -174,35 +174,22 @@ public class ArtistDetailActivity extends BaseActivity implements ObservableScro
                 for (int i = 0; i < musicCount; i++) {
                     GeDanGeInfo geDanGeInfo = MainApplication.gsonInstance().fromJson(pArray.get(i), GeDanGeInfo.class);
                     mList.add(geDanGeInfo);
-                    PlaylistPlayInfoGet.get(new MusicDetailInfoGet(geDanGeInfo.getSong_id(), i, sparseArray));
+                    RequestThreadPool.post(new MusicDetailInfoGet(geDanGeInfo.getSong_id(), i, sparseArray));
                 }
-            } catch (NullPointerException e) {
-                e.printStackTrace();
-            }
 
-            return null;
-        }
+                int tryCount = 0;
+                while (sparseArray.size() != musicCount && tryCount < 1000){
+                    tryCount++;
+                    try {
+                        Thread.sleep(30);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
 
-        @Override
-        protected void onPostExecute(Void aVoid) {
-
-            mHandler.postDelayed(showPlaylistView, 100);
-
-        }
-    }
-
-
-    Runnable showPlaylistView = new Runnable() {
-        @Override
-        public void run() {
-            if (sparseArray.size() != musicCount && tryCount < 36) {
-                mHandler.postDelayed(showPlaylistView, 200);
-                tryCount++;
-            } else {
-                new AsyncTask<Void, Void, Void>() {
-                    @Override
-                    protected Void doInBackground(Void... params) {
-                        for (int i = 0; i < mList.size(); i++) {
+                if(sparseArray.size() == musicCount){
+                    for (int i = 0; i < mList.size(); i++) {
+                        try {
                             MusicInfo musicInfo = new MusicInfo();
                             musicInfo.songId = Integer.parseInt(mList.get(i).getSong_id());
                             musicInfo.musicName = mList.get(i).getTitle();
@@ -214,26 +201,40 @@ public class ArtistDetailActivity extends BaseActivity implements ObservableScro
                             musicInfo.lrc = sparseArray.get(i).getLrclink();
                             musicInfo.albumData = sparseArray.get(i).getPic_radio();
                             adapterList.add(musicInfo);
+                        } catch (Exception e) {
+                            e.printStackTrace();
                         }
-                        return null;
                     }
+                    return true;
+                }
 
-                    @Override
-                    protected void onPostExecute(Void aVoid) {
-                        Log.e("mlist", mList.toString());
-                        loadFrameLayout.removeAllViews();
-                        mPagerAdapter = new NavigationAdapter(getSupportFragmentManager());
-                        mPagerAdapter.addFragment(ArtistInfoMusicFragment.getInstance(adapterList));
-                        mPagerAdapter.addFragment(ArtistInfoFragment.getInstance(artistId));
-                        mPager.setAdapter(mPagerAdapter);
-                        tabLayout.setupWithViewPager(mPager);
-                        mPager.setCurrentItem(0);
-
-                    }
-                }.execute();
+            } catch (NullPointerException e) {
+                e.printStackTrace();
             }
+
+            return false;
         }
-    };
+
+        @Override
+        protected void onPostExecute(Boolean comlete) {
+
+            if (!comlete) {
+                tryAgain.setVisibility(View.VISIBLE);
+            } else {
+                Log.e("mlist", mList.toString());
+                loadFrameLayout.removeAllViews();
+                mPagerAdapter = new NavigationAdapter(getSupportFragmentManager());
+                mPagerAdapter.addFragment(ArtistInfoMusicFragment.getInstance(adapterList));
+                mPagerAdapter.addFragment(ArtistInfoFragment.getInstance(artistId));
+                mPager.setAdapter(mPagerAdapter);
+                tabLayout.setupWithViewPager(mPager);
+                mPager.setCurrentItem(0);
+            }
+
+        }
+    }
+
+
 
 
     @Override
@@ -249,8 +250,6 @@ public class ArtistDetailActivity extends BaseActivity implements ObservableScro
     ArtistInfo artistInfo;
 
     private void setAlbumart() {
-        //  artistTitle.setText(artistName);
-        //  artistArtSmall.setImageURI(Uri.parse(artistPath));
         new Thread(new Runnable() {
             @Override
             public void run() {

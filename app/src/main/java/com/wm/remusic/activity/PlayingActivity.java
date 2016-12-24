@@ -58,7 +58,6 @@ import com.wm.remusic.lrc.LrcView;
 import com.wm.remusic.provider.PlaylistsManager;
 import com.wm.remusic.service.MediaService;
 import com.wm.remusic.service.MusicPlayer;
-import com.wm.remusic.service.MusicTrack;
 import com.wm.remusic.uitl.IConstants;
 import com.wm.remusic.uitl.ImageUtils;
 import com.wm.remusic.uitl.L;
@@ -72,7 +71,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.lang.ref.WeakReference;
-import java.util.ArrayList;
 import java.util.List;
 
 import static com.wm.remusic.service.MusicPlayer.getAlbumPath;
@@ -425,14 +423,18 @@ public class PlayingActivity extends BaseActivity implements IConstants {
             @Override
             public void onClick(View v) {
 
-                if (isFav == true) {
+                if (isFav) {
                     playlistsManager.removeItem(PlayingActivity.this, IConstants.FAV_PLAYLIST,
                             MusicPlayer.getCurrentAudioId());
                     fav.setImageResource(R.drawable.play_rdi_icn_love);
                     isFav = false;
                 } else {
-                    playlistsManager.Insert(PlayingActivity.this, IConstants.FAV_PLAYLIST,
-                            MusicPlayer.getCurrentAudioId(), 0);
+                    try {
+                        MusicInfo info = MusicPlayer.getPlayinfos().get(MusicPlayer.getCurrentAudioId());
+                        playlistsManager.insertMusic(PlayingActivity.this,IConstants.FAV_PLAYLIST,info);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
                     fav.setImageResource(R.drawable.play_icn_loved);
                     isFav = true;
                 }
@@ -545,9 +547,10 @@ public class PlayingActivity extends BaseActivity implements IConstants {
         }
         if (!duetoplaypause) {
             isFav = false;
-            ArrayList<MusicTrack> favlists = playlistsManager.getPlaylist(IConstants.FAV_PLAYLIST);
-            for (int i = 0; i < favlists.size(); i++) {
-                if (MusicPlayer.getCurrentAudioId() == favlists.get(i).mId) {
+            long[] favlists = playlistsManager.getPlaylistIds(IConstants.FAV_PLAYLIST);
+            long currentid = MusicPlayer.getCurrentAudioId();
+            for(long i : favlists){
+                if(currentid == i){
                     isFav = true;
                     break;
                 }

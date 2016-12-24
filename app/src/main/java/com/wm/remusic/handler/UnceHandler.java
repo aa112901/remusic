@@ -6,9 +6,13 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Looper;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.wm.remusic.MainApplication;
 import com.wm.remusic.activity.MainActivity;
+import com.wm.remusic.provider.MusicPlaybackState;
+
+import java.io.File;
 
 /**
  * Created by wm on 2016/3/26.
@@ -36,6 +40,11 @@ public class UnceHandler implements Thread.UncaughtExceptionHandler {
             } catch (InterruptedException e) {
                 Log.e(TAG, "error : ", e);
             }
+            File file = new File(application.getCacheDir().getAbsolutePath() + "playlist");
+            if(file.exists()){
+                file.delete();
+            }
+            MusicPlaybackState.getInstance(application).clearQueue();
             Intent intent = new Intent(application.getApplicationContext(), MainActivity.class);
             PendingIntent restartIntent = PendingIntent.getActivity(
                     application.getApplicationContext(), 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
@@ -63,7 +72,7 @@ public class UnceHandler implements Thread.UncaughtExceptionHandler {
             @Override
             public void run() {
                 Looper.prepare();
-                //  Toast.makeText(application.getApplicationContext(), "很抱歉,程序出现异常,即将退出.", Toast.LENGTH_SHORT).show();
+                  Toast.makeText(application.getApplicationContext(), "很抱歉,程序出现异常,即将退出.", Toast.LENGTH_SHORT).show();
                 Looper.loop();
             }
         }.start();

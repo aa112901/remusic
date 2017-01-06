@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="291dp"
+    android:background="?android:attr/selectableItemBackground"
+    android:orientation="horizontal">
+
+    <RelativeLayout
+        android:id="@+id/play_all_layout"
+        android:layout_gravity="bottom"
+        android:background="?android:attr/selectableItemBackground"
+        android:layout_width="match_parent"
+        android:layout_height="55dp">
+
+        <ImageView
+            android:id="@+id/play_all"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_centerInParent="true"
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="17dp"
+            android:layout_marginRight="10dp"
+            android:src="@drawable/list_icn_play" />
+
+        <TextView
+            android:id="@+id/play_all_text"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_toRightOf="@+id/play_all"
+            android:gravity="center_vertical"
+            android:text="播放全部"
+            android:textColor="@color/text_color"
+            android:textSize="15sp" />
+
+        <TextView
+            android:id="@+id/play_all_number"
+            android:layout_width="70dp"
+            android:layout_height="match_parent"
+            android:layout_toRightOf="@+id/play_all_text"
+            android:gravity="center_vertical"
+            android:textSize="14sp" />
+
+        <ImageView
+            android:id="@+id/select"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_alignParentRight="true"
+            android:layout_centerInParent="true"
+            android:layout_gravity="center|clip_vertical"
+            android:background="?android:attr/selectableItemBackground"
+            android:focusable="false"
+            android:gravity="end"
+            android:paddingLeft="15dp"
+            android:paddingRight="12dp"
+            android:src="@drawable/list_icn_mng" />
+    </RelativeLayout>
+
+</FrameLayout>

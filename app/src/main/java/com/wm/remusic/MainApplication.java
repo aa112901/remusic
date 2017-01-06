@@ -6,6 +6,7 @@ import android.os.Build;
 import android.os.Environment;
 import android.support.annotation.ColorInt;
 import android.support.annotation.ColorRes;
+import android.util.Log;
 
 import com.bilibili.magicasakura.utils.ThemeUtils;
 import com.facebook.cache.disk.DiskCacheConfig;
@@ -27,7 +28,7 @@ import com.wm.remusic.uitl.ThemeHelper;
  */
 public class MainApplication extends Application implements ThemeUtils.switchColor {
     public static Context context;
-    // private RefWatcher refWatcher;
+   // private RefWatcher refWatcher;
     private static int MAX_MEM = (int) Runtime.getRuntime().maxMemory() / 4;
     //private static int MAX_MEM = 60 * ByteConstants.MB;
     private long favPlaylist = IConstants.FAV_PLAYLIST;
@@ -154,8 +155,8 @@ public class MainApplication extends Application implements ThemeUtils.switchCol
             Nammu.init(this);
         }
         ThemeUtils.setSwitchColor(this);
-        // refWatcher = LeakCanary.install(this);
-        // LeakCanary.install(this);
+       // refWatcher = LeakCanary.install(this);
+       // LeakCanary.install(this);
         // initCatchException();
 
         if (!PreferencesUtility.getInstance(this).getFavriateMusicPlaylist()) {

@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="46dp"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="?android:attr/selectableItemBackground"
+    android:orientation="horizontal">
+
+    <com.bilibili.magicasakura.widgets.TintImageView
+        android:id="@+id/play_all"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_centerInParent="true"
+        android:layout_gravity="center_vertical"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        app:imageTint="@color/theme_color_primary"
+        android:src="@drawable/list_icn_play" />
+
+    <TextView
+        android:id="@+id/play_all_text"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_toRightOf="@+id/play_all"
+        android:gravity="center_vertical"
+        android:text="播放全部"
+        android:textColor="@color/text_color"
+        android:textSize="15sp" />
+
+    <TextView
+        android:id="@+id/play_all_number"
+        android:layout_width="70dp"
+        android:layout_height="match_parent"
+        android:layout_toRightOf="@+id/play_all_text"
+        android:gravity="center_vertical"
+        android:textSize="14sp" />
+
+    <ImageView
+        android:id="@+id/select"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_alignParentRight="true"
+        android:layout_centerInParent="true"
+        android:layout_gravity="center|clip_vertical"
+        android:background="?android:attr/selectableItemBackground"
+        android:focusable="false"
+        android:gravity="end"
+        android:paddingLeft="15dp"
+        android:paddingRight="12dp"
+        android:src="@drawable/list_icn_mng" />
+</RelativeLayout>

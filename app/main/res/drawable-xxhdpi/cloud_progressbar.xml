@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list
+  xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@android:id/background">
+        <nine-patch android:src="@drawable/skin_dld_bar_big" />
+    </item>
+    <item android:id="@android:id/progress">
+        <scale android:drawable="@drawable/skin_dld_bar_big_curr" android:scaleWidth="100%" />
+    </item>
+</layer-list>

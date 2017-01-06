@@ -17,8 +17,10 @@ import android.widget.Toast;
 import com.squareup.okhttp.OkHttpClient;
 import com.wm.remusic.R;
 import com.wm.remusic.activity.DownActivity;
+import com.wm.remusic.net.HttpUtil;
 import com.wm.remusic.provider.DownFileStore;
 import com.wm.remusic.uitl.CommonUtils;
+import com.wm.remusic.uitl.IConstants;
 import com.wm.remusic.uitl.L;
 
 import java.io.File;
@@ -49,7 +51,6 @@ public class DownService extends Service {
     private static final String TAG = "DownService";
     private static DownFileStore downFileStore;
     private ExecutorService executorService;
-    private OkHttpClient client;
     private static ArrayList<String> prepareTaskList = new ArrayList<>();
     private int downTaskCount = 0;
     private int downTaskDownloaded = -1;
@@ -71,6 +72,7 @@ public class DownService extends Service {
             Intent intent = new Intent(TASK_STARTDOWN);
             intent.putExtra("completesize", downloadTask.getCompletedSize());
             intent.putExtra("totalsize", downloadTask.getTotalSize());
+            intent.setPackage(IConstants.PACKAGE);
             sendBroadcast(intent);
         }
 
@@ -80,15 +82,16 @@ public class DownService extends Service {
             Intent intent = new Intent(UPDATE_DOWNSTAUS);
             intent.putExtra("completesize", downloadTask.getCompletedSize());
             intent.putExtra("totalsize", downloadTask.getTotalSize());
+            intent.setPackage(IConstants.PACKAGE);
             sendBroadcast(intent);
         }
 
         @Override
         public void onPause(DownloadTask downloadTask) {
             L.D(d, TAG, TAG + " task onPause");
-            Intent intent = new Intent(TASKS_CHANGED);
-            sendBroadcast(intent);
+            sendIntent(TASKS_CHANGED);
             if (prepareTaskList.size() > 0) {
+                if(currentTask != null)
                 prepareTaskList.remove(currentTask.getId());
             }
             currentTask = null;
@@ -99,9 +102,9 @@ public class DownService extends Service {
         @Override
         public void onCancel(DownloadTask downloadTask) {
             L.D(d, TAG, TAG + " task onCancel");
-            Intent intent = new Intent(TASKS_CHANGED);
-            sendBroadcast(intent);
+            sendIntent(TASKS_CHANGED);
             if (prepareTaskList.size() > 0) {
+                if(currentTask != null)
                 prepareTaskList.remove(currentTask.getId());
             }
             currentTask = null;
@@ -111,10 +114,10 @@ public class DownService extends Service {
 
         @Override
         public void onCompleted(DownloadTask downloadTask) {
-            Intent intent = new Intent(TASKS_CHANGED);
-            sendBroadcast(intent);
+            sendIntent(TASKS_CHANGED);
             L.D(d, TAG, TAG + " task Completed");
             if (prepareTaskList.size() > 0) {
+                if(currentTask != null)
                 prepareTaskList.remove(currentTask.getId());
             }
             currentTask = null;
@@ -144,8 +147,6 @@ public class DownService extends Service {
         mNotificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
         executorService = Executors.newSingleThreadExecutor();
         downFileStore = DownFileStore.getInstance(this);
-        client = new OkHttpClient();
-
     }
 
     @Override
@@ -194,10 +195,13 @@ public class DownService extends Service {
             case CANCLE_ALL_DOWNTASK:
                 if (prepareTaskList.size() > 1) {
                     prepareTaskList.clear();
+                    if(currentTask != null)
                     prepareTaskList.add(currentTask.getId());
                 }
+                if(currentTask != null)
                 cancel(currentTask.getId());
                 downFileStore.deleteDowningTasks();
+                sendIntent(TASKS_CHANGED);
                 break;
             case START_ALL_DOWNTASK:
                 String[] ids = downFileStore.getDownLoadedListAllDowningIds();
@@ -210,10 +214,13 @@ public class DownService extends Service {
 
                 break;
             case PAUSE_ALLTASK:
+
                 if (prepareTaskList.size() > 1) {
                     prepareTaskList.clear();
+                    if(currentTask != null)
                     prepareTaskList.add(currentTask.getId());
                 }
+                if(currentTask != null)
                 pause(currentTask.getId());
                 break;
         }
@@ -342,13 +349,12 @@ public class DownService extends Service {
             if (downloadTask.getDownloadStatus() != DownloadStatus.DOWNLOAD_STATUS_COMPLETED) {
                 downloadTask.setDownloadStatus(DownloadStatus.DOWNLOAD_STATUS_PREPARE);
                 downloadTask.setdownFileStore(downFileStore);
-                downloadTask.setHttpClient(client);
+                downloadTask.setHttpClient(HttpUtil.mOkHttpClient);
                 downloadTask.addDownloadListener(listener);
                 executorService.submit(downloadTask);
                 currentTask = downloadTask;
                 upDateNotification();
-                Intent intent = new Intent(TASKS_CHANGED);
-                sendBroadcast(intent);
+                sendIntent(TASKS_CHANGED);
             }
         } else {
             L.D(d, TAG, " no task");
@@ -367,8 +373,7 @@ public class DownService extends Service {
         downTaskCount++;
         prepareTaskList.add(taskId);
         upDateNotification();
-        Intent intent = new Intent(TASKS_CHANGED);
-        sendBroadcast(intent);
+        sendIntent(TASKS_CHANGED);
         if (currentTask == null) {
             startTask();
         }
@@ -395,8 +400,7 @@ public class DownService extends Service {
         }
         downFileStore.deleteTask(taskId);
         upDateNotification();
-        Intent intent = new Intent(TASKS_CHANGED);
-        sendBroadcast(intent);
+        sendIntent(TASKS_CHANGED);
         L.D(d, TAG, "cancle task = " + taskId);
     }
 
@@ -411,8 +415,7 @@ public class DownService extends Service {
             currentTask = null;
         }
         upDateNotification();
-        Intent intent = new Intent(TASKS_CHANGED);
-        sendBroadcast(intent);
+        sendIntent(TASKS_CHANGED);
     }
 
     private Notification getNotification(boolean complete) {
@@ -458,6 +461,13 @@ public class DownService extends Service {
         SimpleDateFormat sDateFormat = new SimpleDateFormat("a hh:mm");
         String date = sDateFormat.format(new Date());
         return date;
+    }
+
+    private void sendIntent(String action){
+        Intent intent = new Intent();
+        intent.setAction(action);
+        intent.setPackage(IConstants.PACKAGE);
+        sendBroadcast(intent);
     }
 
 

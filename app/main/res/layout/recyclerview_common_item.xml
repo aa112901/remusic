@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:fresco="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="55dp"
+    android:background="?android:attr/selectableItemBackground">
+
+    <com.facebook.drawee.view.SimpleDraweeView
+        android:id="@+id/viewpager_list_img"
+        android:layout_width="45dp"
+        android:layout_height="45dp"
+        android:layout_alignParentLeft="true"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="7dp"
+        android:scaleType="centerCrop"
+        fresco:actualImageScaleType="centerInside"
+        fresco:placeholderImage="@drawable/placeholder_disk_210"
+        fresco:placeholderImageScaleType="fitXY" />
+
+    <LinearLayout
+
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_marginLeft="7dp"
+        android:layout_toLeftOf="@+id/viewpager_list_button"
+        android:layout_toRightOf="@+id/viewpager_list_img"
+        android:gravity="center_vertical"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/viewpager_list_toptext"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:singleLine="true"
+            android:text="如果我变成回忆"
+            android:textColor="@color/listTextColor"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/viewpager_list_bottom_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:maxLength="20"
+            android:maxLines="1"
+            android:singleLine="true"
+            android:textColor="@color/listSubTextColor"
+            android:textSize="12sp" />
+    </LinearLayout>
+
+
+    <com.bilibili.magicasakura.widgets.TintImageView
+        android:id="@+id/viewpager_list_button"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:focusable="false"
+        android:padding="15dp"
+        android:scaleType="centerInside"
+        android:src="@drawable/list_icn_more" />
+
+</RelativeLayout>

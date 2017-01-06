@@ -50,12 +50,16 @@ public class BaseActivity extends AppCompatActivity implements ServiceConnection
     public void updateTrackInfo() {
         for (final MusicStateListener listener : mMusicListener) {
             if (listener != null) {
+                listener.reloadAdapter();
                 listener.updateTrackInfo();
             }
         }
     }
 
-    public void refreshUI() {
+    /**
+     *  fragment界面刷新
+     */
+    private void refreshUI() {
         for (final MusicStateListener listener : mMusicListener) {
             if (listener != null) {
                 listener.reloadAdapter();
@@ -72,13 +76,14 @@ public class BaseActivity extends AppCompatActivity implements ServiceConnection
         }
     }
 
+    /**
+     *  歌曲切换
+     */
     public void updateTrack() {
-        for (final MusicStateListener listener : mMusicListener) {
-            if (listener != null) {
-                listener.updateTrackInfo();
-            }
-        }
+
     }
+
+
 
     public void updateLrc() {
 
@@ -97,6 +102,13 @@ public class BaseActivity extends AppCompatActivity implements ServiceConnection
                 listener.changeTheme();
             }
         }
+    }
+
+    /**
+     * @param l 歌曲是否加载中
+     */
+    public void loading(boolean l){
+
     }
 
 
@@ -153,6 +165,7 @@ public class BaseActivity extends AppCompatActivity implements ServiceConnection
         f.addAction(MediaService.MUSIC_CHANGED);
         f.addAction(MediaService.LRC_UPDATED);
         f.addAction(IConstants.PLAYLIST_COUNT_CHANGED);
+        f.addAction(MediaService.MUSIC_LODING);
         registerReceiver(mPlaybackStatus, new IntentFilter(f));
         showQuickControl(true);
     }
@@ -221,7 +234,6 @@ public class BaseActivity extends AppCompatActivity implements ServiceConnection
             BaseActivity baseActivity = mReference.get();
             if (baseActivity != null) {
                 if (action.equals(MediaService.META_CHANGED)) {
-                    baseActivity.refreshUI();
                     baseActivity.updateTrackInfo();
 
                 } else if (action.equals(MediaService.PLAYSTATE_CHANGED)) {
@@ -230,8 +242,8 @@ public class BaseActivity extends AppCompatActivity implements ServiceConnection
                     baseActivity.updateTime();
                 } else if (action.equals(MediaService.BUFFER_UP)) {
                     baseActivity.updateBuffer(intent.getIntExtra("progress", 0));
-                } else if (action.equals(IConstants.EMPTY_LIST)) {
-
+                } else if (action.equals(MediaService.MUSIC_LODING)) {
+                    baseActivity.loading(intent.getBooleanExtra("isloading",false));
                 } else if (action.equals(MediaService.REFRESH)) {
 
                 } else if (action.equals(IConstants.MUSIC_COUNT_CHANGED)) {

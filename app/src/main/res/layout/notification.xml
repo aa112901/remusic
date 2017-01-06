@@ -30,7 +30,7 @@
             android:fadingEdgeLength="10dp"
             android:singleLine="true"
             android:text=""
-            android:textColor="@color/whaite_text"
+            android:textColor="@color/white_text"
             android:textSize="16sp" />
 
         <TextView

@@ -18,7 +18,7 @@
             android:layout_height="20dp"
             android:padding="1dp"
             app:imageTint="@color/theme_color_primary"
-            android:src="@drawable/loadanimation" />
+            android:src="@drawable/list_loading" />
 
         <TextView
             android:layout_marginTop="60dp"

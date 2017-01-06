@@ -75,6 +75,7 @@
             android:noHistory="true"
             android:taskAffinity="com.package.name.lockscreen"
             android:theme="@style/LockScreenTheme"/>
+        <activity android:name=".request.UiMonitorActivity"/>
 
         <service android:name=".downmusic.DownService">
             <intent-filter>
@@ -91,9 +92,7 @@
         </service>
         <service
             android:name=".service.MediaService"
-            android:process=":main"
-
-            />
+            android:process=":main" />
 
         <receiver android:name=".receiver.MediaButtonIntentReceiver">
             <intent-filter>
@@ -106,6 +105,17 @@
             <intent-filter>
                 <action android:name="com.wm.remusic.LAUNCH_NOW_PLAYING_ACTION" />
             </intent-filter>
+        </receiver>
+
+        <receiver android:name=".widget.SimpleWidgetProvider" >
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                <action android:name="com.wm.remusic.metachanged"/>
+                <action android:name="com.wm.remusi.change_music"/>
+                <action android:name="com.wm.remusic.progress"/>
+            </intent-filter>
+            <meta-data android:name="android.appwidget.provider"
+                android:resource="@xml/appwidget_info" />
         </receiver>
 
     </application>

@@ -37,7 +37,7 @@
             android:layout_centerInParent="true"
             android:layout_alignParentRight="true"
             android:textSize="12sp"
-            android:textColor="@color/whaite_text"
+            android:textColor="@color/white_text"
             android:text="更多>" />
     </RelativeLayout>
 

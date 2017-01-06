@@ -28,7 +28,7 @@
                 android:layout_centerVertical="true"
                 android:layout_toLeftOf="@+id/bar_search"
                 android:text="本地音乐"
-                android:textColor="@color/whaite_text"
+                android:textColor="@color/white_text"
                 android:textSize="20sp" />
 
             <ImageView

@@ -1,39 +1,23 @@
 package com.wm.remusic.activity;
 
-import android.app.Activity;
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
-import android.graphics.Bitmap;
-import android.graphics.drawable.Animatable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.support.annotation.Nullable;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.facebook.common.executors.CallerThreadExecutor;
-import com.facebook.common.logging.FLog;
-import com.facebook.common.references.CloseableReference;
-import com.facebook.datasource.DataSource;
 import com.facebook.drawee.backends.pipeline.Fresco;
 import com.facebook.drawee.controller.BaseControllerListener;
 import com.facebook.drawee.controller.ControllerListener;
 import com.facebook.drawee.interfaces.DraweeController;
 import com.facebook.drawee.view.SimpleDraweeView;
-import com.facebook.imagepipeline.core.ImagePipeline;
-import com.facebook.imagepipeline.datasource.BaseBitmapDataSubscriber;
-import com.facebook.imagepipeline.image.CloseableImage;
 import com.facebook.imagepipeline.image.ImageInfo;
-import com.facebook.imagepipeline.image.QualityInfo;
 import com.facebook.imagepipeline.request.ImageRequest;
 import com.facebook.imagepipeline.request.ImageRequestBuilder;
 import com.wm.remusic.R;
@@ -44,9 +28,7 @@ import com.wm.remusic.lrc.LrcRow;
 import com.wm.remusic.provider.PlaylistsManager;
 import com.wm.remusic.service.MediaService;
 import com.wm.remusic.service.MusicPlayer;
-import com.wm.remusic.service.MusicTrack;
 import com.wm.remusic.uitl.IConstants;
-import com.wm.remusic.uitl.ImageUtils;
 import com.wm.remusic.widget.SildingFinishLayout;
 
 import java.io.BufferedReader;
@@ -118,7 +100,7 @@ public class LockActivity extends LockBaseActivity implements View.OnClickListen
                 });
         mView.setTouchView(getWindow().getDecorView());
         mHandler = HandlerUtil.getInstance(this);
-        mHandler.post(runnable);
+        mHandler.post(updateRunnable);
         pre.setOnClickListener(this);
         play.setOnClickListener(this);
         next.setOnClickListener(this);
@@ -129,7 +111,7 @@ public class LockActivity extends LockBaseActivity implements View.OnClickListen
 
     @Override
     protected void onUserLeaveHint() {
-        Log.d("aeon","onUserLeaveHint");
+        Log.d("lock","onUserLeaveHint");
         super.onUserLeaveHint();
 
         Intent intent = new Intent();
@@ -139,7 +121,7 @@ public class LockActivity extends LockBaseActivity implements View.OnClickListen
         finish();
     }
 
-    Runnable runnable = new Runnable() {
+    Runnable updateRunnable = new Runnable() {
         @Override
         public void run() {
             SimpleDateFormat simpleDateFormat = new SimpleDateFormat("hh:mm-MM月dd日 E", Locale.CHINESE);
@@ -157,7 +139,7 @@ public class LockActivity extends LockBaseActivity implements View.OnClickListen
             }else {
                 mLrc.setText(null);
             }
-            mHandler.postDelayed(runnable,300);
+            mHandler.postDelayed(updateRunnable,300);
         }
     };
 
@@ -188,6 +170,7 @@ public class LockActivity extends LockBaseActivity implements View.OnClickListen
         intent.setAction(MediaService.LOCK_SCREEN);
         intent.putExtra("islock",false);
         sendBroadcast(intent);
+        mHandler.removeCallbacks(updateRunnable);
         super.onDestroy();
         Log.e("lock"," on destroy");
 
@@ -318,17 +301,5 @@ public class LockActivity extends LockBaseActivity implements View.OnClickListen
         return rows;
     }
 
-    @Override
-    public boolean onKeyDown( int keyCode, KeyEvent event) {
-        Log.e("keys","  " + keyCode);
-        if (keyCode == KeyEvent.KEYCODE_HOME) {
-            Intent intent = new Intent();
-            intent.setAction(MediaService.LOCK_SCREEN);
-            intent.putExtra("islock",false);
-            sendBroadcast(intent);
-            finish();
-        }
-        return super.onKeyDown(keyCode, event);
 
-    }
 }

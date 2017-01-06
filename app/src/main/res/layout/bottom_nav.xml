@@ -39,7 +39,7 @@
                 android:id="@+id/playbar_info"
                 android:layout_width="wrap_content"
                 android:layout_height="23dp"
-                android:ellipsize="end"
+                android:ellipsize="marquee"
                 android:maxLines="1"
                 android:textSize="17dp" />
 

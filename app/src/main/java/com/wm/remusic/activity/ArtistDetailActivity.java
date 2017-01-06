@@ -247,6 +247,12 @@ public class ArtistDetailActivity extends BaseActivity implements ObservableScro
         super.onPause();
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        RequestThreadPool.finish();
+    }
+
     ArtistInfo artistInfo;
 
     private void setAlbumart() {

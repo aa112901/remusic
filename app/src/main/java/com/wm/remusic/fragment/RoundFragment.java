@@ -8,6 +8,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -54,7 +55,7 @@ public class RoundFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         View rootView = inflater.inflate(R.layout.fragment_roundimage, container, false);
-
+        ((ViewGroup) rootView).setAnimationCacheEnabled(false);
         if (getArguments() != null) {
             albumPath = getArguments().getString("album");
         }
@@ -200,9 +201,13 @@ public class RoundFragment extends Fragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
+        Log.e("roundfragment"," id = " + hashCode());
         if (animator != null) {
             animator = null;
+            Log.e("roundfragment"," id = " + hashCode() + "  , animator destroy");
         }
+//        RefWatcher refWatcher = MainApplication.getRefWatcher(getActivity());
+//        refWatcher.watch(this);
     }
 
 

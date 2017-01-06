@@ -6,7 +6,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -72,7 +71,6 @@ public class QuickControlsFragment extends BaseFragment {
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.bottom_nav, container, false);
         this.rootView = rootView;
-
         mPlayPause = (TintImageView) rootView.findViewById(R.id.control);
         mProgress = (TintProgressBar) rootView.findViewById(R.id.song_progress_normal);
         mTitle = (TextView) rootView.findViewById(R.id.playbar_info);
@@ -227,6 +225,13 @@ public class QuickControlsFragment extends BaseFragment {
     public void onResume() {
         super.onResume();
 
+    }
+
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        mProgress.removeCallbacks(mUpdateProgress);
     }
 
     public void updateState() {

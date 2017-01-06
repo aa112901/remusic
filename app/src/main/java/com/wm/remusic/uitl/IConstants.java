@@ -17,7 +17,7 @@
 package com.wm.remusic.uitl;
 
 /**
- * <p/>
+ * <p>
  * 常量接口
  */
 public interface IConstants {

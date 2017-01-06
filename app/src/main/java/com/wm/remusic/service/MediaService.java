@@ -151,6 +151,8 @@ public class MediaService extends Service {
     public static final String TRY_GET_TRACKINFO = "com.wm.remusic.gettrackinfo";
     public static final String BUFFER_UP = "com.wm.remusic.bufferup";
     public static final String LOCK_SCREEN = "com.wm.remusic.lock";
+    public static final String SEND_PROGRESS = "com.wm.remusic.progress";
+    public static final String MUSIC_LODING = "com.wm.remusic.loading";
     private static final String SHUTDOWN = "com.wm.remusic.shutdown";
     public static final int NEXT = 2;
     public static final int LAST = 3;
@@ -391,6 +393,7 @@ public class MediaService extends Service {
         filter.addAction(TRY_GET_TRACKINFO);
         filter.addAction(Intent.ACTION_SCREEN_OFF);
         filter.addAction(LOCK_SCREEN);
+        filter.addAction(SEND_PROGRESS);
         // Attach the broadcast listener
         registerReceiver(mIntentReceiver, filter);
 
@@ -589,15 +592,33 @@ public class MediaService extends Service {
             if(isPlaying() && !isLocked){
                 Intent lockscreen = new Intent(this, LockActivity.class);
                 lockscreen.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                lockscreen.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 startActivity(lockscreen);
             }
-        } else if (MediaService.LOCK_SCREEN.equals(action)){
+        } else if (LOCK_SCREEN.equals(action)){
             isLocked = intent.getBooleanExtra("islock",true);
             Log.e("lock","isloced = " + isLocked);
+        } else if(SEND_PROGRESS.equals(action)){
+            Log.e("widget","mediaservce sendprogress");
+            if(isPlaying() && !isSending){
+                mPlayerHandler.post(sendDuration);
+                isSending = true;
+            }else if(!isPlaying()) {
+                mPlayerHandler.removeCallbacks(sendDuration);
+                isSending = false;
+            }
+
         }
     }
-    boolean isLocked;
+    private boolean isSending = false;
+    private Runnable sendDuration = new Runnable() {
+        @Override
+        public void run() {
+            notifyChange(SEND_PROGRESS);
+            mPlayerHandler.postDelayed(sendDuration,1000);
+        }
+    };
+
+    private boolean isLocked;
     private void updateNotification() {
         final int newNotifyMode;
         if (isPlaying()) {
@@ -1284,7 +1305,13 @@ public class MediaService extends Service {
 
     private void notifyChange(final String what) {
         if (D) Log.d(TAG, "notifyChange: what = " + what);
-
+        if(SEND_PROGRESS.equals(what)){
+            final Intent intent = new Intent(what);
+            intent.putExtra("position", position());
+            intent.putExtra("duration", duration());
+            sendStickyBroadcast(intent);
+            return;
+        }
 
         // Update the lockscreen controls
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
@@ -1404,7 +1431,6 @@ public class MediaService extends Service {
         final boolean isPlaying = isPlaying();
 
         remoteViews = new RemoteViews(this.getPackageName(), R.layout.notification);
-        Log.e("playing","get notification start 3.1");
         String text = TextUtils.isEmpty(albumName) ? artistName : artistName + " - " + albumName;
         remoteViews.setTextViewText(R.id.title, getTrackName());
         remoteViews.setTextViewText(R.id.text, text);
@@ -1600,7 +1626,7 @@ public class MediaService extends Service {
                 e.printStackTrace();
             }
         }
-        if (mPlaylist.size() > 0) {
+        if ((mPlaylist.size() == mPlaylistInfo.size()) && mPlaylist.size() > 0) {
             final int pos = mPreferences.getInt("curpos", 0);
             if (pos < 0 || pos >= mPlaylist.size()) {
                 mPlaylist.clear();
@@ -1651,7 +1677,14 @@ public class MediaService extends Service {
                 }
             }
             mShuffleMode = shufmode;
+        }else {
+            File file = new File(getCacheDir().getAbsolutePath() + "playlist");
+            if(file.exists()){
+                file.delete();
+            }
+            MusicPlaybackState.getInstance(this).clearQueue();
         }
+        notifyChange(MUSIC_CHANGED);
     }
 
     public boolean openFile(final String path) {
@@ -2476,6 +2509,12 @@ public class MediaService extends Service {
         notifyChange(PLAYLIST_CHANGED);
     }
 
+    public void loading(boolean l){
+        Intent intent = new Intent(MUSIC_LODING);
+        intent.putExtra("isloading",l);
+        sendBroadcast(intent);
+    }
+
     public void setLockscreenAlbumArt(boolean enabled) {
         mShowAlbumArtOnLockscreen = enabled;
         notifyChange(META_CHANGED);
@@ -2820,6 +2859,7 @@ public class MediaService extends Service {
                 mService.get().sendUpdateBuffer(100);
                 mCurrentMediaPlayer.start();
             } else {
+                mService.get().loading(true);
                 handler.postDelayed(startMediaPlayerIfPrepared, 50);
             }
             mService.get().notifyChange(MUSIC_CHANGED);
@@ -2887,6 +2927,7 @@ public class MediaService extends Service {
                         mService.get().gotoNext(true);
                         Log.e("play to go", "");
                     }
+                    mService.get().loading(false);
                 } else {
                     handler.postDelayed(startMediaPlayerIfPrepared, 700);
                 }

@@ -34,9 +34,10 @@
 
         <FrameLayout
             android:id="@+id/headerView"
+            android:layout_marginTop="-6dp"
+            android:layout_below="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="?attr/actionBarSize"
             app:layout_heightPercent="60%">
 
             <android.support.percent.PercentRelativeLayout
@@ -60,13 +61,18 @@
                     android:layout_height="match_parent"
                     android:layout_centerInParent="true"
                     android:layout_gravity="center_horizontal" />
-
+                <View
+                    android:id="@+id/view_line"
+                    android:layout_alignParentTop="true"
+                    android:layout_width="match_parent"
+                    android:layout_height="1.0dip"
+                    android:background="@drawable/play_topbar_line" />
                 <ImageView
+                    android:layout_below="@+id/view_line"
                     android:id="@+id/needle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentRight="true"
-                    android:layout_alignParentTop="true"
                     android:layout_marginTop="-16dp"
                     android:rotation="-30"
                     android:src="@drawable/play_needle"
@@ -86,6 +92,34 @@
             app:layout_heightPercent="70%"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
+            <LinearLayout
+                android:id="@+id/volume_layout"
+                android:layout_marginTop="22dp"
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <ImageView
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginLeft="20dp"
+                    android:src="@drawable/play_icn_speaker"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+                <SeekBar
+                    android:layout_gravity="center_vertical"
+                    style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+                    android:id="@+id/volume_seek"
+                    android:progress="30"
+                    android:layout_marginRight="40dp"
+                    android:layout_marginLeft="20dp"
+                    android:progressDrawable="@drawable/volume_seekbar"
+                    android:focusable="true"
+                    android:maxHeight="2dp"
+                    android:minHeight="2dp"
+                    android:thumb="@drawable/play_volumebar_btn"
+                    android:thumbOffset="3.0dip"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+            </LinearLayout>
 
             <TextView
                 android:focusable="false"
@@ -103,6 +137,8 @@
                 android:layout_height="30dp" />
 
             <com.wm.remusic.lrc.LrcView
+                android:layout_marginTop="10dp"
+                android:layout_below="@+id/volume_layout"
                 android:id="@+id/lrcview"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent" />
@@ -175,16 +211,20 @@
                     android:gravity="right"
                     android:singleLine="true"
                     android:text="00:00"
-                    android:textColor="@color/whaite_text"
+                    android:textColor="@color/white_text"
                     android:textSize="10sp" />
 
-                <SeekBar
+                <com.wm.remusic.widget.PlayerSeekBar
                     style="@style/Widget.AppCompat.ProgressBar.Horizontal"
                     android:id="@+id/play_seek"
+                    android:progressDrawable="@drawable/play_seekbar"
                     android:layout_width="0dp"
                     android:secondaryProgress="0"
                     android:layout_height="wrap_content"
+                    android:maxHeight="8dp"
+                    android:minHeight="8dp"
                     android:layout_gravity="center_vertical"
+                    android:thumb="@drawable/play_plybar_btn"
                     android:layout_weight="22" />
 
                 <TextView
@@ -195,7 +235,7 @@
                     android:layout_weight="1"
                     android:singleLine="true"
                     android:text="00:00"
-                    android:textColor="@color/whaite_text"
+                    android:textColor="@color/white_text"
                     android:textSize="10sp" />
             </LinearLayout>
 

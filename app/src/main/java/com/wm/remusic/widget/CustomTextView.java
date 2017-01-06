@@ -12,11 +12,11 @@ import android.util.Log;
 import android.widget.TextView;
 
 public class CustomTextView extends TextView {
-    
+
     private final static String TAG = CustomTextView.class.getSimpleName();
     private Paint paint1;
     private Paint paint2;
-    
+
     private int mWidth;
     private LinearGradient gradient;
     private Matrix matrix;
@@ -38,20 +38,20 @@ public class CustomTextView extends TextView {
         paint1.setStyle(Paint.Style.FILL);
 
     }
-    
+
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         super.onSizeChanged(w, h, oldw, oldh);
-        if(mWidth == 0){
-            Log.e(TAG,"*********************");
+        if (mWidth == 0) {
+            Log.e(TAG, "*********************");
             mWidth = getMeasuredWidth();
             paint2 = getPaint();
             //颜色渐变器
-            gradient = new LinearGradient(0, 0, mWidth, 0, new int[]{Color.GRAY,Color.WHITE,Color.GRAY}, new float[]{
-                    0.3f,0.5f,1.0f
+            gradient = new LinearGradient(0, 0, mWidth, 0, new int[]{Color.GRAY, Color.WHITE, Color.GRAY}, new float[]{
+                    0.3f, 0.5f, 1.0f
             }, Shader.TileMode.CLAMP);
             paint2.setShader(gradient);
-            
+
             matrix = new Matrix();
         }
     }
@@ -59,9 +59,9 @@ public class CustomTextView extends TextView {
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        if(matrix !=null){
+        if (matrix != null) {
             deltaX += mWidth / 5;
-            if(deltaX > 2 * mWidth){
+            if (deltaX > 2 * mWidth) {
                 deltaX = -mWidth;
             }
         }

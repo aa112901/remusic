@@ -16,7 +16,6 @@
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:layout_alignParentLeft="true"
-            android:layout_marginLeft="10dp"
             android:scaleType="centerCrop" />
         <View
             android:layout_width="match_parent"

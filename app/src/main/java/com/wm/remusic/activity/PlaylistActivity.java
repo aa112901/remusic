@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.AnimationDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.TransitionDrawable;
 import android.net.Uri;
@@ -312,7 +313,7 @@ public class PlaylistActivity extends BaseActivity implements ObservableScrollVi
         }
         return headerTranslationY;
     }
-
+    
 
     private void loadAllLists() {
 
@@ -442,6 +443,11 @@ public class PlaylistActivity extends BaseActivity implements ObservableScrollVi
         super.onPause();
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        RequestThreadPool.finish();
+    }
 
     private void setAlbumart() {
         playlistTitleView.setText(playlistName);

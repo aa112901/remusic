@@ -28,6 +28,7 @@ import com.wm.remusic.uitl.IConstants;
 import com.wm.remusic.widget.DividerItemDecoration;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
@@ -91,9 +92,12 @@ public class PlayQueueFragment extends DialogFragment {
             public void onClick(View v) {
                 MusicPlayer.clearQueue();
                 MusicPlayer.stop();
-                Intent intent = new Intent(IConstants.EMPTY_LIST);
-                intent.putExtra("showorhide", "hide");
-                getActivity().sendBroadcast(intent);
+                File file = new File(getContext().getCacheDir().getAbsolutePath() + "playlist");
+                if(file.exists()){
+                    file.delete();
+                }
+                MusicPlaybackState.getInstance(getContext()).clearQueue();
+                if(adapter != null)
                 adapter.notifyDataSetChanged();
                 dismiss();
             }

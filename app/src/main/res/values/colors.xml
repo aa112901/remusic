@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <color name="whaite_text">#fafafa</color>
+    <color name="white_text">#fafafa</color>
 
     <!-- notification text -->
     <color name="bottom_text">#c1c0c0</color>
@@ -12,6 +12,7 @@
     <color name="background_material_light_2">#ed02fafa</color>
     <color name="small_font">#FF757575</color>
     <color name="text_color">#FF000000</color>
+    <color name="widget_background_color">#a0000000</color>
 
     <!-- Menu Item Color -->
     <color name="menu_transparent">#00FFFFFF</color>

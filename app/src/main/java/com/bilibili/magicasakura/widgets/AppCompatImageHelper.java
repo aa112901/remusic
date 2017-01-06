@@ -18,10 +18,12 @@ package com.bilibili.magicasakura.widgets;
 
 import android.content.res.TypedArray;
 import android.graphics.PorterDuff;
+import android.graphics.drawable.AnimationDrawable;
 import android.graphics.drawable.Drawable;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.graphics.drawable.DrawableCompat;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 
@@ -106,8 +108,15 @@ public class AppCompatImageHelper extends AppCompatBaseHelper {
      */
     private void setImageDrawable(Drawable drawable) {
         if (skipNextApply()) return;
+        if(drawable instanceof AnimationDrawable){
+            Log.e("drawable","instanceof true");
+            AnimationDrawable drawable1 = ((AnimationDrawable) drawable);
+            ((ImageView) mView).setImageDrawable(drawable1);
+            drawable1.start();
+        }else {
+            ((ImageView) mView).setImageDrawable(drawable);
+        }
 
-        ((ImageView) mView).setImageDrawable(drawable);
     }
 
     private boolean setSupportImageTint(int resId) {
@@ -133,23 +142,56 @@ public class AppCompatImageHelper extends AppCompatBaseHelper {
 
     private boolean applySupportImageTint() {
         Drawable image = ((ImageView) mView).getDrawable();
+        AnimationDrawable animationDrawable = null;
+        if(image instanceof AnimationDrawable){
+            Log.e("drawable","is animationdrawable");
+            animationDrawable = ((AnimationDrawable) image);
+            //image = animationDrawable;
+        }
+
         if (image != null && mImageTintInfo != null && mImageTintInfo.mHasTintList) {
-            Drawable tintDrawable = image.mutate();
-            tintDrawable = DrawableCompat.wrap(tintDrawable);
-            if (mImageTintInfo.mHasTintList) {
-                DrawableCompat.setTintList(tintDrawable, mImageTintInfo.mTintList);
+
+            if(animationDrawable != null){
+                Log.e("drawable","is animationdrawable not null");
+                Drawable tintDrawable = animationDrawable;
+                Log.e("drawable","start0");
+                tintDrawable =  DrawableCompat.wrap(tintDrawable);
+                Log.e("drawable","start1");
+                if (mImageTintInfo.mHasTintList) {
+                    DrawableCompat.setTintList(tintDrawable, mImageTintInfo.mTintList);
+                }
+                if (mImageTintInfo.mHasTintMode) {
+                    DrawableCompat.setTintMode(tintDrawable, mImageTintInfo.mTintMode);
+                }
+                if (tintDrawable.isStateful()) {
+                    tintDrawable.setState(mView.getDrawableState());
+                }
+                tintDrawable = DrawableCompat.unwrap(tintDrawable);
+                setImageDrawable(tintDrawable);
+                if (image == tintDrawable) {
+                    Log.e("drawable","invalidateself");
+                   // tintDrawable.invalidateSelf();
+                }
+                return true;
+            }else {
+                Drawable tintDrawable = image.mutate();
+                tintDrawable = DrawableCompat.wrap(tintDrawable);
+                if (mImageTintInfo.mHasTintList) {
+                    DrawableCompat.setTintList(tintDrawable, mImageTintInfo.mTintList);
+                }
+                if (mImageTintInfo.mHasTintMode) {
+                    DrawableCompat.setTintMode(tintDrawable, mImageTintInfo.mTintMode);
+                }
+                if (tintDrawable.isStateful()) {
+                    tintDrawable.setState(mView.getDrawableState());
+                }
+                setImageDrawable(tintDrawable);
+                if (image == tintDrawable) {
+                    tintDrawable.invalidateSelf();
+                }
+                return true;
             }
-            if (mImageTintInfo.mHasTintMode) {
-                DrawableCompat.setTintMode(tintDrawable, mImageTintInfo.mTintMode);
-            }
-            if (tintDrawable.isStateful()) {
-                tintDrawable.setState(mView.getDrawableState());
-            }
-            setImageDrawable(tintDrawable);
-            if (image == tintDrawable) {
-                tintDrawable.invalidateSelf();
-            }
-            return true;
+
         }
         return false;
     }

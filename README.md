@@ -17,8 +17,9 @@
 ![](https://github.com/aa112901/remusic/blob/master/screenshot/play_change.png)
 ![](https://github.com/aa112901/remusic/blob/master/screenshot/device-2016-03-26-123242.png)
 ![](https://github.com/aa112901/remusic/blob/master/screenshot/device-2016-03-26-123513.png)
-![](https://github.com/aa112901/remusic/blob/master/screenshot/device-2016-03-24-134009%20(%E5%A4%8D%E5%88%B6).png)
 ![](https://github.com/aa112901/remusic/blob/master/screenshot/device-2016-03-24-134324%20(%E5%A4%8D%E5%88%B6).png)
+![](https://github.com/aa112901/remusic/blob/master/screenshot/locked.png)
+![](https://github.com/aa112901/remusic/blob/master/screenshot/widget.png)
 
 
 #Credits
@@ -33,6 +34,9 @@
 - [MagicaSakura](https://github.com/Bilibili/MagicaSakura "MagicaSakura")
 
 # Change Log
+## 1.6
+- 加入桌面小部件
+- 修正动画和一些问题
 
 ## 12.23
 - 加入锁屏控制

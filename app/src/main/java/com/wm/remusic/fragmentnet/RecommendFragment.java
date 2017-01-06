@@ -110,19 +110,6 @@ public class RecommendFragment extends Fragment {
 
     LinearLayout linearLayout;
 
-
-    public String getThisMonthDate() {
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        Calendar cc2 = Calendar.getInstance();
-        int maxMonthDay = cc2.getActualMaximum(Calendar.DAY_OF_MONTH);
-        cc2.set(cc2.get(Calendar.YEAR), cc2.get(Calendar.MONTH), maxMonthDay, 23, 59, 59);
-        String end = sdf.format(cc2.getTime());
-        cc2.set(cc2.get(Calendar.YEAR), cc2.get(Calendar.MONTH), 1, 0, 0, 0);
-        String start = sdf.format(cc2.getTime());
-        return start + "|" + end;
-    }
-
-
     private void reloadAdapter() {
         new AsyncTask<Void, Void, Void>() {
 

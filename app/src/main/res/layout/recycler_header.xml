@@ -91,7 +91,7 @@
                         android:layout_height="wrap_content"
                         android:gravity="right"
                         android:layout_marginRight="3dp"
-                        android:textColor="@color/whaite_text"
+                        android:textColor="@color/white_text"
                         android:textSize="12sp"
                         android:id="@+id/playlist_listen_count" />
                 </LinearLayout>
@@ -143,7 +143,7 @@
 
                 <TextView
                     android:id="@+id/playlist_collect_state"
-                    android:textColor="@color/whaite_text"
+                    android:textColor="@color/white_text"
                     android:textSize="12sp"
                     android:gravity="center"
                     android:text="收藏"
@@ -166,7 +166,7 @@
                     android:layout_height="wrap_content" />
 
                 <TextView
-                    android:textColor="@color/whaite_text"
+                    android:textColor="@color/white_text"
                     android:textSize="12sp"
                     android:gravity="center"
                     android:text="评论"
@@ -190,7 +190,7 @@
                     android:layout_height="wrap_content" />
 
                 <TextView
-                    android:textColor="@color/whaite_text"
+                    android:textColor="@color/white_text"
                     android:textSize="12sp"
                     android:gravity="center"
                     android:text="分享"
@@ -215,7 +215,7 @@
                     android:layout_height="wrap_content" />
 
                 <TextView
-                    android:textColor="@color/whaite_text"
+                    android:textColor="@color/white_text"
                     android:textSize="12sp"
                     android:gravity="center"
                     android:text="下载"

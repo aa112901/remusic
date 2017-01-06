@@ -8,55 +8,49 @@ import android.content.Intent;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.AsyncTask;
 import android.util.Log;
+import android.util.SparseArray;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.animation.Animation;
-import android.view.animation.LinearInterpolator;
-import android.view.animation.RotateAnimation;
-import android.widget.ImageView;
 import android.widget.PopupWindow;
 
-import com.google.gson.JsonArray;
-import com.wm.remusic.MainApplication;
 import com.wm.remusic.R;
 import com.wm.remusic.downmusic.DownService;
 import com.wm.remusic.json.GeDanGeInfo;
 import com.wm.remusic.json.MusicFileDownInfo;
-import com.wm.remusic.net.BMA;
-import com.wm.remusic.net.HttpUtil;
+import com.wm.remusic.net.MusicFileDownInfoGet;
+import com.wm.remusic.net.RequestThreadPool;
 import com.wm.remusic.uitl.PreferencesUtility;
 
 import java.util.ArrayList;
 
 public class LoadAllDownInfos extends AsyncTask<Void, Void, Void> {
-    Activity mContext;
+    private Activity mContext;
     private ArrayList<GeDanGeInfo> mList = new ArrayList<GeDanGeInfo>();
+    private PopupWindow popupWindow;
+    private int size;
+    private ArrayList<String> urlList = new ArrayList<>();
 
     public LoadAllDownInfos(Activity context, ArrayList<GeDanGeInfo> list) {
         mContext = context;
         mList = list;
     }
 
-    PopupWindow popupWindow;
-
     @Override
     protected void onPreExecute() {
         super.onPreExecute();
         View view;
-        RotateAnimation animation = new RotateAnimation(0f, 360f, Animation.RELATIVE_TO_SELF, 0.5f,
-                Animation.RELATIVE_TO_SELF, 0.5f);
-        animation.setDuration(5000);
-        animation.setRepeatCount(Animation.INFINITE);
-        animation.setInterpolator(new LinearInterpolator());
+//        RotateAnimation animation = new RotateAnimation(0f, 360f, Animation.RELATIVE_TO_SELF, 0.5f,
+//                Animation.RELATIVE_TO_SELF, 0.5f);
+//        animation.setDuration(5000);
+//        animation.setRepeatCount(Animation.INFINITE);
+//        animation.setInterpolator(new LinearInterpolator());
         if (popupWindow == null) {
             LayoutInflater layoutInflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             view = layoutInflater.inflate(R.layout.loading_circle, null);
-            ImageView imageView = (ImageView) view.findViewById(R.id.rotate);
+            //ImageView imageView = (ImageView) view.findViewById(R.id.rotate);
             popupWindow = new PopupWindow(view, 200, 220);
-
-
-            imageView.setAnimation(animation);
+            //imageView.setAnimation(animation);
 
         }
         popupWindow.setFocusable(true);
@@ -68,46 +62,64 @@ public class LoadAllDownInfos extends AsyncTask<Void, Void, Void> {
         popupWindow.setOnDismissListener(new PopupWindow.OnDismissListener() {
             @Override
             public void onDismiss() {
+                RequestThreadPool.finish();
                 cancel(true);
             }
         });
-        animation.start();
+        //animation.start();
 
     }
 
-    int size;
-    ArrayList<String> urlList = new ArrayList<>();
+    SparseArray<MusicFileDownInfo> sparseArray = new SparseArray<>();
 
     @Override
     protected Void doInBackground(Void... params) {
         int le = mList.size();
-        for (int j = 0; j < le; j++) {
+        int downloadBit = PreferencesUtility.getInstance(mContext).getDownMusicBit();
+        for (int i = 0; i < le; i++) {
+            RequestThreadPool.post(new MusicFileDownInfoGet(mList.get(i).getSong_id(), i, sparseArray, downloadBit));
+        }
+        int tryCount = 0;
+        while (sparseArray.size() != le && tryCount < 6000) {
+            tryCount++;
             try {
-                JsonArray jsonArray = HttpUtil.getResposeJsonObject(BMA.Song.songInfo(mList.get(j).getSong_id())).get("songurl")
-                        .getAsJsonObject().get("url").getAsJsonArray();
-                int len = jsonArray.size();
-
-                int downloadBit = PreferencesUtility.getInstance(mContext).getDownMusicBit();
-                MusicFileDownInfo musicFileDownInfo = null;
-                for (int i = len - 1; i > -1; i--) {
-                    int bit = Integer.parseInt(jsonArray.get(i).getAsJsonObject().get("file_bitrate").toString());
-                    if (bit == downloadBit) {
-                        musicFileDownInfo = MainApplication.gsonInstance().fromJson(jsonArray.get(i), MusicFileDownInfo.class);
-                    } else if (bit < downloadBit && bit >= 64) {
-                        musicFileDownInfo = MainApplication.gsonInstance().fromJson(jsonArray.get(i), MusicFileDownInfo.class);
-                    }
-                }
-                if (musicFileDownInfo != null) {
-                    urlList.add(musicFileDownInfo.getShow_link());
-                    size += musicFileDownInfo.getFile_size();
-                }
-
-
-            } catch (Exception e) {
+                Thread.sleep(30);
+            } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-
         }
+        for (int i = 0; i < le; i++) {
+            size += sparseArray.get(i).getFile_size();
+            urlList.add(sparseArray.get(i).getFile_link());
+        }
+
+//        for (int j = 0; j < le; j++) {
+//            try {
+//                JsonArray jsonArray = HttpUtil.getResposeJsonObject(BMA.Song.songInfo(mList.get(j).getSong_id())).get("songurl")
+//                        .getAsJsonObject().get("url").getAsJsonArray();
+//                int len = jsonArray.size();
+//
+//                int downloadBit = PreferencesUtility.getInstance(mContext).getDownMusicBit();
+//                MusicFileDownInfo musicFileDownInfo = null;
+//                for (int i = len - 1; i > -1; i--) {
+//                    int bit = Integer.parseInt(jsonArray.get(i).getAsJsonObject().get("file_bitrate").toString());
+//                    if (bit == downloadBit) {
+//                        musicFileDownInfo = MainApplication.gsonInstance().fromJson(jsonArray.get(i), MusicFileDownInfo.class);
+//                    } else if (bit < downloadBit && bit >= 64) {
+//                        musicFileDownInfo = MainApplication.gsonInstance().fromJson(jsonArray.get(i), MusicFileDownInfo.class);
+//                    }
+//                }
+//                if (musicFileDownInfo != null) {
+//                    urlList.add(musicFileDownInfo.getShow_link());
+//                    size += musicFileDownInfo.getFile_size();
+//                }
+//
+//
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//            }
+//
+//        }
 
         return null;
     }
@@ -154,6 +166,7 @@ public class LoadAllDownInfos extends AsyncTask<Void, Void, Void> {
                 setNegativeButton(mContext.getString(R.string.cancel), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
+                        RequestThreadPool.finish();
                         dialog.dismiss();
                     }
                 }).show();

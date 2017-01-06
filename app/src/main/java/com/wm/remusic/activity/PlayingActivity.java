@@ -7,8 +7,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.AnimationDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.TransitionDrawable;
+import android.media.AudioManager;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -26,8 +28,11 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.animation.Animation;
 import android.view.animation.Interpolator;
 import android.view.animation.LinearInterpolator;
+import android.view.animation.Transformation;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -41,6 +46,7 @@ import com.facebook.common.executors.CallerThreadExecutor;
 import com.facebook.common.references.CloseableReference;
 import com.facebook.datasource.DataSource;
 import com.facebook.drawee.backends.pipeline.Fresco;
+import com.facebook.drawee.drawable.DrawableUtils;
 import com.facebook.imagepipeline.core.ImagePipeline;
 import com.facebook.imagepipeline.datasource.BaseBitmapDataSubscriber;
 import com.facebook.imagepipeline.image.CloseableImage;
@@ -63,6 +69,7 @@ import com.wm.remusic.uitl.ImageUtils;
 import com.wm.remusic.uitl.L;
 import com.wm.remusic.uitl.MusicUtils;
 import com.wm.remusic.widget.AlbumViewPager;
+import com.wm.remusic.widget.PlayerSeekBar;
 
 import java.io.BufferedReader;
 import java.io.FileInputStream;
@@ -82,7 +89,7 @@ import static com.wm.remusic.service.MusicPlayer.getAlbumPath;
 public class PlayingActivity extends BaseActivity implements IConstants {
     private ImageView backAlbum, playingmode, control, next, pre, playlist, cmt, fav, down, more, needle;
     private TextView timePlayed, duration;
-    private SeekBar mProgress;
+    private PlayerSeekBar mProgress;
 
     private ActionBar ab;
     private ObjectAnimator needleAnim, animator;
@@ -101,8 +108,9 @@ public class PlayingActivity extends BaseActivity implements IConstants {
     private FrameLayout albumLayout;
     private RelativeLayout lrcViewContainer;
     private LrcView mLrcView;
-    TextView tryGetLrc;
-    LinearLayout musicTool;
+    private TextView tryGetLrc;
+    private LinearLayout musicTool;
+    private SeekBar mVolumeSeek;
     private boolean print = true;
     private String TAG = PlayingActivity.class.getSimpleName();
 
@@ -149,11 +157,14 @@ public class PlayingActivity extends BaseActivity implements IConstants {
         down = (ImageView) findViewById(R.id.playing_down);
         timePlayed = (TextView) findViewById(R.id.music_duration_played);
         duration = (TextView) findViewById(R.id.music_duration);
-        mProgress = (SeekBar) findViewById(R.id.play_seek);
+        mProgress = (PlayerSeekBar) findViewById(R.id.play_seek);
         needle = (ImageView) findViewById(R.id.needle);
         mViewPager = (AlbumViewPager) findViewById(R.id.view_pager);
+        mViewPager.setOffscreenPageLimit(2);
+        mVolumeSeek = (SeekBar) findViewById(R.id.volume_seek);
         mProgress.setIndeterminate(false);
         mProgress.setProgress(1);
+
         if(MusicPlayer.isTrackLocal()){
             mProgress.setSecondaryProgress(100);
         }
@@ -197,6 +208,27 @@ public class PlayingActivity extends BaseActivity implements IConstants {
             }
         });
 
+        final AudioManager audioManager = (AudioManager) getSystemService(AUDIO_SERVICE);
+        int v = audioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
+        int mMaxVol = audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
+        mVolumeSeek.setMax(mMaxVol);
+        mVolumeSeek.setProgress(v);
+        mVolumeSeek.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, progress ,AudioManager.ADJUST_SAME);
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        });
     }
 
 
@@ -243,7 +275,6 @@ public class PlayingActivity extends BaseActivity implements IConstants {
             while ((line = br.readLine()) != null) {
                 sb.append(line + "\n");
             }
-            // System.out.println(sb.toString());
             rows = DefaultLrcParser.getIstance().getLrcRows(sb.toString());
         } catch (IOException e) {
             e.printStackTrace();
@@ -251,33 +282,14 @@ public class PlayingActivity extends BaseActivity implements IConstants {
         return rows;
     }
 
-    int progress;
-    Runnable runnable = new Runnable() {
-        @Override
-        public void run() {
-            if (progress != 100) {
-                mProgress.incrementSecondaryProgressBy(progress);
-            } else {
-                progress += 10;
-                HandlerUtil.getInstance(PlayingActivity.this).postDelayed(runnable, 1000);
-            }
-        }
-    };
-
-
     private void loadOther() {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                needleAnim = ObjectAnimator.ofFloat(needle, "rotation", -30, 0);
-                needleAnim.setDuration(60);
-                needleAnim.setRepeatMode(0);
-                needleAnim.setInterpolator(new LinearInterpolator());
+        needleAnim = ObjectAnimator.ofFloat(needle, "rotation", -30, 0);
+        needleAnim.setDuration(60);
+        needleAnim.setRepeatMode(0);
+        needleAnim.setInterpolator(new LinearInterpolator());
 
-                setSeekBarListener();
-                setTools();
-            }
-        }).start();
+        setSeekBarListener();
+        setTools();
 
     }
 
@@ -536,97 +548,116 @@ public class PlayingActivity extends BaseActivity implements IConstants {
     }
 
     public void updateTrack() {
-        Log.e("playing", " updatetrack");
         new setBlurredAlbumArt().execute();
     }
 
     public void updateTrackInfo() {
 
-        if (MusicPlayer.getQueueSize() == 0) {
-            return;
-        }
-        if (!duetoplaypause) {
-            isFav = false;
-            long[] favlists = playlistsManager.getPlaylistIds(IConstants.FAV_PLAYLIST);
-            long currentid = MusicPlayer.getCurrentAudioId();
-            for(long i : favlists){
-                if(currentid == i){
-                    isFav = true;
-                    break;
+            if (MusicPlayer.getQueueSize() == 0) {
+                return;
+            }
+            if (!duetoplaypause) {
+                isFav = false;
+                long[] favlists = playlistsManager.getPlaylistIds(IConstants.FAV_PLAYLIST);
+                long currentid = MusicPlayer.getCurrentAudioId();
+                for(long i : favlists){
+                    if(currentid == i){
+                        isFav = true;
+                        break;
+                    }
+                }
+                updateFav(isFav);
+                updateLrc();
+            }
+            duetoplaypause = false;
+
+            Fragment fragment = (RoundFragment) mViewPager.getAdapter().instantiateItem(mViewPager, mViewPager.getCurrentItem());
+            if(fragment != null){
+                View v = fragment.getView();
+                if(v != null){
+                    ((ViewGroup) v).setAnimationCacheEnabled(false);
+                }
+                if(viewWeakReference != null)
+                    viewWeakReference.clear();
+                viewWeakReference = new WeakReference<View>(v);
+                activeView = viewWeakReference.get();
+            }
+
+
+            if (activeView != null) {
+    //            animatorWeakReference = new WeakReference<>((ObjectAnimator) activeView.getTag(R.id.tag_animator));
+    //            animator = animatorWeakReference.get();
+                animator = (ObjectAnimator) activeView.getTag(R.id.tag_animator);
+            }
+
+            ab.setTitle(MusicPlayer.getTrackName());
+            ab.setSubtitle(MusicPlayer.getArtistName());
+
+
+            duration.setText(MusicUtils.makeShortTimeString(PlayingActivity.this.getApplication(), MusicPlayer.duration() / 1000));
+            //mProgress.setMax((int) MusicPlayer.duration());
+
+            mProgress.postDelayed(mUpdateProgress, 10);
+
+
+            if (MusicPlayer.isPlaying()) {
+                control.setImageResource(R.drawable.play_rdi_btn_pause);
+
+            } else {
+                control.setImageResource(R.drawable.play_rdi_btn_play);
+            }
+
+
+            animatorSet = new AnimatorSet();
+            if (MusicPlayer.isPlaying()) {
+                if (animatorSet != null && animator != null && !animator.isRunning() ) {
+                    //修复从playactivity回到Main界面null
+                    if(needleAnim == null){
+                        needleAnim = ObjectAnimator.ofFloat(needle, "rotation", -30, 0);
+                        needleAnim.setDuration(60);
+                        needleAnim.setRepeatMode(0);
+                        needleAnim.setInterpolator(new LinearInterpolator());
+                    }
+                    animatorSet.play(needleAnim).before(animator);
+                    animatorSet.start();
+                }
+
+            } else {
+                if (needleAnim != null) {
+                    needleAnim.reverse();
+                    needleAnim.end();
+                }
+
+                if (animator != null && animator.isRunning()) {
+                    animator.cancel();
+                    float valueAvatar = (float) animator.getAnimatedValue();
+                    animator.setFloatValues(valueAvatar, 360f + valueAvatar);
                 }
             }
-            updateFav(isFav);
-            updateLrc();
-        }
-        duetoplaypause = false;
 
-        Fragment fragment = (RoundFragment) mViewPager.getAdapter().instantiateItem(mViewPager, mViewPager.getCurrentItem());
-        viewWeakReference = new WeakReference<View>(fragment.getView());
-        activeView = viewWeakReference.get();
-        if (activeView != null) {
-//            animatorWeakReference = new WeakReference<>((ObjectAnimator) activeView.getTag(R.id.tag_animator));
-//            animator = animatorWeakReference.get();
-            animator = (ObjectAnimator) activeView.getTag(R.id.tag_animator);
-        }
-
-        ab.setTitle(MusicPlayer.getTrackName());
-        ab.setSubtitle(MusicPlayer.getArtistName());
-
-
-        duration.setText(MusicUtils.makeShortTimeString(PlayingActivity.this.getApplication(), MusicPlayer.duration() / 1000));
-        //mProgress.setMax((int) MusicPlayer.duration());
-
-        mProgress.postDelayed(mUpdateProgress, 10);
-
-
-        if (MusicPlayer.isPlaying()) {
-            control.setImageResource(R.drawable.play_rdi_btn_pause);
-
-        } else {
-            control.setImageResource(R.drawable.play_rdi_btn_play);
-        }
-
-
-        animatorSet = new AnimatorSet();
-        if (MusicPlayer.isPlaying()) {
-            if (animator != null && !animator.isRunning()) {
-                animatorSet.play(needleAnim).before(animator);
-                animatorSet.start();
+            isNextOrPreSetPage = false;
+            if (MusicPlayer.getQueuePosition() + 1 != mViewPager.getCurrentItem()) {
+                mViewPager.setCurrentItem(MusicPlayer.getQueuePosition() + 1);
+                isNextOrPreSetPage = true;
             }
-
-        } else {
-            if (needleAnim != null) {
-                needleAnim.reverse();
-                needleAnim.end();
-            }
-
-            if (animator != null && animator.isRunning()) {
-                animator.cancel();
-                float valueAvatar = (float) animator.getAnimatedValue();
-                animator.setFloatValues(valueAvatar, 360f + valueAvatar);
-            }
-        }
-
-        isNextOrPreSetPage = false;
-        if (MusicPlayer.getQueuePosition() + 1 != mViewPager.getCurrentItem()) {
-            mViewPager.setCurrentItem(MusicPlayer.getQueuePosition() + 1);
-            isNextOrPreSetPage = true;
-        }
-
 
     }
 
     @Override
     public void updateTime() {
         duration.setText(MusicUtils.makeShortTimeString(PlayingActivity.this.getApplication(), MusicPlayer.duration() / 1000));
+        duration.setText(MusicUtils.makeTimeString(MusicPlayer.duration()));
         //mProgress.setMax((int) MusicPlayer.duration());
     }
 
     @Override
     public void updateBuffer(int p) {
-        super.updateBuffer(p);
         mProgress.setSecondaryProgress(p);
+    }
 
+    @Override
+    public void loading(boolean l) {
+        mProgress.setLoading(l);
     }
 
     private Runnable mUpdateProgress = new Runnable() {
@@ -640,10 +671,10 @@ public class PlayingActivity extends BaseActivity implements IConstants {
                 if (duration > 0)
                     mProgress.setProgress((int) (mProgress.getMax() * position / duration));
                 timePlayed.setText(MusicUtils.makeShortTimeString(PlayingActivity.this.getApplication(), position / 1000));
-            }
 
-            if (MusicPlayer.isPlaying()) {
-                mProgress.postDelayed(mUpdateProgress, 100);
+                if(MusicPlayer.isPlaying()){
+                    mProgress.postDelayed(mUpdateProgress, 50);
+                }
             }
         }
     };
@@ -694,13 +725,6 @@ public class PlayingActivity extends BaseActivity implements IConstants {
     @Override
     public void onPause() {
         super.onPause();
-    }
-
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        onBackPressed();
-        //super.onSaveInstanceState(outState);
-
     }
 
     @Override
@@ -781,7 +805,6 @@ public class PlayingActivity extends BaseActivity implements IConstants {
                 newOpts.inSampleSize = 6;
                 newOpts.inPreferredConfig = Bitmap.Config.RGB_565;
             }
-            Log.e("albumuri", "start");
             if (!MusicPlayer.isTrackLocal()) {
                 L.D(print, TAG, "music is net");
                 if (getAlbumPath() == null) {
@@ -879,7 +902,7 @@ public class PlayingActivity extends BaseActivity implements IConstants {
                 backAlbum.setImageDrawable(td);
                 //去除过度绘制
                 td.setCrossFadeEnabled(true);
-                td.startTransition(370);
+                td.startTransition(200);
 
             } else {
                 backAlbum.setImageDrawable(result);

@@ -113,6 +113,7 @@ public class MusicFragment extends BaseFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.load_framelayout, container, false);
+        Log.e("musicfrag","oncreateview");
         frameLayout = (FrameLayout) view.findViewById(R.id.loadframe);
         View loadView = LayoutInflater.from(getActivity()).inflate(R.layout.loading, frameLayout, false);
         frameLayout.addView(loadView);

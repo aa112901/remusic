@@ -313,6 +313,12 @@ public class AlbumsDetailActivity extends BaseActivity implements ObservableScro
         super.onPause();
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        RequestThreadPool.finish();
+    }
+
 
     private void setAlbumart() {
         albumTitle.setText(albumName);

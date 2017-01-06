@@ -43,7 +43,7 @@
                 android:text="30"
                 android:gravity="right"
                 android:layout_marginRight="3dp"
-                android:textColor="@color/whaite_text"
+                android:textColor="@color/white_text"
                 android:textSize="12sp"
                 android:id="@+id/playlist_listen_count" />
         </LinearLayout>

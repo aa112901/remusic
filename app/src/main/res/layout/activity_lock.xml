@@ -17,7 +17,7 @@
         android:id="@+id/lock_root"
         android:layout_height="match_parent">
         <TextView
-            android:textColor="@color/whaite_text"
+            android:textColor="@color/white_text"
             android:layout_marginTop="70dp"
             android:layout_marginLeft="39dp"
             android:layout_alignParentTop="true"
@@ -28,7 +28,7 @@
             android:layout_height="wrap_content" />
 
         <TextView
-            android:textColor="@color/whaite_text"
+            android:textColor="@color/white_text"
             android:layout_marginTop="5dp"
             android:layout_alignLeft="@+id/lock_time"
             android:layout_below="@+id/lock_time"
@@ -37,7 +37,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
         <TextView
-            android:textColor="@color/whaite_text"
+            android:textColor="@color/white_text"
             android:layout_marginTop="15dp"
             android:layout_alignLeft="@+id/lock_time"
             android:layout_below="@+id/lock_date"
@@ -46,7 +46,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
         <TextView
-            android:textColor="@color/whaite_text"
+            android:textColor="@color/white_text"
             android:layout_marginTop="5dp"
             android:layout_alignLeft="@+id/lock_time"
             android:layout_below="@+id/lock_music_name"
@@ -55,7 +55,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
         <TextView
-            android:textColor="@color/whaite_text"
+            android:textColor="@color/white_text"
             android:layout_marginBottom="30dp"
             android:layout_centerHorizontal="true"
             android:layout_above="@+id/lock_control"
@@ -99,7 +99,7 @@
         <com.wm.remusic.widget.CustomTextView
             android:layout_centerHorizontal="true"
             android:text=">>> 滑动解锁"
-            android:textColor="@color/whaite_text"
+            android:textColor="@color/white_text"
             android:textSize="20sp"
             android:layout_marginBottom="30dp"
             android:layout_alignParentBottom="true"

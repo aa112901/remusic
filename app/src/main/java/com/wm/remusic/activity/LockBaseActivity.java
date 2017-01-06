@@ -72,10 +72,7 @@ public class LockBaseActivity extends AppCompatActivity implements ServiceConnec
     @Override
     protected void onPause() {
         super.onPause();
-        try {
-            unregisterReceiver(mPlaybackStatus);
-        } catch (final Throwable e) {
-        }
+
     }
 
     @Override
@@ -86,7 +83,10 @@ public class LockBaseActivity extends AppCompatActivity implements ServiceConnec
     @Override
     protected void onStop() {
         super.onStop();
-
+        try {
+            unregisterReceiver(mPlaybackStatus);
+        } catch (final Throwable e) {
+        }
     }
 
     @Override

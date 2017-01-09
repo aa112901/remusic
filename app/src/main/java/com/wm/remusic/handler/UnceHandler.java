@@ -11,8 +11,10 @@ import android.widget.Toast;
 import com.wm.remusic.MainApplication;
 import com.wm.remusic.activity.MainActivity;
 import com.wm.remusic.provider.MusicPlaybackState;
+import com.wm.remusic.uitl.CommonUtils;
 
 import java.io.File;
+import java.io.PrintWriter;
 
 /**
  * Created by wm on 2016/3/26.
@@ -36,12 +38,12 @@ public class UnceHandler implements Thread.UncaughtExceptionHandler {
             mDefaultHandler.uncaughtException(thread, ex);
         } else {
             try {
-                Thread.sleep(2000);
+                Thread.sleep(3000);
             } catch (InterruptedException e) {
                 Log.e(TAG, "error : ", e);
             }
             File file = new File(application.getCacheDir().getAbsolutePath() + "playlist");
-            if(file.exists()){
+            if (file.exists()) {
                 file.delete();
             }
             MusicPlaybackState.getInstance(application).clearQueue();
@@ -63,7 +65,7 @@ public class UnceHandler implements Thread.UncaughtExceptionHandler {
      * @param ex
      * @return true:如果处理了该异常信息;否则返回false.
      */
-    private boolean handleException(Throwable ex) {
+    private boolean handleException(final Throwable ex) {
         if (ex == null) {
             return false;
         }
@@ -72,10 +74,31 @@ public class UnceHandler implements Thread.UncaughtExceptionHandler {
             @Override
             public void run() {
                 Looper.prepare();
-                  Toast.makeText(application.getApplicationContext(), "很抱歉,程序出现异常,即将退出.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(application.getApplicationContext(), "很抱歉,程序出现异常,即将退出.", Toast.LENGTH_SHORT).show();
                 Looper.loop();
             }
         }.start();
+
+        File file = new File(application.getCacheDir().getAbsolutePath() + "/err/");
+        if (!file.exists()) {
+            file.mkdirs();
+        }
+        try {
+            PrintWriter writer = new PrintWriter(application.getCacheDir().getAbsolutePath() + "/err/" + System.currentTimeMillis() + ".log");
+            ex.printStackTrace(writer);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                CommonUtils.sendTextMail("errlog from " + CommonUtils.getUniquePsuedoID(), CommonUtils.getDeviceInfo() + Log.getStackTraceString(ex));
+            }
+        }).start();
+
+
         return true;
     }
+
+
 }

@@ -7,7 +7,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.drawable.AnimationDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.TransitionDrawable;
 import android.media.AudioManager;
@@ -23,16 +22,13 @@ import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.Animation;
 import android.view.animation.Interpolator;
 import android.view.animation.LinearInterpolator;
-import android.view.animation.Transformation;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -46,7 +42,6 @@ import com.facebook.common.executors.CallerThreadExecutor;
 import com.facebook.common.references.CloseableReference;
 import com.facebook.datasource.DataSource;
 import com.facebook.drawee.backends.pipeline.Fresco;
-import com.facebook.drawee.drawable.DrawableUtils;
 import com.facebook.imagepipeline.core.ImagePipeline;
 import com.facebook.imagepipeline.datasource.BaseBitmapDataSubscriber;
 import com.facebook.imagepipeline.image.CloseableImage;
@@ -165,7 +160,7 @@ public class PlayingActivity extends BaseActivity implements IConstants {
         mProgress.setIndeterminate(false);
         mProgress.setProgress(1);
 
-        if(MusicPlayer.isTrackLocal()){
+        if (MusicPlayer.isTrackLocal()) {
             mProgress.setSecondaryProgress(100);
         }
         loadOther();
@@ -216,7 +211,7 @@ public class PlayingActivity extends BaseActivity implements IConstants {
         mVolumeSeek.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, progress ,AudioManager.ADJUST_SAME);
+                audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, progress, AudioManager.ADJUST_SAME);
             }
 
             @Override
@@ -284,7 +279,7 @@ public class PlayingActivity extends BaseActivity implements IConstants {
 
     private void loadOther() {
         needleAnim = ObjectAnimator.ofFloat(needle, "rotation", -30, 0);
-        needleAnim.setDuration(60);
+        needleAnim.setDuration(200);
         needleAnim.setRepeatMode(0);
         needleAnim.setInterpolator(new LinearInterpolator());
 
@@ -443,7 +438,7 @@ public class PlayingActivity extends BaseActivity implements IConstants {
                 } else {
                     try {
                         MusicInfo info = MusicPlayer.getPlayinfos().get(MusicPlayer.getCurrentAudioId());
-                        playlistsManager.insertMusic(PlayingActivity.this,IConstants.FAV_PLAYLIST,info);
+                        playlistsManager.insertMusic(PlayingActivity.this, IConstants.FAV_PLAYLIST, info);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -553,93 +548,93 @@ public class PlayingActivity extends BaseActivity implements IConstants {
 
     public void updateTrackInfo() {
 
-            if (MusicPlayer.getQueueSize() == 0) {
-                return;
-            }
-            if (!duetoplaypause) {
-                isFav = false;
-                long[] favlists = playlistsManager.getPlaylistIds(IConstants.FAV_PLAYLIST);
-                long currentid = MusicPlayer.getCurrentAudioId();
-                for(long i : favlists){
-                    if(currentid == i){
-                        isFav = true;
-                        break;
-                    }
-                }
-                updateFav(isFav);
-                updateLrc();
-            }
-            duetoplaypause = false;
-
-            Fragment fragment = (RoundFragment) mViewPager.getAdapter().instantiateItem(mViewPager, mViewPager.getCurrentItem());
-            if(fragment != null){
-                View v = fragment.getView();
-                if(v != null){
-                    ((ViewGroup) v).setAnimationCacheEnabled(false);
-                }
-                if(viewWeakReference != null)
-                    viewWeakReference.clear();
-                viewWeakReference = new WeakReference<View>(v);
-                activeView = viewWeakReference.get();
-            }
-
-
-            if (activeView != null) {
-    //            animatorWeakReference = new WeakReference<>((ObjectAnimator) activeView.getTag(R.id.tag_animator));
-    //            animator = animatorWeakReference.get();
-                animator = (ObjectAnimator) activeView.getTag(R.id.tag_animator);
-            }
-
-            ab.setTitle(MusicPlayer.getTrackName());
-            ab.setSubtitle(MusicPlayer.getArtistName());
-
-
-            duration.setText(MusicUtils.makeShortTimeString(PlayingActivity.this.getApplication(), MusicPlayer.duration() / 1000));
-            //mProgress.setMax((int) MusicPlayer.duration());
-
-            mProgress.postDelayed(mUpdateProgress, 10);
-
-
-            if (MusicPlayer.isPlaying()) {
-                control.setImageResource(R.drawable.play_rdi_btn_pause);
-
-            } else {
-                control.setImageResource(R.drawable.play_rdi_btn_play);
-            }
-
-
-            animatorSet = new AnimatorSet();
-            if (MusicPlayer.isPlaying()) {
-                if (animatorSet != null && animator != null && !animator.isRunning() ) {
-                    //修复从playactivity回到Main界面null
-                    if(needleAnim == null){
-                        needleAnim = ObjectAnimator.ofFloat(needle, "rotation", -30, 0);
-                        needleAnim.setDuration(60);
-                        needleAnim.setRepeatMode(0);
-                        needleAnim.setInterpolator(new LinearInterpolator());
-                    }
-                    animatorSet.play(needleAnim).before(animator);
-                    animatorSet.start();
-                }
-
-            } else {
-                if (needleAnim != null) {
-                    needleAnim.reverse();
-                    needleAnim.end();
-                }
-
-                if (animator != null && animator.isRunning()) {
-                    animator.cancel();
-                    float valueAvatar = (float) animator.getAnimatedValue();
-                    animator.setFloatValues(valueAvatar, 360f + valueAvatar);
+        if (MusicPlayer.getQueueSize() == 0) {
+            return;
+        }
+        if (!duetoplaypause) {
+            isFav = false;
+            long[] favlists = playlistsManager.getPlaylistIds(IConstants.FAV_PLAYLIST);
+            long currentid = MusicPlayer.getCurrentAudioId();
+            for (long i : favlists) {
+                if (currentid == i) {
+                    isFav = true;
+                    break;
                 }
             }
+            updateFav(isFav);
+            updateLrc();
+        }
+        duetoplaypause = false;
 
-            isNextOrPreSetPage = false;
-            if (MusicPlayer.getQueuePosition() + 1 != mViewPager.getCurrentItem()) {
-                mViewPager.setCurrentItem(MusicPlayer.getQueuePosition() + 1);
-                isNextOrPreSetPage = true;
+        Fragment fragment = (RoundFragment) mViewPager.getAdapter().instantiateItem(mViewPager, mViewPager.getCurrentItem());
+        if (fragment != null) {
+            View v = fragment.getView();
+            if (v != null) {
+                ((ViewGroup) v).setAnimationCacheEnabled(false);
             }
+            if (viewWeakReference != null)
+                viewWeakReference.clear();
+            viewWeakReference = new WeakReference<View>(v);
+            activeView = viewWeakReference.get();
+        }
+
+
+        if (activeView != null) {
+            //            animatorWeakReference = new WeakReference<>((ObjectAnimator) activeView.getTag(R.id.tag_animator));
+            //            animator = animatorWeakReference.get();
+            animator = (ObjectAnimator) activeView.getTag(R.id.tag_animator);
+        }
+
+        ab.setTitle(MusicPlayer.getTrackName());
+        ab.setSubtitle(MusicPlayer.getArtistName());
+
+
+        duration.setText(MusicUtils.makeShortTimeString(PlayingActivity.this.getApplication(), MusicPlayer.duration() / 1000));
+        //mProgress.setMax((int) MusicPlayer.duration());
+
+        mProgress.postDelayed(mUpdateProgress, 10);
+
+
+        if (MusicPlayer.isPlaying()) {
+            control.setImageResource(R.drawable.play_rdi_btn_pause);
+
+        } else {
+            control.setImageResource(R.drawable.play_rdi_btn_play);
+        }
+
+
+        animatorSet = new AnimatorSet();
+        if (MusicPlayer.isPlaying()) {
+            if (animatorSet != null && animator != null && !animator.isRunning()) {
+                //修复从playactivity回到Main界面null
+                if (needleAnim == null) {
+                    needleAnim = ObjectAnimator.ofFloat(needle, "rotation", -30, 0);
+                    needleAnim.setDuration(60);
+                    needleAnim.setRepeatMode(0);
+                    needleAnim.setInterpolator(new LinearInterpolator());
+                }
+                animatorSet.play(needleAnim).before(animator);
+                animatorSet.start();
+            }
+
+        } else {
+            if (needleAnim != null) {
+                needleAnim.reverse();
+                needleAnim.end();
+            }
+
+            if (animator != null && animator.isRunning()) {
+                animator.cancel();
+                float valueAvatar = (float) animator.getAnimatedValue();
+                animator.setFloatValues(valueAvatar, 360f + valueAvatar);
+            }
+        }
+
+        isNextOrPreSetPage = false;
+        if (MusicPlayer.getQueuePosition() + 1 != mViewPager.getCurrentItem()) {
+            mViewPager.setCurrentItem(MusicPlayer.getQueuePosition() + 1);
+            isNextOrPreSetPage = true;
+        }
 
     }
 
@@ -672,8 +667,8 @@ public class PlayingActivity extends BaseActivity implements IConstants {
                     mProgress.setProgress((int) (mProgress.getMax() * position / duration));
                 timePlayed.setText(MusicUtils.makeShortTimeString(PlayingActivity.this.getApplication(), position / 1000));
 
-                if(MusicPlayer.isPlaying()){
-                    mProgress.postDelayed(mUpdateProgress, 50);
+                if (MusicPlayer.isPlaying()) {
+                    mProgress.postDelayed(mUpdateProgress, 100);
                 }
             }
         }

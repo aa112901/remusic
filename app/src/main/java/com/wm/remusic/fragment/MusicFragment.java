@@ -21,7 +21,6 @@ import android.widget.TextView;
 import com.bilibili.magicasakura.widgets.TintImageView;
 import com.github.promeg.pinyinhelper.Pinyin;
 import com.wm.remusic.R;
-import com.wm.remusic.activity.AlbumsDetailActivity;
 import com.wm.remusic.activity.SelectActivity;
 import com.wm.remusic.handler.HandlerUtil;
 import com.wm.remusic.info.MusicInfo;
@@ -113,7 +112,7 @@ public class MusicFragment extends BaseFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.load_framelayout, container, false);
-        Log.e("musicfrag","oncreateview");
+        Log.e("musicfrag", "oncreateview");
         frameLayout = (FrameLayout) view.findViewById(R.id.loadframe);
         View loadView = LayoutInflater.from(getActivity()).inflate(R.layout.loading, frameLayout, false);
         frameLayout.addView(loadView);
@@ -337,11 +336,11 @@ public class MusicFragment extends BaseFragment {
 
             public void onClick(View v) {
                 //// TODO: 2016/1/20
-                if(playMusic != null)
+                if (playMusic != null)
                     handler.removeCallbacks(playMusic);
-                if(getAdapterPosition() > 0){
+                if (getAdapterPosition() > 0) {
                     playMusic = new PlayMusic(0);
-                    handler.postDelayed(playMusic,70);
+                    handler.postDelayed(playMusic, 70);
                 }
 //                HandlerUtil.getInstance(getContext()).postDelayed(new Runnable() {
 //                    @Override
@@ -392,11 +391,11 @@ public class MusicFragment extends BaseFragment {
 
             @Override
             public void onClick(View v) {
-                if(playMusic != null)
+                if (playMusic != null)
                     handler.removeCallbacks(playMusic);
-                if(getAdapterPosition() > 0){
+                if (getAdapterPosition() > 0) {
                     playMusic = new PlayMusic(getAdapterPosition() - 1);
-                    handler.postDelayed(playMusic,70);
+                    handler.postDelayed(playMusic, 70);
                 }
 //                HandlerUtil.getInstance(getContext()).postDelayed(new Runnable() {
 //                    @Override
@@ -418,9 +417,10 @@ public class MusicFragment extends BaseFragment {
 
         }
 
-        class PlayMusic implements Runnable{
+        class PlayMusic implements Runnable {
             int position;
-            public PlayMusic(int position){
+
+            public PlayMusic(int position) {
                 this.position = position;
             }
 

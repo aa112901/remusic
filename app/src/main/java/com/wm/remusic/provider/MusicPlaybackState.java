@@ -123,12 +123,12 @@ public class MusicPlaybackState {
 
     }
 
-    public synchronized void clearQueue(){
+    public synchronized void clearQueue() {
         final SQLiteDatabase database = mMusicDatabase.getWritableDatabase();
         try {
             database.delete(PlaybackQueueColumns.NAME, null, null);
             database.setTransactionSuccessful();
-        }catch (Exception e){
+        } catch (Exception e) {
 
         }
     }

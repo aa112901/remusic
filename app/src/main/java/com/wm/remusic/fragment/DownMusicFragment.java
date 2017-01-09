@@ -78,6 +78,12 @@ public class DownMusicFragment extends BaseFragment {
         super.onPause();
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        reloadAdapter();
+    }
+
     //设置分割线
     private void setItemDecoration() {
         RecyclerView.ItemDecoration itemDecoration = new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL_LIST);
@@ -196,7 +202,7 @@ public class DownMusicFragment extends BaseFragment {
                         }
                         MusicPlayer.playAll(infos, list, 0, false);
                     }
-                },70);
+                }, 70);
             }
 
 

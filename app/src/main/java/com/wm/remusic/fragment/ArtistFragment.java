@@ -293,11 +293,14 @@ public class ArtistFragment extends BaseFragment {
             //加载歌手专辑界面fragment
             @Override
             public void onClick(View v) {
-                FragmentTransaction transaction = ((AppCompatActivity) getContext()).getSupportFragmentManager().beginTransaction();
-                ArtistDetailFragment fragment = ArtistDetailFragment.newInstance(mList.get(getAdapterPosition()).artist_id);
-                transaction.hide(((AppCompatActivity) getContext()).getSupportFragmentManager().findFragmentById(R.id.tab_container));
-                transaction.add(R.id.tab_container, fragment);
-                transaction.addToBackStack(null).commit();
+                if (getAdapterPosition() != -1) {
+                    FragmentTransaction transaction = ((AppCompatActivity) getContext()).getSupportFragmentManager().beginTransaction();
+                    ArtistDetailFragment fragment = ArtistDetailFragment.newInstance(mList.get(getAdapterPosition()).artist_id);
+                    transaction.hide(((AppCompatActivity) getContext()).getSupportFragmentManager().findFragmentById(R.id.tab_container));
+                    transaction.add(R.id.tab_container, fragment);
+                    transaction.addToBackStack(null).commit();
+                }
+
             }
 
         }

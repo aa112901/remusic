@@ -75,6 +75,7 @@
             android:noHistory="true"
             android:taskAffinity="com.package.name.lockscreen"
             android:theme="@style/LockScreenTheme"/>
+        <activity android:name=".request.UiMonitorActivity"/>
 
         <service android:name=".downmusic.DownService">
             <intent-filter>

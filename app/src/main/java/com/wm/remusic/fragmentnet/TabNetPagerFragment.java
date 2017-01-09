@@ -26,6 +26,7 @@ public class TabNetPagerFragment extends Fragment implements ChangeView {
     private int page = 0;
     private ActionBar ab;
     private String[] title;
+    private boolean isFirstLoad = true;
 
     public static final TabNetPagerFragment newInstance(int page, String[] title) {
         TabNetPagerFragment f = new TabNetPagerFragment();
@@ -75,12 +76,22 @@ public class TabNetPagerFragment extends Fragment implements ChangeView {
 
     }
 
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+        if (isVisibleToUser && isFirstLoad) {
+            recommendFragment.requestData();
+            isFirstLoad = false;
+        }
+    }
+
+    RecommendFragment recommendFragment;
 
     private void setupViewPager(ViewPager viewPager) {
         Adapter adapter = new Adapter(getChildFragmentManager());
-        RecommendFragment fragment = new RecommendFragment();
-        fragment.setChanger(this);
-        adapter.addFragment(fragment, "新曲");
+        recommendFragment = new RecommendFragment();
+        recommendFragment.setChanger(this);
+        adapter.addFragment(recommendFragment, "新曲");
         adapter.addFragment(new AllPlaylistFragment(), "歌单");
         //  adapter.addFragment(new NetFragment(), "主播电台");
         adapter.addFragment(new RankingFragment(), "排行榜");

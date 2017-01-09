@@ -6,7 +6,6 @@ import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.provider.ContactsContract;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -16,10 +15,6 @@ import android.text.style.ImageSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.Animation;
-import android.view.animation.LinearInterpolator;
-import android.view.animation.RotateAnimation;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -65,7 +60,7 @@ public class RecommendFragment extends Fragment {
     private ArrayList<RecommendListNewAlbumInfo> mNewAlbumsList = new ArrayList<>();
     private ArrayList<RecommendListRadioInfo> mRadioList = new ArrayList<>();
     private int width = 160, height = 160;
-    private LinearLayout viewContent,itemChanged;
+    private LinearLayout viewContent, itemChanged;
     private LayoutInflater layoutInflater;
     private View loadView, v1, v2, v3;
     private HashMap<String, View> hashMap;
@@ -76,6 +71,7 @@ public class RecommendFragment extends Fragment {
     public void setChanger(ChangeView changer) {
         changeView = changer;
     }
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -88,7 +84,7 @@ public class RecommendFragment extends Fragment {
 
         itemChanged = (LinearLayout) view.findViewById(R.id.item_change);
         viewContent = (LinearLayout) view.findViewById(R.id.recommend_layout);
-        if(!PreferencesUtility.getInstance(getActivity()).isCurrentDayFirst(date)){
+        if (!PreferencesUtility.getInstance(getActivity()).isCurrentDayFirst(date)) {
             PreferencesUtility.getInstance(getContext()).setCurrentDate(date);
 //            loadView = layoutInflater.inflate(R.layout.loading_daymusic,null,false);
 //            RotateAnimation rotateAnimation = new RotateAnimation(0,360, 1, 0.5F, 1, 0.5F );
@@ -98,7 +94,7 @@ public class RecommendFragment extends Fragment {
 //            rotateAnimation.setRepeatMode(Animation.INFINITE);
 //            loadView.startAnimation(rotateAnimation);
             loadView = layoutInflater.inflate(R.layout.loading, null, false);
-        }else {
+        } else {
             loadView = layoutInflater.inflate(R.layout.loading, null, false);
 
         }
@@ -109,7 +105,7 @@ public class RecommendFragment extends Fragment {
         newAlbumsAdapter = new NewAlbumsAdapter(null);
         radioAdapter = new RadioAdapter(null);
 
-        reloadAdapter();
+        //   reloadAdapter();
 
         TextView change = (TextView) view.findViewById(R.id.change_item_position);
         change.setOnClickListener(new View.OnClickListener() {
@@ -124,6 +120,9 @@ public class RecommendFragment extends Fragment {
     }
 
 
+    public void requestData() {
+        reloadAdapter();
+    }
 
     private void reloadAdapter() {
         new AsyncTask<Void, Void, Void>() {

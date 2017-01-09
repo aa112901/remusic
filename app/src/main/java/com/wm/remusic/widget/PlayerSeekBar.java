@@ -37,7 +37,7 @@ public class PlayerSeekBar extends SeekBar {
         if (loading) {
             drawLoading = true;
             invalidate();
-        }else {
+        } else {
             drawLoading = false;
         }
     }

@@ -32,7 +32,6 @@ import com.wm.remusic.fragment.TimingFragment;
 import com.wm.remusic.fragmentnet.TabNetPagerFragment;
 import com.wm.remusic.handler.HandlerUtil;
 import com.wm.remusic.service.MusicPlayer;
-import com.wm.remusic.uitl.IConstants;
 import com.wm.remusic.uitl.ThemeHelper;
 import com.wm.remusic.widget.CustomViewPager;
 import com.wm.remusic.widget.SplashScreen;
@@ -47,9 +46,10 @@ public class MainActivity extends BaseActivity implements CardPickerDialog.Click
     private DrawerLayout drawerLayout;
     private ListView mLvLeftMenu;
     private long time = 0;
+    private SplashScreen splashScreen;
 
     public void onCreate(Bundle savedInstanceState) {
-        final SplashScreen splashScreen = new SplashScreen(this);
+        splashScreen = new SplashScreen(this);
         splashScreen.show(R.drawable.art_login_bg,
                 SplashScreen.SLIDE_LEFT);
         super.onCreate(savedInstanceState);
@@ -59,7 +59,7 @@ public class MainActivity extends BaseActivity implements CardPickerDialog.Click
             public void run() {
                 splashScreen.removeSplashScreen();
             }
-        }, 2000);
+        }, 3000);
 
         getWindow().setBackgroundDrawableResource(R.color.background_material_light_1);
 
@@ -213,12 +213,10 @@ public class MainActivity extends BaseActivity implements CardPickerDialog.Click
 
                         @Override
                         public void refreshSpecificView(View view) {
-                            //TODO: will do this for each traversal
                         }
                     }
             );
         }
-       // sendBroadcast(new Intent(IConstants.CHANGE_THEME));
         changeTheme();
     }
 
@@ -259,31 +257,11 @@ public class MainActivity extends BaseActivity implements CardPickerDialog.Click
         }
     }
 
-
-//    @Override
-//    public void down(String key) {
-//        // 字母索引被按下时回调
-//        if (map.get(key) != null) {
-//            lv.setSelectionFromTop(map.get(key), 0);
-//
-//            text_select.setText(key);
-//        }
-//        Iv_select_bg.setVisibility(View.VISIBLE);
-//    }
-//
-//    @Override
-//    public void up() {
-//        // 字母索引被松开时回调
-//        Iv_select_bg.setVisibility(View.GONE);
-//        text_select.setText(null);
-//    }
-//
-//    @Override
-//    public void move(String key) {
-//        // 字母索引被按下并移动时回调
-//        down(key);
-//    }
-
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        splashScreen.removeSplashScreen();
+    }
 
     /**
      * 双击返回桌面
@@ -313,7 +291,7 @@ public class MainActivity extends BaseActivity implements CardPickerDialog.Click
         if (fragments != null) {
             for (Fragment fragment : fragments) {
                 if (fragment != null) {
-                    fragment.onRequestPermissionsResult(requestCode,permissions,grantResults);
+                    fragment.onRequestPermissionsResult(requestCode, permissions, grantResults);
                 }
             }
         }
@@ -322,10 +300,6 @@ public class MainActivity extends BaseActivity implements CardPickerDialog.Click
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-//        Intent startMain = new Intent(Intent.ACTION_MAIN);
-//        startMain.addCategory(Intent.CATEGORY_HOME);
-//        startMain.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-//        startActivity(startMain);
 //        moveTaskToBack(true);
         // System.exit(0);
         // finish();

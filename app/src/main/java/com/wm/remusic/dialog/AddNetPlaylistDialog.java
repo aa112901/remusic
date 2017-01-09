@@ -8,6 +8,7 @@ import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -104,17 +105,17 @@ public class AddNetPlaylistDialog extends DialogFragment {
                         new Thread(new Runnable() {
                             @Override
                             public void run() {
+                                Log.e("addplay", "here");
                                 String albumart = null;
                                 for (MusicInfo info : musics) {
                                     albumart = info.albumData;
                                     if (info.islocal) {
-                                        if (albumart == MusicUtils.getAlbumdata(MainApplication.context, info.songId))
+                                        if (albumart.equals(MusicUtils.getAlbumdata(MainApplication.context, info.songId)))
                                             break;
                                     } else if (!albumart.isEmpty()) {
                                         break;
                                     }
                                 }
-                                //String albumart = MusicUtils.getMusicInfo(getContext(), musicId[0]).albumData;
                                 long playlistid = editText.getText().hashCode();
                                 playlistInfo.addPlaylist(playlistid, editText.getText().toString(),
                                         musics.size(), albumart, author);

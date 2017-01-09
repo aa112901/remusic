@@ -15,7 +15,7 @@
         android:layout_height="match_parent"
         android:background="#70000000" />
 
-    <android.support.percent.PercentRelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -34,122 +34,125 @@
 
         <FrameLayout
             android:id="@+id/headerView"
-            android:layout_marginTop="-6dp"
-            android:layout_below="@+id/toolbar"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:layout_heightPercent="60%">
+            android:layout_height="390dp"
+            android:layout_below="@+id/toolbar"
+            android:layout_marginTop="-6dp">
 
-            <android.support.percent.PercentRelativeLayout
+            <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:orientation="horizontal"
-                android:layout_marginTop="10dp">
+                android:layout_marginTop="10dp"
+                android:orientation="horizontal">
 
                 <ImageView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_centerInParent="true"
-                    android:layout_margin="3dp"
+                    android:layout_width="263dp"
+                    android:layout_height="263dp"
+                    android:layout_marginTop="60dp"
+                    android:layout_centerHorizontal="true"
                     android:scaleType="fitCenter"
-                    android:src="@drawable/play_disc_halo"
-                    app:layout_heightPercent="77%"
-                    app:layout_widthPercent="76%" />
+                    android:src="@drawable/play_disc_halo" />
+
                 <com.wm.remusic.widget.AlbumViewPager
                     android:id="@+id/view_pager"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_centerInParent="true"
+                    android:layout_height="263dp"
+                    android:layout_marginTop="60dp"
+                    android:layout_centerHorizontal="true"
                     android:layout_gravity="center_horizontal" />
+
                 <View
                     android:id="@+id/view_line"
-                    android:layout_alignParentTop="true"
                     android:layout_width="match_parent"
                     android:layout_height="1.0dip"
+                    android:layout_alignParentTop="true"
                     android:background="@drawable/play_topbar_line" />
+
                 <ImageView
-                    android:layout_below="@+id/view_line"
                     android:id="@+id/needle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentRight="true"
+                    android:layout_below="@+id/view_line"
+                    android:layout_marginRight="100dp"
                     android:layout_marginTop="-16dp"
                     android:rotation="-30"
                     android:src="@drawable/play_needle"
                     android:transformPivotX="15.1dp"
-                    android:transformPivotY="15.1dp"
-                    app:layout_marginRightPercent="23%"
-
-                    />
-            </android.support.percent.PercentRelativeLayout>
+                    android:transformPivotY="15.1dp" />
+            </RelativeLayout>
 
         </FrameLayout>
 
         <RelativeLayout
             android:id="@+id/lrcviewContainer"
-            android:layout_marginTop="?attr/actionBarSize"
-            android:visibility="invisible"
-            app:layout_heightPercent="70%"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/bottom_control"
+            android:layout_marginTop="?attr/actionBarSize"
+            android:visibility="invisible">
+
             <LinearLayout
                 android:id="@+id/volume_layout"
-                android:layout_marginTop="22dp"
-                android:orientation="horizontal"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:layout_marginTop="22dp"
+                android:orientation="horizontal">
+
                 <ImageView
-                    android:layout_gravity="center_vertical"
-                    android:layout_marginLeft="20dp"
-                    android:src="@drawable/play_icn_speaker"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
-                <SeekBar
+                    android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
-                    style="@style/Widget.AppCompat.ProgressBar.Horizontal"
-                    android:id="@+id/volume_seek"
-                    android:progress="30"
-                    android:layout_marginRight="40dp"
                     android:layout_marginLeft="20dp"
-                    android:progressDrawable="@drawable/volume_seekbar"
+                    android:src="@drawable/play_icn_speaker" />
+
+                <SeekBar
+                    android:id="@+id/volume_seek"
+                    style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginLeft="20dp"
+                    android:layout_marginRight="40dp"
                     android:focusable="true"
                     android:maxHeight="2dp"
                     android:minHeight="2dp"
+                    android:progress="30"
+                    android:progressDrawable="@drawable/volume_seekbar"
                     android:thumb="@drawable/play_volumebar_btn"
-                    android:thumbOffset="3.0dip"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
+                    android:thumbOffset="3.0dip" />
             </LinearLayout>
 
             <TextView
-                android:focusable="false"
+                android:id="@+id/tragetlrc"
+                android:layout_width="100dp"
+                android:layout_height="30dp"
                 android:layout_alignParentBottom="true"
                 android:layout_centerHorizontal="true"
-                android:id="@+id/tragetlrc"
-                android:textAlignment="center"
-                android:padding="5dp"
-                android:gravity="center"
-                android:text="获取封面和歌词"
                 android:layout_gravity="bottom|center_horizontal"
-                android:background="#70d7d7d7"
                 android:layout_marginBottom="10dp"
-                android:layout_width="100dp"
-                android:layout_height="30dp" />
+                android:background="#70d7d7d7"
+                android:focusable="false"
+                android:gravity="center"
+                android:padding="5dp"
+                android:text="获取封面和歌词"
+                android:textAlignment="center" />
 
             <com.wm.remusic.lrc.LrcView
-                android:layout_marginTop="10dp"
-                android:layout_below="@+id/volume_layout"
                 android:id="@+id/lrcview"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent" />
+                android:layout_height="match_parent"
+                android:layout_below="@+id/volume_layout"
+                android:layout_marginTop="10dp" />
         </RelativeLayout>
 
         <LinearLayout
+            android:id="@+id/bottom_control"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_below="@+id/headerView"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
             android:layout_gravity="center_horizontal|center_vertical"
-            android:layout_marginTop="-20dp"
+            android:layout_marginBottom="15dp"
             android:gravity="center_horizontal|center_vertical"
             android:orientation="vertical">
 
@@ -215,17 +218,17 @@
                     android:textSize="10sp" />
 
                 <com.wm.remusic.widget.PlayerSeekBar
-                    style="@style/Widget.AppCompat.ProgressBar.Horizontal"
                     android:id="@+id/play_seek"
-                    android:progressDrawable="@drawable/play_seekbar"
+                    style="@style/Widget.AppCompat.ProgressBar.Horizontal"
                     android:layout_width="0dp"
-                    android:secondaryProgress="0"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_weight="22"
                     android:maxHeight="8dp"
                     android:minHeight="8dp"
-                    android:layout_gravity="center_vertical"
-                    android:thumb="@drawable/play_plybar_btn"
-                    android:layout_weight="22" />
+                    android:progressDrawable="@drawable/play_seekbar"
+                    android:secondaryProgress="0"
+                    android:thumb="@drawable/play_plybar_btn" />
 
                 <TextView
                     android:id="@+id/music_duration"
@@ -286,5 +289,5 @@
 
             </LinearLayout>
         </LinearLayout>
-    </android.support.percent.PercentRelativeLayout>
+    </RelativeLayout>
 </FrameLayout>

@@ -320,8 +320,8 @@ public class RecentFragment extends Fragment {
                         for (int i = 0; i < mList.size(); i++) {
                             list[i] = mList.get(i).id;
                         }
-                        if(getAdapterPosition() > 0)
-                        MusicPlayer.playAll(null, list, getAdapterPosition() - 1, false);
+                        if (getAdapterPosition() > 0)
+                            MusicPlayer.playAll(null, list, getAdapterPosition() - 1, false);
                         Handler handler1 = new Handler();
                         handler1.postDelayed(new Runnable() {
                             @Override

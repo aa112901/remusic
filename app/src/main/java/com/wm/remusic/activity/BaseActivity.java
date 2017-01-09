@@ -57,9 +57,9 @@ public class BaseActivity extends AppCompatActivity implements ServiceConnection
     }
 
     /**
-     *  fragment界面刷新
+     * fragment界面刷新
      */
-    private void refreshUI() {
+    public void refreshUI() {
         for (final MusicStateListener listener : mMusicListener) {
             if (listener != null) {
                 listener.reloadAdapter();
@@ -77,12 +77,11 @@ public class BaseActivity extends AppCompatActivity implements ServiceConnection
     }
 
     /**
-     *  歌曲切换
+     * 歌曲切换
      */
     public void updateTrack() {
 
     }
-
 
 
     public void updateLrc() {
@@ -107,7 +106,7 @@ public class BaseActivity extends AppCompatActivity implements ServiceConnection
     /**
      * @param l 歌曲是否加载中
      */
-    public void loading(boolean l){
+    public void loading(boolean l) {
 
     }
 
@@ -243,7 +242,7 @@ public class BaseActivity extends AppCompatActivity implements ServiceConnection
                 } else if (action.equals(MediaService.BUFFER_UP)) {
                     baseActivity.updateBuffer(intent.getIntExtra("progress", 0));
                 } else if (action.equals(MediaService.MUSIC_LODING)) {
-                    baseActivity.loading(intent.getBooleanExtra("isloading",false));
+                    baseActivity.loading(intent.getBooleanExtra("isloading", false));
                 } else if (action.equals(MediaService.REFRESH)) {
 
                 } else if (action.equals(IConstants.MUSIC_COUNT_CHANGED)) {

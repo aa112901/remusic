@@ -8,18 +8,12 @@ import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.view.WindowManager;
-import android.widget.Toast;
 
 import com.wm.remusic.MediaAidlInterface;
-import com.wm.remusic.R;
-import com.wm.remusic.fragment.QuickControlsFragment;
 import com.wm.remusic.service.MediaService;
 import com.wm.remusic.service.MusicPlayer;
-import com.wm.remusic.uitl.IConstants;
 
 import java.lang.ref.WeakReference;
 
@@ -97,7 +91,7 @@ public class LockBaseActivity extends AppCompatActivity implements ServiceConnec
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        Log.e("lock"," on destroy");
+        Log.e("lock", " on destroy");
         unbindService();
         // Unbind from the service
     }
@@ -127,7 +121,7 @@ public class LockBaseActivity extends AppCompatActivity implements ServiceConnec
             if (baseActivity != null) {
                 if (action.equals(MediaService.META_CHANGED)) {
                     baseActivity.updateTrackInfo();
-                }   else if (action.equals(MediaService.MUSIC_CHANGED)) {
+                } else if (action.equals(MediaService.MUSIC_CHANGED)) {
                     baseActivity.updateTrack();
                 } else if (action.equals(MediaService.LRC_UPDATED)) {
                     baseActivity.updateLrc();

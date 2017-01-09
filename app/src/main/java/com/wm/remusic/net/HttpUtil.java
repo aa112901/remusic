@@ -37,7 +37,7 @@ import okio.Okio;
  * Created by wm on 2016/4/10.
  */
 public class HttpUtil {
-    public  static final OkHttpClient mOkHttpClient = new OkHttpClient();
+    public static final OkHttpClient mOkHttpClient = new OkHttpClient();
 
 
     public static void getOut(final String url) {

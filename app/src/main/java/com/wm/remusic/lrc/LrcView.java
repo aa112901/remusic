@@ -14,7 +14,9 @@ import android.view.View;
 import android.view.ViewConfiguration;
 import android.widget.Scroller;
 
+import com.wm.remusic.MainApplication;
 import com.wm.remusic.R;
+import com.wm.remusic.uitl.CommonUtils;
 
 import java.util.List;
 
@@ -43,7 +45,7 @@ public class LrcView extends View implements ILrcView {
     /**
      * 默认文字的字体大小
      **/
-    private static final float SIZE_FOR_DEFAULT_TEXT = 50;
+    private static final float SIZE_FOR_DEFAULT_TEXT = CommonUtils.dip2px(MainApplication.context, 17);
 
     /**
      * 画高亮歌词的画笔
@@ -52,7 +54,7 @@ public class LrcView extends View implements ILrcView {
     /**
      * 高亮歌词的默认字体大小
      ***/
-    private static final float DEFAULT_SIZE_FOR_HIGHT_LIGHT_LRC = 43;
+    private static final float DEFAULT_SIZE_FOR_HIGHT_LIGHT_LRC = CommonUtils.dip2px(MainApplication.context, 15);
     /**
      * 高亮歌词当前的字体大小
      ***/
@@ -74,7 +76,7 @@ public class LrcView extends View implements ILrcView {
     /**
      * 其他歌词的默认字体大小
      ***/
-    private static final float DEFAULT_SIZE_FOR_OTHER_LRC = 43;
+    private static final float DEFAULT_SIZE_FOR_OTHER_LRC = CommonUtils.dip2px(MainApplication.context, 15);
     /**
      * 其他歌词当前的字体大小
      ***/
@@ -100,7 +102,7 @@ public class LrcView extends View implements ILrcView {
     /**
      * 时间文字大小
      **/
-    private static final int SIZE_FOR_TIME = 35;
+    private static final int SIZE_FOR_TIME = CommonUtils.dip2px(MainApplication.context, 12);
     /**
      * 是否画时间线
      **/
@@ -109,7 +111,7 @@ public class LrcView extends View implements ILrcView {
     /**
      * 歌词间默认的行距
      **/
-    private static final float DEFAULT_PADDING = 50;
+    private static final float DEFAULT_PADDING = CommonUtils.dip2px(MainApplication.context, 17);
     /**
      * 歌词当前的行距
      **/

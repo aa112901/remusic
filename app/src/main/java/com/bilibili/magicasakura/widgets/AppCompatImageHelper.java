@@ -108,12 +108,12 @@ public class AppCompatImageHelper extends AppCompatBaseHelper {
      */
     private void setImageDrawable(Drawable drawable) {
         if (skipNextApply()) return;
-        if(drawable instanceof AnimationDrawable){
-            Log.e("drawable","instanceof true");
+        if (drawable instanceof AnimationDrawable) {
+            Log.e("drawable", "instanceof true");
             AnimationDrawable drawable1 = ((AnimationDrawable) drawable);
             ((ImageView) mView).setImageDrawable(drawable1);
             drawable1.start();
-        }else {
+        } else {
             ((ImageView) mView).setImageDrawable(drawable);
         }
 
@@ -143,20 +143,20 @@ public class AppCompatImageHelper extends AppCompatBaseHelper {
     private boolean applySupportImageTint() {
         Drawable image = ((ImageView) mView).getDrawable();
         AnimationDrawable animationDrawable = null;
-        if(image instanceof AnimationDrawable){
-            Log.e("drawable","is animationdrawable");
+        if (image instanceof AnimationDrawable) {
+            Log.e("drawable", "is animationdrawable");
             animationDrawable = ((AnimationDrawable) image);
             //image = animationDrawable;
         }
 
         if (image != null && mImageTintInfo != null && mImageTintInfo.mHasTintList) {
 
-            if(animationDrawable != null){
-                Log.e("drawable","is animationdrawable not null");
+            if (animationDrawable != null) {
+                Log.e("drawable", "is animationdrawable not null");
                 Drawable tintDrawable = animationDrawable;
-                Log.e("drawable","start0");
-                tintDrawable =  DrawableCompat.wrap(tintDrawable);
-                Log.e("drawable","start1");
+                Log.e("drawable", "start0");
+                tintDrawable = DrawableCompat.wrap(tintDrawable);
+                Log.e("drawable", "start1");
                 if (mImageTintInfo.mHasTintList) {
                     DrawableCompat.setTintList(tintDrawable, mImageTintInfo.mTintList);
                 }
@@ -169,11 +169,11 @@ public class AppCompatImageHelper extends AppCompatBaseHelper {
                 tintDrawable = DrawableCompat.unwrap(tintDrawable);
                 setImageDrawable(tintDrawable);
                 if (image == tintDrawable) {
-                    Log.e("drawable","invalidateself");
-                   // tintDrawable.invalidateSelf();
+                    Log.e("drawable", "invalidateself");
+                    // tintDrawable.invalidateSelf();
                 }
                 return true;
-            }else {
+            } else {
                 Drawable tintDrawable = image.mutate();
                 tintDrawable = DrawableCompat.wrap(tintDrawable);
                 if (mImageTintInfo.mHasTintList) {

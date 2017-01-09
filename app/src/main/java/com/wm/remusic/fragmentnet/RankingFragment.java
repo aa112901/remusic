@@ -22,8 +22,6 @@ import com.wm.remusic.net.BMA;
 import com.wm.remusic.net.HttpUtil;
 
 import java.util.ArrayList;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 /**
  * Created by wm on 2016/5/14.

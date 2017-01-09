@@ -52,7 +52,7 @@
             android:background="@drawable/ic_card_bigdp"
             android:scaleType="centerInside"
             android:src="@drawable/selector_pick_item"
-            app:backgroundTint="@color/pink" />
+            app:backgroundTint="@color/red" />
 
         <android.support.v4.widget.Space
             android:layout_width="0dp"
@@ -160,7 +160,7 @@
             android:background="@drawable/ic_card_bigdp"
             android:scaleType="centerInside"
             android:src="@drawable/selector_pick_item"
-            app:backgroundTint="@color/red" />
+            app:backgroundTint="@color/pink" />
     </LinearLayout>
 
     <LinearLayout

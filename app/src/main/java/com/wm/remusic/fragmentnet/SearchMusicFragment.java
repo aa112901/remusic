@@ -174,7 +174,7 @@ public class SearchMusicFragment extends Fragment {
                     @Override
                     public void onClick(View v) {
                         final SearchSongInfo model = mList.get(getAdapterPosition());
-                        new AsyncTask<Void,Void,Void>(){
+                        new AsyncTask<Void, Void, Void>() {
 
                             @Override
                             protected Void doInBackground(Void... params) {

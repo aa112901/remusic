@@ -57,11 +57,11 @@ public final class PreferencesUtility {
         return sInstance;
     }
 
-    public boolean isCurrentDayFirst(String str){
+    public boolean isCurrentDayFirst(String str) {
         return mPreferences.getString(CURRENT_DATE, "").equals(str);
     }
 
-    public void setCurrentDate(String str){
+    public void setCurrentDate(String str) {
         final SharedPreferences.Editor editor = mPreferences.edit();
         editor.putString(CURRENT_DATE, str);
         editor.apply();

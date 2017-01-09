@@ -239,7 +239,7 @@ public class RecentActivity extends BaseActivity {
                         }
                         MusicPlayer.playAll(infos, list, 0, false);
                     }
-                },70);
+                }, 70);
 
             }
 

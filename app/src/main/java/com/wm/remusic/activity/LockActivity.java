@@ -45,10 +45,10 @@ import java.util.Locale;
 /**
  * Created by wm on 2016/12/21.
  */
-public class LockActivity extends LockBaseActivity implements View.OnClickListener{
+public class LockActivity extends LockBaseActivity implements View.OnClickListener {
 
-    private TextView mTime,mDate,mMusicName,mMusicArtsit,mLrc;
-    private ImageView pre,play,next,fav;
+    private TextView mTime, mDate, mMusicName, mMusicArtsit, mLrc;
+    private ImageView pre, play, next, fav;
     private Handler mHandler;
     private SildingFinishLayout mView;
     private SimpleDraweeView mBack;
@@ -93,11 +93,11 @@ public class LockActivity extends LockBaseActivity implements View.OnClickListen
         mBack = (SimpleDraweeView) findViewById(R.id.lock_background);
         mView.setOnSildingFinishListener(new SildingFinishLayout.OnSildingFinishListener() {
 
-                    @Override
-                    public void onSildingFinish() {
-                        finish();
-                    }
-                });
+            @Override
+            public void onSildingFinish() {
+                finish();
+            }
+        });
         mView.setTouchView(getWindow().getDecorView());
         mHandler = HandlerUtil.getInstance(this);
         mHandler.post(updateRunnable);
@@ -111,12 +111,12 @@ public class LockActivity extends LockBaseActivity implements View.OnClickListen
 
     @Override
     protected void onUserLeaveHint() {
-        Log.d("lock","onUserLeaveHint");
+        Log.d("lock", "onUserLeaveHint");
         super.onUserLeaveHint();
 
         Intent intent = new Intent();
         intent.setAction(MediaService.LOCK_SCREEN);
-        intent.putExtra("islock",false);
+        intent.putExtra("islock", false);
         sendBroadcast(intent);
         finish();
     }
@@ -128,18 +128,18 @@ public class LockActivity extends LockBaseActivity implements View.OnClickListen
             String date[] = simpleDateFormat.format(new Date()).split("-");
             mTime.setText(date[0]);
             mDate.setText(date[1]);
-            if(lrcRows != null){
+            if (lrcRows != null) {
                 int len = lrcRows.size() - 1;
-                for(int i = 0 ; i < len; i++){
-                   // Log.e("lock",lrcRows.get(i).getTime() + "   " + lrcRows.get(i).getContent());
-                    if(MusicPlayer.position() >= lrcRows.get(i).getTime()){
+                for (int i = 0; i < len; i++) {
+                    // Log.e("lock",lrcRows.get(i).getTime() + "   " + lrcRows.get(i).getContent());
+                    if (MusicPlayer.position() >= lrcRows.get(i).getTime()) {
                         mLrc.setText(lrcRows.get(i).getContent());
                     }
                 }
-            }else {
+            } else {
                 mLrc.setText(null);
             }
-            mHandler.postDelayed(updateRunnable,300);
+            mHandler.postDelayed(updateRunnable, 300);
         }
     };
 
@@ -147,7 +147,7 @@ public class LockActivity extends LockBaseActivity implements View.OnClickListen
     @Override
     protected void onResume() {
         super.onResume();
-        Log.e("lock"," on resume");
+        Log.e("lock", " on resume");
         updateTrackInfo();
         updateTrack();
     }
@@ -155,24 +155,24 @@ public class LockActivity extends LockBaseActivity implements View.OnClickListen
     @Override
     protected void onPause() {
         super.onPause();
-        Log.e("lock"," on pause");
+        Log.e("lock", " on pause");
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        Log.e("lock"," on stop");
+        Log.e("lock", " on stop");
     }
 
     @Override
     protected void onDestroy() {
         Intent intent = new Intent();
         intent.setAction(MediaService.LOCK_SCREEN);
-        intent.putExtra("islock",false);
+        intent.putExtra("islock", false);
         sendBroadcast(intent);
         mHandler.removeCallbacks(updateRunnable);
         super.onDestroy();
-        Log.e("lock"," on destroy");
+        Log.e("lock", " on destroy");
 
     }
 
@@ -181,27 +181,27 @@ public class LockActivity extends LockBaseActivity implements View.OnClickListen
         // do nothing
     }
 
-    public void updateTrackInfo(){
-            mMusicName.setText(MusicPlayer.getTrackName());
-                mMusicArtsit.setText(MusicPlayer.getArtistName());
-            isFav = false;
-            long[] favlists = playlistsManager.getPlaylistIds(IConstants.FAV_PLAYLIST);
-            long currentid = MusicPlayer.getCurrentAudioId();
-            for(long i : favlists){
-                if(currentid == i){
-                    isFav = true;
-                    break;
-                }
+    public void updateTrackInfo() {
+        mMusicName.setText(MusicPlayer.getTrackName());
+        mMusicArtsit.setText(MusicPlayer.getArtistName());
+        isFav = false;
+        long[] favlists = playlistsManager.getPlaylistIds(IConstants.FAV_PLAYLIST);
+        long currentid = MusicPlayer.getCurrentAudioId();
+        for (long i : favlists) {
+            if (currentid == i) {
+                isFav = true;
+                break;
             }
+        }
 
-            updateFav(isFav);
+        updateFav(isFav);
 
-            if (MusicPlayer.isPlaying()) {
-                play.setImageResource(R.drawable.lock_btn_pause);
+        if (MusicPlayer.isPlaying()) {
+            play.setImageResource(R.drawable.lock_btn_pause);
 
-            } else {
-                play.setImageResource(R.drawable.lock_btn_play);
-            }
+        } else {
+            play.setImageResource(R.drawable.lock_btn_play);
+        }
     }
 
     private void updateFav(boolean b) {
@@ -212,7 +212,7 @@ public class LockActivity extends LockBaseActivity implements View.OnClickListen
         }
     }
 
-    public void updateTrack(){
+    public void updateTrack() {
         lrcRows = getLrcRows();
         String url = MusicPlayer.getAlbumPath();
         if (url == null) {
@@ -242,9 +242,9 @@ public class LockActivity extends LockBaseActivity implements View.OnClickListen
 
     @Override
     public void onClick(View v) {
-        switch (v.getId()){
+        switch (v.getId()) {
             case R.id.lock_music_pre:
-                MusicPlayer.previous(this,true);
+                MusicPlayer.previous(this, true);
                 break;
             case R.id.lock_music_play:
                 MusicPlayer.playOrPause();
@@ -253,21 +253,21 @@ public class LockActivity extends LockBaseActivity implements View.OnClickListen
                 MusicPlayer.next();
                 break;
             case R.id.lock_music_fav:
-                    if (isFav) {
-                        playlistsManager.removeItem(this, IConstants.FAV_PLAYLIST,
-                                MusicPlayer.getCurrentAudioId());
-                        fav.setImageResource(R.drawable.lock_btn_love);
-                        isFav = false;
-                    } else {
-                        try {
-                            MusicInfo info = MusicPlayer.getPlayinfos().get(MusicPlayer.getCurrentAudioId());
-                            playlistsManager.insertMusic(this,IConstants.FAV_PLAYLIST,info);
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                        fav.setImageResource(R.drawable.lock_btn_loved);
-                        isFav = true;
+                if (isFav) {
+                    playlistsManager.removeItem(this, IConstants.FAV_PLAYLIST,
+                            MusicPlayer.getCurrentAudioId());
+                    fav.setImageResource(R.drawable.lock_btn_love);
+                    isFav = false;
+                } else {
+                    try {
+                        MusicInfo info = MusicPlayer.getPlayinfos().get(MusicPlayer.getCurrentAudioId());
+                        playlistsManager.insertMusic(this, IConstants.FAV_PLAYLIST, info);
+                    } catch (Exception e) {
+                        e.printStackTrace();
                     }
+                    fav.setImageResource(R.drawable.lock_btn_loved);
+                    isFav = true;
+                }
 
                 break;
         }

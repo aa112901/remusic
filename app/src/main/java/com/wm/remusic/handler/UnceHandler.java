@@ -12,6 +12,7 @@ import com.wm.remusic.MainApplication;
 import com.wm.remusic.activity.MainActivity;
 import com.wm.remusic.provider.MusicPlaybackState;
 import com.wm.remusic.uitl.CommonUtils;
+import com.wm.remusic.uitl.PreferencesUtility;
 
 import java.io.File;
 import java.io.PrintWriter;
@@ -48,13 +49,17 @@ public class UnceHandler implements Thread.UncaughtExceptionHandler {
             }
             MusicPlaybackState.getInstance(application).clearQueue();
             Intent intent = new Intent(application.getApplicationContext(), MainActivity.class);
+            if (System.currentTimeMillis() - PreferencesUtility.getInstance(application.getApplicationContext()).lastExit() < 10000) {
+                android.os.Process.killProcess(android.os.Process.myPid());
+                return;
+            }
             PendingIntent restartIntent = PendingIntent.getActivity(
                     application.getApplicationContext(), 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
             //退出程序
             AlarmManager mgr = (AlarmManager) application.getSystemService(Context.ALARM_SERVICE);
             mgr.set(AlarmManager.RTC, System.currentTimeMillis() + 300,
                     restartIntent); // 1秒钟后重启应用
-
+            PreferencesUtility.getInstance(MainApplication.context).setExitTime();
             android.os.Process.killProcess(android.os.Process.myPid());
         }
     }

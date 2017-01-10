@@ -69,27 +69,28 @@ public class AlbumDetailFragment extends BaseFragment {
 
 
         recyclerView = (RecyclerView) view.findViewById(R.id.recyclerview);
-        layoutManager = new LinearLayoutManager(getActivity());
+        layoutManager = new LinearLayoutManager(mContext);
         recyclerView.setLayoutManager(layoutManager);
         mAdapter = new AlbumDetailAdapter(null);
         recyclerView.setAdapter(mAdapter);
-        itemDecoration = new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL_LIST);
+        itemDecoration = new DividerItemDecoration(mContext, DividerItemDecoration.VERTICAL_LIST);
         recyclerView.addItemDecoration(itemDecoration);
         recyclerView.setHasFixedSize(true);
         reloadAdapter();
 
-        AlbumInfo albumInfo = MusicUtils.getAlbumInfo(getContext(), albumID);
+        AlbumInfo albumInfo = MusicUtils.getAlbumInfo(mContext, albumID);
         Toolbar toolbar = (Toolbar) view.findViewById(R.id.toolbar);
-        toolbar.setPadding(0, CommonUtils.getStatusHeight(getActivity()), 0, 0);
-        ((AppCompatActivity) getActivity()).setSupportActionBar(toolbar);
-        ab = ((AppCompatActivity) getActivity()).getSupportActionBar();
+        toolbar.setPadding(0, CommonUtils.getStatusHeight(mContext), 0, 0);
+        ((AppCompatActivity) mContext).setSupportActionBar(toolbar);
+        ab = ((AppCompatActivity) mContext).getSupportActionBar();
         ab.setHomeAsUpIndicator(R.drawable.actionbar_back);
         ab.setDisplayHomeAsUpEnabled(true);
         ab.setTitle(albumInfo.album_name);
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                getActivity().onBackPressed();
+                if (getActivity() != null)
+                    getActivity().onBackPressed();
             }
         });
 
@@ -108,7 +109,7 @@ public class AlbumDetailFragment extends BaseFragment {
         new AsyncTask<Void, Void, Void>() {
             @Override
             protected Void doInBackground(final Void... unused) {
-                List<MusicInfo> albumList = MusicUtils.queryMusic(getActivity(), albumID + "", IConstants.START_FROM_ALBUM);
+                List<MusicInfo> albumList = MusicUtils.queryMusic(mContext, albumID + "", IConstants.START_FROM_ALBUM);
                 mAdapter.updateDataSet((ArrayList) albumList);
                 return null;
             }
@@ -157,9 +158,9 @@ public class AlbumDetailFragment extends BaseFragment {
                 ((CommonItemViewHolder) holder).select.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Intent intent = new Intent(getActivity(), SelectActivity.class);
+                        Intent intent = new Intent(mContext, SelectActivity.class);
                         intent.putParcelableArrayListExtra("ids", mList);
-                        getActivity().startActivity(intent);
+                        mContext.startActivity(intent);
                     }
                 });
             }
@@ -198,7 +199,7 @@ public class AlbumDetailFragment extends BaseFragment {
             //播放专辑
             @Override
             public void onClick(View v) {
-                HandlerUtil.getInstance(getContext()).postDelayed(new Runnable() {
+                HandlerUtil.getInstance(mContext).postDelayed(new Runnable() {
                     @Override
                     public void run() {
                         long[] list = new long[mList.size()];
@@ -245,7 +246,7 @@ public class AlbumDetailFragment extends BaseFragment {
             //播放歌曲
             @Override
             public void onClick(View v) {
-                HandlerUtil.getInstance(getContext()).postDelayed(new Runnable() {
+                HandlerUtil.getInstance(mContext).postDelayed(new Runnable() {
                     @Override
                     public void run() {
                         long[] list = new long[mList.size()];

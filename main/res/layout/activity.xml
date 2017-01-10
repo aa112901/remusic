@@ -1,0 +1,80 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/a"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <com.bilibili.magicasakura.widgets.TintToolbar
+        android:id="@+id/toolbar"
+        android:fitsSystemWindows="true"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/theme_color_primary"
+        android:minHeight="?attr/actionBarSize"
+        app:contentInsetStart="0.0dp"
+        app:layout_scrollFlags="enterAlways|scroll"
+        >
+
+        <RelativeLayout
+            android:gravity="center"
+            android:layout_width="match_parent"
+            android:layout_height="?actionBarSize">
+
+            <ImageView
+                android:id="@+id/bar_net"
+                android:layout_width="55dp"
+                android:layout_height="match_parent"
+                android:layout_toLeftOf="@+id/bar_music"
+                android:background="@drawable/actionbar_disco"
+                android:clickable="true" />
+
+            <ImageView
+                android:id="@+id/bar_music"
+                android:layout_width="55dp"
+                android:layout_height="match_parent"
+                android:layout_centerInParent="true"
+                android:background="@drawable/actionbar_music"
+                android:clickable="true" />
+
+            <ImageView
+                android:id="@+id/bar_friends"
+                android:layout_width="55dp"
+                android:layout_height="match_parent"
+                android:layout_toRightOf="@+id/bar_music"
+                android:background="@drawable/actionbar_friends"
+                android:clickable="true" />
+
+            <ImageView
+                android:id="@+id/bar_search"
+                android:layout_width="23dp"
+                android:layout_height="23dp"
+                android:scaleType="center"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:background="@drawable/actionbar_search" />
+        </RelativeLayout>
+    </com.bilibili.magicasakura.widgets.TintToolbar>
+
+    <com.wm.remusic.widget.CustomViewPager
+        android:layout_below="@+id/toolbar"
+        android:layout_above="@+id/nav_play"
+        android:id="@+id/main_viewpager"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+    <!--<FrameLayout-->
+    <!--android:orientation="vertical"-->
+    <!--android:id="@+id/fragment_container"-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="match_parent"-->
+    <!--android:layout_below="@+id/toolbar"-->
+    <!--android:layout_above="@+id/nav_play">-->
+    <!--</FrameLayout>-->
+    <FrameLayout
+        android:layout_alignParentBottom="true"
+        android:id="@+id/bottom_container"
+        android:layout_width="match_parent"
+        android:layout_height="50dp" />
+    <!--<include layout="@layout/bottom_nav"/>-->
+
+
+</RelativeLayout>

@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="20dp"
+        android:layout_marginTop="20dp"
+        android:layout_weight="1"
+        android:text="歌曲下载品质"
+        android:gravity="center_vertical"
+        android:background="?android:attr/selectableItemBackground"
+        android:textColor="@color/text_color"
+        android:textSize="20sp" />
+
+    <TextView
+        android:id="@+id/timing_10min"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="20dp"
+        android:layout_weight="1"
+        android:background="?android:attr/selectableItemBackground"
+        android:text="64kbit/s"
+        android:gravity="center_vertical"
+        android:textColor="@color/text_color"
+        android:textSize="15sp" />
+
+    <TextView
+        android:id="@+id/timing_20min"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="20dp"
+        android:layout_weight="1"
+        android:background="?android:attr/selectableItemBackground"
+        android:text="128kbit/s"
+        android:gravity="center_vertical"
+        android:textColor="@color/text_color"
+        android:textSize="15sp" />
+
+    <TextView
+        android:id="@+id/timing_30min"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="20dp"
+        android:layout_weight="1"
+        android:text="192kbit/s"
+        android:textColor="@color/text_color"
+        android:gravity="center_vertical"
+        android:background="?android:attr/selectableItemBackground"
+        android:textSize="15sp" />
+
+    <TextView
+        android:id="@+id/timing_45min"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="20dp"
+        android:layout_weight="1"
+        android:text="256kbit/s"
+        android:textColor="@color/text_color"
+        android:gravity="center_vertical"
+        android:background="?android:attr/selectableItemBackground"
+        android:textSize="15sp" />
+
+    <TextView
+        android:id="@+id/timing_60min"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="20dp"
+        android:layout_weight="1"
+        android:text="320kbit/s"
+        android:gravity="center_vertical"
+        android:textColor="@color/text_color"
+        android:background="?android:attr/selectableItemBackground"
+        android:textSize="15sp" />
+
+
+</LinearLayout>

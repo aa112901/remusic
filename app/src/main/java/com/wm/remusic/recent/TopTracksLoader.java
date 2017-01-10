@@ -41,6 +41,15 @@ public class TopTracksLoader extends SongLoader {
         return getCursor();
     }
 
+    public static int getCount(Context context, QueryType queryType) {
+        Cursor cursor = getCursor(context, queryType);
+        if (cursor != null) {
+            return cursor.getCount();
+        } else {
+            return 0;
+        }
+    }
+
     public static Cursor getCursor() {
         SortedCursor retCursor = null;
         if (mQueryType == QueryType.TopTracks) {

@@ -4,7 +4,6 @@ package com.wm.remusic.fragmentnet;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -17,6 +16,7 @@ import com.facebook.drawee.view.SimpleDraweeView;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.wm.remusic.R;
+import com.wm.remusic.fragment.AttachFragment;
 import com.wm.remusic.json.BillboardInfo;
 import com.wm.remusic.net.BMA;
 import com.wm.remusic.net.HttpUtil;
@@ -26,7 +26,7 @@ import java.util.ArrayList;
 /**
  * Created by wm on 2016/5/14.
  */
-public class RankingFragment extends Fragment {
+public class RankingFragment extends AttachFragment {
 
     //新歌榜
     public static int BILLBOARD_NEW_MUSIC = 1;
@@ -56,9 +56,9 @@ public class RankingFragment extends Fragment {
         super.setUserVisibleHint(isVisibleToUser);
         if (isVisibleToUser) {
             if (view == null) {
-                view = LayoutInflater.from(getActivity()).inflate(R.layout.ranking, null, false);
+                view = LayoutInflater.from(mContext).inflate(R.layout.ranking, null, false);
                 recyclerView = (RecyclerView) view.findViewById(R.id.recyclerview);
-                linearLayoutManager = new LinearLayoutManager(getActivity());
+                linearLayoutManager = new LinearLayoutManager(mContext);
                 recyclerView.setLayoutManager(linearLayoutManager);
                 rankingAdapter = new RankingAdapter();
                 recyclerView.setAdapter(rankingAdapter);
@@ -73,7 +73,7 @@ public class RankingFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.load_framelayout, container, false);
         frameLayout = (FrameLayout) view.findViewById(R.id.loadframe);
-        View loadView = LayoutInflater.from(getActivity()).inflate(R.layout.loading, frameLayout, false);
+        View loadView = LayoutInflater.from(mContext).inflate(R.layout.loading, frameLayout, false);
         frameLayout.addView(loadView);
 
         return view;

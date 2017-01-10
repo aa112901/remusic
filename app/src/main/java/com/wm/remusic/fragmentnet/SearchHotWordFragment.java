@@ -4,7 +4,6 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -16,6 +15,7 @@ import android.widget.TextView;
 import com.google.gson.JsonArray;
 import com.wm.remusic.R;
 import com.wm.remusic.adapter.RecentSearchAdapter;
+import com.wm.remusic.fragment.AttachFragment;
 import com.wm.remusic.json.SearchSongInfo;
 import com.wm.remusic.net.BMA;
 import com.wm.remusic.net.HttpUtil;
@@ -29,7 +29,7 @@ import java.util.List;
 /**
  * Created by wm on 2016/5/21.
  */
-public class SearchHotWordFragment extends Fragment implements View.OnClickListener, SearchWords {
+public class SearchHotWordFragment extends AttachFragment implements View.OnClickListener, SearchWords {
     String[] texts = new String[10];
     ArrayList<TextView> views = new ArrayList<>();
     SearchWords searchWords;
@@ -47,7 +47,7 @@ public class SearchHotWordFragment extends Fragment implements View.OnClickListe
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.load_framelayout, container, false);
         frameLayout = (FrameLayout) view.findViewById(R.id.loadframe);
-        loadview = LayoutInflater.from(getActivity()).inflate(R.layout.loading, frameLayout, false);
+        loadview = LayoutInflater.from(mContext).inflate(R.layout.loading, frameLayout, false);
         frameLayout.addView(loadview);
         loadWords();
 
@@ -69,13 +69,13 @@ public class SearchHotWordFragment extends Fragment implements View.OnClickListe
 
             @Override
             protected Boolean doInBackground(Boolean... params) {
-                if (NetworkUtils.isConnectInternet(getActivity())) {
+                if (NetworkUtils.isConnectInternet(mContext)) {
                     isFromCache = false;
                 }
 
 
                 try {
-                    JsonArray jsonArray = HttpUtil.getResposeJsonObject(BMA.Search.hotWord(), getActivity(), isFromCache).get("result").getAsJsonArray();
+                    JsonArray jsonArray = HttpUtil.getResposeJsonObject(BMA.Search.hotWord(), mContext, isFromCache).get("result").getAsJsonArray();
                     for (int i = 0; i < 10; i++) {
                         texts[i] = jsonArray.get(i).getAsJsonObject().get("word").getAsString();
                     }
@@ -90,15 +90,15 @@ public class SearchHotWordFragment extends Fragment implements View.OnClickListe
             @Override
             protected void onPostExecute(Boolean load) {
                 super.onPostExecute(load);
-                if (!load && getActivity() == null) {
+                if (!load && mContext == null) {
 
                     return;
                 }
-                View view = LayoutInflater.from(getActivity()).inflate(R.layout.fragment_search_hot_words, frameLayout, false);
+                View view = LayoutInflater.from(mContext).inflate(R.layout.fragment_search_hot_words, frameLayout, false);
                 recyclerView = (RecyclerView) view.findViewById(R.id.recyclerview);
-                recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+                recyclerView.setLayoutManager(new LinearLayoutManager(mContext));
                 recyclerView.setHasFixedSize(true);
-                adapter = new RecentSearchAdapter(getActivity());
+                adapter = new RecentSearchAdapter(mContext);
                 adapter.setListenter(SearchHotWordFragment.this);
                 recyclerView.setAdapter(adapter);
 
@@ -127,10 +127,10 @@ public class SearchHotWordFragment extends Fragment implements View.OnClickListe
                 frameLayout.removeAllViews();
                 frameLayout.addView(view);
 
-                int w = getActivity().getResources().getDisplayMetrics().widthPixels;
+                int w = mContext.getResources().getDisplayMetrics().widthPixels;
                 int xdistance = -1;
                 int ydistance = 0;
-                int distance = dip2px(getActivity(), 16);
+                int distance = dip2px(mContext, 16);
                 for (int i = 0; i < 10; i++) {
                     views.get(i).setOnClickListener(SearchHotWordFragment.this);
                     views.get(i).setText(texts[i]);

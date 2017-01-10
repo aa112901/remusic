@@ -6,7 +6,6 @@ import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Spannable;
@@ -33,6 +32,7 @@ import com.wm.remusic.activity.AlbumsDetailActivity;
 import com.wm.remusic.activity.NetItemChangeActivity;
 import com.wm.remusic.activity.PlaylistActivity;
 import com.wm.remusic.activity.RadioDetailActivity;
+import com.wm.remusic.fragment.AttachFragment;
 import com.wm.remusic.json.RecommendListNewAlbumInfo;
 import com.wm.remusic.json.RecommendListRadioInfo;
 import com.wm.remusic.json.RecommendListRecommendInfo;
@@ -47,7 +47,7 @@ import java.util.HashMap;
 /**
  * Created by wm on 2016/4/9.
  */
-public class RecommendFragment extends Fragment {
+public class RecommendFragment extends AttachFragment {
 
 
     private RecyclerView recyclerView1, recyclerView2, recyclerView3;
@@ -78,14 +78,14 @@ public class RecommendFragment extends Fragment {
         View view = inflater.inflate(R.layout.recommend, container, false);
         String date = Calendar.getInstance().get(Calendar.DAY_OF_MONTH) + "";
 
-        layoutInflater = LayoutInflater.from(getContext());
+        layoutInflater = LayoutInflater.from(mContext);
         TextView dailyText = (TextView) view.findViewById(R.id.daily_text);
         dailyText.setText(date);
 
         itemChanged = (LinearLayout) view.findViewById(R.id.item_change);
         viewContent = (LinearLayout) view.findViewById(R.id.recommend_layout);
-        if (!PreferencesUtility.getInstance(getActivity()).isCurrentDayFirst(date)) {
-            PreferencesUtility.getInstance(getContext()).setCurrentDate(date);
+        if (!PreferencesUtility.getInstance(mContext).isCurrentDayFirst(date)) {
+            PreferencesUtility.getInstance(mContext).setCurrentDate(date);
 //            loadView = layoutInflater.inflate(R.layout.loading_daymusic,null,false);
 //            RotateAnimation rotateAnimation = new RotateAnimation(0,360, 1, 0.5F, 1, 0.5F );
 //            rotateAnimation.setDuration(25000L);
@@ -111,8 +111,8 @@ public class RecommendFragment extends Fragment {
         change.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent itent = new Intent(getContext(), NetItemChangeActivity.class);
-                getActivity().startActivity(itent);
+                Intent itent = new Intent(mContext, NetItemChangeActivity.class);
+                mContext.startActivity(itent);
             }
         });
 
@@ -130,14 +130,14 @@ public class RecommendFragment extends Fragment {
             @Override
             protected Void doInBackground(Void... params) {
 
-                if (NetworkUtils.isConnectInternet(getActivity())) {
+                if (NetworkUtils.isConnectInternet(mContext)) {
                     isFromCache = false;
                 }
 
                 //推荐电台
                 try {
                     JsonObject list = HttpUtil.getResposeJsonObject("http://tingapi.ting.baidu.com/v1/restserver/ting?from=android&version=5.8.1.0&channel=ppzs&operator=3&method=baidu.ting.plaza.index&cuid=89CF1E1A06826F9AB95A34DC0F6AAA14"
-                            , getActivity(), isFromCache);
+                            , mContext, isFromCache);
 
                     JsonObject object = list.get("result").getAsJsonObject();
                     JsonArray radioArray = object.get("radio").getAsJsonObject().get("result").getAsJsonArray();
@@ -163,7 +163,7 @@ public class RecommendFragment extends Fragment {
                 v1 = layoutInflater.inflate(R.layout.recommend_playlist, viewContent, false);
 
                 recyclerView1 = (RecyclerView) v1.findViewById(R.id.recommend_playlist_recyclerview);
-                gridLayoutManager = new GridLayoutManager(getActivity(), 3);
+                gridLayoutManager = new GridLayoutManager(mContext, 3);
                 recyclerView1.setLayoutManager(gridLayoutManager);
                 recyclerView1.setAdapter(recomendAdapter);
                 recyclerView1.setHasFixedSize(true);
@@ -178,14 +178,14 @@ public class RecommendFragment extends Fragment {
 
                 v2 = layoutInflater.inflate(R.layout.recommend_newalbums, viewContent, false);
                 recyclerView2 = (RecyclerView) v2.findViewById(R.id.recommend_newalbums_recyclerview);
-                gridLayoutManager2 = new GridLayoutManager(getActivity(), 3);
+                gridLayoutManager2 = new GridLayoutManager(mContext, 3);
                 recyclerView2.setLayoutManager(gridLayoutManager2);
                 recyclerView2.setAdapter(newAlbumsAdapter);
                 recyclerView2.setHasFixedSize(true);
 
                 v3 = layoutInflater.inflate(R.layout.recommend_radio, viewContent, false);
                 recyclerView3 = (RecyclerView) v3.findViewById(R.id.recommend_radio_recyclerview);
-                gridLayoutManager3 = new GridLayoutManager(getActivity(), 3);
+                gridLayoutManager3 = new GridLayoutManager(mContext, 3);
                 recyclerView3.setLayoutManager(gridLayoutManager3);
                 recyclerView3.setAdapter(radioAdapter);
                 recyclerView3.setHasFixedSize(true);
@@ -198,7 +198,7 @@ public class RecommendFragment extends Fragment {
                 hashMap.put("推荐歌单", v1);
                 hashMap.put("最新专辑", v2);
                 hashMap.put("主播电台", v3);
-                position = PreferencesUtility.getInstance(getActivity()).getItemPosition();
+                position = PreferencesUtility.getInstance(mContext).getItemPosition();
                 loadView.clearAnimation();
                 viewContent.removeView(loadView);
 
@@ -215,14 +215,14 @@ public class RecommendFragment extends Fragment {
         @Override
         protected Integer doInBackground(Integer... params) {
 
-            if (NetworkUtils.isConnectInternet(getActivity())) {
+            if (NetworkUtils.isConnectInternet(mContext)) {
                 isFromCache = false;
             }
 
             //推荐电台
             try {
                 JsonObject list = HttpUtil.getResposeJsonObject("http://tingapi.ting.baidu.com/v1/restserver/ting?from=android&version=5.8.1.0&channel=ppzs&operator=3&method=baidu.ting.plaza.index&cuid=89CF1E1A06826F9AB95A34DC0F6AAA14"
-                        , getActivity(), isFromCache);
+                        , mContext, isFromCache);
 
                 JsonObject object = list.get("result").getAsJsonObject();
                 JsonArray radioArray = object.get("radio").getAsJsonObject().get("result").getAsJsonArray();
@@ -249,8 +249,8 @@ public class RecommendFragment extends Fragment {
                     tryCount++;
                     new LoadRecommend().execute(tryCount);
                 } else {
-                    Toast.makeText(getContext(), "网络连接失败", Toast.LENGTH_SHORT).show();
-                    View tryAgain = LayoutInflater.from(getContext()).inflate(R.layout.try_again, viewContent, false);
+                    Toast.makeText(mContext, "网络连接失败", Toast.LENGTH_SHORT).show();
+                    View tryAgain = LayoutInflater.from(mContext).inflate(R.layout.try_again, viewContent, false);
                     tryAgain.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
@@ -266,7 +266,7 @@ public class RecommendFragment extends Fragment {
 
             v1 = layoutInflater.inflate(R.layout.recommend_playlist, viewContent, false);
             recyclerView1 = (RecyclerView) v1.findViewById(R.id.recommend_playlist_recyclerview);
-            gridLayoutManager = new GridLayoutManager(getActivity(), 3);
+            gridLayoutManager = new GridLayoutManager(mContext, 3);
             recyclerView1.setLayoutManager(gridLayoutManager);
             recyclerView1.setAdapter(recomendAdapter);
             TextView more = (TextView) v1.findViewById(R.id.more);
@@ -280,13 +280,13 @@ public class RecommendFragment extends Fragment {
 
             v2 = layoutInflater.inflate(R.layout.recommend_newalbums, viewContent, false);
             recyclerView2 = (RecyclerView) v2.findViewById(R.id.recommend_newalbums_recyclerview);
-            gridLayoutManager2 = new GridLayoutManager(getActivity(), 3);
+            gridLayoutManager2 = new GridLayoutManager(mContext, 3);
             recyclerView2.setLayoutManager(gridLayoutManager2);
             recyclerView2.setAdapter(newAlbumsAdapter);
 
             v3 = layoutInflater.inflate(R.layout.recommend_radio, viewContent, false);
             recyclerView3 = (RecyclerView) v3.findViewById(R.id.recommend_radio_recyclerview);
-            gridLayoutManager3 = new GridLayoutManager(getActivity(), 3);
+            gridLayoutManager3 = new GridLayoutManager(mContext, 3);
             recyclerView3.setLayoutManager(gridLayoutManager3);
             recyclerView3.setAdapter(radioAdapter);
 
@@ -299,7 +299,7 @@ public class RecommendFragment extends Fragment {
             hashMap.put("推荐歌单", v1);
             hashMap.put("最新专辑", v2);
             hashMap.put("主播电台", v3);
-            position = PreferencesUtility.getInstance(getActivity()).getItemPosition();
+            position = PreferencesUtility.getInstance(mContext).getItemPosition();
             loadView.clearAnimation();
             viewContent.removeView(loadView);
 
@@ -326,7 +326,7 @@ public class RecommendFragment extends Fragment {
         if (position == null) {
             return;
         }
-        String st = PreferencesUtility.getInstance(getActivity()).getItemPosition();
+        String st = PreferencesUtility.getInstance(mContext).getItemPosition();
         if (!st.equals(position)) {
             position = st;
             viewContent.removeAllViews();
@@ -342,7 +342,7 @@ public class RecommendFragment extends Fragment {
 
         public RecommendAdapter(ArrayList<RecommendListRecommendInfo> list) {
             Bitmap b = BitmapFactory.decodeResource(getResources(), R.mipmap.index_icn_earphone);
-            ImageSpan imgSpan = new ImageSpan(getActivity(), b, ImageSpan.ALIGN_BASELINE);
+            ImageSpan imgSpan = new ImageSpan(mContext, b, ImageSpan.ALIGN_BASELINE);
             spanString = new SpannableString("icon");
             spanString.setSpan(imgSpan, 0, 4, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
 
@@ -391,7 +391,7 @@ public class RecommendFragment extends Fragment {
             ((ItemView) holder).itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Intent intent = new Intent(getActivity(), PlaylistActivity.class);
+                    Intent intent = new Intent(mContext, PlaylistActivity.class);
                     intent.putExtra("playlistid", info.getListid());
                     intent.putExtra("islocal", false);
                     intent.putExtra("albumart", info.getPic());
@@ -399,7 +399,7 @@ public class RecommendFragment extends Fragment {
                     intent.putExtra("playlistDetail", info.getTag());
                     intent.putExtra("playlistcount", info.getListenum());
 
-                    getActivity().startActivity(intent);
+                    mContext.startActivity(intent);
                 }
             });
 
@@ -484,12 +484,12 @@ public class RecommendFragment extends Fragment {
                 @Override
                 public void onClick(View v) {
 
-                    Intent intent = new Intent(getActivity(), RadioDetailActivity.class);
+                    Intent intent = new Intent(mContext, RadioDetailActivity.class);
                     intent.putExtra("albumid", info.getAlbum_id());
                     intent.putExtra("albumart", info.getPic());
                     intent.putExtra("albumname", info.getTitle());
                     intent.putExtra("artistname", info.getDesc());
-                    getActivity().startActivity(intent);
+                    mContext.startActivity(intent);
 
                 }
             });
@@ -585,7 +585,7 @@ public class RecommendFragment extends Fragment {
                 @Override
                 public void onClick(View v) {
 
-                    Intent intent = new Intent(getActivity(), AlbumsDetailActivity.class);
+                    Intent intent = new Intent(mContext, AlbumsDetailActivity.class);
 //                    intent.putExtra("albumid",info.getType_id());
 //                    intent.putExtra("albumart",info.getPic());
 //                    intent.putExtra("albumname",info.getTitle());
@@ -596,7 +596,7 @@ public class RecommendFragment extends Fragment {
                     intent.putExtra("albumname", info.getTitle());
                     intent.putExtra("albumdetail", info.getDesc());
                     // intent.putExtra("playlistcount",info.get);
-                    getActivity().startActivity(intent);
+                    mContext.startActivity(intent);
 
 //                    AlbumsDetail fragment = AlbumsDetail.newInstance(info.id, info.coverImgUrl, info.albumName,
 //                            info.artistName, info.publishTime);

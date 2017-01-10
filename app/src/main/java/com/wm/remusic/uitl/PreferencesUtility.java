@@ -57,6 +57,16 @@ public final class PreferencesUtility {
         return sInstance;
     }
 
+    public long lastExit() {
+        return mPreferences.getLong("last_err_exit", 0);
+    }
+
+    public void setExitTime() {
+        final SharedPreferences.Editor editor = mPreferences.edit();
+        editor.putLong("last_err_exit", System.currentTimeMillis());
+        editor.commit();
+    }
+
     public boolean isCurrentDayFirst(String str) {
         return mPreferences.getString(CURRENT_DATE, "").equals(str);
     }

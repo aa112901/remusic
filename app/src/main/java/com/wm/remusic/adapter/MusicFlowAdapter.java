@@ -1,6 +1,6 @@
 package com.wm.remusic.adapter;
 
-import android.app.Activity;
+import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,10 +19,10 @@ import java.util.List;
 public class MusicFlowAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements View.OnClickListener {
     private List<OverFlowItem> mList;
     private MusicInfo musicInfo;
-    private Activity mContext;
+    private Context mContext;
     private OnRecyclerViewItemClickListener mOnItemClickListener = null;
 
-    public MusicFlowAdapter(Activity context, List<OverFlowItem> list, MusicInfo info) {
+    public MusicFlowAdapter(Context context, List<OverFlowItem> list, MusicInfo info) {
         mList = list;
         musicInfo = info;
         mContext = context;

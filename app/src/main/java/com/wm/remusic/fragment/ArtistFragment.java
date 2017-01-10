@@ -59,7 +59,7 @@ public class ArtistFragment extends BaseFragment {
         View view = inflater.inflate(R.layout.recylerview, container, false);
 
         recyclerView = (RecyclerView) view.findViewById(R.id.recyclerview);
-        layoutManager = new LinearLayoutManager(getActivity());
+        layoutManager = new LinearLayoutManager(mContext);
         recyclerView.setLayoutManager(layoutManager);
         //fastScroller = (FastScroller) view.findViewById(R.id.fastscroller);
         //new loadArtists().execute("");
@@ -103,7 +103,7 @@ public class ArtistFragment extends BaseFragment {
     @Override
     public void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mPreferences = PreferencesUtility.getInstance(getActivity());
+        mPreferences = PreferencesUtility.getInstance(mContext);
     }
 
 
@@ -138,7 +138,7 @@ public class ArtistFragment extends BaseFragment {
     //设置分割线
     private void setItemDecoration() {
 
-        itemDecoration = new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL_LIST);
+        itemDecoration = new DividerItemDecoration(mContext, DividerItemDecoration.VERTICAL_LIST);
         recyclerView.addItemDecoration(itemDecoration);
     }
 
@@ -148,7 +148,7 @@ public class ArtistFragment extends BaseFragment {
             @Override
             protected Void doInBackground(final Void... unused) {
                 isAZSort = mPreferences.getArtistSortOrder().equals(SortOrder.ArtistSortOrder.ARTIST_A_Z);
-                List<ArtistInfo> artList = MusicUtils.queryArtist(getActivity());
+                List<ArtistInfo> artList = MusicUtils.queryArtist(mContext);
                 if (isAZSort) {
                     Collections.sort(artList, new ArtistComparator());
                     for (int i = 0; i < artList.size(); i++) {
@@ -179,8 +179,8 @@ public class ArtistFragment extends BaseFragment {
 
         @Override
         protected String doInBackground(String... params) {
-            if (getActivity() != null) {
-                artistInfos = MusicUtils.queryArtist(getActivity());
+            if (mContext != null) {
+                artistInfos = MusicUtils.queryArtist(mContext);
                 if (artistInfos != null)
                     mAdapter = new ArtistAdapter(artistInfos);
             }
@@ -191,7 +191,7 @@ public class ArtistFragment extends BaseFragment {
         @Override
         protected void onPostExecute(String result) {
             recyclerView.setAdapter(mAdapter);
-            if (getActivity() != null) {
+            if (mContext != null) {
                 setItemDecoration();
             }
         }
@@ -239,7 +239,7 @@ public class ArtistFragment extends BaseFragment {
             }
 
             //lastFm api加载歌手图片
-            LastFmClient.getInstance(getContext()).getArtistInfo(new ArtistQuery(model.artist_name.toString()), new ArtistInfoListener() {
+            LastFmClient.getInstance(mContext).getArtistInfo(new ArtistQuery(model.artist_name.toString()), new ArtistInfoListener() {
                 @Override
                 public void artistInfoSucess(LastfmArtist artist) {
                     if (artist != null && artist.mArtwork != null) {
@@ -294,9 +294,9 @@ public class ArtistFragment extends BaseFragment {
             @Override
             public void onClick(View v) {
                 if (getAdapterPosition() != -1) {
-                    FragmentTransaction transaction = ((AppCompatActivity) getContext()).getSupportFragmentManager().beginTransaction();
+                    FragmentTransaction transaction = ((AppCompatActivity) mContext).getSupportFragmentManager().beginTransaction();
                     ArtistDetailFragment fragment = ArtistDetailFragment.newInstance(mList.get(getAdapterPosition()).artist_id);
-                    transaction.hide(((AppCompatActivity) getContext()).getSupportFragmentManager().findFragmentById(R.id.tab_container));
+                    transaction.hide(((AppCompatActivity) mContext).getSupportFragmentManager().findFragmentById(R.id.tab_container));
                     transaction.add(R.id.tab_container, fragment);
                     transaction.addToBackStack(null).commit();
                 }

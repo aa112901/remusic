@@ -3,7 +3,6 @@ package com.wm.remusic.fragment;
 
 import android.Manifest;
 import android.app.Activity;
-import android.content.Context;
 import android.content.pm.PackageManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -47,8 +46,6 @@ public class MainFragment extends BaseFragment {
     private List<MainFragmentItem> mList = new ArrayList<>();
     private PlaylistInfo playlistInfo; //playlist 管理类
     private SwipeRefreshLayout swipeRefresh; //下拉刷新layout
-    private Context mContext;
-
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
@@ -61,7 +58,6 @@ public class MainFragment extends BaseFragment {
     @Override
     public void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mContext = getContext();
         playlistInfo = PlaylistInfo.getInstance(mContext);
         if (CommonUtils.isLollipop() && ContextCompat.checkSelfPermission(mContext, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions((Activity) mContext, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 0);
@@ -94,7 +90,7 @@ public class MainFragment extends BaseFragment {
         ((SimpleItemAnimator) recyclerView.getItemAnimator()).setSupportsChangeAnimations(false);
         reloadAdapter();
 
-        getActivity().getWindow().setBackgroundDrawableResource(R.color.background_material_light_1);
+        mContext.getWindow().setBackgroundDrawableResource(R.color.background_material_light_1);
         return view;
     }
 
@@ -134,10 +130,15 @@ public class MainFragment extends BaseFragment {
     private void loadCount(boolean has) {
         int localMusicCount = 0, recentMusicCount = 0, downLoadCount = 0, artistsCount = 0;
         if (has) {
-            localMusicCount = MusicUtils.queryMusic(mContext, IConstants.START_FROM_LOCAL).size();
-            recentMusicCount = TopTracksLoader.getCursor(mContext, TopTracksLoader.QueryType.RecentSongs).getCount();
-            downLoadCount = DownFileStore.getInstance(mContext).getDownLoadedListAll().size();
-            artistsCount = MusicUtils.queryArtist(mContext).size();
+            try {
+                localMusicCount = MusicUtils.queryMusic(mContext, IConstants.START_FROM_LOCAL).size();
+                recentMusicCount = TopTracksLoader.getCount(mContext, TopTracksLoader.QueryType.RecentSongs);
+                downLoadCount = DownFileStore.getInstance(mContext).getDownLoadedListAll().size();
+                artistsCount = MusicUtils.queryArtist(mContext).size();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
         }
         setInfo(mContext.getResources().getString(R.string.local_music), localMusicCount, R.drawable.music_icn_local, 0);
         setInfo(mContext.getResources().getString(R.string.recent_play), recentMusicCount, R.drawable.music_icn_recent, 1);

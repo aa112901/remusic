@@ -2,7 +2,6 @@ package com.wm.remusic.fragmentnet;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +11,7 @@ import android.widget.TextView;
 import com.google.gson.JsonObject;
 import com.wm.remusic.MainApplication;
 import com.wm.remusic.R;
+import com.wm.remusic.fragment.AttachFragment;
 import com.wm.remusic.handler.HandlerUtil;
 import com.wm.remusic.json.ArtistInfo;
 import com.wm.remusic.net.BMA;
@@ -20,7 +20,7 @@ import com.wm.remusic.net.HttpUtil;
 /**
  * Created by wm on 2016/8/3.
  */
-public class ArtistInfoFragment extends Fragment {
+public class ArtistInfoFragment extends AttachFragment {
     FrameLayout frameLayout;
     private TextView artistInfoView, artistName;
     private String artistid;
@@ -46,10 +46,10 @@ public class ArtistInfoFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.load_framelayout, container, false);
         frameLayout = (FrameLayout) view.findViewById(R.id.loadframe);
-        View loadView = LayoutInflater.from(getActivity()).inflate(R.layout.loading, frameLayout, false);
+        View loadView = LayoutInflater.from(mContext).inflate(R.layout.loading, frameLayout, false);
         frameLayout.addView(loadView);
 
-        v = LayoutInflater.from(getContext()).inflate(R.layout.fragment_artistinfo, frameLayout, false);
+        v = LayoutInflater.from(mContext).inflate(R.layout.fragment_artistinfo, frameLayout, false);
         artistName = (TextView) v.findViewById(R.id.artist_name);
         artistInfoView = (TextView) v.findViewById(R.id.artist_info);
         if (getArguments() != null) {
@@ -76,7 +76,7 @@ public class ArtistInfoFragment extends Fragment {
                 JsonObject object = HttpUtil.getResposeJsonObject(BMA.Artist.artistInfo("", artistid));
                 artistInfo = MainApplication.gsonInstance().fromJson(object, ArtistInfo.class);
                 if (artistInfo != null && artistInfo.getAvatar_s500() != null) {
-                    HandlerUtil.getInstance(getContext()).post(new Runnable() {
+                    HandlerUtil.getInstance(mContext).post(new Runnable() {
                         @Override
                         public void run() {
                             artistName.setText(artistInfo.getName());

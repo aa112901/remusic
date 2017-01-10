@@ -65,7 +65,7 @@ public class ArtistDetailFragment extends BaseFragment {
         View view = inflater.inflate(R.layout.fragment_common, container, false);
 
         recyclerView = (RecyclerView) view.findViewById(R.id.recyclerview);
-        layoutManager = new LinearLayoutManager(getActivity());
+        layoutManager = new LinearLayoutManager(mContext);
         recyclerView.setLayoutManager(layoutManager);
         artDetailAdapter = new ArtDetailAdapter(null);
         recyclerView.setAdapter(artDetailAdapter);
@@ -73,18 +73,19 @@ public class ArtistDetailFragment extends BaseFragment {
         setItemDecoration();
         reloadAdapter();
 
-        ArtistInfo artistInfo = MusicUtils.getArtistinfo(getContext(), artistID);
+        ArtistInfo artistInfo = MusicUtils.getArtistinfo(mContext, artistID);
         toolbar = (Toolbar) view.findViewById(R.id.toolbar);
-        toolbar.setPadding(0, CommonUtils.getStatusHeight(getActivity()), 0, 0);
-        ((AppCompatActivity) getActivity()).setSupportActionBar(toolbar);
-        ab = ((AppCompatActivity) getActivity()).getSupportActionBar();
+        toolbar.setPadding(0, CommonUtils.getStatusHeight(mContext), 0, 0);
+        ((AppCompatActivity) mContext).setSupportActionBar(toolbar);
+        ab = ((AppCompatActivity) mContext).getSupportActionBar();
         ab.setHomeAsUpIndicator(R.drawable.actionbar_back);
         ab.setDisplayHomeAsUpEnabled(true);
         ab.setTitle(artistInfo.artist_name);
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                getActivity().onBackPressed();
+                if (getActivity() != null)
+                    getActivity().onBackPressed();
             }
         });
         return view;
@@ -100,7 +101,7 @@ public class ArtistDetailFragment extends BaseFragment {
 
     //设置分割线
     private void setItemDecoration() {
-        RecyclerView.ItemDecoration itemDecoration = new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL_LIST);
+        RecyclerView.ItemDecoration itemDecoration = new DividerItemDecoration(mContext, DividerItemDecoration.VERTICAL_LIST);
         recyclerView.addItemDecoration(itemDecoration);
     }
 
@@ -110,7 +111,7 @@ public class ArtistDetailFragment extends BaseFragment {
         new AsyncTask<Void, Void, Void>() {
             @Override
             protected Void doInBackground(final Void... unused) {
-                ArrayList<MusicInfo> artistList = (ArrayList) MusicUtils.queryMusic(getActivity(), artistID + "", IConstants.START_FROM_ARTIST);
+                ArrayList<MusicInfo> artistList = (ArrayList) MusicUtils.queryMusic(mContext, artistID + "", IConstants.START_FROM_ARTIST);
                 artDetailAdapter.updateDataSet(artistList);
                 return null;
             }
@@ -159,9 +160,9 @@ public class ArtistDetailFragment extends BaseFragment {
                 ((CommonItemViewHolder) holder).select.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Intent intent = new Intent(getActivity(), SelectActivity.class);
+                        Intent intent = new Intent(mContext, SelectActivity.class);
                         intent.putParcelableArrayListExtra("ids", mList);
-                        getActivity().startActivity(intent);
+                        mContext.startActivity(intent);
                     }
                 });
 
@@ -204,7 +205,7 @@ public class ArtistDetailFragment extends BaseFragment {
             //播放歌手所有歌曲
             @Override
             public void onClick(View v) {
-                HandlerUtil.getInstance(getContext()).postDelayed(new Runnable() {
+                HandlerUtil.getInstance(mContext).postDelayed(new Runnable() {
                     @Override
                     public void run() {
                         long[] list = new long[mList.size()];
@@ -251,7 +252,7 @@ public class ArtistDetailFragment extends BaseFragment {
             //播放歌曲
             @Override
             public void onClick(View v) {
-                HandlerUtil.getInstance(getContext()).postDelayed(new Runnable() {
+                HandlerUtil.getInstance(mContext).postDelayed(new Runnable() {
                     @Override
                     public void run() {
                         long[] list = new long[mList.size()];

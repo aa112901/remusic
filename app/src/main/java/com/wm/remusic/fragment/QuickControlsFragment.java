@@ -81,7 +81,7 @@ public class QuickControlsFragment extends BaseFragment {
 
         mProgress.setMax((int) MusicPlayer.duration());
         mProgress.setProgress((int) MusicPlayer.position());
-        mProgress.setProgressTintList(ThemeUtils.getThemeColorStateList(getContext(), R.color.theme_color_primary));
+        mProgress.setProgressTintList(ThemeUtils.getThemeColorStateList(mContext, R.color.theme_color_primary));
 
         mPlayPause.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -253,7 +253,7 @@ public class QuickControlsFragment extends BaseFragment {
     @Override
     public void changeTheme() {
         super.changeTheme();
-        mProgress.setProgressTintList(ThemeUtils.getThemeColorStateList(getContext(), R.color.theme_color_primary));
+        mProgress.setProgressTintList(ThemeUtils.getThemeColorStateList(mContext, R.color.theme_color_primary));
     }
 
 

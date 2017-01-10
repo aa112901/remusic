@@ -1,5 +1,6 @@
 package com.wm.remusic.fragment;
 
+import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -43,10 +44,10 @@ public class DownFragment extends Fragment {
     private DownLoadAdapter adapter;
     private DownFileStore downFileStore;
     private DownStatus downStatus;
-    private Context mContext;
     private int downPosition = -1;
     private String TAG = "DownFragment";
     private boolean d = true;
+    public Activity mContext;
 
 
     @Nullable
@@ -62,7 +63,7 @@ public class DownFragment extends Fragment {
 
         recyclerView = (RecyclerView) view.findViewById(R.id.recyclerview);
         recyclerView.setHasFixedSize(true);
-        layoutManager = new LinearLayoutManager(getActivity());
+        layoutManager = new LinearLayoutManager(mContext);
         recyclerView.setLayoutManager(layoutManager);
         adapter = new DownLoadAdapter(null, null);
         recyclerView.setAdapter(adapter);
@@ -74,11 +75,11 @@ public class DownFragment extends Fragment {
 
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        mContext = getContext();
-
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        this.mContext = activity;
     }
+
 
     @Override
     public void onStart() {
@@ -102,7 +103,7 @@ public class DownFragment extends Fragment {
         new AsyncTask<Void, Void, Void>() {
             @Override
             protected Void doInBackground(Void... params) {
-                downFileStore = DownFileStore.getInstance(getContext());
+                downFileStore = DownFileStore.getInstance(mContext);
                 mList = downFileStore.getDownLoadedListAllDowning();
                 L.D(d, TAG, " mlist size = " + mList.size());
                 return null;
@@ -247,8 +248,8 @@ public class DownFragment extends Fragment {
             ((ItemViewHolder) holder).clear.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    new AlertDialog.Builder(getActivity()).setTitle("要清除下载吗")
-                            .setPositiveButton(getActivity().getString(R.string.sure), new DialogInterface.OnClickListener() {
+                    new AlertDialog.Builder(mContext).setTitle("要清除下载吗")
+                            .setPositiveButton(mContext.getString(R.string.sure), new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
                                     Intent intent = new Intent(DownService.CANCLE_DOWNTASK);
@@ -258,7 +259,7 @@ public class DownFragment extends Fragment {
                                     dialog.dismiss();
                                 }
                             })
-                            .setNegativeButton(getActivity().getString(R.string.cancel), new DialogInterface.OnClickListener() {
+                            .setNegativeButton(mContext.getString(R.string.cancel), new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
                                     dialog.dismiss();

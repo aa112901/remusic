@@ -67,7 +67,7 @@ public class ArtistInfoMusicFragment extends BaseFragment {
         }
         Activity parentActivity = getActivity();
         recyclerView = (ObservableRecyclerView) view.findViewById(R.id.scroll);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        recyclerView.setLayoutManager(new LinearLayoutManager(mContext));
         recyclerView.setHasFixedSize(true);
         PlaylistDetailAdapter adapter = new PlaylistDetailAdapter(getActivity(), mList);
         recyclerView.setAdapter(adapter);
@@ -232,7 +232,7 @@ public class ArtistInfoMusicFragment extends BaseFragment {
 
             @Override
             public void onClick(View v) {
-                HandlerUtil.getInstance(getContext()).postDelayed(new Runnable() {
+                HandlerUtil.getInstance(mContext).postDelayed(new Runnable() {
                     @Override
                     public void run() {
                         HashMap<Long, MusicInfo> infos = new HashMap<Long, MusicInfo>();

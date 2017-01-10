@@ -32,7 +32,7 @@ import com.wm.remusic.R;
 /**
  * @author xyczero617@gmail.com
  * @time 16/2/1
- * <p/>
+ * <p>
  * special view for replacing view in preference , not recommend to use it in common
  * layout: select_dialog_singlechoice_xxx
  */

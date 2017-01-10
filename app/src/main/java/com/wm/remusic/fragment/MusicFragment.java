@@ -60,17 +60,17 @@ public class MusicFragment extends BaseFragment {
         super.setUserVisibleHint(isVisibleToUser);
         if (isVisibleToUser) {
             if (view == null) {
-                view = LayoutInflater.from(getActivity()).inflate(R.layout.recylerview, frameLayout, false);
+                view = LayoutInflater.from(mContext).inflate(R.layout.recylerview, frameLayout, false);
 
                 dialogText = (TextView) view.findViewById(R.id.dialog_text);
                 recyclerView = (RecyclerView) view.findViewById(R.id.recyclerview);
-                layoutManager = new LinearLayoutManager(getActivity());
+                layoutManager = new LinearLayoutManager(mContext);
                 recyclerView.setLayoutManager(layoutManager);
                 mAdapter = new Adapter(null);
                 recyclerView.setAdapter(mAdapter);
                 recyclerView.setHasFixedSize(true);
                 //fastScroller = (FastScroller) view.findViewById(R.id.fastscroller);
-                recyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL_LIST));
+                recyclerView.addItemDecoration(new DividerItemDecoration(mContext, DividerItemDecoration.VERTICAL_LIST));
 
                 sideBar = (SideBar) view.findViewById(R.id.sidebar);
                 sideBar.setOnTouchingLetterChangedListener(new SideBar.OnTouchingLetterChangedListener() {
@@ -106,7 +106,7 @@ public class MusicFragment extends BaseFragment {
     @Override
     public void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mPreferences = PreferencesUtility.getInstance(getActivity());
+        mPreferences = PreferencesUtility.getInstance(mContext);
     }
 
     @Override
@@ -114,7 +114,7 @@ public class MusicFragment extends BaseFragment {
         View view = inflater.inflate(R.layout.load_framelayout, container, false);
         Log.e("musicfrag", "oncreateview");
         frameLayout = (FrameLayout) view.findViewById(R.id.loadframe);
-        View loadView = LayoutInflater.from(getActivity()).inflate(R.layout.loading, frameLayout, false);
+        View loadView = LayoutInflater.from(mContext).inflate(R.layout.loading, frameLayout, false);
         frameLayout.addView(loadView);
         isFirstLoad = true;
         isAZSort = mPreferences.getSongSortOrder().equals(SortOrder.SongSortOrder.SONG_A_Z);
@@ -133,7 +133,7 @@ public class MusicFragment extends BaseFragment {
             @Override
             protected Void doInBackground(final Void... unused) {
                 isAZSort = mPreferences.getSongSortOrder().equals(SortOrder.SongSortOrder.SONG_A_Z);
-                ArrayList<MusicInfo> songList = (ArrayList) MusicUtils.queryMusic(getActivity(), IConstants.START_FROM_LOCAL);
+                ArrayList<MusicInfo> songList = (ArrayList) MusicUtils.queryMusic(mContext, IConstants.START_FROM_LOCAL);
                 // 名称排序时，重新排序并加入位置信息
                 if (isAZSort) {
                     Collections.sort(songList, new MusicComparator());
@@ -213,8 +213,8 @@ public class MusicFragment extends BaseFragment {
 
         @Override
         protected String doInBackground(String... params) {
-            if (getActivity() != null) {
-                musicInfos = (ArrayList<MusicInfo>) MusicUtils.queryMusic(getActivity(), IConstants.START_FROM_LOCAL);
+            if (mContext != null) {
+                musicInfos = (ArrayList<MusicInfo>) MusicUtils.queryMusic(mContext, IConstants.START_FROM_LOCAL);
 
                 for (int i = 0; i < musicInfos.size(); i++) {
                     char c = Pinyin.toPinyin(musicInfos.get(i).musicName.charAt(0)).charAt(0);
@@ -229,8 +229,8 @@ public class MusicFragment extends BaseFragment {
         @Override
         protected void onPostExecute(String result) {
             recyclerView.setAdapter(mAdapter);
-            if (getActivity() != null)
-                recyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL_LIST));
+            if (mContext != null)
+                recyclerView.addItemDecoration(new DividerItemDecoration(mContext, DividerItemDecoration.VERTICAL_LIST));
 
         }
 
@@ -252,7 +252,7 @@ public class MusicFragment extends BaseFragment {
 //            if (list == null) {
 //                throw new IllegalArgumentException("model Data must not be null");
 //            }
-            handler = HandlerUtil.getInstance(getContext());
+            handler = HandlerUtil.getInstance(mContext);
             mList = list;
 
         }
@@ -307,10 +307,10 @@ public class MusicFragment extends BaseFragment {
                 ((CommonItemViewHolder) holder).select.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Intent intent = new Intent(getActivity(), SelectActivity.class);
+                        Intent intent = new Intent(mContext, SelectActivity.class);
                         intent.putParcelableArrayListExtra("ids", mList);
                         intent.setFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-                        getActivity().startActivity(intent);
+                        mContext.startActivity(intent);
                     }
                 });
 

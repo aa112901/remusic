@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group android:checkableBehavior="single">
+
+        <item
+            android:icon="@mipmap/topmenu_icn_cloud"
+            android:id="@+id/down_bit"
+            android:title="下载歌曲品质" />
+
+        <item
+            android:id="@+id/timing_play"
+
+            android:title="@string/timing" />
+        <item
+            android:id="@+id/action_exit"
+
+            android:title="@string/exit" />
+    </group>
+
+
+</menu>

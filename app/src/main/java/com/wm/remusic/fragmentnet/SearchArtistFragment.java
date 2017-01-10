@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -16,6 +15,7 @@ import android.widget.TextView;
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.wm.remusic.R;
 import com.wm.remusic.activity.ArtistDetailActivity;
+import com.wm.remusic.fragment.AttachFragment;
 import com.wm.remusic.json.SearchArtistInfo;
 import com.wm.remusic.widget.DividerItemDecoration;
 
@@ -24,7 +24,7 @@ import java.util.ArrayList;
 /**
  * Created by wm on 2016/5/18.
  */
-public class SearchArtistFragment extends Fragment {
+public class SearchArtistFragment extends AttachFragment {
 
     private ArrayList<SearchArtistInfo> artistInfos;
     private RecyclerView recyclerView;
@@ -46,7 +46,7 @@ public class SearchArtistFragment extends Fragment {
         View view = inflater.inflate(R.layout.recylerview, container, false);
 
         recyclerView = (RecyclerView) view.findViewById(R.id.recyclerview);
-        layoutManager = new LinearLayoutManager(getActivity());
+        layoutManager = new LinearLayoutManager(mContext);
         recyclerView.setLayoutManager(layoutManager);
         mAdapter = new ArtistAdapter(null);
         recyclerView.setAdapter(mAdapter);
@@ -61,7 +61,7 @@ public class SearchArtistFragment extends Fragment {
     //设置分割线
     private void setItemDecoration() {
 
-        itemDecoration = new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL_LIST);
+        itemDecoration = new DividerItemDecoration(mContext, DividerItemDecoration.VERTICAL_LIST);
         recyclerView.addItemDecoration(itemDecoration);
     }
 
@@ -133,13 +133,13 @@ public class SearchArtistFragment extends Fragment {
             //加载歌手专辑界面fragment
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getActivity(), ArtistDetailActivity.class);
+                Intent intent = new Intent(mContext, ArtistDetailActivity.class);
                 SearchArtistInfo model = mList.get(getAdapterPosition());
                 intent.putExtra("artistid", model.getArtist_id());
                 intent.putExtra("artistart", model.getAvatar_middle());
                 intent.putExtra("artistname", model.getAuthor());
                 intent.putExtra("artistUid", model.getTing_uid());
-                getActivity().startActivity(intent);
+                mContext.startActivity(intent);
             }
 
         }

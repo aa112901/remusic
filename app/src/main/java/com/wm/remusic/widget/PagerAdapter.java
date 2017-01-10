@@ -12,7 +12,7 @@ import android.view.ViewGroup;
  * specific implementation of this, such as
  * {@link android.support.v4.app.FragmentPagerAdapter} or
  * {@link android.support.v4.app.FragmentStatePagerAdapter}.
- * <p/>
+ * <p>
  * <p>When you implement a PagerAdapter, you must override the following methods
  * at minimum:</p>
  * <ul>
@@ -21,7 +21,7 @@ import android.view.ViewGroup;
  * <li>{@link #getCount()}</li>
  * <li>{@link #isViewFromObject(View, Object)}</li>
  * </ul>
- * <p/>
+ * <p>
  * <p>PagerAdapter is more general than the adapters used for
  * {@link android.widget.AdapterView AdapterViews}. Instead of providing a
  * View recycling mechanism directly ViewPager uses callbacks to indicate the
@@ -29,7 +29,7 @@ import android.view.ViewGroup;
  * recycling if desired or use a more sophisticated method of managing page
  * Views such as Fragment transactions where each page is represented by its
  * own Fragment.</p>
- * <p/>
+ * <p>
  * <p>ViewPager associates each page with a key Object instead of working with
  * Views directly. This key is used to track and uniquely identify a given page
  * independent of its position in the adapter. A call to the PagerAdapter method
@@ -44,14 +44,14 @@ import android.view.ViewGroup;
  * the keys passed to {@link #destroyItem(ViewGroup, int, Object) destroyItem}
  * should be removed. The method {@link #isViewFromObject(View, Object)} identifies
  * whether a page View is associated with a given key object.</p>
- * <p/>
+ * <p>
  * <p>A very simple PagerAdapter may choose to use the page Views themselves
  * as key objects, returning them from {@link #instantiateItem(ViewGroup, int)}
  * after creation and adding them to the parent ViewGroup. A matching
  * {@link #destroyItem(ViewGroup, int, Object)} implementation would remove the
  * View from the parent ViewGroup and {@link #isViewFromObject(View, Object)}
  * could be implemented as <code>return view == object;</code>.</p>
- * <p/>
+ * <p>
  * <p>PagerAdapter supports data set changes. Data set changes must occur on the
  * main thread and must end with a call to {@link #notifyDataSetChanged()} similar
  * to AdapterView adapters derived from {@link android.widget.BaseAdapter}. A data
@@ -238,7 +238,7 @@ public abstract class PagerAdapter {
      * has changed. Returns {@link #POSITION_UNCHANGED} if the position of the given
      * item has not changed or {@link #POSITION_NONE} if the item is no longer present
      * in the adapter.
-     * <p/>
+     * <p>
      * <p>The default implementation assumes that items will never
      * change position and always returns {@link #POSITION_UNCHANGED}.
      *

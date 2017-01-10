@@ -54,7 +54,7 @@ import java.util.List;
 /**
  * Created by wm on 2016/1/31.
  */
-public class MoreFragment extends DialogFragment {
+public class MoreFragment extends AttachDialogFragment {
     private int type;
     private double heightPercent;
     private TextView topTitle;
@@ -140,7 +140,7 @@ public class MoreFragment extends DialogFragment {
         View view = inflater.inflate(R.layout.more_fragment, container);
         topTitle = (TextView) view.findViewById(R.id.pop_list_title);
         recyclerView = (RecyclerView) view.findViewById(R.id.pop_list);
-        layoutManager = new LinearLayoutManager(getActivity());
+        layoutManager = new LinearLayoutManager(mContext);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setHasFixedSize(true);
@@ -152,7 +152,7 @@ public class MoreFragment extends DialogFragment {
 
     //设置分割线
     private void setItemDecoration() {
-        RecyclerView.ItemDecoration itemDecoration = new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL_LIST);
+        RecyclerView.ItemDecoration itemDecoration = new DividerItemDecoration(mContext, DividerItemDecoration.VERTICAL_LIST);
         recyclerView.addItemDecoration(itemDecoration);
     }
 
@@ -161,6 +161,9 @@ public class MoreFragment extends DialogFragment {
         if (type == IConstants.MUSICOVERFLOW) {
             // long musicId = Long.parseLong(args.trim());
             adapterMusicInfo = getArguments().getParcelable("music");
+            if (adapterMusicInfo == null) {
+                adapterMusicInfo = new MusicInfo();
+            }
             artist = adapterMusicInfo.artist;
             albumId = adapterMusicInfo.albumId + "";
             albumName = adapterMusicInfo.albumName;
@@ -168,7 +171,7 @@ public class MoreFragment extends DialogFragment {
             topTitle.setText("歌曲：" + " " + musicName);
             heightPercent = 0.6;
             setMusicInfo();
-            muaicflowAdapter = new MusicFlowAdapter(getActivity(), mlistInfo, adapterMusicInfo);
+            muaicflowAdapter = new MusicFlowAdapter(mContext, mlistInfo, adapterMusicInfo);
 
         } else {
             switch (type) {
@@ -190,7 +193,7 @@ public class MoreFragment extends DialogFragment {
             }
             setCommonInfo();
             heightPercent = 0.3;
-            commonAdapter = new OverFlowAdapter(getActivity(), mlistInfo, list);
+            commonAdapter = new OverFlowAdapter(mContext, mlistInfo, list);
 
         }
 
@@ -230,7 +233,7 @@ public class MoreFragment extends DialogFragment {
                             shareIntent.setAction(Intent.ACTION_SEND);
                             shareIntent.putExtra(Intent.EXTRA_STREAM, Uri.parse("file://" + adapterMusicInfo.data));
                             shareIntent.setType("audio/*");
-                            getActivity().startActivity(Intent.createChooser(shareIntent, getResources().getString(R.string.shared_to)));
+                            mContext.startActivity(Intent.createChooser(shareIntent, getResources().getString(R.string.shared_to)));
                             dismiss();
                             break;
                         case 3:
@@ -371,7 +374,7 @@ public class MoreFragment extends DialogFragment {
                                 };
                             } else {
 
-                                Intent intent = new Intent(getActivity(), AlbumsDetailActivity.class);
+                                Intent intent = new Intent(mContext, AlbumsDetailActivity.class);
                                 intent.putExtra("albumid", adapterMusicInfo.albumId + "");
                                 intent.putExtra("albumart", adapterMusicInfo.albumData);
                                 intent.putExtra("albumname", adapterMusicInfo.albumName);
@@ -380,10 +383,7 @@ public class MoreFragment extends DialogFragment {
                             dismiss();
                             break;
                         case 6:
-                            if (playlistId != -1) {
-                                PlaylistsManager.getInstance(mContext).deleteMusicInfo(mContext, playlistId, adapterMusicInfo.songId);
-
-                            } else {
+                            if (adapterMusicInfo.islocal) {
                                 new AlertDialog.Builder(mContext).setTitle(getResources().getString(R.string.sure_to_set_ringtone)).
                                         setPositiveButton(getResources().getString(R.string.sure), new DialogInterface.OnClickListener() {
                                             @Override
@@ -402,12 +402,14 @@ public class MoreFragment extends DialogFragment {
                                                 dialog.dismiss();
                                             }
                                         }).show();
+                            } else {
+
                             }
 
                             break;
                         case 7:
                             MusicDetailFragment detailFrament = MusicDetailFragment.newInstance(adapterMusicInfo);
-                            detailFrament.show(getActivity().getFragmentManager(), "detail");
+                            detailFrament.show(getActivity().getSupportFragmentManager(), "detail");
                             dismiss();
                             break;
                         default:
@@ -491,7 +493,7 @@ public class MoreFragment extends DialogFragment {
 //                            if (file.exists())
 //                                file.delete();
 //                            if (file.exists() == false) {
-//                                getActivity().sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE,
+//                                mContext.sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE,
 //                                        Uri.parse("file://" + music.data)));
 //                            }
                         //  HandlerUtil.CommonHandler handler1 = new HandlerUtil.CommonHandler(mContext);
@@ -541,7 +543,7 @@ public class MoreFragment extends DialogFragment {
     public void onStart() {
         super.onStart();
         //设置fragment高度 、宽度
-        int dialogHeight = (int) (getActivity().getResources().getDisplayMetrics().heightPixels * heightPercent);
+        int dialogHeight = (int) (mContext.getResources().getDisplayMetrics().heightPixels * heightPercent);
         ;
 //        WindowManager wm = (WindowManager) mContext.getSystemService(Context.WINDOW_SERVICE);
 //        Display display = wm.getDefaultDisplay();

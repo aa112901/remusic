@@ -609,7 +609,7 @@ public class PlayingActivity extends BaseActivity implements IConstants {
                 //修复从playactivity回到Main界面null
                 if (needleAnim == null) {
                     needleAnim = ObjectAnimator.ofFloat(needle, "rotation", -30, 0);
-                    needleAnim.setDuration(60);
+                    needleAnim.setDuration(200);
                     needleAnim.setRepeatMode(0);
                     needleAnim.setInterpolator(new LinearInterpolator());
                 }

@@ -91,6 +91,7 @@ public class UnceHandler implements Thread.UncaughtExceptionHandler {
         try {
             PrintWriter writer = new PrintWriter(application.getCacheDir().getAbsolutePath() + "/err/" + System.currentTimeMillis() + ".log");
             ex.printStackTrace(writer);
+            writer.close();
         } catch (Exception e) {
             e.printStackTrace();
         }

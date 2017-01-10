@@ -104,6 +104,10 @@ public class CommonUtils {
         builder.append("BRAND = " + Build.BRAND + "\n");
         builder.append("DEVICE = " + Build.DEVICE + "\n");
         builder.append("DISPLAY = " + Build.DISPLAY + "\n");
+        builder.append("VERSION.RELEASE = " + Build.VERSION.RELEASE + "\n");
+        builder.append("Build.VERSION.SDK_INT = " + Build.VERSION.SDK_INT + "\n");
+        builder.append("VERSION.BASE_OS = " + Build.VERSION.BASE_OS + "\n");
+        builder.append("Build.VERSION.SDK = " + Build.VERSION.SDK + "\n");
         builder.append("ID = " + Build.ID + "\n");
         builder.append("\n" + "log:" + "\n");
 

@@ -172,21 +172,21 @@ public class SimpleWidgetProvider extends AppWidgetProvider {
     }
 
 
-    public void onEnabled(Context context) {
-        Log.e(TAG,"onenabled = " + isInUse);
-        super.onEnabled(context);
-
-        isInUse = true;
-        Log.e(TAG,"onenabled = " + isInUse);
-
-    }
-    //当最后一个该Widget删除是调用该方法，注意是最后一个
-    public void onDisabled(Context context) {
-        Log.e(TAG,"ondisable = " + isInUse);
-        super.onDisabled(context);
-        isInUse = false;
-        Log.e(TAG,"ondisable = " + isInUse);
-    }
+//    public void onEnabled(Context context) {
+//        Log.e(TAG,"onenabled = " + isInUse);
+//        super.onEnabled(context);
+//
+//        isInUse = true;
+//        Log.e(TAG,"onenabled = " + isInUse);
+//
+//    }
+//    //当最后一个该Widget删除是调用该方法，注意是最后一个
+//    public void onDisabled(Context context) {
+//        Log.e(TAG,"ondisable = " + isInUse);
+//        super.onDisabled(context);
+//        isInUse = false;
+//        Log.e(TAG,"ondisable = " + isInUse);
+//    }
 
     @Override
     public void onUpdate(Context context, AppWidgetManager appWidgetManager,
@@ -212,9 +212,10 @@ public class SimpleWidgetProvider extends AppWidgetProvider {
             this.onEnabled(context);
         }
         else if (AppWidgetManager.ACTION_APPWIDGET_DISABLED.equals(action)) {
+            isInUse = false;
             this.onDisabled(context);
         }
-        Log.e(TAG,"action = " + action);
+        Log.e(TAG,"action = " + action + "  isinuse = " + isInUse);
         if(!isInUse){
             return;
         }

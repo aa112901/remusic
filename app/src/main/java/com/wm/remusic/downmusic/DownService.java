@@ -14,6 +14,7 @@ import android.support.v4.app.NotificationCompat;
 import android.widget.RemoteViews;
 import android.widget.Toast;
 
+import com.squareup.okhttp.OkHttpClient;
 import com.wm.remusic.R;
 import com.wm.remusic.activity.DownActivity;
 import com.wm.remusic.net.HttpUtil;
@@ -28,6 +29,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+
 
 /**
  * Created by wm on 2016/12/13.
@@ -90,8 +92,8 @@ public class DownService extends Service {
             L.D(d, TAG, TAG + " task onPause");
             sendIntent(TASKS_CHANGED);
             if (prepareTaskList.size() > 0) {
-                if (currentTask != null)
-                    prepareTaskList.remove(currentTask.getId());
+                if(currentTask != null)
+                prepareTaskList.remove(currentTask.getId());
             }
             currentTask = null;
             upDateNotification();
@@ -103,8 +105,8 @@ public class DownService extends Service {
             L.D(d, TAG, TAG + " task onCancel");
             sendIntent(TASKS_CHANGED);
             if (prepareTaskList.size() > 0) {
-                if (currentTask != null)
-                    prepareTaskList.remove(currentTask.getId());
+                if(currentTask != null)
+                prepareTaskList.remove(currentTask.getId());
             }
             currentTask = null;
             upDateNotification();
@@ -116,8 +118,8 @@ public class DownService extends Service {
             sendIntent(TASKS_CHANGED);
             L.D(d, TAG, TAG + " task Completed");
             if (prepareTaskList.size() > 0) {
-                if (currentTask != null)
-                    prepareTaskList.remove(currentTask.getId());
+                if(currentTask != null)
+                prepareTaskList.remove(currentTask.getId());
             }
             currentTask = null;
             downTaskDownloaded++;
@@ -151,7 +153,7 @@ public class DownService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         L.D(d, TAG, TAG + " onstartcommand");
-        if (intent == null) {
+        if(intent == null){
             mNotificationManager.cancel(notificationid);
         }
         String action = null;
@@ -194,11 +196,11 @@ public class DownService extends Service {
             case CANCLE_ALL_DOWNTASK:
                 if (prepareTaskList.size() > 1) {
                     prepareTaskList.clear();
-                    if (currentTask != null)
-                        prepareTaskList.add(currentTask.getId());
+                    if(currentTask != null)
+                    prepareTaskList.add(currentTask.getId());
                 }
-                if (currentTask != null)
-                    cancel(currentTask.getId());
+                if(currentTask != null)
+                cancel(currentTask.getId());
                 downFileStore.deleteDowningTasks();
                 sendIntent(TASKS_CHANGED);
                 break;
@@ -216,11 +218,11 @@ public class DownService extends Service {
 
                 if (prepareTaskList.size() > 1) {
                     prepareTaskList.clear();
-                    if (currentTask != null)
-                        prepareTaskList.add(currentTask.getId());
+                    if(currentTask != null)
+                    prepareTaskList.add(currentTask.getId());
                 }
-                if (currentTask != null)
-                    pause(currentTask.getId());
+                if(currentTask != null)
+                pause(currentTask.getId());
                 break;
         }
 
@@ -271,7 +273,7 @@ public class DownService extends Service {
             prepareTaskList.add(dbEntity.getDownloadId());
             downTaskCount++;
         }
-        Toast.makeText(mContext, "已加入到下载", Toast.LENGTH_SHORT).show();
+        Toast.makeText(mContext,"已加入到下载", Toast.LENGTH_SHORT).show();
         upDateNotification();
         if (currentTask != null) {
             L.D(d, TAG, "add task wrong, current task is not null");
@@ -292,7 +294,7 @@ public class DownService extends Service {
         prepareTaskList.add(dbEntity.getDownloadId());
         downTaskCount++;
         upDateNotification();
-        Toast.makeText(mContext, "已加入到下载", Toast.LENGTH_SHORT).show();
+        Toast.makeText(mContext,"已加入到下载", Toast.LENGTH_SHORT).show();
         if (currentTask != null) {
             L.D(d, TAG, "add task wrong, current task is not null");
             return;
@@ -435,13 +437,13 @@ public class DownService extends Service {
         final Intent nowPlayingIntent = new Intent();
         nowPlayingIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         nowPlayingIntent.setComponent(new ComponentName("com.wm.remusic", "com.wm.remusic.activity.DownActivity"));
-        PendingIntent clickIntent = PendingIntent.getActivity(this, 0, nowPlayingIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent clickIntent = PendingIntent.getActivity(this,0,nowPlayingIntent,PendingIntent.FLAG_UPDATE_CURRENT);
         remoteViews.setImageViewResource(R.id.image, R.drawable.placeholder_disk_210);
-        if (complete) {
-            remoteViews.setTextViewText(R.id.title, "remusic");
-            remoteViews.setTextViewText(R.id.text, "下载完成，点击查看");
+        if(complete){
+            remoteViews.setTextViewText(R.id.title, "remusic" );
+            remoteViews.setTextViewText(R.id.text, "下载完成，点击查看" );
             remoteViews.setTextViewText(R.id.time, showDate());
-        } else {
+        }else {
             remoteViews.setTextViewText(R.id.title, "下载进度：" + downTaskDownloaded + "/" + downTaskCount);
             remoteViews.setTextViewText(R.id.text, "正在下载：" + currentTask.getFileName());
             remoteViews.setTextViewText(R.id.time, showDate());
@@ -463,7 +465,7 @@ public class DownService extends Service {
         return date;
     }
 
-    private void sendIntent(String action) {
+    private void sendIntent(String action){
         Intent intent = new Intent();
         intent.setAction(action);
         intent.setPackage(IConstants.PACKAGE);

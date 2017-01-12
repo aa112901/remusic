@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.FrameLayout;
 
+import com.facebook.common.logging.FLog;
 import com.facebook.drawee.backends.pipeline.Fresco;
 import com.facebook.drawee.controller.BaseControllerListener;
 import com.facebook.drawee.controller.ControllerListener;
@@ -20,6 +21,7 @@ import com.facebook.drawee.generic.RoundingParams;
 import com.facebook.drawee.interfaces.DraweeController;
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.facebook.imagepipeline.image.ImageInfo;
+import com.facebook.imagepipeline.image.QualityInfo;
 import com.facebook.imagepipeline.request.ImageRequest;
 import com.facebook.imagepipeline.request.ImageRequestBuilder;
 import com.wm.remusic.R;
@@ -42,15 +44,15 @@ public class RoundView extends FrameLayout {
 
     }
 
-    public static RoundView getView(Context context, String str) {
+    public static RoundView getView(Context context ,String str){
         RoundView view = new RoundView(context);
         view.setAlbum(str);
         return view;
     }
 
-    private void initView(Context context) {
+    private void initView(Context context){
         this.setAnimationCacheEnabled(false);
-        mView = LayoutInflater.from(context).inflate(R.layout.fragment_roundimage, null);
+        mView = LayoutInflater.from(context).inflate(R.layout.fragment_roundimage,null);
         albumView = (SimpleDraweeView) mView.findViewById(R.id.sdv);
         addView(mView);
         //设置图像是否为圆形
@@ -66,7 +68,7 @@ public class RoundView extends FrameLayout {
         albumView.setHierarchy(hierarchy);
     }
 
-    public void setAlbum(String albumPath) {
+    public void setAlbum(String albumPath){
         if (albumPath == null) {
             albumView.setImageURI(Uri.parse("res:/" + R.drawable.placeholder_disk_play_song));
         } else {
@@ -82,7 +84,7 @@ public class RoundView extends FrameLayout {
                 e.printStackTrace();
             }
         }
-        Log.e("roundview", "setalbum = " + albumPath);
+        Log.e("roundview","setalbum = " + albumPath);
 
     }
 

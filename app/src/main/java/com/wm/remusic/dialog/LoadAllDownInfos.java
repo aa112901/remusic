@@ -62,18 +62,16 @@ public class LoadAllDownInfos extends AsyncTask<Void, Void, Void> {
         //animation.start();
 
     }
-
     SparseArray<MusicFileDownInfo> sparseArray = new SparseArray<>();
-
     @Override
     protected Void doInBackground(Void... params) {
         int le = mList.size();
         int downloadBit = PreferencesUtility.getInstance(mContext).getDownMusicBit();
         for (int i = 0; i < le; i++) {
-            RequestThreadPool.post(new MusicFileDownInfoGet(mList.get(i).getSong_id(), i, sparseArray, downloadBit));
+            RequestThreadPool.post(new MusicFileDownInfoGet(mList.get(i).getSong_id(), i, sparseArray,downloadBit));
         }
         int tryCount = 0;
-        while (sparseArray.size() != le && tryCount < 6000) {
+        while (sparseArray.size() != le && tryCount < 6000){
             tryCount++;
             try {
                 Thread.sleep(30);
@@ -81,7 +79,7 @@ public class LoadAllDownInfos extends AsyncTask<Void, Void, Void> {
                 e.printStackTrace();
             }
         }
-        for (int i = 0; i < le; i++) {
+        for(int i = 0 ; i< le;i++){
             size += sparseArray.get(i).getFile_size();
             urlList.add(sparseArray.get(i).getFile_link());
         }

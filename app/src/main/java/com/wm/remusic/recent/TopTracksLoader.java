@@ -42,10 +42,10 @@ public class TopTracksLoader extends SongLoader {
     }
 
     public static int getCount(Context context, QueryType queryType) {
-        Cursor cursor = getCursor(context, queryType);
-        if (cursor != null) {
+        Cursor cursor = getCursor(context,queryType);
+        if(cursor != null){
             return cursor.getCount();
-        } else {
+        }else {
             return 0;
         }
     }

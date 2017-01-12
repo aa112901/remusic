@@ -7,6 +7,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -65,12 +66,7 @@ public class TabNetPagerFragment extends AttachFragment implements ChangeView {
         final TabLayout tabLayout = (TabLayout) rootView.findViewById(R.id.tabs);
         tabLayout.setTabTextColors(R.color.text_color, ThemeUtils.getThemeColorStateList(mContext, R.color.theme_color_primary).getDefaultColor());
         tabLayout.setSelectedTabIndicatorColor(ThemeUtils.getThemeColorStateList(mContext, R.color.theme_color_primary).getDefaultColor());
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                tabLayout.setupWithViewPager(viewPager);
-            }
-        }).start();
+        tabLayout.setupWithViewPager(viewPager);
 
 
         return rootView;
@@ -80,14 +76,15 @@ public class TabNetPagerFragment extends AttachFragment implements ChangeView {
     @Override
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
-        if (isVisibleToUser && isFirstLoad) {
+        if(recommendFragment == null){
+            return;
+        }
+        if(isVisibleToUser && isFirstLoad){
             recommendFragment.requestData();
             isFirstLoad = false;
         }
     }
-
     RecommendFragment recommendFragment;
-
     private void setupViewPager(ViewPager viewPager) {
         Adapter adapter = new Adapter(getChildFragmentManager());
         recommendFragment = new RecommendFragment();

@@ -19,6 +19,7 @@ import android.widget.TextView;
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.wm.remusic.MainApplication;
 import com.wm.remusic.R;
+import com.wm.remusic.fragment.AttachDialogFragment;
 import com.wm.remusic.info.Playlist;
 import com.wm.remusic.provider.PlaylistInfo;
 import com.wm.remusic.provider.PlaylistsManager;
@@ -32,7 +33,7 @@ import java.util.ArrayList;
 /**
  * Created by wm on 20/12/15.
  */
-public class AddPlaylistDialog extends DialogFragment {
+public class AddPlaylistDialog extends AttachDialogFragment {
     private PlaylistInfo playlistInfo;
     private PlaylistsManager playlistsManager;
     private RecyclerView recyclerView;

@@ -20,6 +20,7 @@ import android.widget.TextView;
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.wm.remusic.MainApplication;
 import com.wm.remusic.R;
+import com.wm.remusic.fragment.AttachDialogFragment;
 import com.wm.remusic.info.MusicInfo;
 import com.wm.remusic.info.Playlist;
 import com.wm.remusic.provider.PlaylistInfo;
@@ -33,7 +34,7 @@ import java.util.ArrayList;
 /**
  * Created by wm on 20/12/15.
  */
-public class AddNetPlaylistDialog extends DialogFragment {
+public class AddNetPlaylistDialog extends AttachDialogFragment {
     private PlaylistInfo playlistInfo;
     private PlaylistsManager playlistsManager;
     private RecyclerView recyclerView;
@@ -73,11 +74,11 @@ public class AddNetPlaylistDialog extends DialogFragment {
             musics = getArguments().getParcelableArrayList("songs");
             author = getArguments().getString("author");
         }
-        playlistInfo = PlaylistInfo.getInstance(getContext());
-        playlistsManager = PlaylistsManager.getInstance(getContext());
+        playlistInfo = PlaylistInfo.getInstance(mContext);
+        playlistsManager = PlaylistsManager.getInstance(mContext);
 
         View view = inflater.inflate(R.layout.fragment_add_playlist, container);
-        LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
+        LinearLayoutManager layoutManager = new LinearLayoutManager(mContext);
         LinearLayout linearLayout = (LinearLayout) view.findViewById(R.id.create_new_playlist);
         recyclerView = (RecyclerView) view.findViewById(R.id.add_playlist_recyclerview);
 
@@ -85,8 +86,8 @@ public class AddNetPlaylistDialog extends DialogFragment {
         linearLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                final AlertDialog alertDialog = new AlertDialog.Builder(getContext()).create();
-                alertDialog.setView((getActivity().getLayoutInflater().inflate(R.layout.dialog, null)));
+                final AlertDialog alertDialog = new AlertDialog.Builder(mContext).create();
+                alertDialog.setView((mContext.getLayoutInflater().inflate(R.layout.dialog, null)));
                 alertDialog.show();
                 Window window = alertDialog.getWindow();
                 window.setContentView(R.layout.dialog);
@@ -105,7 +106,7 @@ public class AddNetPlaylistDialog extends DialogFragment {
                         new Thread(new Runnable() {
                             @Override
                             public void run() {
-                                Log.e("addplay", "here");
+                                Log.e("addplay","here");
                                 String albumart = null;
                                 for (MusicInfo info : musics) {
                                     albumart = info.albumData;
@@ -119,7 +120,7 @@ public class AddNetPlaylistDialog extends DialogFragment {
                                 long playlistid = editText.getText().hashCode();
                                 playlistInfo.addPlaylist(playlistid, editText.getText().toString(),
                                         musics.size(), albumart, author);
-                                playlistsManager.insertLists(getContext(), playlistid, musics);
+                                playlistsManager.insertLists(mContext, playlistid, musics);
                                 Intent intent = new Intent(IConstants.PLAYLIST_COUNT_CHANGED);
                                 MainApplication.context.sendBroadcast(intent);
 
@@ -149,8 +150,8 @@ public class AddNetPlaylistDialog extends DialogFragment {
     public void onStart() {
         super.onStart();
         //设置fragment高度 、宽度
-        int dialogHeight = (int) (getActivity().getResources().getDisplayMetrics().heightPixels * 0.65);
-        int dialogWidth = (int) (getActivity().getResources().getDisplayMetrics().widthPixels * 0.77);
+        int dialogHeight = (int) (mContext.getResources().getDisplayMetrics().heightPixels * 0.65);
+        int dialogWidth = (int) (mContext.getResources().getDisplayMetrics().widthPixels * 0.77);
         getDialog().getWindow().setLayout(dialogWidth, dialogHeight);
         getDialog().setCanceledOnTouchOutside(true);
 
@@ -158,7 +159,7 @@ public class AddNetPlaylistDialog extends DialogFragment {
 
     //设置分割线
     private void setItemDecoration() {
-        RecyclerView.ItemDecoration itemDecoration = new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL_LIST);
+        RecyclerView.ItemDecoration itemDecoration = new DividerItemDecoration(mContext, DividerItemDecoration.VERTICAL_LIST);
         recyclerView.addItemDecoration(itemDecoration);
     }
 
@@ -171,7 +172,7 @@ public class AddNetPlaylistDialog extends DialogFragment {
 
         @Override
         public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            return new ViewHolder(LayoutInflater.from(getContext()).inflate(R.layout.fragment_add_playlist_item, parent, false));
+            return new ViewHolder(LayoutInflater.from(mContext).inflate(R.layout.fragment_add_playlist_item, parent, false));
         }
 
         @Override
@@ -211,9 +212,9 @@ public class AddNetPlaylistDialog extends DialogFragment {
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
-                        playlistsManager.insertLists(getContext(), playlist.id, musics);
+                        playlistsManager.insertLists(mContext, playlist.id, musics);
                         Intent intent = new Intent(IConstants.PLAYLIST_COUNT_CHANGED);
-                        getActivity().sendBroadcast(intent);
+                        mContext.sendBroadcast(intent);
                         dismiss();
                     }
                 }).start();

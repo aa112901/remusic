@@ -291,7 +291,7 @@ public class MainActivity extends BaseActivity implements CardPickerDialog.Click
         if (fragments != null) {
             for (Fragment fragment : fragments) {
                 if (fragment != null) {
-                    fragment.onRequestPermissionsResult(requestCode, permissions, grantResults);
+                    fragment.onRequestPermissionsResult(requestCode,permissions,grantResults);
                 }
             }
         }

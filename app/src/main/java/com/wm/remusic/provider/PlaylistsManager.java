@@ -141,6 +141,8 @@ public class PlaylistsManager {
             }
 
             database.setTransactionSuccessful();
+        } catch (Exception e) {
+            e.printStackTrace();
         } finally {
             database.endTransaction();
         }

@@ -161,7 +161,7 @@ public class MoreFragment extends AttachDialogFragment {
         if (type == IConstants.MUSICOVERFLOW) {
             // long musicId = Long.parseLong(args.trim());
             adapterMusicInfo = getArguments().getParcelable("music");
-            if (adapterMusicInfo == null) {
+            if(adapterMusicInfo == null){
                 adapterMusicInfo = new MusicInfo();
             }
             artist = adapterMusicInfo.artist;
@@ -383,7 +383,7 @@ public class MoreFragment extends AttachDialogFragment {
                             dismiss();
                             break;
                         case 6:
-                            if (adapterMusicInfo.islocal) {
+                            if(adapterMusicInfo.islocal){
                                 new AlertDialog.Builder(mContext).setTitle(getResources().getString(R.string.sure_to_set_ringtone)).
                                         setPositiveButton(getResources().getString(R.string.sure), new DialogInterface.OnClickListener() {
                                             @Override
@@ -402,7 +402,7 @@ public class MoreFragment extends AttachDialogFragment {
                                                 dialog.dismiss();
                                             }
                                         }).show();
-                            } else {
+                            }else {
 
                             }
 

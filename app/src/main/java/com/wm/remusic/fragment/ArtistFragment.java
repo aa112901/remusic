@@ -293,7 +293,7 @@ public class ArtistFragment extends BaseFragment {
             //加载歌手专辑界面fragment
             @Override
             public void onClick(View v) {
-                if (getAdapterPosition() != -1) {
+                if(getAdapterPosition() != -1){
                     FragmentTransaction transaction = ((AppCompatActivity) mContext).getSupportFragmentManager().beginTransaction();
                     ArtistDetailFragment fragment = ArtistDetailFragment.newInstance(mList.get(getAdapterPosition()).artist_id);
                     transaction.hide(((AppCompatActivity) mContext).getSupportFragmentManager().findFragmentById(R.id.tab_container));

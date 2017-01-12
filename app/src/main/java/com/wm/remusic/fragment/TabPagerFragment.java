@@ -3,6 +3,7 @@ package com.wm.remusic.fragment;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -165,7 +166,10 @@ public class TabPagerFragment extends AttachDialogFragment {
 
         @Override
         public Fragment getItem(int position) {
+            if(mFragments.size() > position)
             return mFragments.get(position);
+
+            return null;
         }
 
         @Override
@@ -176,6 +180,11 @@ public class TabPagerFragment extends AttachDialogFragment {
         @Override
         public CharSequence getPageTitle(int position) {
             return mFragmentTitles.get(position);
+        }
+
+        @Override
+        public void restoreState(Parcelable state, ClassLoader loader) {
+            // don't super !
         }
     }
 }

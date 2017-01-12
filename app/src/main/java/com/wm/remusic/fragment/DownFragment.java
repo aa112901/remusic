@@ -74,8 +74,9 @@ public class DownFragment extends Fragment {
     }
 
 
+
     @Override
-    public void onAttach(Activity activity) {
+    public void onAttach(Activity activity){
         super.onAttach(activity);
         this.mContext = activity;
     }

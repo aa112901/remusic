@@ -4,6 +4,7 @@ import android.content.DialogInterface;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -174,7 +175,7 @@ public class SearchMusicFragment extends AttachFragment {
                     @Override
                     public void onClick(View v) {
                         final SearchSongInfo model = mList.get(getAdapterPosition());
-                        new AsyncTask<Void, Void, Void>() {
+                        new AsyncTask<Void,Void,Void>(){
 
                             @Override
                             protected Void doInBackground(Void... params) {

@@ -212,10 +212,15 @@ public class AddNetPlaylistDialog extends AttachDialogFragment {
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
-                        playlistsManager.insertLists(mContext, playlist.id, musics);
-                        Intent intent = new Intent(IConstants.PLAYLIST_COUNT_CHANGED);
-                        mContext.sendBroadcast(intent);
-                        dismiss();
+                        try {
+                            playlistsManager.insertLists(mContext, playlist.id, musics);
+                            Intent intent = new Intent(IConstants.PLAYLIST_COUNT_CHANGED);
+                            mContext.sendBroadcast(intent);
+                            dismiss();
+                        } catch (Exception e) {
+                            e.printStackTrace();
+
+                        }
                     }
                 }).start();
 

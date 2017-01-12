@@ -208,7 +208,7 @@ public class ArtistDetailActivity extends BaseActivity implements ObservableScro
                     return true;
                 }
 
-            } catch (NullPointerException e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
 

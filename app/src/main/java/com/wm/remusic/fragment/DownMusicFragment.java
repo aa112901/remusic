@@ -22,6 +22,7 @@ import com.wm.remusic.uitl.IConstants;
 import com.wm.remusic.uitl.MusicUtils;
 import com.wm.remusic.widget.DividerItemDecoration;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -95,8 +96,18 @@ public class DownMusicFragment extends BaseFragment {
         new AsyncTask<Void, Void, Void>() {
             @Override
             protected Void doInBackground(final Void... unused) {
-                List<MusicInfo> albumList = MusicUtils.queryMusic(mContext, folder_path, IConstants.START_FROM_FOLDER);
-                folderDetailAdapter.updateDataSet(albumList);
+                boolean hasFolder = false;
+                File file = new File(folder_path);
+                if(!file.exists()){
+                    hasFolder = file.mkdirs();
+                }else {
+                    hasFolder = true;
+                }
+                if(hasFolder){
+                    List<MusicInfo> albumList = MusicUtils.queryMusic(mContext, folder_path, IConstants.START_FROM_FOLDER);
+                    folderDetailAdapter.updateDataSet(albumList);
+                }
+
                 return null;
             }
 

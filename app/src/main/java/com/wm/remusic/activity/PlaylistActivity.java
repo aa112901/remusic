@@ -35,6 +35,7 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.bilibili.magicasakura.widgets.TintImageView;
 import com.facebook.binaryresource.BinaryResource;
 import com.facebook.binaryresource.FileBinaryResource;
 import com.facebook.cache.common.CacheKey;
@@ -352,8 +353,8 @@ public class PlaylistActivity extends BaseActivity implements ObservableScrollVi
     }
 
     @Override
-    public void refreshUI() {
-       new LoadLocalPlaylistInfo().execute();
+    public void updateTrack() {
+       mAdapter.notifyDataSetChanged();
     }
 
     class LoadNetPlaylistInfo extends AsyncTask<Void, Void, Boolean> {
@@ -405,7 +406,7 @@ public class PlaylistActivity extends BaseActivity implements ObservableScrollVi
                     return true;
                 }
 
-            } catch (NullPointerException e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
 
@@ -622,7 +623,19 @@ public class PlaylistActivity extends BaseActivity implements ObservableScrollVi
         public void onBindViewHolder(final RecyclerView.ViewHolder itemHolder, final int i) {
             if (itemHolder instanceof ItemViewHolder) {
                 final MusicInfo localItem = arraylist.get(i - 1);
-                ((ItemViewHolder) itemHolder).trackNumber.setText(i + "");
+
+                //判断该条目音乐是否在播放
+                if (MusicPlayer.getCurrentAudioId() == localItem.songId) {
+                    ((ItemViewHolder) itemHolder).trackNumber.setVisibility(View.GONE);
+                    ((ItemViewHolder) itemHolder).playState.setVisibility(View.VISIBLE);
+                    ((ItemViewHolder) itemHolder).playState.setImageResource(R.drawable.song_play_icon);
+                    ((ItemViewHolder) itemHolder).playState.setImageTintList(R.color.theme_color_primary);
+                } else {
+                    ((ItemViewHolder) itemHolder).playState.setVisibility(View.GONE);
+                    ((ItemViewHolder) itemHolder).trackNumber.setVisibility(View.VISIBLE);
+                    ((ItemViewHolder) itemHolder).trackNumber.setText(i + "");
+                }
+
                 ((ItemViewHolder) itemHolder).title.setText(localItem.musicName);
                 ((ItemViewHolder) itemHolder).artist.setText(localItem.artist);
                 ((ItemViewHolder) itemHolder).menu.setOnClickListener(new View.OnClickListener() {
@@ -703,6 +716,7 @@ public class PlaylistActivity extends BaseActivity implements ObservableScrollVi
         public class ItemViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
             protected TextView title, artist, trackNumber;
             protected ImageView menu;
+            TintImageView playState;
 
             public ItemViewHolder(View view) {
                 super(view);
@@ -710,6 +724,7 @@ public class PlaylistActivity extends BaseActivity implements ObservableScrollVi
                 this.artist = (TextView) view.findViewById(R.id.song_artist);
                 this.trackNumber = (TextView) view.findViewById(R.id.trackNumber);
                 this.menu = (ImageView) view.findViewById(R.id.popup_menu);
+                this.playState = (TintImageView) view.findViewById(R.id.play_state);
                 view.setOnClickListener(this);
             }
 

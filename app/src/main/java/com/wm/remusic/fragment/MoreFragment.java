@@ -242,35 +242,31 @@ public class MoreFragment extends AttachDialogFragment {
                                         @Override
                                         public void onClick(DialogInterface dialog, int which) {
 
-                                            Uri uri = ContentUris.withAppendedId(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, adapterMusicInfo.songId);
-                                            mContext.getContentResolver().delete(uri, null, null);
+                                            try {
+                                                Uri uri = ContentUris.withAppendedId(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, adapterMusicInfo.songId);
+                                                mContext.getContentResolver().delete(uri, null, null);
 
 
-                                            if (MusicPlayer.getCurrentAudioId() == adapterMusicInfo.songId) {
-                                                if (MusicPlayer.getQueueSize() == 0) {
-                                                    MusicPlayer.stop();
-                                                } else {
-                                                    MusicPlayer.next();
+                                                if (MusicPlayer.getCurrentAudioId() == adapterMusicInfo.songId) {
+                                                    if (MusicPlayer.getQueueSize() == 0) {
+                                                        MusicPlayer.stop();
+                                                    } else {
+                                                        MusicPlayer.next();
+                                                    }
+
                                                 }
 
+                                                mHandler.postDelayed(new Runnable() {
+                                                    @Override
+                                                    public void run() {
+                                                        PlaylistsManager.getInstance(mContext).deleteMusic(mContext, adapterMusicInfo.songId);
+                                                        mContext.sendBroadcast(new Intent(IConstants.MUSIC_COUNT_CHANGED));
+                                                    }
+                                                }, 200);
+                                            } catch (Exception e) {
+                                                e.printStackTrace();
                                             }
 
-                                            mHandler.postDelayed(new Runnable() {
-                                                @Override
-                                                public void run() {
-                                                    PlaylistsManager.getInstance(mContext).deleteMusic(mContext, adapterMusicInfo.songId);
-                                                    mContext.sendBroadcast(new Intent(IConstants.MUSIC_COUNT_CHANGED));
-                                                }
-                                            }, 200);
-
-//                                            File file;
-//                                            file = new File(adapterMusicInfo.data);
-//                                            if (file.exists())
-//                                                file.delete();
-
-//                                                mContext.getApplicationContext().sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE,
-//                                                        Uri.parse("file://" + adapterMusicInfo.data)));
-//                                            mContext.sendBroadcast(new Intent(IConstants.MUSIC_COUNT_CHANGED));
                                             dismiss();
                                         }
                                     }).

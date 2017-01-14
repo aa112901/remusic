@@ -103,6 +103,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.PrintWriter;
 import java.io.RandomAccessFile;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -302,7 +303,6 @@ public class MediaService extends Service {
         }
     };
 
-
     @Override
     public IBinder onBind(final Intent intent) {
         if (D) Log.d(TAG, "Service bound, intent = " + intent);
@@ -424,7 +424,7 @@ public class MediaService extends Service {
     }
 
     private void setUpMediaSession() {
-        mSession = new MediaSession(this, "Remusic");
+        mSession = new MediaSession(this, "remusic");
         mSession.setCallback(new MediaSession.Callback() {
             @Override
             public void onPause() {
@@ -463,11 +463,7 @@ public class MediaService extends Service {
         mSession.setFlags(MediaSession.FLAG_HANDLES_TRANSPORT_CONTROLS);
     }
 
-
-    public void exit() {
-
-    }
-
+    public void exit() {}
 
     @Override
     public void onDestroy() {
@@ -599,7 +595,6 @@ public class MediaService extends Service {
             isLocked = intent.getBooleanExtra("islock",true);
             Log.e("lock","isloced = " + isLocked);
         } else if(SEND_PROGRESS.equals(action)){
-            Log.e("widget","mediaservce sendprogress");
             if(isPlaying() && !isSending){
                 mPlayerHandler.post(sendDuration);
                 isSending = true;
@@ -653,8 +648,6 @@ public class MediaService extends Service {
 
         mNotifyMode = newNotifyMode;
     }
-
-
 
     private void cancelNotification() {
         stopForeground(true);
@@ -972,12 +965,11 @@ public class MediaService extends Service {
                 JsonObject jsonObject = HttpUtil.getResposeJsonObject(BMA.Search.searchLrcPic(musicInfo.musicName, musicInfo.artist));
                 JsonArray array = jsonObject.get("songinfo").getAsJsonArray();
                 int len = array.size();
-                Log.e(TAG, "  " + len);
                 url = null;
                 for (int i = 0; i < len; i++) {
                     url = array.get(i).getAsJsonObject().get("lrclink").getAsString();
                     if (url != null) {
-                        Log.e(TAG, url);
+                        L.D(D,TAG,"lrclink = " + url);
                         break;
                     }
                 }
@@ -1006,13 +998,12 @@ public class MediaService extends Service {
 
     private void getLrc(long id) {
         String lrc = Environment.getExternalStorageDirectory().getAbsolutePath() + LRC_PATH;
-        Log.e(TAG, lrc);
         File file = new File(lrc);
-        Log.e(TAG, "file exists = " + file.exists());
+        L.D(D,TAG, "file exists = " + file.exists());
         if (!file.exists()) {
             //不存在就建立此目录
             boolean r = file.mkdirs();
-            Log.e(TAG, "file created = " + r);
+            L.D(D,TAG, "file created = " + r);
 
         }
         file = new File(lrc + id);
@@ -1059,7 +1050,7 @@ public class MediaService extends Service {
             if (D) Log.d(TAG, "open current");
             closeCursor();
 
-            if (mPlaylist.size() == 0) {
+            if (mPlaylist.size() == 0 || mPlaylistInfo.size() == 0) {
                 return;
             }
             stop(false);
@@ -1069,7 +1060,9 @@ public class MediaService extends Service {
             final long id = mPlaylist.get(mPlayPos).mId;
             updateCursor(id);
             getLrc(id);
-
+            if(mPlaylistInfo.get(id) == null){
+                return;
+            }
             if (!mPlaylistInfo.get(id).islocal) {
                 if (mRequestUrl != null) {
                     mRequestUrl.stop();
@@ -1117,7 +1110,6 @@ public class MediaService extends Service {
             }
         }
     }
-
 
     private void sendErrorMessage(final String trackName) {
         final Intent i = new Intent(TRACK_ERROR);
@@ -1209,14 +1201,18 @@ public class MediaService extends Service {
         setNextTrack(getNextPosition(false));
     }
 
-
     private void setNextTrack(int position) {
         mNextPlayPos = position;
         if (D) Log.d(TAG, "setNextTrack: next play position = " + mNextPlayPos);
         if (mNextPlayPos >= 0 && mPlaylist != null && mNextPlayPos < mPlaylist.size()) {
             final long id = mPlaylist.get(mNextPlayPos).mId;
-            if (mPlaylistInfo.get(id).islocal) {
-                mPlayer.setNextDataSource(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI + "/" + id);
+            if (mPlaylistInfo.get(id) != null) {
+                if(mPlaylistInfo.get(id).islocal){
+                    mPlayer.setNextDataSource(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI + "/" + id);
+                }else {
+                    mPlayer.setNextDataSource(null);
+                }
+
             }
         } else {
             mPlayer.setNextDataSource(null);
@@ -1618,11 +1614,8 @@ public class MediaService extends Service {
                 }.getType());
                 if (play != null && play.size() > 0) {
                     mPlaylistInfo = play;
-                    Log.e("reload", mPlaylistInfo.keySet().toString());
+                    L.D(D,TAG, mPlaylistInfo.keySet().toString());
                 }
-
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -1970,17 +1963,20 @@ public class MediaService extends Service {
     }
 
     public String[] getAlbumPathAll() {
-
-        if (mPlaylistInfo != null) {
-            int len = mPlaylistInfo.size();
-            String[] albums = new String[len];
-            long[] queue = getQueue();
-            for (int i = 0; i < len; i++) {
-                albums[i] = mPlaylistInfo.get(queue[i]).albumData;
+        synchronized (this){
+            try {
+                int len = mPlaylistInfo.size();
+                String[] albums = new String[len];
+                long[] queue = getQueue();
+                for (int i = 0; i < len; i++) {
+                    albums[i] = mPlaylistInfo.get(queue[i]).albumData;
+                }
+                return albums;
+            } catch (Exception e) {
+                e.printStackTrace();
             }
-            return albums;
+            return new String[]{};
         }
-        return null;
     }
 
     public String getTrackName() {
@@ -1994,15 +1990,22 @@ public class MediaService extends Service {
 
     public boolean isTrackLocal() {
         synchronized (this) {
-            Log.e("Playing", "getAudioId()" + getAudioId());
             MusicInfo info = mPlaylistInfo.get(getAudioId());
-
             if (info == null) {
-                Log.e("Playing", " no info");
                 return true;
             }
-            Log.e("Playing", " music is local = " + info.islocal);
             return info.islocal;
+        }
+    }
+    public String getAlbumPath(long id){
+        synchronized (this){
+            try {
+                String str = mPlaylistInfo.get(id).albumData;
+                return str;
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return null;
         }
     }
 
@@ -2225,7 +2228,7 @@ public class MediaService extends Service {
         synchronized (this) {
 
             mPlaylistInfo = infos;
-
+            L.D(D,TAG,mPlaylistInfo.toString());
             if (mShuffleMode == SHUFFLE_AUTO) {
                 mShuffleMode = SHUFFLE_NORMAL;
             }
@@ -2328,7 +2331,6 @@ public class MediaService extends Service {
     }
 
     public void gotoNext(final boolean force) {
-        Log.e("playing", "gotonext");
         if (D) Log.d(TAG, "Going to next track");
         synchronized (this) {
             if (mPlaylist.size() <= 0) {
@@ -2998,7 +3000,11 @@ public class MediaService extends Service {
 
 
         public void setVolume(final float vol) {
-            mCurrentMediaPlayer.setVolume(vol, vol);
+            try {
+                mCurrentMediaPlayer.setVolume(vol, vol);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
 
         public int getAudioSessionId() {
@@ -3060,8 +3066,27 @@ public class MediaService extends Service {
         public boolean onTransact(int code, Parcel data, Parcel reply, int flags) {
             try {
                 super.onTransact(code, data, reply, flags);
-            } catch (RuntimeException e) {
+            } catch (final RuntimeException e) {
                L.E(D,TAG,"onTransact error");
+                e.printStackTrace();
+                File file = new File(mService.get().getCacheDir().getAbsolutePath() + "/err/");
+                if (!file.exists()) {
+                    file.mkdirs();
+                }
+                try {
+                    PrintWriter writer = new PrintWriter(mService.get().getCacheDir().getAbsolutePath() + "/err/" + System.currentTimeMillis() + ".aidllog");
+                    e.printStackTrace(writer);
+                    writer.close();
+                } catch (Exception e1) {
+                    e1.printStackTrace();
+                }
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        CommonUtils.sendTextMail("erraidllog from " + CommonUtils.getUniquePsuedoID() ,CommonUtils.getDeviceInfo() + Log.getStackTraceString(e));
+                    }
+                }).start();
+
                 throw e;
             } catch (RemoteException e) {
                 e.printStackTrace();

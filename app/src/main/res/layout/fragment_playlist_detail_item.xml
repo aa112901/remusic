@@ -3,13 +3,23 @@
     android:layout_height="55dp"
     android:background="?attr/selectableItemBackground"
     android:orientation="vertical">
-
+    <com.bilibili.magicasakura.widgets.TintImageView
+        android:id="@+id/play_state"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_marginLeft="10dp"
+        android:layout_alignParentLeft="true"
+        android:gravity="center"
+        android:paddingLeft="15dp"
+        android:paddingRight="10dp"
+        android:scaleType="centerInside"
+        android:visibility="gone" />
     <TextView
         android:layout_marginLeft="10dp"
         android:id="@+id/trackNumber"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:layout_alignParentLeft="true"
+        android:layout_toRightOf="@+id/play_state"
         android:gravity="center"
         android:maxLength="3"
         android:paddingLeft="15dp"

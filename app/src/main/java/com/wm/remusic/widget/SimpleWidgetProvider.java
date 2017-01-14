@@ -209,11 +209,9 @@ public class SimpleWidgetProvider extends AppWidgetProvider {
         String action = intent.getAction();
         if (AppWidgetManager.ACTION_APPWIDGET_ENABLED.equals(action)) {
             isInUse = true;
-            this.onEnabled(context);
         }
         else if (AppWidgetManager.ACTION_APPWIDGET_DISABLED.equals(action)) {
             isInUse = false;
-            this.onDisabled(context);
         }
         Log.e(TAG,"action = " + action + "  isinuse = " + isInUse);
         if(!isInUse){

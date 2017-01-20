@@ -9,6 +9,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,6 +28,7 @@ import com.wm.remusic.service.MediaService;
 import com.wm.remusic.service.MusicPlayer;
 import com.wm.remusic.uitl.CommonUtils;
 import com.wm.remusic.uitl.IConstants;
+import com.wm.remusic.uitl.L;
 import com.wm.remusic.uitl.MusicUtils;
 import com.wm.remusic.widget.DividerItemDecoration;
 
@@ -45,19 +47,10 @@ public class RecentActivity extends BaseActivity {
     private Toolbar toolbar;
     private List<Song> mList;
     private RecyclerView recyclerView;
+    private String TAG = "RecentActivity";
+    private boolean d = true;
     private LinearLayoutManager layoutManager;
     //接受歌曲播放变化和列表变化广播，刷新列表
-    private BroadcastReceiver mStatusListener = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            String action = intent.getAction();
-            if (action.equals(MediaService.META_CHANGED)) {
-                reloadAdapter();
-            } else if (action.equals(MediaService.PLAYLIST_CHANGED)) {
-                reloadAdapter();
-            }
-        }
-    };
 
     @Override
     public void onCreate(final Bundle savedInstanceState) {
@@ -95,20 +88,9 @@ public class RecentActivity extends BaseActivity {
 
 
     //刷新列表
-    private void reloadAdapter() {
-        new AsyncTask<Void, Void, Void>() {
-            @Override
-            protected Void doInBackground(final Void... unused) {
-                //List<MusicInfo> songList = MusicUtils.getMusicLists(getContext(), recentStore.getRecentIds());
-                //mAdapter.updateDataSet(songList);
-                return null;
-            }
-
-            @Override
-            protected void onPostExecute(Void aVoid) {
-                mAdapter.notifyDataSetChanged();
-            }
-        }.execute();
+    public void updateTrack() {
+        L.D(d,TAG,"reload");
+        mAdapter.updateDataSet(mList);
     }
 
     //异步加载recyclerview界面
@@ -152,6 +134,7 @@ public class RecentActivity extends BaseActivity {
         //更新adpter的数据
         public void updateDataSet(List<Song> list) {
             this.mList = list;
+            notifyDataSetChanged();
         }
 
         @Override

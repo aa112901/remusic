@@ -143,7 +143,7 @@ public class SimpleWidgetProvider extends AppWidgetProvider {
                                                          // You can use the bitmap in only limited ways
                                                          // No need to do any cleanup.
                                                          if (bitmap != null) {
-                                                             noBit = bitmap;
+                                                             noBit = bitmap.copy(bitmap.getConfig(),true);
                                                              albumMap.put(albumuri,noBit);
                                                          }
                                                          pushUpdate(context,AppWidgetManager.getInstance(context),false);
@@ -172,21 +172,21 @@ public class SimpleWidgetProvider extends AppWidgetProvider {
     }
 
 
-//    public void onEnabled(Context context) {
-//        Log.e(TAG,"onenabled = " + isInUse);
-//        super.onEnabled(context);
-//
-//        isInUse = true;
-//        Log.e(TAG,"onenabled = " + isInUse);
-//
-//    }
-//    //当最后一个该Widget删除是调用该方法，注意是最后一个
-//    public void onDisabled(Context context) {
-//        Log.e(TAG,"ondisable = " + isInUse);
-//        super.onDisabled(context);
-//        isInUse = false;
-//        Log.e(TAG,"ondisable = " + isInUse);
-//    }
+    public void onEnabled(Context context) {
+        Log.e(TAG,"onenabled = " + isInUse);
+        super.onEnabled(context);
+
+        isInUse = true;
+        Log.e(TAG,"onenabled = " + isInUse);
+
+    }
+    //当最后一个该Widget删除是调用该方法，注意是最后一个
+    public void onDisabled(Context context) {
+        Log.e(TAG,"ondisable = " + isInUse);
+        super.onDisabled(context);
+        isInUse = false;
+        Log.e(TAG,"ondisable = " + isInUse);
+    }
 
     @Override
     public void onUpdate(Context context, AppWidgetManager appWidgetManager,
@@ -208,12 +208,12 @@ public class SimpleWidgetProvider extends AppWidgetProvider {
     public void onReceive(Context context, Intent intent) {
         String action = intent.getAction();
         if (AppWidgetManager.ACTION_APPWIDGET_ENABLED.equals(action)) {
-            isInUse = true;
+            this.onEnabled(context);
         }
         else if (AppWidgetManager.ACTION_APPWIDGET_DISABLED.equals(action)) {
-            isInUse = false;
+            this.onDisabled(context);
         }
-        Log.e(TAG,"action = " + action + "  isinuse = " + isInUse);
+        Log.e(TAG,"action = " + action);
         if(!isInUse){
             return;
         }

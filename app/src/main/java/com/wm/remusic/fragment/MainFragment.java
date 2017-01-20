@@ -104,7 +104,7 @@ public class MainFragment extends BaseFragment {
     @Override
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
-        if (isVisibleToUser && mContext != null) {
+        if (isVisibleToUser) {
             //相当于Fragment的onResume
             reloadAdapter();
         }

@@ -1,12 +1,14 @@
 package com.wm.remusic.widget;
 
 import android.content.Context;
+import android.graphics.drawable.Animatable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Handler;
 import android.os.Message;
 import android.os.Parcelable;
+import android.support.annotation.Nullable;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.util.AttributeSet;
@@ -17,7 +19,16 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 
+import com.facebook.common.logging.FLog;
+import com.facebook.drawee.backends.pipeline.Fresco;
+import com.facebook.drawee.controller.BaseControllerListener;
+import com.facebook.drawee.controller.ControllerListener;
+import com.facebook.drawee.interfaces.DraweeController;
 import com.facebook.drawee.view.SimpleDraweeView;
+import com.facebook.imagepipeline.image.ImageInfo;
+import com.facebook.imagepipeline.image.QualityInfo;
+import com.facebook.imagepipeline.request.ImageRequest;
+import com.facebook.imagepipeline.request.ImageRequestBuilder;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.wm.remusic.R;
@@ -25,6 +36,7 @@ import com.wm.remusic.json.FocusItemInfo;
 import com.wm.remusic.net.BMA;
 import com.wm.remusic.net.HttpUtil;
 import com.wm.remusic.net.NetworkUtils;
+import com.wm.remusic.service.MusicPlayer;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -109,12 +121,62 @@ public class LoodView extends FrameLayout {
     private void initUI(Context context) {
         LayoutInflater.from(context).inflate(R.layout.load_view, this, true);
         for (String imagesID : imageNet) {
-            SimpleDraweeView view = new SimpleDraweeView(context);
-            view.setImageURI(Uri.parse(imagesID));
+            final SimpleDraweeView mAlbumArt = new SimpleDraweeView(context);
+
+            ControllerListener controllerListener = new BaseControllerListener<ImageInfo>() {
+                @Override
+                public void onFinalImageSet(String id, @Nullable ImageInfo imageInfo, @Nullable Animatable anim) {
+                    if (imageInfo == null) {
+                        return;
+                    }
+                    QualityInfo qualityInfo = imageInfo.getQualityInfo();
+                    FLog.d("Final image received! " +
+                                    "Size %d x %d",
+                            "Quality level %d, good enough: %s, full quality: %s",
+                            imageInfo.getWidth(),
+                            imageInfo.getHeight(),
+                            qualityInfo.getQuality(),
+                            qualityInfo.isOfGoodEnoughQuality(),
+                            qualityInfo.isOfFullQuality());
+                }
+
+                @Override
+                public void onIntermediateImageSet(String id, @Nullable ImageInfo imageInfo) {
+                    //FLog.d("Intermediate image received");
+                }
+
+                @Override
+                public void onFailure(String id, Throwable throwable) {
+                    mAlbumArt.setImageURI(Uri.parse("res:/" + R.drawable.placeholder_disk_210));
+                }
+            };
+            Uri uri = null;
+            try{
+                uri = Uri.parse(imagesID);
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+            if (uri != null) {
+                ImageRequest request = ImageRequestBuilder.newBuilderWithSource(uri).build();
+
+                DraweeController controller = Fresco.newDraweeControllerBuilder()
+                        .setOldController(mAlbumArt.getController())
+                        .setImageRequest(request)
+                        .setControllerListener(controllerListener)
+                        .build();
+
+                mAlbumArt.setController(controller);
+            } else {
+                mAlbumArt.setImageURI(Uri.parse("res:/" + R.drawable.placeholder_disk_210));
+            }
+
+
+            //view.setImageURI(Uri.parse(imagesID));
+
             // view.setImageResource(imagesID);
             // view.setImageResource(imagesID);
-            view.setScaleType(ImageView.ScaleType.CENTER_CROP);
-            imageViewList.add(view);
+            mAlbumArt.setScaleType(ImageView.ScaleType.CENTER_CROP);
+            imageViewList.add(mAlbumArt);
         }
         dotViewList.add(findViewById(R.id.v_dot1));
         dotViewList.add(findViewById(R.id.v_dot2));

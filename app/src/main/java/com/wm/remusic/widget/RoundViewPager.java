@@ -57,7 +57,6 @@ import android.view.ViewConfiguration;
 import android.view.ViewGroup;
 import android.view.ViewParent;
 import android.view.accessibility.AccessibilityEvent;
-import android.view.animation.Animation;
 import android.view.animation.Interpolator;
 import android.widget.Scroller;
 
@@ -99,12 +98,12 @@ import java.util.List;
  */
 public class RoundViewPager extends ViewGroup {
     private static final String TAG = "ViewPager";
-    private static final boolean DEBUG = true;
+    private static final boolean DEBUG = false;
 
     private static final boolean USE_CACHE = false;
 
     private static final int DEFAULT_OFFSCREEN_PAGES = 1;
-    private static final int MAX_SETTLE_DURATION = 1000; // ms
+    private static final int MAX_SETTLE_DURATION = 600; // ms
     private static final int MIN_DISTANCE_FOR_FLING = 25; // dips
 
     private static final int DEFAULT_GUTTER_SIZE = 16; // dips
@@ -264,7 +263,7 @@ public class RoundViewPager extends ViewGroup {
         }
     };
 
-    public int mScrollState = SCROLL_STATE_IDLE;
+    private int mScrollState = SCROLL_STATE_IDLE;
 
     /**
      * Callback interface for responding to changing state of the selected page.
@@ -377,7 +376,6 @@ public class RoundViewPager extends ViewGroup {
     }
 
     private OnAnimationChange mAnimationChange;
-    public boolean isRotating = false;
 
     public void setAnimationChange(OnAnimationChange change){
         mAnimationChange = change;
@@ -385,20 +383,7 @@ public class RoundViewPager extends ViewGroup {
     public  View getCurrentView(){
         return mCurrentView;
     }
-    public void setAnimation(Animation animation){
-        if(mCurrentView == null){
-            Log.e("round","mcview == null" + mItems.size());
-            mCurrentView =  (View) getChildAt(0);
 
-            Log.e("round","mcview == " + (mCurrentView == null));
-        }
-        if(mCurrentView != null){
-            Log.e("round","set");
-            mCurrentView.startAnimation(animation);
-            isRotating = true;
-            Log.e("round","set" +mCurrentView.getAnimation().hasStarted());
-        }
-    }
 
     void initViewPager() {
         setWillNotDraw(false);
@@ -475,7 +460,7 @@ public class RoundViewPager extends ViewGroup {
                                 res.left, res.top, res.right, res.bottom);
                     }
                 });
-        isRotating = false;
+
     }
 
 
@@ -680,7 +665,6 @@ public class RoundViewPager extends ViewGroup {
                 mCurrentView.clearAnimation();
                 mCurrentView = (View) curInfo.object;
                 currentPosition++;
-                isRotating = false;
 //                if(mAnimationChange != null)
 //                    mAnimationChange.onStart(mCurrentView);
             }
@@ -691,7 +675,6 @@ public class RoundViewPager extends ViewGroup {
                 mCurrentView.clearAnimation();
                 mCurrentView = (View) curInfo.object;
                 currentPosition++;
-                isRotating = false;
             }
             completeScroll(false);
             scrollTo(destX, 0);
@@ -1000,7 +983,7 @@ public class RoundViewPager extends ViewGroup {
             duration = (int) ((pageDelta + 1) * 100);
         }
         duration = Math.min(duration, MAX_SETTLE_DURATION);
-        duration = 600;
+
         // Reset the "scroll started" flag. It will be flipped to true in all places
         // where we call computeScrollOffset().
         mIsScrollStarted = false;
@@ -2144,11 +2127,9 @@ public class RoundViewPager extends ViewGroup {
          */
         return mIsBeingDragged;
     }
-    boolean isSingleTouch = false;
+  long time;
     @Override
     public boolean onTouchEvent(MotionEvent ev) {
-
-
         if (mFakeDragging) {
             // A fake drag is in progress already, ignore this real one
             // but still eat the touch events.
@@ -2174,14 +2155,12 @@ public class RoundViewPager extends ViewGroup {
 
         final int action = ev.getAction();
         boolean needsInvalidate = false;
-        Log.e("round","onevent");
 
         switch (action & MotionEventCompat.ACTION_MASK) {
-
             case MotionEvent.ACTION_DOWN: {
-                Log.e("round","ondown");
-                isSingleTouch = true;
-
+                if(mAnimationChange !=null){
+                    mAnimationChange.onPause();
+                }
 
                 mScroller.abortAnimation();
                 mPopulatePending = false;
@@ -2194,7 +2173,6 @@ public class RoundViewPager extends ViewGroup {
                 break;
             }
             case MotionEvent.ACTION_MOVE:
-                Log.e("round","onmove");
                 if (!mIsBeingDragged) {
                     final int pointerIndex = MotionEventCompat.findPointerIndex(ev, mActivePointerId);
                     if (pointerIndex == -1) {
@@ -2206,17 +2184,9 @@ public class RoundViewPager extends ViewGroup {
                     final float xDiff = Math.abs(x - mLastMotionX);
                     final float y = MotionEventCompat.getY(ev, pointerIndex);
                     final float yDiff = Math.abs(y - mLastMotionY);
-
                     if (DEBUG) Log.v(TAG, "Moved x to " + x + "," + y + " diff=" + xDiff + "," + yDiff);
                     if (xDiff > mTouchSlop && xDiff > yDiff) {
                         if (DEBUG) Log.v(TAG, "Starting drag!");
-
-
-                        isSingleTouch = false;
-                        if(mAnimationChange !=null){
-                            mAnimationChange.onPause();
-                        }
-
                         mIsBeingDragged = true;
                         requestParentDisallowInterceptTouchEvent(true);
                         mLastMotionX = x - mInitialMotionX > 0 ? mInitialMotionX + mTouchSlop :
@@ -2265,10 +2235,9 @@ public class RoundViewPager extends ViewGroup {
 
                     needsInvalidate = resetTouch();
                 }
-                Log.e("round","onup" + isSingleTouch);
-//                if(mAnimationChange != null && isSingleTouch){
+//                if(mAnimationChange != null){
 //                    mAnimationChange.onReStart();
-//        }
+//                }
                 break;
             case MotionEvent.ACTION_CANCEL:
                 if (mIsBeingDragged) {

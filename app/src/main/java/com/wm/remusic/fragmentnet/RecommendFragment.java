@@ -1,3 +1,4 @@
+
 package com.wm.remusic.fragmentnet;
 
 import android.content.Intent;
@@ -14,11 +15,6 @@ import android.text.style.ImageSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.Animation;
-import android.view.animation.LinearInterpolator;
-import android.view.animation.RotateAnimation;
-import android.widget.FrameLayout;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -44,7 +40,6 @@ import com.wm.remusic.json.RecommendListRecommendInfo;
 import com.wm.remusic.net.HttpUtil;
 import com.wm.remusic.net.NetworkUtils;
 import com.wm.remusic.uitl.PreferencesUtility;
-import com.wm.remusic.widget.LoodView;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -56,66 +51,64 @@ import java.util.HashMap;
 public class RecommendFragment extends AttachFragment {
 
 
-    private RecyclerView mRecyclerView1, mRecyclerView2, mRecyclerView3;
-    private GridLayoutManager mGridLayoutManager, mGridLayoutManager2, mGridLayoutManager3;
-    private RecommendAdapter mRecomendAdapter;
-    private NewAlbumsAdapter mNewAlbumsAdapter;
-    private RadioAdapter mRadioAdapter;
+    private RecyclerView recyclerView1, recyclerView2, recyclerView3;
+    private GridLayoutManager gridLayoutManager, gridLayoutManager2, gridLayoutManager3;
+    private RecommendAdapter recomendAdapter;
+    private NewAlbumsAdapter newAlbumsAdapter;
+    private RadioAdapter radioAdapter;
 
     private ArrayList<RecommendListRecommendInfo> mRecomendList = new ArrayList<>();
     private ArrayList<RecommendListNewAlbumInfo> mNewAlbumsList = new ArrayList<>();
     private ArrayList<RecommendListRadioInfo> mRadioList = new ArrayList<>();
     private int width = 160, height = 160;
-    private LinearLayout mItemLayout ,mViewContent;;
-    private LayoutInflater mLayoutInflater;
-    private View mLoadView, v1, v2, v3;
-    private HashMap<String, View> mViewHashMap;
-    private String mPosition;
-    private ChangeView mChangeView;
+    private LinearLayout viewContent, itemChanged;
+    private LayoutInflater layoutInflater;
+    private View loadView, v1, v2, v3;
+    private HashMap<String, View> hashMap;
+    private String position;
+    private ChangeView changeView;
     private boolean isFromCache = true;
-    private boolean isDayFirst;
-    private ViewGroup mContent;
-    private View mRecommendView;
-    private LoodView mLoodView;
 
     public void setChanger(ChangeView changer) {
-        mChangeView = changer;
+        changeView = changer;
     }
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        mContent = (ViewGroup) inflater.inflate(R.layout.fragment_recommend_container, container, false);
-
-        mLayoutInflater = LayoutInflater.from(mContext);
-        mRecommendView = mLayoutInflater.inflate(R.layout.recommend,container,false);
+        View view = inflater.inflate(R.layout.recommend, container, false);
         String date = Calendar.getInstance().get(Calendar.DAY_OF_MONTH) + "";
-        TextView dailyText = (TextView) mRecommendView.findViewById(R.id.daily_text);
+
+        layoutInflater = LayoutInflater.from(mContext);
+        TextView dailyText = (TextView) view.findViewById(R.id.daily_text);
         dailyText.setText(date);
-        mItemLayout = (LinearLayout) mRecommendView.findViewById(R.id.item_change);
-        mViewContent = (LinearLayout) mRecommendView.findViewById(R.id.recommend_layout);
-        if(!PreferencesUtility.getInstance(mContext).isCurrentDayFirst(date)){
+
+        itemChanged = (LinearLayout) view.findViewById(R.id.item_change);
+        viewContent = (LinearLayout) view.findViewById(R.id.recommend_layout);
+        if (!PreferencesUtility.getInstance(mContext).isCurrentDayFirst(date)) {
             PreferencesUtility.getInstance(mContext).setCurrentDate(date);
-            View dayRec = mLayoutInflater.inflate(R.layout.loading_daymusic,container,false);
-            ImageView view1 = (ImageView) dayRec.findViewById(R.id.loading_dayimage) ;
-            RotateAnimation rotateAnimation = new RotateAnimation(0,360, 1, 0.5F, 1, 0.5F );
-            rotateAnimation.setDuration(20000L);
-            rotateAnimation.setInterpolator(new LinearInterpolator());
-            rotateAnimation.setRepeatCount(Animation.INFINITE);
-            rotateAnimation.setRepeatMode(Animation.INFINITE);
-            view1.startAnimation(rotateAnimation);
-            isDayFirst = true;
-            mContent.addView(dayRec);
+//            loadView = layoutInflater.inflate(R.layout.loading_daymusic,null,false);
+//            RotateAnimation rotateAnimation = new RotateAnimation(0,360, 1, 0.5F, 1, 0.5F );
+//            rotateAnimation.setDuration(25000L);
+//            rotateAnimation.setInterpolator(new LinearInterpolator());
+//            rotateAnimation.setRepeatCount(Animation.INFINITE);
+//            rotateAnimation.setRepeatMode(Animation.INFINITE);
+//            loadView.startAnimation(rotateAnimation);
+            loadView = layoutInflater.inflate(R.layout.loading, null, false);
+        } else {
+            loadView = layoutInflater.inflate(R.layout.loading, null, false);
+
         }
+        itemChanged.setVisibility(View.INVISIBLE);
+        viewContent.addView(loadView);
 
-        mLoadView = mLayoutInflater.inflate(R.layout.loading, null, false);
-        mItemLayout.setVisibility(View.INVISIBLE);
-        mViewContent.addView(mLoadView);
+        recomendAdapter = new RecommendAdapter(null);
+        newAlbumsAdapter = new NewAlbumsAdapter(null);
+        radioAdapter = new RadioAdapter(null);
 
-        mRecomendAdapter = new RecommendAdapter(null);
-        mNewAlbumsAdapter = new NewAlbumsAdapter(null);
-        mRadioAdapter = new RadioAdapter(null);
+        //   reloadAdapter();
 
-        TextView change = (TextView) mRecommendView.findViewById(R.id.change_item_position);
+        TextView change = (TextView) view.findViewById(R.id.change_item_position);
         change.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -124,24 +117,11 @@ public class RecommendFragment extends AttachFragment {
             }
         });
 
-        mLoodView = (LoodView) mRecommendView.findViewById(R.id.loop_view);
-        if(!isDayFirst){
-            mContent.addView(mRecommendView);
-        }
-
-        return mContent;
+        return view;
     }
 
-    @Override
-    public void setUserVisibleHint(boolean isVisibleToUser) {
-        super.setUserVisibleHint(isVisibleToUser);
-        if(isVisibleToUser){
-            if(mLoodView != null)
-            mLoodView.requestFocus();
-        }
-    }
 
-    public void requestData(){
+    public void requestData() {
         reloadAdapter();
     }
 
@@ -181,61 +161,56 @@ public class RecommendFragment extends AttachFragment {
             @Override
             protected void onPostExecute(Void v) {
 
-                v1 = mLayoutInflater.inflate(R.layout.recommend_playlist, mViewContent, false);
+                v1 = layoutInflater.inflate(R.layout.recommend_playlist, viewContent, false);
 
-                mRecyclerView1 = (RecyclerView) v1.findViewById(R.id.recommend_playlist_recyclerview);
-                mGridLayoutManager = new GridLayoutManager(mContext, 3);
-                mRecyclerView1.setLayoutManager(mGridLayoutManager);
-                mRecyclerView1.setAdapter(mRecomendAdapter);
-                mRecyclerView1.setHasFixedSize(true);
+                recyclerView1 = (RecyclerView) v1.findViewById(R.id.recommend_playlist_recyclerview);
+                gridLayoutManager = new GridLayoutManager(mContext, 3);
+                recyclerView1.setLayoutManager(gridLayoutManager);
+                recyclerView1.setAdapter(recomendAdapter);
+                recyclerView1.setHasFixedSize(true);
                 TextView more = (TextView) v1.findViewById(R.id.more);
                 more.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        mChangeView.changeTo(1);
+                        changeView.changeTo(1);
                     }
                 });
 
 
-                v2 = mLayoutInflater.inflate(R.layout.recommend_newalbums, mViewContent, false);
-                mRecyclerView2 = (RecyclerView) v2.findViewById(R.id.recommend_newalbums_recyclerview);
-                mGridLayoutManager2 = new GridLayoutManager(mContext, 3);
-                mRecyclerView2.setLayoutManager(mGridLayoutManager2);
-                mRecyclerView2.setAdapter(mNewAlbumsAdapter);
-                mRecyclerView2.setHasFixedSize(true);
+                v2 = layoutInflater.inflate(R.layout.recommend_newalbums, viewContent, false);
+                recyclerView2 = (RecyclerView) v2.findViewById(R.id.recommend_newalbums_recyclerview);
+                gridLayoutManager2 = new GridLayoutManager(mContext, 3);
+                recyclerView2.setLayoutManager(gridLayoutManager2);
+                recyclerView2.setAdapter(newAlbumsAdapter);
+                recyclerView2.setHasFixedSize(true);
 
-                v3 = mLayoutInflater.inflate(R.layout.recommend_radio, mViewContent, false);
-                mRecyclerView3 = (RecyclerView) v3.findViewById(R.id.recommend_radio_recyclerview);
-                mGridLayoutManager3 = new GridLayoutManager(mContext, 3);
-                mRecyclerView3.setLayoutManager(mGridLayoutManager3);
-                mRecyclerView3.setAdapter(mRadioAdapter);
-                mRecyclerView3.setHasFixedSize(true);
+                v3 = layoutInflater.inflate(R.layout.recommend_radio, viewContent, false);
+                recyclerView3 = (RecyclerView) v3.findViewById(R.id.recommend_radio_recyclerview);
+                gridLayoutManager3 = new GridLayoutManager(mContext, 3);
+                recyclerView3.setLayoutManager(gridLayoutManager3);
+                recyclerView3.setAdapter(radioAdapter);
+                recyclerView3.setHasFixedSize(true);
 
-                mRecomendAdapter.update(mRecomendList);
-                mNewAlbumsAdapter.update(mNewAlbumsList);
-                mRadioAdapter.update(mRadioList);
+                recomendAdapter.update(mRecomendList);
+                newAlbumsAdapter.update(mNewAlbumsList);
+                radioAdapter.update(mRadioList);
 
-                mViewHashMap = new HashMap<>();
-                mViewHashMap.put("推荐歌单", v1);
-                mViewHashMap.put("最新专辑", v2);
-                mViewHashMap.put("主播电台", v3);
-                mPosition = PreferencesUtility.getInstance(mContext).getItemPosition();
-                mViewContent.removeView(mLoadView);
-                if(isDayFirst){
-                    mContent.removeAllViews();
-                    mContent.addView(mRecommendView);
-                }
+                hashMap = new HashMap<>();
+                hashMap.put("推荐歌单", v1);
+                hashMap.put("最新专辑", v2);
+                hashMap.put("主播电台", v3);
+                position = PreferencesUtility.getInstance(mContext).getItemPosition();
+                loadView.clearAnimation();
+                viewContent.removeView(loadView);
 
                 addViews();
 
-                mItemLayout.setVisibility(View.VISIBLE);
+                itemChanged.setVisibility(View.VISIBLE);
 
             }
 
         }.execute();
     }
-
-
 
     class LoadRecommend extends AsyncTask<Integer, Void, Integer> {
         @Override
@@ -276,69 +251,71 @@ public class RecommendFragment extends AttachFragment {
                     new LoadRecommend().execute(tryCount);
                 } else {
                     Toast.makeText(mContext, "网络连接失败", Toast.LENGTH_SHORT).show();
-                    View tryAgain = LayoutInflater.from(mContext).inflate(R.layout.try_again, mViewContent, false);
+                    View tryAgain = LayoutInflater.from(mContext).inflate(R.layout.try_again, viewContent, false);
                     tryAgain.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
                             new LoadRecommend().execute(0);
                         }
                     });
-                    mViewContent.removeView(mLoadView);
-                    mViewContent.addView(tryAgain);
+                    loadView.clearAnimation();
+                    viewContent.removeView(loadView);
+                    viewContent.addView(tryAgain);
                 }
 
             }
 
-            v1 = mLayoutInflater.inflate(R.layout.recommend_playlist, mViewContent, false);
-            mRecyclerView1 = (RecyclerView) v1.findViewById(R.id.recommend_playlist_recyclerview);
-            mGridLayoutManager = new GridLayoutManager(mContext, 3);
-            mRecyclerView1.setLayoutManager(mGridLayoutManager);
-            mRecyclerView1.setAdapter(mRecomendAdapter);
+            v1 = layoutInflater.inflate(R.layout.recommend_playlist, viewContent, false);
+            recyclerView1 = (RecyclerView) v1.findViewById(R.id.recommend_playlist_recyclerview);
+            gridLayoutManager = new GridLayoutManager(mContext, 3);
+            recyclerView1.setLayoutManager(gridLayoutManager);
+            recyclerView1.setAdapter(recomendAdapter);
             TextView more = (TextView) v1.findViewById(R.id.more);
             more.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    mChangeView.changeTo(1);
+                    changeView.changeTo(1);
                 }
             });
 
 
-            v2 = mLayoutInflater.inflate(R.layout.recommend_newalbums, mViewContent, false);
-            mRecyclerView2 = (RecyclerView) v2.findViewById(R.id.recommend_newalbums_recyclerview);
-            mGridLayoutManager2 = new GridLayoutManager(mContext, 3);
-            mRecyclerView2.setLayoutManager(mGridLayoutManager2);
-            mRecyclerView2.setAdapter(mNewAlbumsAdapter);
+            v2 = layoutInflater.inflate(R.layout.recommend_newalbums, viewContent, false);
+            recyclerView2 = (RecyclerView) v2.findViewById(R.id.recommend_newalbums_recyclerview);
+            gridLayoutManager2 = new GridLayoutManager(mContext, 3);
+            recyclerView2.setLayoutManager(gridLayoutManager2);
+            recyclerView2.setAdapter(newAlbumsAdapter);
 
-            v3 = mLayoutInflater.inflate(R.layout.recommend_radio, mViewContent, false);
-            mRecyclerView3 = (RecyclerView) v3.findViewById(R.id.recommend_radio_recyclerview);
-            mGridLayoutManager3 = new GridLayoutManager(mContext, 3);
-            mRecyclerView3.setLayoutManager(mGridLayoutManager3);
-            mRecyclerView3.setAdapter(mRadioAdapter);
+            v3 = layoutInflater.inflate(R.layout.recommend_radio, viewContent, false);
+            recyclerView3 = (RecyclerView) v3.findViewById(R.id.recommend_radio_recyclerview);
+            gridLayoutManager3 = new GridLayoutManager(mContext, 3);
+            recyclerView3.setLayoutManager(gridLayoutManager3);
+            recyclerView3.setAdapter(radioAdapter);
 
 
-            mRecomendAdapter.update(mRecomendList);
-            mNewAlbumsAdapter.update(mNewAlbumsList);
-            mRadioAdapter.update(mRadioList);
+            recomendAdapter.update(mRecomendList);
+            newAlbumsAdapter.update(mNewAlbumsList);
+            radioAdapter.update(mRadioList);
 
-            mViewHashMap = new HashMap<>();
-            mViewHashMap.put("推荐歌单", v1);
-            mViewHashMap.put("最新专辑", v2);
-            mViewHashMap.put("主播电台", v3);
-            mPosition = PreferencesUtility.getInstance(mContext).getItemPosition();
-            mViewContent.removeView(mLoadView);
+            hashMap = new HashMap<>();
+            hashMap.put("推荐歌单", v1);
+            hashMap.put("最新专辑", v2);
+            hashMap.put("主播电台", v3);
+            position = PreferencesUtility.getInstance(mContext).getItemPosition();
+            loadView.clearAnimation();
+            viewContent.removeView(loadView);
 
             addViews();
 
-            mItemLayout.setVisibility(View.VISIBLE);
+            itemChanged.setVisibility(View.VISIBLE);
 
         }
     }
 
-    private void addViews() {
+    public void addViews() {
 
-        String[] strs = mPosition.split(" ");
+        String[] strs = position.split(" ");
         for (int i = 0; i < strs.length; i++) {
-            mViewContent.addView(mViewHashMap.get(strs[i]));
+            viewContent.addView(hashMap.get(strs[i]));
         }
 
     }
@@ -347,13 +324,13 @@ public class RecommendFragment extends AttachFragment {
     @Override
     public void onResume() {
         super.onResume();
-        if (mPosition == null) {
+        if (position == null) {
             return;
         }
         String st = PreferencesUtility.getInstance(mContext).getItemPosition();
-        if (!st.equals(mPosition)) {
-            mPosition = st;
-            mViewContent.removeAllViews();
+        if (!st.equals(position)) {
+            position = st;
+            viewContent.removeAllViews();
             addViews();
         }
 

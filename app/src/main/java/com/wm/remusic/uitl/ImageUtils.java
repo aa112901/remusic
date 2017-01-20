@@ -338,8 +338,7 @@ public class ImageUtils {
                 }
 
                 return b;
-            } catch (Exception e) {
-                e.printStackTrace();
+            } catch (FileNotFoundException e) {
             } finally {
                 try {
                     if (fd != null)

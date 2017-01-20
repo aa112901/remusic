@@ -47,6 +47,7 @@ public class RoundView extends FrameLayout {
     public static RoundView getView(Context context ,String str){
         RoundView view = new RoundView(context);
         view.setAlbum(str);
+        Log.e("uqueue",str);
         return view;
     }
 

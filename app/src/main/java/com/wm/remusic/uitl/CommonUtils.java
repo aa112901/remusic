@@ -16,6 +16,8 @@ package com.wm.remusic.uitl;
 
 import android.content.ContentUris;
 import android.content.Context;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
@@ -23,6 +25,7 @@ import android.provider.MediaStore;
 import android.util.TypedValue;
 
 import com.sun.mail.smtp.SMTPMessage;
+import com.wm.remusic.MainApplication;
 import com.wm.remusic.R;
 
 import java.io.IOException;
@@ -94,6 +97,26 @@ public class CommonUtils {
         return new UUID(m_szDevIDShort.hashCode(), serial.hashCode()).toString();
     }
 
+    /**
+     * 获取apk的版本号 currentVersionCode
+     *
+     * @param ctx
+     * @return
+     */
+    public static int getAPPVersionCode(Context ctx) {
+        int currentVersionCode = 0;
+        PackageManager manager = ctx.getPackageManager();
+        try {
+            PackageInfo info = manager.getPackageInfo(ctx.getPackageName(), 0);
+            String appVersionName = info.versionName; // 版本名
+            currentVersionCode = info.versionCode; // 版本号
+            System.out.println(currentVersionCode + " " + appVersionName);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return currentVersionCode;
+    }
+
     public static String getDeviceInfo() {
         StringBuilder builder = new StringBuilder();
         builder.append("MODEL = " + Build.MODEL + "\n");
@@ -109,6 +132,7 @@ public class CommonUtils {
         builder.append("Build.VERSION.SDK_INT = " + Build.VERSION.SDK_INT + "\n");
         builder.append("VERSION.BASE_OS = " + Build.VERSION.BASE_OS + "\n");
         builder.append("Build.VERSION.SDK = " + Build.VERSION.SDK + "\n");
+        builder.append("APP.VERSION = " + getAPPVersionCode(MainApplication.context) + "\n");
         builder.append("\n" + "log:" + "\n");
 
         return builder.toString();
@@ -128,12 +152,12 @@ public class CommonUtils {
             Session session = Session.getInstance(props, null);
             Transport transport = session.getTransport("smtp");
 
-            transport.connect("smtp.163.com", 25, "remusic_send@163.com",
-                    "remusic1");
+            transport.connect("smtp.163.com", 25, "remusic_log@163.com",
+                    "remusiclog1");
             Message mailMessage = new SMTPMessage(session);
-            Address from = new InternetAddress("remusic_send@163.com");
+            Address from = new InternetAddress("remusic_log@163.com");
             mailMessage.setFrom(from);
-            Address to = new InternetAddress("remusic_send@163.com");
+            Address to = new InternetAddress("remusic_log@163.com");
             mailMessage.setRecipient(Message.RecipientType.TO, to);
             mailMessage.setSubject(title);
             mailMessage.setSentDate(new Date());

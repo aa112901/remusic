@@ -6,6 +6,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -43,12 +44,16 @@ public class QuickControlsFragment extends BaseFragment {
         public void run() {
 
             long position = MusicPlayer.position();
-            mProgress.setMax((int) MusicPlayer.duration());
-            mProgress.setProgress((int) position);
+            long duration = MusicPlayer.duration();
+            if (duration > 0 && duration < 627080716){
+                mProgress.setProgress((int) (1000 * position / duration));
+            }
 
             if (MusicPlayer.isPlaying()) {
                 mProgress.postDelayed(mUpdateProgress, 50);
-            } else mProgress.removeCallbacks(this);
+            }else {
+                mProgress.removeCallbacks(mUpdateProgress);
+            }
 
         }
     };
@@ -58,8 +63,7 @@ public class QuickControlsFragment extends BaseFragment {
     private SimpleDraweeView mAlbumArt;
     private View rootView;
     private ImageView playQueue, next;
-    private LinearLayout layout;
-    private boolean duetoplaypause = false;
+    private String TAG = "QuickControlsFragment";
     private static QuickControlsFragment fragment;
 
     public static QuickControlsFragment newInstance() {
@@ -79,8 +83,6 @@ public class QuickControlsFragment extends BaseFragment {
         next = (ImageView) rootView.findViewById(R.id.play_next);
         playQueue = (ImageView) rootView.findViewById(R.id.play_list);
 
-        mProgress.setMax((int) MusicPlayer.duration());
-        mProgress.setProgress((int) MusicPlayer.position());
         mProgress.setProgressTintList(ThemeUtils.getThemeColorStateList(mContext, R.color.theme_color_primary));
 
         mPlayPause.setOnClickListener(new View.OnClickListener() {
@@ -151,7 +153,6 @@ public class QuickControlsFragment extends BaseFragment {
     public void updateNowplayingCard() {
         mTitle.setText(MusicPlayer.getTrackName());
         mArtist.setText(MusicPlayer.getArtistName());
-        if (!duetoplaypause) {
             ControllerListener controllerListener = new BaseControllerListener<ImageInfo>() {
                 @Override
                 public void onFinalImageSet(String id, @Nullable ImageInfo imageInfo, @Nullable Animatable anim) {
@@ -198,10 +199,7 @@ public class QuickControlsFragment extends BaseFragment {
             } else {
                 mAlbumArt.setImageURI(Uri.parse("content://" + MusicPlayer.getAlbumPath()));
             }
-        }
-        duetoplaypause = false;
-        mProgress.setMax((int) MusicPlayer.duration());
-        mProgress.postDelayed(mUpdateProgress, 10);
+
     }
 
     @Override
@@ -214,12 +212,15 @@ public class QuickControlsFragment extends BaseFragment {
     public void onStop() {
         super.onStop();
         mProgress.removeCallbacks(mUpdateProgress);
-
     }
 
     @Override
     public void onResume() {
         super.onResume();
+        mProgress.setMax(1000);
+        mProgress.removeCallbacks(mUpdateProgress);
+        mProgress.postDelayed(mUpdateProgress,10);
+        updateNowplayingCard();
 
     }
 
@@ -233,9 +234,12 @@ public class QuickControlsFragment extends BaseFragment {
         if (MusicPlayer.isPlaying()) {
             mPlayPause.setImageResource(R.drawable.playbar_btn_pause);
             mPlayPause.setImageTintList(R.color.theme_color_primary);
+            mProgress.removeCallbacks(mUpdateProgress);
+            mProgress.postDelayed(mUpdateProgress,50);
         } else {
             mPlayPause.setImageResource(R.drawable.playbar_btn_play);
             mPlayPause.setImageTintList(R.color.theme_color_primary);
+            mProgress.removeCallbacks(mUpdateProgress);
         }
     }
 
@@ -245,10 +249,6 @@ public class QuickControlsFragment extends BaseFragment {
         updateState();
     }
 
-    @Override
-    public void updateTime() {
-        mProgress.setMax((int) MusicPlayer.duration());
-    }
 
     @Override
     public void changeTheme() {

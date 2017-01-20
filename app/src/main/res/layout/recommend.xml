@@ -6,14 +6,18 @@
     android:contentDescription="@string/app_name"
     android:scrollbarSize="10dp"
     android:scrollbarStyle="insideInset"
+    android:fillViewport="true"
     android:scrollbars="none">
 
     <LinearLayout
+        android:id="@+id/layout_content"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
 
         <com.wm.remusic.widget.LoodView
+            android:focusableInTouchMode="true"
+            android:focusable="true"
             android:id="@+id/loop_view"
             android:layout_width="match_parent"
             android:layout_height="160dp"

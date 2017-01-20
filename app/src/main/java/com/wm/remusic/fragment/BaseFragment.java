@@ -26,13 +26,25 @@ public class BaseFragment extends Fragment implements MusicStateListener {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
         ((BaseActivity) getActivity()).setMusicStateListenerListener(this);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        ((BaseActivity) getActivity()).removeMusicStateListenerListener(this);
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        ((BaseActivity) getActivity()).removeMusicStateListenerListener(this);
+
     }
 
     @Override

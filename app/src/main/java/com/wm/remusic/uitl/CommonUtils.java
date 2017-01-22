@@ -140,12 +140,11 @@ public class CommonUtils {
 
     /**
      * 以文本格式发送邮件
+     *
      * @param title 待发送的邮件的信息
      */
-    public static boolean sendTextMail(String title ,String content)
-    {
-        try
-        {
+    public static boolean sendTextMail(String title, String content) {
+        try {
             Properties props = System.getProperties();
             props.put("mail.smtp.host", "smtp.163.com");
             props.put("mail.smtp.auth", "true");
@@ -164,9 +163,7 @@ public class CommonUtils {
             mailMessage.setText(content);
             transport.sendMessage(mailMessage, mailMessage.getAllRecipients());
             return true;
-        }
-        catch (MessagingException ex)
-        {
+        } catch (MessagingException ex) {
             ex.printStackTrace();
 
         }

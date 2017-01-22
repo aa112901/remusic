@@ -7,7 +7,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -21,7 +20,6 @@ import android.widget.TextView;
 import com.bilibili.magicasakura.widgets.TintImageView;
 import com.github.promeg.pinyinhelper.Pinyin;
 import com.wm.remusic.R;
-import com.wm.remusic.activity.AlbumsDetailActivity;
 import com.wm.remusic.activity.SelectActivity;
 import com.wm.remusic.handler.HandlerUtil;
 import com.wm.remusic.info.MusicInfo;
@@ -330,11 +328,11 @@ public class MusicFragment extends BaseFragment {
 
             public void onClick(View v) {
                 //// TODO: 2016/1/20
-                if(playMusic != null)
+                if (playMusic != null)
                     handler.removeCallbacks(playMusic);
-                if(getAdapterPosition() > -1){
+                if (getAdapterPosition() > -1) {
                     playMusic = new PlayMusic(0);
-                    handler.postDelayed(playMusic,70);
+                    handler.postDelayed(playMusic, 70);
                 }
 //                HandlerUtil.getInstance(getContext()).postDelayed(new Runnable() {
 //                    @Override
@@ -385,11 +383,11 @@ public class MusicFragment extends BaseFragment {
 
             @Override
             public void onClick(View v) {
-                if(playMusic != null)
+                if (playMusic != null)
                     handler.removeCallbacks(playMusic);
-                if(getAdapterPosition() > -1){
+                if (getAdapterPosition() > -1) {
                     playMusic = new PlayMusic(getAdapterPosition() - 1);
-                    handler.postDelayed(playMusic,70);
+                    handler.postDelayed(playMusic, 70);
                 }
 //                HandlerUtil.getInstance(getContext()).postDelayed(new Runnable() {
 //                    @Override
@@ -411,9 +409,10 @@ public class MusicFragment extends BaseFragment {
 
         }
 
-        class PlayMusic implements Runnable{
+        class PlayMusic implements Runnable {
             int position;
-            public PlayMusic(int position){
+
+            public PlayMusic(int position) {
                 this.position = position;
             }
 

@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:contentDescription="@string/app_name"
+    android:scrollbarSize="10dp"
+    android:scrollbarStyle="insideInset"
+    android:fillViewport="true"
+    android:scrollbars="none">
+
+    <LinearLayout
+        android:id="@+id/layout_content"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <com.wm.remusic.widget.LoodView
+            android:focusableInTouchMode="true"
+            android:focusable="true"
+            android:id="@+id/loop_view"
+            android:layout_width="match_parent"
+            android:layout_height="160dp"
+            android:layout_gravity="center_horizontal" />
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <LinearLayout
+                android:id="@+id/personal_recommend"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:orientation="horizontal">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center_vertical">
+
+                    <RelativeLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="35dp">
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical">
+
+                            <com.bilibili.magicasakura.widgets.TintButton
+                                android:layout_width="55dp"
+                                android:layout_height="55dp"
+                                android:id="@+id/private_fm"
+                                android:background="@drawable/recommend_fm" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center_horizontal"
+                                android:layout_marginTop="10dp"
+                                android:text="私人FM"
+                                android:textColor="#000000"
+                                android:textSize="12sp" />
+                        </LinearLayout>
+                    </RelativeLayout>
+
+                    <RelativeLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerInParent="true">
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:orientation="vertical">
+
+                            <FrameLayout
+                                android:layout_width="55dp"
+                                android:layout_height="55dp">
+
+                                <com.bilibili.magicasakura.widgets.TintButton
+                                    android:id="@+id/daily_btn"
+                                    android:layout_width="55dp"
+                                    android:layout_height="55dp"
+                                    android:background="@drawable/recommend_daily" />
+
+                                <com.bilibili.magicasakura.widgets.TintTextView
+                                    android:id="@+id/daily_text"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_gravity="center"
+                                    android:text="15"
+                                    android:textColor="@color/theme_color_primary"
+                                    android:textSize="25sp" />
+                            </FrameLayout>
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="10dp"
+                                android:text="每日歌曲推荐"
+                                android:textColor="#000000"
+                                android:textSize="12sp" />
+
+                        </LinearLayout>
+
+
+                    </RelativeLayout>
+
+                    <RelativeLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:layout_marginRight="35dp">
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical">
+
+                            <com.bilibili.magicasakura.widgets.TintButton
+                                android:layout_width="55dp"
+                                android:layout_height="55dp"
+                                android:layout_gravity="center"
+                                android:background="@drawable/recommend_rank" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:layout_marginTop="10dp"
+                                android:text="云音乐新歌榜"
+                                android:textColor="#000000"
+                                android:textSize="12sp" />
+                        </LinearLayout>
+
+                    </RelativeLayout>
+                </RelativeLayout>
+
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="0.3dp"
+                android:layout_below="@+id/personal_recommend"
+                android:layout_marginTop="15dp"
+                android:background="#E0E0E0" />
+        </RelativeLayout>
+
+        <LinearLayout
+            android:id="@+id/recommend_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+            <!--<include layout="@layout/recommend_playlist" />-->
+            <!--<include layout="@layout/recommend_newalbums"/>-->
+            <!--<include layout="@layout/recommend_radio"/>-->
+
+            <!--添加布局的位置-->
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:id="@+id/item_change"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <View
+                android:id="@+id/layout_line"
+                android:layout_width="match_parent"
+                android:layout_height="0.3dp"
+                android:layout_marginTop="20dp"
+                android:background="#E0E0E0" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="15dp"
+                android:text="现在可以根据个人喜好，自由调整首页项目顺序啦~"
+                android:textColor="#7D7D7D"
+                android:textSize="10sp" />
+
+            <com.bilibili.magicasakura.widgets.TintLinearLayout
+                app:imageTint="@color/theme_color_primary"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginBottom="70dp"
+                android:layout_marginTop="10dp"
+                android:orientation="horizontal"
+                android:clickable="true"
+                android:background="@drawable/btn_background">
+
+                <com.bilibili.magicasakura.widgets.TintTextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="调整栏目顺序"
+                    android:id="@+id/change_item_position"
+                    android:textColor="@color/theme_color_primary"
+                    android:clickable="true"
+                    android:textSize="12sp" />
+            </com.bilibili.magicasakura.widgets.TintLinearLayout>
+        </LinearLayout>
+
+    </LinearLayout>
+</ScrollView>

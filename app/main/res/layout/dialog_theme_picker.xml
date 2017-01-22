@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (C) 2016 Bilibili
+  ~
+  ~  Licensed under the Apache License, Version 2.0 (the "License");
+  ~  you may not use this file except in compliance with the License.
+  ~  You may obtain a copy of the License at
+  ~
+  ~        http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~  Unless required by applicable law or agreed to in writing, software
+  ~  distributed under the License is distributed on an "AS IS" BASIS,
+  ~  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~  See the License for the specific language governing permissions and
+  ~  limitations under the License.
+  ~
+  -->
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <android.support.v7.widget.DialogTitle
+        android:id="@+id/title"
+        style="?android:attr/windowTitleStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="start"
+        android:ellipsize="end"
+        android:paddingLeft="?attr/dialogPreferredPadding"
+        android:paddingRight="?attr/dialogPreferredPadding"
+        android:paddingTop="@dimen/abc_dialog_padding_top_material"
+        android:singleLine="true"
+        android:text="Card Picker"
+        android:textAlignment="viewStart"
+        android:textSize="16sp" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingLeft="?attr/dialogPreferredPadding"
+        android:paddingRight="?attr/dialogPreferredPadding"
+        android:paddingTop="?attr/dialogPreferredPadding">
+
+        <com.bilibili.magicasakura.widgets.TintImageView
+            android:id="@+id/theme_pink"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:background="@drawable/ic_card_bigdp"
+            android:scaleType="centerInside"
+            android:src="@drawable/selector_pick_item"
+            app:backgroundTint="@color/red" />
+
+        <android.support.v4.widget.Space
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:visibility="invisible" />
+
+        <com.bilibili.magicasakura.widgets.TintImageView
+            android:id="@+id/theme_purple"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:background="@drawable/ic_card_bigdp"
+            android:scaleType="centerInside"
+            android:src="@drawable/selector_pick_item"
+            app:backgroundTint="@color/purple" />
+
+        <android.support.v4.widget.Space
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:visibility="invisible" />
+
+        <com.bilibili.magicasakura.widgets.TintImageView
+            android:id="@+id/theme_blue"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:background="@drawable/ic_card_bigdp"
+            android:scaleType="centerInside"
+            android:src="@drawable/selector_pick_item"
+            app:backgroundTint="@color/blue" />
+
+        <android.support.v4.widget.Space
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:visibility="invisible" />
+
+        <com.bilibili.magicasakura.widgets.TintImageView
+            android:id="@+id/theme_green"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:background="@drawable/ic_card_bigdp"
+            android:scaleType="centerInside"
+            android:src="@drawable/selector_pick_item"
+            app:backgroundTint="@color/green" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingLeft="?attr/dialogPreferredPadding"
+        android:paddingRight="?attr/dialogPreferredPadding"
+        android:paddingTop="?attr/dialogPreferredPadding">
+
+        <com.bilibili.magicasakura.widgets.TintImageView
+            android:id="@+id/theme_green_light"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:background="@drawable/ic_card_bigdp"
+            android:scaleType="centerInside"
+            android:src="@drawable/selector_pick_item"
+            app:backgroundTint="@color/green_light" />
+
+        <android.support.v4.widget.Space
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:visibility="invisible" />
+
+        <com.bilibili.magicasakura.widgets.TintImageView
+            android:id="@+id/theme_yellow"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:background="@drawable/ic_card_bigdp"
+            android:scaleType="centerInside"
+            android:src="@drawable/selector_pick_item"
+            app:backgroundTint="@color/yellow" />
+
+        <android.support.v4.widget.Space
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:visibility="invisible" />
+
+        <com.bilibili.magicasakura.widgets.TintImageView
+            android:id="@+id/theme_orange"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:background="@drawable/ic_card_bigdp"
+            android:scaleType="centerInside"
+            android:src="@drawable/selector_pick_item"
+            app:backgroundTint="@color/orange" />
+
+        <android.support.v4.widget.Space
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:visibility="invisible" />
+
+        <com.bilibili.magicasakura.widgets.TintImageView
+            android:id="@+id/theme_red"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:background="@drawable/ic_card_bigdp"
+            android:scaleType="centerInside"
+            android:src="@drawable/selector_pick_item"
+            app:backgroundTint="@color/pink" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/buttonPanel"
+        style="?attr/buttonBarStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="bottom"
+        android:orientation="horizontal"
+        android:paddingBottom="20dp"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:paddingTop="?attr/dialogPreferredPadding">
+
+        <android.support.v4.widget.Space
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:visibility="invisible" />
+
+        <com.bilibili.magicasakura.widgets.TintButton
+            android:id="@android:id/button2"
+            style="?attr/buttonBarNegativeButtonStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="16dp"
+            android:background="?attr/selectableItemBackground"
+            android:text="@string/cancel"
+            android:textColor="@color/text_color" />
+
+        <com.bilibili.magicasakura.widgets.TintButton
+            android:id="@android:id/button1"
+            style="?attr/buttonBarPositiveButtonStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="?attr/selectableItemBackground"
+            android:text="@string/confirm"
+            android:textColor="@color/text_color" />
+    </LinearLayout>
+
+</LinearLayout>

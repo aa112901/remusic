@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="toolbarItemBackground" type="drawable">@drawable/abc_item_background_holo_light
+    </item>
+
+
+</resources>

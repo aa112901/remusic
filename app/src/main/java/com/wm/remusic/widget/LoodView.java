@@ -36,7 +36,6 @@ import com.wm.remusic.json.FocusItemInfo;
 import com.wm.remusic.net.BMA;
 import com.wm.remusic.net.HttpUtil;
 import com.wm.remusic.net.NetworkUtils;
-import com.wm.remusic.service.MusicPlayer;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -97,6 +96,11 @@ public class LoodView extends FrameLayout {
 
     }
 
+    public void onDestroy() {
+        scheduledExecutorService.shutdownNow();
+        scheduledExecutorService = null;
+    }
+
     /**
      * 开始轮播图切换
      */
@@ -151,9 +155,9 @@ public class LoodView extends FrameLayout {
                 }
             };
             Uri uri = null;
-            try{
+            try {
                 uri = Uri.parse(imagesID);
-            }catch (Exception e){
+            } catch (Exception e) {
                 e.printStackTrace();
             }
             if (uri != null) {

@@ -1,0 +1,230 @@
+<!--
+  Copyright 2014 Soichiro Kashima
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:fresco="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/headerview"
+    android:orientation="vertical">
+
+    <ImageView
+        android:layout_alignParentTop="true"
+        android:id="@+id/album_art"
+        android:layout_width="match_parent"
+        android:layout_height="270dp"
+        android:scaleType="centerCrop" />
+
+    <View
+        android:id="@+id/overlay"
+        android:layout_alignParentTop="true"
+        android:layout_width="match_parent"
+        android:layout_height="270dp"
+        android:background="#60919191" />
+
+    <RelativeLayout
+        android:id="@+id/headerdetail"
+        android:layout_marginTop="90dp"
+        android:layout_width="match_parent"
+        android:layout_height="179dp"
+        android:orientation="horizontal"
+        android:visibility="visible">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="15dp"
+            android:layout_marginLeft="18dp"
+            android:orientation="horizontal">
+
+            <FrameLayout
+                android:layout_width="123dp"
+                android:layout_height="123dp"
+                android:layout_marginLeft="5dp"
+                android:id="@+id/fra">
+
+                <com.facebook.drawee.view.SimpleDraweeView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:src="@mipmap/list_third"
+                    android:id="@+id/playlist_art"
+                    android:scaleType="centerCrop"
+                    fresco:placeholderImage="@drawable/placeholder_disk_210"
+                    fresco:placeholderImageScaleType="centerCrop" />
+                <FrameLayout
+                    android:visibility="invisible"
+                    android:id="@+id/playlist_fav"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="#aa000000" />
+                    <ImageView
+                        android:src="@drawable/play_icn_love"
+                        android:layout_gravity="center"
+                        android:scaleType="centerCrop"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent" />
+                </FrameLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="#1e000000"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="right"
+                        android:layout_marginRight="3dp"
+                        android:textColor="@color/white_text"
+                        android:textSize="12sp"
+                        android:id="@+id/playlist_listen_count" />
+                </LinearLayout>
+
+            </FrameLayout>
+
+            <TextView
+                android:layout_marginRight="10dp"
+                android:id="@+id/album_title"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="center_vertical"
+                android:gravity="center_vertical"
+                android:layout_marginLeft="15dp"
+                android:ellipsize="end"
+                android:textColor="#ffffff"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/album_details"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingTop="3dp"
+                android:textColor="#ffffff"
+                android:textSize="16sp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_marginBottom="10dp"
+            android:layout_alignParentBottom="true"
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <LinearLayout
+                android:id="@+id/playlist_collect"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <ImageView
+                    android:layout_gravity="center"
+                    android:id="@+id/playlist_collect_view"
+                    android:src="@drawable/list_detail_icn_fav"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+                <TextView
+                    android:id="@+id/playlist_collect_state"
+                    android:textColor="@color/white_text"
+                    android:textSize="12sp"
+                    android:gravity="center"
+                    android:text="收藏"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <ImageView
+                    android:layout_gravity="center"
+                    android:id="@+id/playlist_cmt"
+                    android:layout_weight="1"
+                    android:src="@drawable/list_detail_icn_cmt_dis"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+                <TextView
+                    android:textColor="@color/white_text"
+                    android:textSize="12sp"
+                    android:gravity="center"
+                    android:text="评论"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+            </LinearLayout>
+
+
+            <LinearLayout
+                android:id="@+id/playlist_share"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <ImageView
+                    android:layout_gravity="center"
+                    android:id="@+id/playlist_share_view"
+                    android:src="@drawable/list_detail_icn_share"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+                <TextView
+                    android:textColor="@color/white_text"
+                    android:textSize="12sp"
+                    android:gravity="center"
+                    android:text="分享"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+            </LinearLayout>
+
+
+            <LinearLayout
+                android:background="?android:selectableItemBackground"
+                android:id="@+id/playlist_down"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <ImageView
+                    android:layout_gravity="center"
+                    android:layout_weight="1"
+                    android:src="@drawable/list_detail_icn_dld"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+                <TextView
+                    android:textColor="@color/white_text"
+                    android:textSize="12sp"
+                    android:gravity="center"
+                    android:text="下载"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </RelativeLayout>
+
+</FrameLayout>

@@ -98,12 +98,12 @@ public class DownMusicFragment extends BaseFragment {
             protected Void doInBackground(final Void... unused) {
                 boolean hasFolder = false;
                 File file = new File(folder_path);
-                if(!file.exists()){
+                if (!file.exists()) {
                     hasFolder = file.mkdirs();
-                }else {
+                } else {
                     hasFolder = true;
                 }
-                if(hasFolder){
+                if (hasFolder) {
                     List<MusicInfo> albumList = MusicUtils.queryMusic(mContext, folder_path, IConstants.START_FROM_FOLDER);
                     folderDetailAdapter.updateDataSet(albumList);
                 }
@@ -213,7 +213,7 @@ public class DownMusicFragment extends BaseFragment {
                         }
                         MusicPlayer.playAll(infos, list, 0, false);
                     }
-                },70);
+                }, 70);
             }
 
 

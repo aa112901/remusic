@@ -201,10 +201,10 @@ public class RoundFragment extends Fragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        Log.e("roundfragment"," id = " + hashCode());
+        Log.e("roundfragment", " id = " + hashCode());
         if (animator != null) {
             animator = null;
-            Log.e("roundfragment"," id = " + hashCode() + "  , animator destroy");
+            Log.e("roundfragment", " id = " + hashCode() + "  , animator destroy");
         }
 //        RefWatcher refWatcher = MainApplication.getRefWatcher(getActivity());
 //        refWatcher.watch(this);

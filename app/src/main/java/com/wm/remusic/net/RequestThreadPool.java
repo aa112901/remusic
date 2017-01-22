@@ -1,11 +1,6 @@
 package com.wm.remusic.net;
 
-import com.wm.remusic.json.MusicDetailInfo;
-
-import java.util.ArrayList;
 import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -39,12 +34,12 @@ public class RequestThreadPool {
                 workQueue);
     }
 
-    public static boolean isTerminated(){
+    public static boolean isTerminated() {
         return mInstance.mThreadPoolExec.isTerminated();
     }
 
     public static void finish() {
-        if(mInstance != null){
+        if (mInstance != null) {
             mInstance.mThreadPoolExec.shutdownNow();
             mInstance.mThreadPoolExec.purge();
             mInstance.mThreadPoolExec = null;

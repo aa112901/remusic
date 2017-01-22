@@ -37,7 +37,7 @@ import okio.Okio;
  * Created by wm on 2016/4/10.
  */
 public class HttpUtil {
-    public  static final OkHttpClient mOkHttpClient = new OkHttpClient();
+    public static final OkHttpClient mOkHttpClient = new OkHttpClient();
 
 
     public static void getOut(final String url) {
@@ -269,7 +269,9 @@ public class HttpUtil {
             Response response = mOkHttpClient.newCall(request).execute();
             if (response.isSuccessful()) {
                 String c = response.body().string();
-                Log.e("HttpUtil", c);
+//                FileOutputStream fileOutputStream = new FileOutputStream("/sdcard/" + System.currentTimeMillis() + ".txt");
+//                fileOutputStream.write(c.getBytes());
+//                fileOutputStream.close();
                 JsonParser parser = new JsonParser();
                 JsonElement el = parser.parse(c);
                 return el.getAsJsonObject();

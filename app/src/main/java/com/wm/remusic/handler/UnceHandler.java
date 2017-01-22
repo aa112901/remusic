@@ -49,7 +49,7 @@ public class UnceHandler implements Thread.UncaughtExceptionHandler {
             }
             MusicPlaybackState.getInstance(application).clearQueue();
             Intent intent = new Intent(application.getApplicationContext(), MainActivity.class);
-            if(System.currentTimeMillis() - PreferencesUtility.getInstance(application.getApplicationContext()).lastExit() < 10000){
+            if (System.currentTimeMillis() - PreferencesUtility.getInstance(application.getApplicationContext()).lastExit() < 10000) {
                 android.os.Process.killProcess(android.os.Process.myPid());
                 return;
             }
@@ -98,7 +98,7 @@ public class UnceHandler implements Thread.UncaughtExceptionHandler {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                CommonUtils.sendTextMail("errlog from " + CommonUtils.getUniquePsuedoID() ,CommonUtils.getDeviceInfo() + Log.getStackTraceString(ex));
+                CommonUtils.sendTextMail("errlog from " + CommonUtils.getUniquePsuedoID(), CommonUtils.getDeviceInfo() + Log.getStackTraceString(ex));
             }
         }).start();
 

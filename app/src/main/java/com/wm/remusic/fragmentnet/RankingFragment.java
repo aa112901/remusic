@@ -1,10 +1,10 @@
 package com.wm.remusic.fragmentnet;
 
 
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -17,14 +17,13 @@ import com.facebook.drawee.view.SimpleDraweeView;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.wm.remusic.R;
+import com.wm.remusic.activity.RankPlaylistActivity;
 import com.wm.remusic.fragment.AttachFragment;
 import com.wm.remusic.json.BillboardInfo;
 import com.wm.remusic.net.BMA;
 import com.wm.remusic.net.HttpUtil;
 
 import java.util.ArrayList;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 /**
  * Created by wm on 2016/5/14.
@@ -53,6 +52,8 @@ public class RankingFragment extends AttachFragment {
     LinearLayoutManager linearLayoutManager;
     RankingAdapter rankingAdapter;
     ArrayList<BillboardInfo> items = new ArrayList<>();
+    int[] mBillList = new int[]{BILLBOARD_NEW_MUSIC, BILLBOARD_ORIGINAL, BILLBOARD_HOT_MUSIC
+            , BILLBOARD_EU_UK, BILLBOARD_KING, BILLBOARD_NET_MUSIC};
 
     @Override
     public void setUserVisibleHint(boolean isVisibleToUser) {
@@ -201,6 +202,17 @@ public class RankingFragment extends AttachFragment {
                 textView1 = (TextView) itemView.findViewById(R.id.rank_first_txt);
                 textView2 = (TextView) itemView.findViewById(R.id.rank_second_txt);
                 textView3 = (TextView) itemView.findViewById(R.id.rank_third_txt);
+                itemView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if (getAdapterPosition() > -1) {
+                            Intent intent = new Intent(mContext, RankPlaylistActivity.class);
+                            intent.putExtra("type", mBillList[getAdapterPosition()]);
+                            intent.putExtra("pic", pic[getAdapterPosition()]);
+                            mContext.startActivity(intent);
+                        }
+                    }
+                });
             }
         }
     }

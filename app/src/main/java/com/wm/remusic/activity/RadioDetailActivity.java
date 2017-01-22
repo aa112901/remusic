@@ -17,7 +17,6 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,7 +26,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.bilibili.magicasakura.widgets.TintImageView;
 import com.facebook.binaryresource.BinaryResource;
@@ -57,8 +55,6 @@ import com.wm.remusic.fragment.MoreFragment;
 import com.wm.remusic.fragment.NetMoreFragment;
 import com.wm.remusic.handler.HandlerUtil;
 import com.wm.remusic.info.MusicInfo;
-import com.wm.remusic.json.AlbumInfo;
-import com.wm.remusic.json.MusicDetailInfo;
 import com.wm.remusic.json.RadioInfo;
 import com.wm.remusic.net.BMA;
 import com.wm.remusic.net.HttpUtil;
@@ -103,6 +99,7 @@ public class RadioDetailActivity extends BaseActivity implements ObservableScrol
     private String albumListenCount;
     private FrameLayout headerViewContent;
     private RelativeLayout headerDetail;
+    private LoadNetPlaylistInfo mLoadNetList;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -236,7 +233,8 @@ public class RadioDetailActivity extends BaseActivity implements ObservableScrol
             tryAgain.setVisibility(View.GONE);
             loadView = LayoutInflater.from(this).inflate(R.layout.loading, loadFrameLayout, false);
             loadFrameLayout.addView(loadView);
-            new LoadNetPlaylistInfo().execute();
+            mLoadNetList = new LoadNetPlaylistInfo();
+            mLoadNetList.execute();
 
         } else {
             tryAgain.setVisibility(View.VISIBLE);
@@ -286,6 +284,7 @@ public class RadioDetailActivity extends BaseActivity implements ObservableScrol
             loadFrameLayout.removeAllViews();
             mAdapter.updateDataSet(adapterList);
         }
+
     }
 
 
@@ -299,6 +298,11 @@ public class RadioDetailActivity extends BaseActivity implements ObservableScrol
         super.onPause();
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        mLoadNetList.cancel(true);
+    }
 
     private void setAlbumart() {
         albumTitle.setText(albumName);
@@ -546,7 +550,7 @@ public class RadioDetailActivity extends BaseActivity implements ObservableScrol
                         }
                         MusicPlayer.playAll(infos, list, 0, false);
                     }
-                },70);
+                }, 70);
 
             }
 
@@ -583,7 +587,7 @@ public class RadioDetailActivity extends BaseActivity implements ObservableScrol
                         if (getAdapterPosition() > 0)
                             MusicPlayer.playAll(infos, list, getAdapterPosition() - 1, false);
                     }
-                },70);
+                }, 70);
 
             }
 

@@ -89,8 +89,8 @@ public class AlbumDetailFragment extends BaseFragment {
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(getActivity() != null)
-                getActivity().onBackPressed();
+                if (getActivity() != null)
+                    getActivity().onBackPressed();
             }
         });
 
@@ -213,7 +213,7 @@ public class AlbumDetailFragment extends BaseFragment {
                         }
                         MusicPlayer.playAll(infos, list, 0, false);
                     }
-                },70);
+                }, 70);
             }
 
 

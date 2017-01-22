@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+
+    <string name="local_music">本地音乐</string>
+    <string name="recent_play">最近播放</string>
+    <string name="local_manage">下载管理</string>
+    <string name="my_artist">我的歌手</string>
+    <string name="created_playlists">创建的歌单</string>
+    <string name="my_fav_playlist">我喜欢的音乐</string>
+    <string name="shared_to">分享到</string>
+
+    <string name="queue_is_empty">播放队列为空</string>
+    <string name="random_play">随机播放</string>
+    <string name="loop_play">列表循环</string>
+    <string name="play_one">单曲播放</string>
+
+    <string name="sure_to_delete_music">确定删除歌曲吗</string>
+    <string name="sure">确定</string>
+    <string name="cancel">取消</string>
+    <string name="search_local_music">搜索本地歌曲</string>
+    <string name="search_net_music">搜索音乐、歌手、歌词、...</string>
+    <string name="sure_to_set_ringtone">确定成设置铃声吗</string>
+
+    <string name="set_ringtone_successed">设置铃声成功！</string>
+
+    <string name="app_name">remusic</string>
+    <string name="search">搜索</string>
+    <string name="action_connect">连接设备</string>
+    <string name="timing">定时播放</string>
+    <string name="exit">退出</string>
+    <string name="search_hint">歌名/歌手名</string>
+    <string name="title_activity_search_">Search_Activity</string>
+    <string name="dialog_fire_missiles">您确定要退出吗</string>
+    <string name="fire">确定</string>
+
+    <string name="next_play">已加入下一首播放</string>
+
+    <color name="test_color">#696969</color>
+
+
+    <string name="duration_format" translatable="false"><xliff:g id="hours">%1$s</xliff:g> <xliff:g id="minutes">%2$s</xliff:g></string>
+    <string name="durationformatshort" translatable="false"><xliff:g id="format">%2$d:%3$02d</xliff:g></string>
+    <string name="durationformatlong" translatable="false"><xliff:g id="format">%1$d:%2$02d:%3$02d</xliff:g></string>
+
+    <string name="menu_sort_by">选择排序方式</string>
+    <string name="sort_order_entry_az">按名称排序</string>
+    <string name="sort_order_entry_dateadded">按添加时间排序</string>
+    <string name="sort_order_entry_album">按专辑排序</string>
+    <string name="sort_order_entry_artist">按歌手排序</string>
+    <string name="sort_order_entry_number_of_songs">按歌曲数量排序</string>
+
+    <string name="confirm">ok</string>
+    <string name="textview_title_unlock">Unlock it</string>
+    <string name="textview_title_lock">Lock it</string>
+    <string name="textview_click_before">Unlock it to open the door of the new world !</string>
+    <string name="textview_click_after">Go to : https://github.com/Bilibili/MagicaSakura</string>
+
+
+
+</resources>

@@ -7,7 +7,6 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -76,15 +75,17 @@ public class TabNetPagerFragment extends AttachFragment implements ChangeView {
     @Override
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
-        if(recommendFragment == null){
+        if (recommendFragment == null) {
             return;
         }
-        if(isVisibleToUser && isFirstLoad){
+        if (isVisibleToUser && isFirstLoad) {
             recommendFragment.requestData();
             isFirstLoad = false;
         }
     }
+
     RecommendFragment recommendFragment;
+
     private void setupViewPager(ViewPager viewPager) {
         Adapter adapter = new Adapter(getChildFragmentManager());
         recommendFragment = new RecommendFragment();

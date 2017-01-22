@@ -1,14 +1,10 @@
 package com.wm.remusic.net;
 
-import android.util.Log;
 import android.util.SparseArray;
 
 import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
 import com.wm.remusic.MainApplication;
-import com.wm.remusic.json.MusicDetailInfo;
 import com.wm.remusic.json.MusicFileDownInfo;
-import com.wm.remusic.uitl.PreferencesUtility;
 
 public class MusicFileDownInfoGet implements Runnable {
     String id;
@@ -16,7 +12,7 @@ public class MusicFileDownInfoGet implements Runnable {
     SparseArray<MusicFileDownInfo> arrayList;
     int downloadBit;
 
-    public MusicFileDownInfoGet(String id, int position, SparseArray<MusicFileDownInfo> arrayList ,int bit) {
+    public MusicFileDownInfoGet(String id, int position, SparseArray<MusicFileDownInfo> arrayList, int bit) {
         this.id = id;
         p = position;
         this.arrayList = arrayList;

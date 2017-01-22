@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ProgressBar
+        android:id="@+id/progress"
+        android:indeterminate="true"
+        android:progressDrawable="@drawable/white_progressbar"
+        android:layout_width="60dp"
+        android:layout_height="60dp" />
+
+    <!--<ImageView-->
+        <!--android:id="@+id/rotate"-->
+        <!--android:src="@drawable/loading_big"-->
+        <!--android:layout_width="60dp"-->
+        <!--android:layout_height="60dp" />-->
+</LinearLayout>

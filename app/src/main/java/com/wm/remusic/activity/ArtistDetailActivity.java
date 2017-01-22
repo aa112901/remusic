@@ -80,8 +80,9 @@ public class ArtistDetailActivity extends BaseActivity implements ObservableScro
     private int mBaseTranslationY;
     private ViewPager mPager;
     private NavigationAdapter mPagerAdapter;
-    TabLayout tabLayout;
+    private TabLayout tabLayout;
     private ImageView toolbar_bac;
+    private LoadNetPlaylistInfo mLoadNetList;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -151,7 +152,8 @@ public class ArtistDetailActivity extends BaseActivity implements ObservableScro
             tryAgain.setVisibility(View.GONE);
             loadView = LayoutInflater.from(this).inflate(R.layout.loading, loadFrameLayout, false);
             loadFrameLayout.addView(loadView);
-            new LoadNetPlaylistInfo().execute();
+            mLoadNetList = new LoadNetPlaylistInfo();
+            mLoadNetList.execute();
 
         } else {
             tryAgain.setVisibility(View.VISIBLE);
@@ -178,7 +180,7 @@ public class ArtistDetailActivity extends BaseActivity implements ObservableScro
                 }
 
                 int tryCount = 0;
-                while (sparseArray.size() != musicCount && tryCount < 1000){
+                while (sparseArray.size() != musicCount && tryCount < 1000) {
                     tryCount++;
                     try {
                         Thread.sleep(30);
@@ -187,7 +189,7 @@ public class ArtistDetailActivity extends BaseActivity implements ObservableScro
                     }
                 }
 
-                if(sparseArray.size() == musicCount){
+                if (sparseArray.size() == musicCount) {
                     for (int i = 0; i < mList.size(); i++) {
                         try {
                             MusicInfo musicInfo = new MusicInfo();
@@ -232,9 +234,12 @@ public class ArtistDetailActivity extends BaseActivity implements ObservableScro
             }
 
         }
+
+        public void cancleTask() {
+            cancel(true);
+            RequestThreadPool.finish();
+        }
     }
-
-
 
 
     @Override
@@ -250,7 +255,9 @@ public class ArtistDetailActivity extends BaseActivity implements ObservableScro
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        RequestThreadPool.finish();
+        if (mLoadNetList != null) {
+            mLoadNetList.cancleTask();
+        }
     }
 
     ArtistInfo artistInfo;

@@ -6,12 +6,10 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -45,13 +43,13 @@ public class QuickControlsFragment extends BaseFragment {
 
             long position = MusicPlayer.position();
             long duration = MusicPlayer.duration();
-            if (duration > 0 && duration < 627080716){
+            if (duration > 0 && duration < 627080716) {
                 mProgress.setProgress((int) (1000 * position / duration));
             }
 
             if (MusicPlayer.isPlaying()) {
                 mProgress.postDelayed(mUpdateProgress, 50);
-            }else {
+            } else {
                 mProgress.removeCallbacks(mUpdateProgress);
             }
 
@@ -153,52 +151,52 @@ public class QuickControlsFragment extends BaseFragment {
     public void updateNowplayingCard() {
         mTitle.setText(MusicPlayer.getTrackName());
         mArtist.setText(MusicPlayer.getArtistName());
-            ControllerListener controllerListener = new BaseControllerListener<ImageInfo>() {
-                @Override
-                public void onFinalImageSet(String id, @Nullable ImageInfo imageInfo, @Nullable Animatable anim) {
-                    if (imageInfo == null) {
-                        return;
-                    }
-                    QualityInfo qualityInfo = imageInfo.getQualityInfo();
-                    FLog.d("Final image received! " +
-                                    "Size %d x %d",
-                            "Quality level %d, good enough: %s, full quality: %s",
-                            imageInfo.getWidth(),
-                            imageInfo.getHeight(),
-                            qualityInfo.getQuality(),
-                            qualityInfo.isOfGoodEnoughQuality(),
-                            qualityInfo.isOfFullQuality());
+        ControllerListener controllerListener = new BaseControllerListener<ImageInfo>() {
+            @Override
+            public void onFinalImageSet(String id, @Nullable ImageInfo imageInfo, @Nullable Animatable anim) {
+                if (imageInfo == null) {
+                    return;
                 }
-
-                @Override
-                public void onIntermediateImageSet(String id, @Nullable ImageInfo imageInfo) {
-                    //FLog.d("Intermediate image received");
-                }
-
-                @Override
-                public void onFailure(String id, Throwable throwable) {
-                    mAlbumArt.setImageURI(Uri.parse("res:/" + R.drawable.placeholder_disk_210));
-                }
-            };
-            Uri uri = null;
-            try{
-                uri = Uri.parse(MusicPlayer.getAlbumPath());
-            }catch (Exception e){
-                e.printStackTrace();
+                QualityInfo qualityInfo = imageInfo.getQualityInfo();
+                FLog.d("Final image received! " +
+                                "Size %d x %d",
+                        "Quality level %d, good enough: %s, full quality: %s",
+                        imageInfo.getWidth(),
+                        imageInfo.getHeight(),
+                        qualityInfo.getQuality(),
+                        qualityInfo.isOfGoodEnoughQuality(),
+                        qualityInfo.isOfFullQuality());
             }
-            if (uri != null) {
-                ImageRequest request = ImageRequestBuilder.newBuilderWithSource(uri).build();
 
-                DraweeController controller = Fresco.newDraweeControllerBuilder()
-                        .setOldController(mAlbumArt.getController())
-                        .setImageRequest(request)
-                        .setControllerListener(controllerListener)
-                        .build();
-
-                mAlbumArt.setController(controller);
-            } else {
-                mAlbumArt.setImageURI(Uri.parse("content://" + MusicPlayer.getAlbumPath()));
+            @Override
+            public void onIntermediateImageSet(String id, @Nullable ImageInfo imageInfo) {
+                //FLog.d("Intermediate image received");
             }
+
+            @Override
+            public void onFailure(String id, Throwable throwable) {
+                mAlbumArt.setImageURI(Uri.parse("res:/" + R.drawable.placeholder_disk_210));
+            }
+        };
+        Uri uri = null;
+        try {
+            uri = Uri.parse(MusicPlayer.getAlbumPath());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        if (uri != null) {
+            ImageRequest request = ImageRequestBuilder.newBuilderWithSource(uri).build();
+
+            DraweeController controller = Fresco.newDraweeControllerBuilder()
+                    .setOldController(mAlbumArt.getController())
+                    .setImageRequest(request)
+                    .setControllerListener(controllerListener)
+                    .build();
+
+            mAlbumArt.setController(controller);
+        } else {
+            mAlbumArt.setImageURI(Uri.parse("content://" + MusicPlayer.getAlbumPath()));
+        }
 
     }
 
@@ -219,7 +217,7 @@ public class QuickControlsFragment extends BaseFragment {
         super.onResume();
         mProgress.setMax(1000);
         mProgress.removeCallbacks(mUpdateProgress);
-        mProgress.postDelayed(mUpdateProgress,10);
+        mProgress.postDelayed(mUpdateProgress, 10);
         updateNowplayingCard();
 
     }
@@ -235,7 +233,7 @@ public class QuickControlsFragment extends BaseFragment {
             mPlayPause.setImageResource(R.drawable.playbar_btn_pause);
             mPlayPause.setImageTintList(R.color.theme_color_primary);
             mProgress.removeCallbacks(mUpdateProgress);
-            mProgress.postDelayed(mUpdateProgress,50);
+            mProgress.postDelayed(mUpdateProgress, 50);
         } else {
             mPlayPause.setImageResource(R.drawable.playbar_btn_play);
             mPlayPause.setImageTintList(R.color.theme_color_primary);

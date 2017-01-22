@@ -134,7 +134,7 @@ public class RequestDealThread extends Thread {
             // 缓存不够。或者数据库没有文件大小
             else {
                 HttpURLConnection realResponse = null;
-				/*
+                /*
 				 * 返回Header和Cache
 				 */
                 // 如果数据库没有存文件大小，则获取（处理数据库没有文件大小的情况）

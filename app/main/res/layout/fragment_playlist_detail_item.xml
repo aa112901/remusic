@@ -1,0 +1,74 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="55dp"
+    android:background="?attr/selectableItemBackground"
+    android:orientation="vertical">
+    <com.bilibili.magicasakura.widgets.TintImageView
+        android:id="@+id/play_state"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_marginLeft="10dp"
+        android:layout_alignParentLeft="true"
+        android:gravity="center"
+        android:paddingLeft="15dp"
+        android:paddingRight="10dp"
+        android:scaleType="centerInside"
+        android:visibility="gone" />
+    <TextView
+        android:layout_marginLeft="10dp"
+        android:id="@+id/trackNumber"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_toRightOf="@+id/play_state"
+        android:gravity="center"
+        android:maxLength="3"
+        android:paddingLeft="15dp"
+        android:paddingRight="10dp"
+        android:textSize="15sp" />
+
+    <LinearLayout
+        android:layout_toRightOf="@+id/trackNumber"
+        android:layout_toLeftOf="@+id/popup_menu"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginRight="10dp"
+        android:orientation="vertical"
+        android:paddingLeft="18dp"
+        android:paddingTop="5dp">
+
+        <TextView
+            android:id="@+id/song_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="39dp"
+            android:ellipsize="end"
+            android:singleLine="true"
+            android:textColor="@color/listTextColor"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/song_artist"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="39dp"
+            android:textColor="@color/listSubTextColor"
+            android:ellipsize="end"
+            android:paddingTop="3dp"
+            android:singleLine="true"
+            android:textSize="12sp" />
+
+    </LinearLayout>
+
+    <ImageView
+        android:id="@+id/popup_menu"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:focusable="false"
+        android:padding="15dp"
+        android:src="@drawable/list_icn_more" />
+
+
+</RelativeLayout>

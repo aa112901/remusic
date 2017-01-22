@@ -19,7 +19,6 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.os.AsyncTask;
 import android.preference.PreferenceManager;
-import android.util.Log;
 
 public final class PreferencesUtility {
 
@@ -58,21 +57,21 @@ public final class PreferencesUtility {
         return sInstance;
     }
 
-    public long lastExit(){
+    public long lastExit() {
         return mPreferences.getLong("last_err_exit", 0);
     }
 
-    public void setExitTime(){
+    public void setExitTime() {
         final SharedPreferences.Editor editor = mPreferences.edit();
         editor.putLong("last_err_exit", System.currentTimeMillis());
         editor.commit();
     }
 
-    public boolean isCurrentDayFirst(String str){
+    public boolean isCurrentDayFirst(String str) {
         return mPreferences.getString(CURRENT_DATE, "").equals(str);
     }
 
-    public void setCurrentDate(String str){
+    public void setCurrentDate(String str) {
         final SharedPreferences.Editor editor = mPreferences.edit();
         editor.putString(CURRENT_DATE, str);
         editor.apply();

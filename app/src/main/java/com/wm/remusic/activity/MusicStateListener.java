@@ -8,11 +8,11 @@ public interface MusicStateListener {
     /**
      * 更新歌曲状态信息
      */
-     void updateTrackInfo();
+    void updateTrackInfo();
 
-     void updateTime();
+    void updateTime();
 
-     void changeTheme();
+    void changeTheme();
 
-     void reloadAdapter();
+    void reloadAdapter();
 }

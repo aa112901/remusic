@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.drawable.AnimationDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.TransitionDrawable;
 import android.net.Uri;
@@ -20,7 +19,6 @@ import android.support.v7.widget.Toolbar;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.style.ImageSpan;
-import android.util.Log;
 import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -115,6 +113,8 @@ public class PlaylistActivity extends BaseActivity implements ObservableScrollVi
     private ImageView collectView;
     private FrameLayout favLayout;
     private LinearLayout share;
+    private LoadLocalPlaylistInfo mLoadLocalList;
+    private LoadNetPlaylistInfo mLoadNetList;
     private String TAG = "PlaylistActivity";
     private boolean d = true;
 
@@ -223,7 +223,7 @@ public class PlaylistActivity extends BaseActivity implements ObservableScrollVi
             public void onClick(View v) {
                 if (!mCollected) {
                     collectText.setText("已收藏");
-                    new AsyncTask<Void,Void,Void>(){
+                    new AsyncTask<Void, Void, Void>() {
                         @Override
                         protected Void doInBackground(Void... params) {
                             String albumart = null;
@@ -277,7 +277,7 @@ public class PlaylistActivity extends BaseActivity implements ObservableScrollVi
             }
         });
 
-        if(Integer.parseInt(playlsitId) == IConstants.FAV_PLAYLIST){
+        if (Integer.parseInt(playlsitId) == IConstants.FAV_PLAYLIST) {
             favLayout.setVisibility(View.VISIBLE);
         }
     }
@@ -314,14 +314,15 @@ public class PlaylistActivity extends BaseActivity implements ObservableScrollVi
         }
         return headerTranslationY;
     }
-    
+
 
     private void loadAllLists() {
 
         if (isLocalPlaylist) {
             loadView = LayoutInflater.from(this).inflate(R.layout.loading, loadFrameLayout, false);
             loadFrameLayout.addView(loadView);
-            new LoadLocalPlaylistInfo().execute();
+            mLoadLocalList = new LoadLocalPlaylistInfo();
+            mLoadLocalList.execute();
             return;
         }
 
@@ -329,7 +330,8 @@ public class PlaylistActivity extends BaseActivity implements ObservableScrollVi
             tryAgain.setVisibility(View.GONE);
             loadView = LayoutInflater.from(this).inflate(R.layout.loading, loadFrameLayout, false);
             loadFrameLayout.addView(loadView);
-            new LoadNetPlaylistInfo().execute();
+            mLoadNetList = new LoadNetPlaylistInfo();
+            mLoadNetList.execute();
 
         } else {
             tryAgain.setVisibility(View.VISIBLE);
@@ -354,7 +356,7 @@ public class PlaylistActivity extends BaseActivity implements ObservableScrollVi
 
     @Override
     public void updateTrack() {
-       mAdapter.notifyDataSetChanged();
+        mAdapter.notifyDataSetChanged();
     }
 
     class LoadNetPlaylistInfo extends AsyncTask<Void, Void, Boolean> {
@@ -376,7 +378,7 @@ public class PlaylistActivity extends BaseActivity implements ObservableScrollVi
                     RequestThreadPool.post(new MusicDetailInfoGet(geDanGeInfo.getSong_id(), i, sparseArray));
                 }
                 int tryCount = 0;
-                while (sparseArray.size() != musicCount && tryCount < 1000){
+                while (sparseArray.size() != musicCount && tryCount < 1000) {
                     tryCount++;
                     try {
                         Thread.sleep(30);
@@ -385,7 +387,7 @@ public class PlaylistActivity extends BaseActivity implements ObservableScrollVi
                     }
                 }
 
-                if(sparseArray.size() == musicCount){
+                if (sparseArray.size() == musicCount) {
                     for (int i = 0; i < mList.size(); i++) {
                         try {
                             MusicInfo musicInfo = new MusicInfo();
@@ -424,6 +426,11 @@ public class PlaylistActivity extends BaseActivity implements ObservableScrollVi
 
             }
         }
+
+        public void cancleTask() {
+            cancel(true);
+            RequestThreadPool.finish();
+        }
     }
 
 
@@ -452,15 +459,20 @@ public class PlaylistActivity extends BaseActivity implements ObservableScrollVi
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        RequestThreadPool.finish();
+        if (mLoadNetList != null) {
+            mLoadNetList.cancleTask();
+        }
+        if (mLoadLocalList != null) {
+            mLoadLocalList.cancel(true);
+        }
     }
 
     private void setAlbumart() {
         playlistTitleView.setText(playlistName);
 
-        if(albumPath == null){
+        if (albumPath == null) {
             albumArtSmall.setImageResource(R.drawable.placeholder_disk_210);
-        }else {
+        } else {
             albumArtSmall.setImageURI(Uri.parse(albumPath));
         }
 
@@ -482,7 +494,7 @@ public class PlaylistActivity extends BaseActivity implements ObservableScrollVi
             }
 
         } catch (Exception e) {
-              e.printStackTrace();
+            e.printStackTrace();
         }
 
     }
@@ -693,21 +705,21 @@ public class PlaylistActivity extends BaseActivity implements ObservableScrollVi
 
             public void onClick(View v) {
                 //// TODO: 2016/1/20
-             mHandler.postDelayed(new Runnable() {
-                 @Override
-                 public void run() {
-                     HashMap<Long, MusicInfo> infos = new HashMap<Long, MusicInfo>();
-                     int len = arraylist.size();
-                     long[] list = new long[len];
-                     for (int i = 0; i < len; i++) {
-                         MusicInfo info = arraylist.get(i);
-                         list[i] = info.songId;
-                         infos.put(list[i], info);
-                     }
-                     if (getAdapterPosition() > 0)
-                         MusicPlayer.playAll(infos, list, 0, false);
-                 }
-             },70);
+                mHandler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        HashMap<Long, MusicInfo> infos = new HashMap<Long, MusicInfo>();
+                        int len = arraylist.size();
+                        long[] list = new long[len];
+                        for (int i = 0; i < len; i++) {
+                            MusicInfo info = arraylist.get(i);
+                            list[i] = info.songId;
+                            infos.put(list[i], info);
+                        }
+                        if (getAdapterPosition() > -1)
+                            MusicPlayer.playAll(infos, list, 0, false);
+                    }
+                }, 70);
 
             }
 
@@ -749,25 +761,29 @@ public class PlaylistActivity extends BaseActivity implements ObservableScrollVi
 
         }
     }
+
     private PlayMusic mPlay;
     private volatile boolean tryPlaying = false;
+
     public class PlayMusic extends Thread {
         private volatile boolean isInterrupted = false;
         private ArrayList<MusicInfo> arrayList;
         private int position;
-        public PlayMusic(ArrayList<MusicInfo> arrayList , int position){
+
+        public PlayMusic(ArrayList<MusicInfo> arrayList, int position) {
             this.arrayList = arrayList;
             this.position = position;
         }
-        public void interrupt(){
+
+        public void interrupt() {
             isInterrupted = true;
             super.interrupt();
         }
 
-        public void run(){
-            L.D(d,TAG, " start");
+        public void run() {
+            L.D(d, TAG, " start");
             tryPlaying = true;
-            while(!isInterrupted){
+            while (!isInterrupted) {
                 HashMap<Long, MusicInfo> infos = new HashMap<Long, MusicInfo>();
                 int len = arrayList.size();
                 long[] list = new long[len];
@@ -779,7 +795,7 @@ public class PlaylistActivity extends BaseActivity implements ObservableScrollVi
                 MusicPlayer.playAll(infos, list, position, false);
             }
             tryPlaying = false;
-            L.D(d,TAG, "已经终止!");
+            L.D(d, TAG, "已经终止!");
         }
     }
 }

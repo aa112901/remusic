@@ -694,8 +694,8 @@ public class MusicPlayer {
     public static void clearQueue() {
 
         try {
-            if(mService != null)
-            mService.removeTracks(0, Integer.MAX_VALUE);
+            if (mService != null)
+                mService.removeTracks(0, Integer.MAX_VALUE);
         } catch (final RemoteException ignored) {
         }
     }

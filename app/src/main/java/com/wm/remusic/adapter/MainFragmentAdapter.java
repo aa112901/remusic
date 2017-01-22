@@ -70,7 +70,7 @@ public class MainFragmentAdapter extends RecyclerView.Adapter<MainFragmentAdapte
                 ItemHolder ml0 = new ItemHolder(v0);
                 return ml0;
             case 1:
-                if(isLoveList){
+                if (isLoveList) {
                     View v1 = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.fragment_main_playlist_first_item, viewGroup, false);
                     ItemHolder ml1 = new ItemHolder(v1);
                     return ml1;
@@ -140,7 +140,7 @@ public class MainFragmentAdapter extends RecyclerView.Adapter<MainFragmentAdapte
 
     @Override
     public int getItemCount() {
-        if(itemResults == null){
+        if (itemResults == null) {
             return 0;
         }
         if (!createdExpanded && playlists != null) {

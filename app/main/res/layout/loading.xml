@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <LinearLayout
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="30dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <com.bilibili.magicasakura.widgets.TintImageView
+            android:layout_centerInParent="true"
+            android:layout_marginTop="60dp"
+            android:id="@+id/anim_image"
+            android:layout_width="25dp"
+            android:layout_height="20dp"
+            android:padding="1dp"
+            app:imageTint="@color/theme_color_primary"
+            android:src="@drawable/list_loading" />
+
+        <TextView
+            android:layout_marginTop="60dp"
+            android:id="@+id/anim_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:text="努力加载中..."
+            android:textColor="#000000"
+            android:textSize="14sp" />
+    </LinearLayout>
+
+
+</RelativeLayout>

@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<paths xmlns:android="http://schemas.android.com/apk/res/android" >
+
+	<!--
+		## 说明
+
+		这个文件为开发者适配Android 7.0系统以上才需要配置有米的相关内容，如果没有兼容到的话，可以不管
+
+		有米sdk会将apk优先下载在sd卡中，如果sd卡不能使用，则会使用应用私有缓存目录context.getCache()
+		因此需要开发者配置下面两个路径方便有米sdk在下载完apk之后启动apk的安装页面
+
+		## 其他说明
+
+		名字不建议开发者起"youmi_apk"、"ym_apk"、"um_apk"之类的等包含"有米"意思的命名，
+		因为这可能会提高你的应用嵌入广告后，被市场扫描出来的概率，
+		建议做法是执行另起一个和有米广告平台无关的名字
+	-->
+
+	<cache-path
+		name="apk1"
+		path="." />
+	<external-path
+		name="apk2"
+		path="." />
+
+</paths >

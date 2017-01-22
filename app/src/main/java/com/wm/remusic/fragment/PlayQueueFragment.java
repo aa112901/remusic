@@ -49,6 +49,15 @@ public class PlayQueueFragment extends AttachDialogFragment {
     private RecyclerView recyclerView;  //弹出的activity列表
     private LinearLayoutManager layoutManager;
     private Handler mHandler;
+    private PlayQuueuListener mQueueListener;
+
+    public interface PlayQuueuListener {
+        void onPlay(int position);
+    }
+
+    public void setQueueListener(PlayQuueuListener listener) {
+        mQueueListener = listener;
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -286,6 +295,10 @@ public class PlayQueueFragment extends AttachDialogFragment {
                         long[] ids = new long[1];
                         ids[0] = playlist.get(a).songId;
                         MusicPlayer.setQueuePosition(a);
+
+                        if (mQueueListener != null)
+                            mQueueListener.onPlay(a);
+
                         notifyItemChanged(currentlyPlayingPosition);
                         notifyItemChanged(a);
                     }

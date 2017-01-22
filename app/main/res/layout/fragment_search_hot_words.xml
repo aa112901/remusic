@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:id="@+id/hot_words_frame"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="26dp"
+        android:textSize="14sp"
+        android:layout_marginLeft="16dp"
+        android:text="热门搜索" />
+
+    <FrameLayout
+        android:id="@+id/hot_words"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="50dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/text_color"
+            android:singleLine="true"
+            android:padding="7dp"
+            android:background="@drawable/hot_words_select"
+            android:textSize="15sp"
+            android:id="@+id/text1" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/text_color"
+            android:singleLine="true"
+            android:padding="7dp"
+            android:background="@drawable/hot_words_select"
+            android:textSize="15sp"
+            android:id="@+id/text2" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/text_color"
+            android:padding="7dp"
+            android:background="@drawable/hot_words_select"
+            android:singleLine="true"
+            android:textSize="15sp"
+            android:id="@+id/text3" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/text_color"
+            android:padding="7dp"
+            android:background="@drawable/hot_words_select"
+            android:singleLine="true"
+            android:textSize="15sp"
+            android:id="@+id/text4" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/text_color"
+            android:padding="7dp"
+            android:background="@drawable/hot_words_select"
+            android:singleLine="true"
+            android:textSize="15sp"
+            android:id="@+id/text5" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/text_color"
+            android:padding="7dp"
+            android:background="@drawable/hot_words_select"
+            android:singleLine="true"
+            android:textSize="15sp"
+            android:id="@+id/text6" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/text_color"
+            android:padding="7dp"
+            android:background="@drawable/hot_words_select"
+            android:singleLine="true"
+            android:textSize="15sp"
+            android:id="@+id/text7" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/text_color"
+            android:padding="7dp"
+            android:background="@drawable/hot_words_select"
+            android:singleLine="true"
+            android:textSize="15sp"
+            android:id="@+id/text8" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/text_color"
+            android:padding="7dp"
+            android:background="@drawable/hot_words_select"
+            android:singleLine="true"
+            android:textSize="15sp"
+            android:id="@+id/text9" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/text_color"
+            android:padding="7dp"
+            android:background="@drawable/hot_words_select"
+            android:singleLine="true"
+            android:textSize="15sp"
+            android:id="@+id/text10" />
+    </FrameLayout>
+
+    <View
+        android:layout_below="@+id/hot_words"
+        android:id="@+id/layout_line"
+        android:layout_width="match_parent"
+        android:layout_height="0.3dp"
+        android:layout_marginTop="20dp"
+        android:background="#E0E0E0" />
+
+    <android.support.v7.widget.RecyclerView
+        android:layout_marginTop="16dp"
+        android:layout_below="@+id/layout_line"
+        android:id="@+id/recyclerview"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+
+</RelativeLayout>

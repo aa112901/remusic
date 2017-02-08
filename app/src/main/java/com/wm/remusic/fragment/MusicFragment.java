@@ -44,7 +44,7 @@ import java.util.HashMap;
 /**
  * Created by wm on 2016/1/19.
  */
-public class MusicFragment extends Fragment {
+public class MusicFragment extends BaseFragment {
     private Adapter mAdapter;
     private ArrayList<MusicInfo> musicInfos;
     private RecyclerView recyclerView;
@@ -57,19 +57,6 @@ public class MusicFragment extends Fragment {
     private TextView dialogText;
     private HashMap<String, Integer> positionMap = new HashMap<>();
     private boolean isAZSort = true;
-    private Context mContext;
-//    @Override
-//    public void onAttach(Activity activity){
-//        super.onAttach(activity);
-//        this.mContext = activity;
-//    }
-
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        this.mContext = context;
-
-    }
 
 
     private void loadView() {

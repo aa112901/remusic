@@ -65,6 +65,7 @@ public class LoadAllDownInfos extends AsyncTask<Void, Void, Boolean> {
     }
 
 
+
     @Override
     protected Boolean doInBackground(Void... params) {
 
@@ -87,10 +88,10 @@ public class LoadAllDownInfos extends AsyncTask<Void, Void, Boolean> {
             if (mDownInfoArray.size() != le) {
                 return false;
             }
-            for (int i = 0; i < le; i++) {
-                totalSize += mDownInfoArray.get(i).getFile_size();
-                mUrlList.add(mDownInfoArray.get(i).getFile_link());
-            }
+                for (int i = 0; i < le; i++) {
+                    totalSize += mDownInfoArray.get(i).getFile_size();
+                    mUrlList.add(mDownInfoArray.get(i).getFile_link());
+                }
 
         } catch (Exception e) {
             e.printStackTrace();

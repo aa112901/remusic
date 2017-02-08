@@ -116,7 +116,7 @@
             android:background="?attr/selectableItemBackgroundBorderless"
             android:focusable="false"
             android:foregroundTint="#434343"
-            android:src="@drawable/abc_ic_menu_moreoverflow_mtrl_alpha" />
+            android:src="@drawable/list_icn_more" />
     </LinearLayout>
 
 </LinearLayout>

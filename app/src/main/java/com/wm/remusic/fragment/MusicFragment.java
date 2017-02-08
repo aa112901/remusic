@@ -1,12 +1,16 @@
 package com.wm.remusic.fragment;
 
 
+import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -20,6 +24,7 @@ import android.widget.TextView;
 import com.bilibili.magicasakura.widgets.TintImageView;
 import com.github.promeg.pinyinhelper.Pinyin;
 import com.wm.remusic.R;
+import com.wm.remusic.activity.AlbumsDetailActivity;
 import com.wm.remusic.activity.SelectActivity;
 import com.wm.remusic.handler.HandlerUtil;
 import com.wm.remusic.info.MusicInfo;
@@ -39,7 +44,7 @@ import java.util.HashMap;
 /**
  * Created by wm on 2016/1/19.
  */
-public class MusicFragment extends BaseFragment {
+public class MusicFragment extends Fragment {
     private Adapter mAdapter;
     private ArrayList<MusicInfo> musicInfos;
     private RecyclerView recyclerView;
@@ -52,41 +57,61 @@ public class MusicFragment extends BaseFragment {
     private TextView dialogText;
     private HashMap<String, Integer> positionMap = new HashMap<>();
     private boolean isAZSort = true;
+    private Context mContext;
+//    @Override
+//    public void onAttach(Activity activity){
+//        super.onAttach(activity);
+//        this.mContext = activity;
+//    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        this.mContext = context;
+
+    }
+
+
+    private void loadView() {
+        //setUservisibleHint 可能先与attach
+        if (view == null && mContext != null) {
+            view = LayoutInflater.from(mContext).inflate(R.layout.recylerview, frameLayout, false);
+
+            dialogText = (TextView) view.findViewById(R.id.dialog_text);
+            recyclerView = (RecyclerView) view.findViewById(R.id.recyclerview);
+            layoutManager = new LinearLayoutManager(mContext);
+            recyclerView.setLayoutManager(layoutManager);
+            mAdapter = new Adapter(null);
+            recyclerView.setAdapter(mAdapter);
+            recyclerView.setHasFixedSize(true);
+            //fastScroller = (FastScroller) view.findViewById(R.id.fastscroller);
+            recyclerView.addItemDecoration(new DividerItemDecoration(mContext, DividerItemDecoration.VERTICAL_LIST));
+
+            sideBar = (SideBar) view.findViewById(R.id.sidebar);
+            sideBar.setOnTouchingLetterChangedListener(new SideBar.OnTouchingLetterChangedListener() {
+                @Override
+                public void onTouchingLetterChanged(String s) {
+                    dialogText.setText(s);
+                    sideBar.setView(dialogText);
+                    if (positionMap.get(s) != null) {
+                        int i = positionMap.get(s);
+                        ((LinearLayoutManager) recyclerView.getLayoutManager()).scrollToPositionWithOffset(i + 1, 0);
+                    }
+
+                }
+            });
+            reloadAdapter();
+            Log.e("MusicFragment", "load l");
+        }
+    }
 
     @Override
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
-        if (isVisibleToUser) {
-            //setUservisibleHint 可能先与attach
-            if (view == null && mContext != null) {
-                view = LayoutInflater.from(mContext).inflate(R.layout.recylerview, frameLayout, false);
-
-                dialogText = (TextView) view.findViewById(R.id.dialog_text);
-                recyclerView = (RecyclerView) view.findViewById(R.id.recyclerview);
-                layoutManager = new LinearLayoutManager(mContext);
-                recyclerView.setLayoutManager(layoutManager);
-                mAdapter = new Adapter(null);
-                recyclerView.setAdapter(mAdapter);
-                recyclerView.setHasFixedSize(true);
-                //fastScroller = (FastScroller) view.findViewById(R.id.fastscroller);
-                recyclerView.addItemDecoration(new DividerItemDecoration(mContext, DividerItemDecoration.VERTICAL_LIST));
-
-                sideBar = (SideBar) view.findViewById(R.id.sidebar);
-                sideBar.setOnTouchingLetterChangedListener(new SideBar.OnTouchingLetterChangedListener() {
-                    @Override
-                    public void onTouchingLetterChanged(String s) {
-                        dialogText.setText(s);
-                        sideBar.setView(dialogText);
-                        if (positionMap.get(s) != null) {
-                            int i = positionMap.get(s);
-                            ((LinearLayoutManager) recyclerView.getLayoutManager()).scrollToPositionWithOffset(i + 1, 0);
-                        }
-
-                    }
-                });
-                reloadAdapter();
-            }
+        if(isVisibleToUser){
+            loadView();
         }
+
     }
 
     private RecyclerView.OnScrollListener scrollListener = new RecyclerView.OnScrollListener() {
@@ -113,6 +138,10 @@ public class MusicFragment extends BaseFragment {
         frameLayout.addView(loadView);
         isFirstLoad = true;
         isAZSort = mPreferences.getSongSortOrder().equals(SortOrder.SongSortOrder.SONG_A_Z);
+
+        if(getUserVisibleHint()){
+            loadView();
+        }
 
         return view;
     }
@@ -150,8 +179,9 @@ public class MusicFragment extends BaseFragment {
                     sideBar.setVisibility(View.INVISIBLE);
                     recyclerView.removeOnScrollListener(scrollListener);
                 }
-
+                Log.e("MusicFragment","load t");
                 if (isFirstLoad) {
+                    Log.e("MusicFragment","load");
                     frameLayout.removeAllViews();
                     //framelayout 创建了新的实例
                     ViewGroup p = (ViewGroup) view.getParent();
@@ -328,11 +358,11 @@ public class MusicFragment extends BaseFragment {
 
             public void onClick(View v) {
                 //// TODO: 2016/1/20
-                if (playMusic != null)
+                if(playMusic != null)
                     handler.removeCallbacks(playMusic);
-                if (getAdapterPosition() > -1) {
+                if(getAdapterPosition() > -1){
                     playMusic = new PlayMusic(0);
-                    handler.postDelayed(playMusic, 70);
+                    handler.postDelayed(playMusic,70);
                 }
 //                HandlerUtil.getInstance(getContext()).postDelayed(new Runnable() {
 //                    @Override
@@ -383,11 +413,11 @@ public class MusicFragment extends BaseFragment {
 
             @Override
             public void onClick(View v) {
-                if (playMusic != null)
+                if(playMusic != null)
                     handler.removeCallbacks(playMusic);
-                if (getAdapterPosition() > -1) {
+                if(getAdapterPosition() > -1){
                     playMusic = new PlayMusic(getAdapterPosition() - 1);
-                    handler.postDelayed(playMusic, 70);
+                    handler.postDelayed(playMusic,70);
                 }
 //                HandlerUtil.getInstance(getContext()).postDelayed(new Runnable() {
 //                    @Override
@@ -409,10 +439,9 @@ public class MusicFragment extends BaseFragment {
 
         }
 
-        class PlayMusic implements Runnable {
+        class PlayMusic implements Runnable{
             int position;
-
-            public PlayMusic(int position) {
+            public PlayMusic(int position){
                 this.position = position;
             }
 

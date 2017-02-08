@@ -50,12 +50,11 @@ public class PlayQueueFragment extends AttachDialogFragment {
     private LinearLayoutManager layoutManager;
     private Handler mHandler;
     private PlayQuueuListener mQueueListener;
-
-    public interface PlayQuueuListener {
+    public interface PlayQuueuListener{
         void onPlay(int position);
     }
 
-    public void setQueueListener(PlayQuueuListener listener) {
+    public void setQueueListener(PlayQuueuListener listener){
         mQueueListener = listener;
     }
 
@@ -296,8 +295,8 @@ public class PlayQueueFragment extends AttachDialogFragment {
                         ids[0] = playlist.get(a).songId;
                         MusicPlayer.setQueuePosition(a);
 
-                        if (mQueueListener != null)
-                            mQueueListener.onPlay(a);
+                        if(mQueueListener != null)
+                        mQueueListener.onPlay(a);
 
                         notifyItemChanged(currentlyPlayingPosition);
                         notifyItemChanged(a);

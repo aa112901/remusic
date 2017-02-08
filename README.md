@@ -34,7 +34,7 @@
 - [MagicaSakura](https://github.com/Bilibili/MagicaSakura "MagicaSakura")
 
 # Change Log
-## 1.6
+## 2.6
 - 加入开屏广告
 - 修正动画和一些问题
 

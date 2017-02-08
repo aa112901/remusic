@@ -3,16 +3,19 @@ package com.wm.remusic.fragment;
 
 import android.Manifest;
 import android.app.Activity;
+import android.content.Context;
 import android.content.pm.PackageManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SimpleItemAnimator;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,7 +25,9 @@ import com.wm.remusic.MainApplication;
 import com.wm.remusic.R;
 import com.wm.remusic.adapter.MainFragmentAdapter;
 import com.wm.remusic.adapter.MainFragmentItem;
+import com.wm.remusic.handler.HandlerUtil;
 import com.wm.remusic.info.Playlist;
+import com.wm.remusic.net.HttpUtil;
 import com.wm.remusic.provider.DownFileStore;
 import com.wm.remusic.provider.PlaylistInfo;
 import com.wm.remusic.recent.TopTracksLoader;
@@ -61,7 +66,7 @@ public class MainFragment extends BaseFragment {
         super.onCreate(savedInstanceState);
         playlistInfo = PlaylistInfo.getInstance(mContext);
         if (CommonUtils.isLollipop() && ContextCompat.checkSelfPermission(mContext, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions((Activity) mContext, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 0);
+            ActivityCompat.requestPermissions((Activity) mContext,new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 0);
         }
     }
 
@@ -129,14 +134,14 @@ public class MainFragment extends BaseFragment {
     }
 
     private void loadCount(boolean has) {
-        int localMusicCount = 0, recentMusicCount = 0, downLoadCount = 0, artistsCount = 0;
-        if (has) {
-            try {
+        int localMusicCount = 0, recentMusicCount = 0,downLoadCount = 0 ,artistsCount = 0;
+        if(has){
+            try{
                 localMusicCount = MusicUtils.queryMusic(mContext, IConstants.START_FROM_LOCAL).size();
                 recentMusicCount = TopTracksLoader.getCount(MainApplication.context, TopTracksLoader.QueryType.RecentSongs);
                 downLoadCount = DownFileStore.getInstance(mContext).getDownLoadedListAll().size();
                 artistsCount = MusicUtils.queryArtist(mContext).size();
-            } catch (Exception e) {
+            }catch (Exception e){
                 e.printStackTrace();
             }
 
@@ -164,7 +169,7 @@ public class MainFragment extends BaseFragment {
                     results.addAll(netPlaylists);
                 }
 
-                if (mAdapter == null) {
+                if(mAdapter == null){
                     mAdapter = new MainFragmentAdapter(mContext);
                 }
                 mAdapter.updateResults(results, playlists, netPlaylists);

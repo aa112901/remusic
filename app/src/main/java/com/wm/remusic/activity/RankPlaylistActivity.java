@@ -89,6 +89,7 @@ public class RankPlaylistActivity extends BaseActivity implements ObservableScro
     private Context mContext;
     private int mBillType;
     private LoadNetPlaylistInfo mLoadNetList;
+    private ObservableRecyclerView recyclerView;
     private String TAG = "PlaylistActivity";
     private boolean d = true;
 
@@ -173,7 +174,7 @@ public class RankPlaylistActivity extends BaseActivity implements ObservableScro
     }
 
     private void setList() {
-        ObservableRecyclerView recyclerView = (ObservableRecyclerView) findViewById(R.id.recyclerview);
+        recyclerView = (ObservableRecyclerView) findViewById(R.id.recyclerview);
         recyclerView.setScrollViewCallbacks(RankPlaylistActivity.this);
         recyclerView.setLayoutManager(new LinearLayoutManager(RankPlaylistActivity.this));
         recyclerView.setHasFixedSize(true);
@@ -298,12 +299,13 @@ public class RankPlaylistActivity extends BaseActivity implements ObservableScro
                 tryAgain.setVisibility(View.VISIBLE);
             } else {
                 loadFrameLayout.removeAllViews();
+                recyclerView.setVisibility(View.VISIBLE);
                 mAdapter.updateDataSet(adapterList);
 
             }
         }
 
-        public void cancleTask() {
+        public void cancleTask(){
             cancel(true);
             RequestThreadPool.finish();
         }
@@ -332,7 +334,7 @@ public class RankPlaylistActivity extends BaseActivity implements ObservableScro
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if (mLoadNetList != null) {
+        if(mLoadNetList != null){
             mLoadNetList.cancleTask();
         }
     }

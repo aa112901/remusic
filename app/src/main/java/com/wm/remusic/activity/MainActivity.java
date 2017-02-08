@@ -54,13 +54,6 @@ public class MainActivity extends BaseActivity implements CardPickerDialog.Click
                 SplashScreen.SLIDE_LEFT);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        HandlerUtil.getInstance(this).postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                splashScreen.removeSplashScreen();
-            }
-        }, 3000);
-
         getWindow().setBackgroundDrawableResource(R.color.background_material_light_1);
 
         barnet = (ImageView) findViewById(R.id.bar_net);
@@ -68,13 +61,18 @@ public class MainActivity extends BaseActivity implements CardPickerDialog.Click
         barfriends = (ImageView) findViewById(R.id.bar_friends);
         search = (ImageView) findViewById(R.id.bar_search);
         barmusic = (ImageView) findViewById(R.id.bar_music);
-
         drawerLayout = (DrawerLayout) findViewById(R.id.fd);
         mLvLeftMenu = (ListView) findViewById(R.id.id_lv_left_menu);
 
         setToolBar();
         setViewPager();
         setUpDrawer();
+        HandlerUtil.getInstance(this).postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                splashScreen.removeSplashScreen();
+            }
+        }, 3000);
 
     }
 
@@ -291,7 +289,7 @@ public class MainActivity extends BaseActivity implements CardPickerDialog.Click
         if (fragments != null) {
             for (Fragment fragment : fragments) {
                 if (fragment != null) {
-                    fragment.onRequestPermissionsResult(requestCode, permissions, grantResults);
+                    fragment.onRequestPermissionsResult(requestCode,permissions,grantResults);
                 }
             }
         }

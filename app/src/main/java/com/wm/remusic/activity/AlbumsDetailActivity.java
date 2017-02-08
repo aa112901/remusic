@@ -98,6 +98,7 @@ public class AlbumsDetailActivity extends BaseActivity implements ObservableScro
     private FrameLayout headerViewContent;
     private RelativeLayout headerDetail;
     private LoadNetPlaylistInfo mLoadNetList;
+    private ObservableRecyclerView recyclerView;
     private String TAG = "AlbumsDetailActivity";
     private boolean d = true;
 
@@ -179,7 +180,7 @@ public class AlbumsDetailActivity extends BaseActivity implements ObservableScro
 
 
     private void setList() {
-        ObservableRecyclerView recyclerView = (ObservableRecyclerView) findViewById(R.id.recyclerview);
+        recyclerView = (ObservableRecyclerView) findViewById(R.id.recyclerview);
         recyclerView.setScrollViewCallbacks(AlbumsDetailActivity.this);
         recyclerView.setLayoutManager(new LinearLayoutManager(AlbumsDetailActivity.this));
         recyclerView.setHasFixedSize(false);
@@ -232,7 +233,6 @@ public class AlbumsDetailActivity extends BaseActivity implements ObservableScro
     }
 
     AlbumInfo albumInfo;
-
     class LoadNetPlaylistInfo extends AsyncTask<Void, Void, Boolean> {
 
 
@@ -251,7 +251,7 @@ public class AlbumsDetailActivity extends BaseActivity implements ObservableScro
                 }
 
                 int tryCount = 0;
-                while (sparseArray.size() != musicCount && tryCount < 1000) {
+                while (sparseArray.size() != musicCount && tryCount < 1000){
                     tryCount++;
                     try {
                         Thread.sleep(30);
@@ -260,7 +260,7 @@ public class AlbumsDetailActivity extends BaseActivity implements ObservableScro
                     }
                 }
 
-                if (sparseArray.size() == musicCount) {
+                if(sparseArray.size() == musicCount){
                     for (int i = 0; i < mList.size(); i++) {
                         MusicInfo musicInfo = new MusicInfo();
                         musicInfo.songId = Integer.parseInt(mList.get(i).getSong_id());
@@ -291,13 +291,14 @@ public class AlbumsDetailActivity extends BaseActivity implements ObservableScro
                 tryAgain.setVisibility(View.VISIBLE);
             } else {
                 loadFrameLayout.removeAllViews();
+                recyclerView.setVisibility(View.VISIBLE);
                 mAdapter.updateDataSet(adapterList);
 
             }
 
         }
 
-        public void cancleTask() {
+        public void cancleTask(){
             cancel(true);
             RequestThreadPool.finish();
         }
@@ -324,7 +325,7 @@ public class AlbumsDetailActivity extends BaseActivity implements ObservableScro
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if (mLoadNetList != null) {
+        if(mLoadNetList != null){
             mLoadNetList.cancleTask();
         }
     }
@@ -622,25 +623,21 @@ public class AlbumsDetailActivity extends BaseActivity implements ObservableScro
 
         }
     }
-
     PlayMusic playMusic;
-
     public class PlayMusic extends Thread {
         private volatile boolean isInterrupted = false;
         private ArrayList<MusicInfo> arrayList;
-
-        public PlayMusic(ArrayList<MusicInfo> arrayList) {
+        public PlayMusic(ArrayList<MusicInfo> arrayList){
             this.arrayList = arrayList;
         }
-
-        public void interrupt() {
+        public void interrupt(){
             isInterrupted = true;
             super.interrupt();
         }
 
-        public void run() {
-            L.D(d, TAG, " start");
-            while (!isInterrupted) {
+        public void run(){
+            L.D(d,TAG, " start");
+            while(!isInterrupted){
                 HashMap<Long, MusicInfo> infos = new HashMap<Long, MusicInfo>();
                 int len = arrayList.size();
                 long[] list = new long[len];
@@ -657,7 +654,7 @@ public class AlbumsDetailActivity extends BaseActivity implements ObservableScro
 //                    L.D(d,TAG, "this.isInterrupted()="+this.isInterrupted());
 //                }
             }
-            L.D(d, TAG, "已经终止!");
+            L.D(d,TAG, "已经终止!");
         }
     }
 }

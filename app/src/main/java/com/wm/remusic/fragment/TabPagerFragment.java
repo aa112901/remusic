@@ -166,8 +166,8 @@ public class TabPagerFragment extends AttachDialogFragment {
 
         @Override
         public Fragment getItem(int position) {
-            if (mFragments.size() > position)
-                return mFragments.get(position);
+            if(mFragments.size() > position)
+            return mFragments.get(position);
 
             return null;
         }

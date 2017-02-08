@@ -235,7 +235,7 @@ public class ArtistFragment extends BaseFragment {
                 ((ListItemViewHolder) holder).moreOverflow.setImageResource(R.drawable.song_play_icon);
                 ((ListItemViewHolder) holder).moreOverflow.setImageTintList(R.color.theme_color_primary);
             } else {
-                ((ListItemViewHolder) holder).moreOverflow.setImageResource(R.drawable.abc_ic_menu_moreoverflow_mtrl_alpha);
+                ((ListItemViewHolder) holder).moreOverflow.setImageResource(R.drawable.list_icn_more);
             }
 
             //lastFm api加载歌手图片
@@ -293,7 +293,7 @@ public class ArtistFragment extends BaseFragment {
             //加载歌手专辑界面fragment
             @Override
             public void onClick(View v) {
-                if (getAdapterPosition() != -1) {
+                if(getAdapterPosition() != -1){
                     FragmentTransaction transaction = ((AppCompatActivity) mContext).getSupportFragmentManager().beginTransaction();
                     ArtistDetailFragment fragment = ArtistDetailFragment.newInstance(mList.get(getAdapterPosition()).artist_id);
                     transaction.hide(((AppCompatActivity) mContext).getSupportFragmentManager().findFragmentById(R.id.tab_container));

@@ -248,7 +248,7 @@ public class AlbumFragment extends BaseFragment {
                 ((ListItemViewHolder) holder).moreOverflow.setImageResource(R.drawable.song_play_icon);
                 ((ListItemViewHolder) holder).moreOverflow.setImageTintList(R.color.theme_color_primary);
             } else {
-                ((ListItemViewHolder) holder).moreOverflow.setImageResource(R.drawable.abc_ic_menu_moreoverflow_mtrl_alpha);
+                ((ListItemViewHolder) holder).moreOverflow.setImageResource(R.drawable.list_icn_more);
             }
 
         }

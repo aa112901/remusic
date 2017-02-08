@@ -1,5 +1,7 @@
 package com.wm.remusic.uitl.Comparator;
 
+import android.util.Log;
+
 import com.wm.remusic.info.ArtistInfo;
 
 import java.util.Comparator;

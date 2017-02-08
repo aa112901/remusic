@@ -17,6 +17,7 @@ import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.LinearInterpolator;
 import android.view.animation.RotateAnimation;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -65,8 +66,7 @@ public class RecommendFragment extends AttachFragment {
     private ArrayList<RecommendListNewAlbumInfo> mNewAlbumsList = new ArrayList<>();
     private ArrayList<RecommendListRadioInfo> mRadioList = new ArrayList<>();
     private int width = 160, height = 160;
-    private LinearLayout mItemLayout, mViewContent;
-    ;
+    private LinearLayout mItemLayout ,mViewContent;;
     private LayoutInflater mLayoutInflater;
     private View mLoadView, v1, v2, v3;
     private HashMap<String, View> mViewHashMap;
@@ -87,17 +87,17 @@ public class RecommendFragment extends AttachFragment {
         mContent = (ViewGroup) inflater.inflate(R.layout.fragment_recommend_container, container, false);
 
         mLayoutInflater = LayoutInflater.from(mContext);
-        mRecommendView = mLayoutInflater.inflate(R.layout.recommend, container, false);
+        mRecommendView = mLayoutInflater.inflate(R.layout.recommend,container,false);
         String date = Calendar.getInstance().get(Calendar.DAY_OF_MONTH) + "";
         TextView dailyText = (TextView) mRecommendView.findViewById(R.id.daily_text);
         dailyText.setText(date);
         mItemLayout = (LinearLayout) mRecommendView.findViewById(R.id.item_change);
         mViewContent = (LinearLayout) mRecommendView.findViewById(R.id.recommend_layout);
-        if (!PreferencesUtility.getInstance(mContext).isCurrentDayFirst(date)) {
+        if(!PreferencesUtility.getInstance(mContext).isCurrentDayFirst(date)){
             PreferencesUtility.getInstance(mContext).setCurrentDate(date);
-            View dayRec = mLayoutInflater.inflate(R.layout.loading_daymusic, container, false);
-            ImageView view1 = (ImageView) dayRec.findViewById(R.id.loading_dayimage);
-            RotateAnimation rotateAnimation = new RotateAnimation(0, 360, 1, 0.5F, 1, 0.5F);
+            View dayRec = mLayoutInflater.inflate(R.layout.loading_daymusic,container,false);
+            ImageView view1 = (ImageView) dayRec.findViewById(R.id.loading_dayimage) ;
+            RotateAnimation rotateAnimation = new RotateAnimation(0,360, 1, 0.5F, 1, 0.5F );
             rotateAnimation.setDuration(20000L);
             rotateAnimation.setInterpolator(new LinearInterpolator());
             rotateAnimation.setRepeatCount(Animation.INFINITE);
@@ -125,7 +125,7 @@ public class RecommendFragment extends AttachFragment {
         });
 
         mLoodView = (LoodView) mRecommendView.findViewById(R.id.loop_view);
-        if (!isDayFirst) {
+        if(!isDayFirst){
             mContent.addView(mRecommendView);
         }
 
@@ -135,13 +135,13 @@ public class RecommendFragment extends AttachFragment {
     @Override
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
-        if (isVisibleToUser) {
-            if (mLoodView != null)
-                mLoodView.requestFocus();
+        if(isVisibleToUser){
+            if(mLoodView != null)
+            mLoodView.requestFocus();
         }
     }
 
-    public void requestData() {
+    public void requestData(){
         reloadAdapter();
     }
 
@@ -221,7 +221,7 @@ public class RecommendFragment extends AttachFragment {
                 mViewHashMap.put("主播电台", v3);
                 mPosition = PreferencesUtility.getInstance(mContext).getItemPosition();
                 mViewContent.removeView(mLoadView);
-                if (isDayFirst) {
+                if(isDayFirst){
                     mContent.removeAllViews();
                     mContent.addView(mRecommendView);
                 }
@@ -234,6 +234,7 @@ public class RecommendFragment extends AttachFragment {
 
         }.execute();
     }
+
 
 
     class LoadRecommend extends AsyncTask<Integer, Void, Integer> {

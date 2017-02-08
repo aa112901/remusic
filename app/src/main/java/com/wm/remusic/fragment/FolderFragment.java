@@ -249,7 +249,7 @@ public class FolderFragment extends BaseFragment {
                 holder.moreOverflow.setImageResource(R.drawable.song_play_icon);
                 holder.moreOverflow.setImageTintList(R.color.theme_color_primary);
             } else {
-                holder.moreOverflow.setImageResource(R.drawable.abc_ic_menu_moreoverflow_mtrl_alpha);
+                holder.moreOverflow.setImageResource(R.drawable.list_icn_more);
             }
 
         }

@@ -251,7 +251,7 @@ public class AlbumsDetailActivity extends BaseActivity implements ObservableScro
                 }
 
                 int tryCount = 0;
-                while (sparseArray.size() != musicCount && tryCount < 1000){
+                while (sparseArray.size() != musicCount && tryCount < 1000 && !isCancelled()){
                     tryCount++;
                     try {
                         Thread.sleep(30);

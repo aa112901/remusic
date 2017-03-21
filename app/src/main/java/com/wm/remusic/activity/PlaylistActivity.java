@@ -380,7 +380,7 @@ public class PlaylistActivity extends BaseActivity implements ObservableScrollVi
                     RequestThreadPool.post(new MusicDetailInfoGet(geDanGeInfo.getSong_id(), i, sparseArray));
                 }
                 int tryCount = 0;
-                while (sparseArray.size() != musicCount && tryCount < 1000){
+                while (sparseArray.size() != musicCount && tryCount < 1000 && !isCancelled()){
                     tryCount++;
                     try {
                         Thread.sleep(30);
@@ -388,6 +388,7 @@ public class PlaylistActivity extends BaseActivity implements ObservableScrollVi
                         e.printStackTrace();
                     }
                 }
+
 
                 if(sparseArray.size() == musicCount){
                     for (int i = 0; i < mList.size(); i++) {
@@ -431,8 +432,10 @@ public class PlaylistActivity extends BaseActivity implements ObservableScrollVi
         }
 
         public void cancleTask(){
+
             cancel(true);
             RequestThreadPool.finish();
+            Log.e(TAG," cancled task , + thread" + Thread.currentThread().getName());
         }
     }
 
@@ -461,13 +464,14 @@ public class PlaylistActivity extends BaseActivity implements ObservableScrollVi
 
     @Override
     protected void onDestroy() {
-        super.onDestroy();
+
         if(mLoadNetList != null){
             mLoadNetList.cancleTask();
         }
         if(mLoadLocalList != null){
             mLoadLocalList.cancel(true);
         }
+        super.onDestroy();
     }
 
     private void setAlbumart() {

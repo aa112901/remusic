@@ -1,7 +1,7 @@
 # remusic
 仿网易云音乐安卓版客户端
 
-#screenshot
+# screenshot
 ![](https://github.com/aa112901/remusic/blob/master/screenshot/1%20(2).png)
 ![](https://github.com/aa112901/remusic/blob/master/screenshot/device-2016-11-01-103226.png)
 ![](https://github.com/aa112901/remusic/blob/master/screenshot/1%20(3).png)
@@ -22,7 +22,7 @@
 ![](https://github.com/aa112901/remusic/blob/master/screenshot/widget.png)
 
 
-#Credits
+# Credits
 - [Timber](https://github.com/naman14/Timber)
 - [Fresco](https://github.com/facebook/fresco)
 - [MediaPlayerProxy](https://github.com/andrewhanks/MediaPlayerProxy)
@@ -64,7 +64,7 @@
 - 增加保存网络歌单到主页
 - 其他
  
-##7.27
+## 7.27
 - 改动底部控制栏为fragment，设置activity跳转无动画，使底部控制栏看起来全局固定在底部
 - 歌单列表使用Android-Observescrollview取代CollapsingToolbarLayout
 - service支持在线歌曲播放，支持在线歌单，暂时在线歌曲不支持无缝播放

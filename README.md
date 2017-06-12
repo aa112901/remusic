@@ -2,9 +2,9 @@
 仿网易云音乐安卓版客户端
 
 # table of contents
-* [screenshot](#screenshot)
-* [Credits](#credits)
-* [Change Log](#change-log)
+- [screenshot](#screenshot)
+-  [Credits](#credits)
+-  [Change Log](#change-log)
 
 # screenshot
 ![](https://github.com/aa112901/remusic/blob/master/screenshot/1%20(2).png)

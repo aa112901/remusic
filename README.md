@@ -2,6 +2,8 @@
 仿网易云音乐安卓版客户端
 
 # table of contents
+[screenshot](#screenshot)
+[Credits](#credits)
 [Change Log](#change-log)
 
 # screenshot
@@ -35,6 +37,10 @@
 - [okhttp](https://github.com/square/okhttp)
 - [CustomLrcView](https://github.com/android-lili/CustomLrcView-master)
 - [MagicaSakura](https://github.com/Bilibili/MagicaSakura "MagicaSakura")
+
+# 常见错误
+## 不显示数据
+修改HttpUtil类中的
 
 # Change Log
 ## 2.6

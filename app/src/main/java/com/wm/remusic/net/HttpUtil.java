@@ -230,6 +230,7 @@ public class HttpUtil {
             mOkHttpClient.setConnectTimeout(1000, TimeUnit.MINUTES);
             mOkHttpClient.setReadTimeout(1000, TimeUnit.MINUTES);
             Request.Builder builder = new Request.Builder()
+                    .addHeader("user-agent", "Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:0.9.4)")
                     .url(action1);
             if (forceCache) {
                 builder.cacheControl(CacheControl.FORCE_CACHE);

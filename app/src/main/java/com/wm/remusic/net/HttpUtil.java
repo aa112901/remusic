@@ -11,6 +11,7 @@ import com.google.gson.JsonParser;
 import com.squareup.okhttp.Cache;
 import com.squareup.okhttp.CacheControl;
 import com.squareup.okhttp.FormEncodingBuilder;
+import com.squareup.okhttp.Interceptor;
 import com.squareup.okhttp.MediaType;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
@@ -37,7 +38,24 @@ import okio.Okio;
  * Created by wm on 2016/4/10.
  */
 public class HttpUtil {
-    public  static final OkHttpClient mOkHttpClient = new OkHttpClient();
+    public static final OkHttpClient mOkHttpClient = new OkHttpClient();
+
+    static {
+        final String useAgent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.99 Safari/537.36";
+        Interceptor requestInterceptor = new Interceptor() {
+            @Override
+            public Response intercept(Chain chain) throws IOException {
+                Request userAgentRequest = chain.request()
+                        .newBuilder()
+                        .header("User-Agent", useAgent)
+                        .build();
+                return chain.proceed(userAgentRequest);
+            }
+        };
+        mOkHttpClient.networkInterceptors().add(requestInterceptor);
+
+
+    }
 
 
     public static void getOut(final String url) {
@@ -261,6 +279,7 @@ public class HttpUtil {
         try {
             mOkHttpClient.setConnectTimeout(3000, TimeUnit.MINUTES);
             mOkHttpClient.setReadTimeout(3000, TimeUnit.MINUTES);
+            String useAgent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.99 Safari/537.36";
             Request request = new Request.Builder()
                     .url(action1)
 //                    .addHeader("Referer","http://music.163.com/")
